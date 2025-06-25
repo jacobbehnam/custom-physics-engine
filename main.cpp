@@ -33,11 +33,14 @@ void processInput(GLFWwindow* window, Camera& camera, float deltaTime, SceneObje
         cube.setRotation(glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    static bool firstMouse = true;
-    static float lastX = 0.0f;
-    static float lastY = 0.0f;
+// TODO: Change these from global variables later
+static bool firstMouse = true;
+static bool mouseCaptured = false;
+static float lastX = 0.0f;
+static float lastY = 0.0f;
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (!mouseCaptured) return;
     // Retrieve camera instance
     Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
     if (!cam) return;
@@ -61,11 +64,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        if (action == GLFW_PRESS) {
-
+        if (action == GLFW_PRESS && !mouseCaptured) {
+            mouseCaptured = true;
+            firstMouse = true;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
-        else if (action == GLFW_RELEASE) {
+        else if (action == GLFW_RELEASE && mouseCaptured) {
+            mouseCaptured = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
     }
