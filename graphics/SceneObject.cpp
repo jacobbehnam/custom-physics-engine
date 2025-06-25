@@ -4,7 +4,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 SceneObject::SceneObject(Mesh *meshPtr, unsigned int program)
-    : mesh(meshPtr), shaderProgram(program) {}
+    : mesh(meshPtr), shaderProgram(program) {
+    sceneObjects.push_back(this);
+    boundingRadius = 1.0f;
+}
 
 glm::mat4 SceneObject::getModelMatrix() const {
     glm::mat4 model(1.0f);
@@ -38,5 +41,15 @@ void SceneObject::setRotation(const glm::vec3 &rot) {
 void SceneObject::setScale(const glm::vec3 &scl) {
     scale = scl;
 }
+
+glm::vec3 SceneObject::getPosition() const{
+    return position;
+}
+
+float SceneObject::getBoundingRadius() const{
+    return boundingRadius;
+}
+
+
 
 
