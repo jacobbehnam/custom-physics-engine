@@ -1,15 +1,15 @@
 #pragma once
 #include <glm/glm.hpp>
 
+enum class Movement {
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT,
+};
+
 class Camera {
 public:
-    enum Movement {
-        FORWARD,
-        BACKWARD,
-        LEFT,
-        RIGHT,
-    };
-
     glm::vec3 position;
     glm::vec3 front;
     glm::vec3 up;

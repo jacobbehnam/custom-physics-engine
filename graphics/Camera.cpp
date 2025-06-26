@@ -42,16 +42,16 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 void Camera::processKeyboard(Movement direction, float deltaTime) {
     float velocity = movementSpeed * deltaTime;
     switch (direction) {
-        case FORWARD:
+        case Movement::FORWARD:
             position += front * velocity;
             break;
-        case BACKWARD:
+        case Movement::BACKWARD:
             position -= front * velocity;
             break;
-        case LEFT:
+        case Movement::LEFT:
             position -= right * velocity;
             break;
-        case RIGHT:
+        case Movement::RIGHT:
             position += right * velocity;
             break;
     }

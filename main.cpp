@@ -12,6 +12,8 @@
 #include <graphics/SceneObject.h>
 #include <graphics/Camera.h>
 
+#include "graphics/TranslateHandle.h"
+
 
 void framebuffer_size_callback (GLFWwindow* window, int width, int height) {
     glViewport(0,0,width,height);
@@ -45,13 +47,13 @@ void processInput(GLFWwindow* window, Camera& camera, float deltaTime, SceneObje
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(Camera::LEFT, deltaTime);
+        camera.processKeyboard(Movement::LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(Camera::RIGHT, deltaTime);
+        camera.processKeyboard(Movement::RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(Camera::FORWARD, deltaTime);
+        camera.processKeyboard(Movement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(Camera::BACKWARD, deltaTime);
+        camera.processKeyboard(Movement::BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
         cube.setRotation(glm::vec3(1.0f, 0.0f, 0.0f));
 }
@@ -61,6 +63,7 @@ static bool firstMouse = true;
 static bool mouseCaptured = false;
 static float lastX = 0.0f;
 static float lastY = 0.0f;
+
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     if (!mouseCaptured) return;
@@ -129,6 +132,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 
         if (clickedObject) {
             std::cout << "Clicked " << clickedObject << " at t=" << closestDistance << "\n";
+
         }
     }
 }

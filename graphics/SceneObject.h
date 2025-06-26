@@ -1,12 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <graphics/Mesh.h>
+#include <graphics/IDrawable.h>
 
-class SceneObject {
+class SceneObject : public IDrawable{
 public:
     SceneObject(Mesh* meshPtr, unsigned int program);
 
-    void draw() const;
+    void draw() const override;
 
     void setPosition(const glm::vec3& pos);
     void setRotation(const glm::vec3& rot);
