@@ -12,8 +12,8 @@
 #include <graphics/SceneObject.h>
 #include <graphics/Camera.h>
 #include <graphics/Shader.h>
-
 #include "graphics/TranslateHandle.h"
+#include <graphics/Scene.h>
 
 static Mesh*          gMesh         = nullptr;
 static SceneObject*   gCube         = nullptr;
@@ -47,7 +47,7 @@ bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir,
 }
 
 
-void processInput(GLFWwindow* window, Camera& camera, float deltaTime, SceneObject &cube) {
+void processInput(GLFWwindow* window, Camera& camera, float deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -59,8 +59,6 @@ void processInput(GLFWwindow* window, Camera& camera, float deltaTime, SceneObje
         camera.processKeyboard(Movement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera.processKeyboard(Movement::BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        cube.setRotation(glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 // TODO: Change these from global variables later
@@ -73,7 +71,8 @@ static float lastY = 0.0f;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     if (!mouseCaptured) return;
     // Retrieve camera instance
-    Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
+    Camera* cam = &scene->camera;
     if (!cam) return;
 
     if (firstMouse) {
@@ -105,42 +104,42 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
     }
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // Get cursor as ray in world space
-        double mouseX, mouseY;
-        glfwGetCursorPos(window, &mouseX, &mouseY);
-
-        float x = (2.0f * mouseX) / 800 - 1.0f;
-        float y = 1.0f - (2.0f * mouseY) / 600;
-
-        glm::vec4 clip = glm::vec4(x, y, -1.0f, 1.0f);
-        Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-        glm::mat4 invProj = glm::inverse(cam->getProjMatrix());
-        glm::vec4 eye = invProj * clip;
-        eye.z = -1.0f; eye.w = 0.0f;
-        glm::mat4 invView = glm::inverse(cam->getViewMatrix());
-        glm::vec4 worldDir4 = invView * eye;
-        glm::vec3 worldDir = glm::normalize(glm::vec3(worldDir4));
-
-        float closestDistance = std::numeric_limits<float>::max();
-        SceneObject* clickedObject = nullptr;
-
-        for (auto obj : sceneObjects) {
-            float t;
-            if (rayIntersection(cam->position, worldDir, obj->getPosition(), obj->getBoundingRadius(), t)) {
-                if (t < closestDistance) {
-                    closestDistance = t;
-                    clickedObject = obj;
-                }
-            }
-        }
-
-        if (clickedObject) {
-            std::cout << "Clicked " << clickedObject << " at t=" << closestDistance << "\n";
-            delete gHandle;
-            gHandle = new TranslateHandle(gMesh, gShader, gCube, Axis::X);
-        }
-    }
+    // else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    //     // Get cursor as ray in world space
+    //     double mouseX, mouseY;
+    //     glfwGetCursorPos(window, &mouseX, &mouseY);
+    //
+    //     float x = (2.0f * mouseX) / 800 - 1.0f;
+    //     float y = 1.0f - (2.0f * mouseY) / 600;
+    //
+    //     glm::vec4 clip = glm::vec4(x, y, -1.0f, 1.0f);
+    //     Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    //     glm::mat4 invProj = glm::inverse(cam->getProjMatrix());
+    //     glm::vec4 eye = invProj * clip;
+    //     eye.z = -1.0f; eye.w = 0.0f;
+    //     glm::mat4 invView = glm::inverse(cam->getViewMatrix());
+    //     glm::vec4 worldDir4 = invView * eye;
+    //     glm::vec3 worldDir = glm::normalize(glm::vec3(worldDir4));
+    //
+    //     float closestDistance = std::numeric_limits<float>::max();
+    //     SceneObject* clickedObject = nullptr;
+    //
+    //     for (auto obj : sceneObjects) {
+    //         float t;
+    //         if (rayIntersection(cam->position, worldDir, obj->getPosition(), obj->getBoundingRadius(), t)) {
+    //             if (t < closestDistance) {
+    //                 closestDistance = t;
+    //                 clickedObject = obj;
+    //             }
+    //         }
+    //     }
+    //
+    //     if (clickedObject) {
+    //         std::cout << "Clicked " << clickedObject << " at t=" << closestDistance << "\n";
+    //         delete gHandle;
+    //         gHandle = new TranslateHandle(gMesh, gShader, gCube, Axis::X);
+    //     }
+    // }
 }
 
 int main() {
@@ -167,33 +166,6 @@ int main() {
     glViewport(0,0,800,600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // === 1. Vertex data ===
-    std::vector<Vertex> vertices = {
-        { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
-        { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
-        { {0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
-        { {-0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
-        { {-0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f} },
-        { {0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f} },
-        { {0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f} },
-        { {-0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f} }
-    };
-
-    std::vector<unsigned int> indices {
-        0, 1, 2,
-        0, 3, 2,
-        0, 1, 5,
-        0, 4, 5,
-        0, 4, 7,
-        0, 3, 7,
-        1, 2, 6,
-        1, 5, 6,
-        2, 3, 7,
-        2, 6, 7,
-        4, 5, 6,
-        4, 7, 6
-    };
-
     glEnable(GL_DEPTH_TEST);
     glLineWidth(10.0f);
 
@@ -203,19 +175,18 @@ int main() {
     glm::mat4 view;
     glm::mat4 projection = camera.getProjMatrix();
     Camera* camPtr = &camera;
-    glfwSetWindowUserPointer(window, camPtr);
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     glfwSetMouseButtonCallback(window, mouseButtonCallback);
     glfwSetCursorPosCallback(window, mouse_callback);
 
     double lastFrame = glfwGetTime();
 
-    Mesh mesh(vertices, indices);
-    SceneObject cube(&mesh, &cubeShader);
+    // gShader = &cubeShader;
+    // gMesh  = &mesh;
+    // gCube  = &cube;
 
-    gShader = &cubeShader;
-    gMesh  = &mesh;
-    gCube  = &cube;
+    Scene scene(window);
 
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
@@ -223,20 +194,9 @@ int main() {
         double deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window, camera, deltaTime, cube);
-        view = camera.getViewMatrix();
+        processInput(window, camera, deltaTime);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // TODO: Create a set of shaders to iterate over
-        cubeShader.setMat4("view", view);
-        cubeShader.setMat4("projection", projection);
-
-        cube.draw();
-        if (gHandle) {
-            gHandle->draw();
-        }
+        scene.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

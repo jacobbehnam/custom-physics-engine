@@ -1,10 +1,11 @@
 #include "SceneObject.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <graphics/Scene.h>
 
-SceneObject::SceneObject(Mesh *meshPtr, Shader *sdr)
-    : mesh(meshPtr), shader(sdr) {
-    sceneObjects.push_back(this);
+SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
+    : mesh(meshPtr), shader(sdr), ownerScene(scene) {
+    ownerScene->addObject(this);
     boundingRadius = 1.0f;
 }
 
@@ -46,6 +47,11 @@ glm::vec3 SceneObject::getPosition() const{
 float SceneObject::getBoundingRadius() const{
     return boundingRadius;
 }
+
+Shader* SceneObject::getShader() const {
+    return shader;
+}
+
 
 
 
