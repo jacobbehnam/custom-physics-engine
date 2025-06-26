@@ -21,6 +21,25 @@ glm::mat4 Camera::getProjMatrix() const {
         100.0f
 );
 }
+
+void Camera::handleMouseMovement(double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = (float)xpos;
+        lastY = (float)ypos;
+        firstMouse = false;
+    }
+
+    // Calculate movement offset
+    float xoffset = (float)xpos - lastX;
+    float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = (float)xpos;
+    lastY = (float)ypos;
+
+    processMouseMovement(xoffset, yoffset);
+}
+
+
 void Camera::processMouseMovement(float xoffset, float yoffset) {
     yaw += xoffset * sensitivity;
     pitch += yoffset * sensitivity;
@@ -36,7 +55,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     newDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     front = newDir;
     right = glm::normalize(glm::cross(front, worldUp));
-    up = glm::cross(right, front);
+    up = glm::normalize(glm::cross(right, front));
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
@@ -55,4 +74,8 @@ void Camera::processKeyboard(Movement direction, float deltaTime) {
             position += right * velocity;
             break;
     }
+}
+
+void Camera::resetMouse() {
+    firstMouse = true;
 }

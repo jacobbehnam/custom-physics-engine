@@ -12,10 +12,15 @@ public:
     ~Scene() = default;
     void draw();
     void addObject(SceneObject* obj);
+
+    void processInput(float dt);
+    void handleMouseButton(int button, int action, int mods);
     Camera camera;
 private:
     GLFWwindow* window;
     std::vector<SceneObject*> sceneObjects;
     TranslateHandle* handle;
     Shader basicShader;
+
+    bool mouseCaptured = false;
 };

@@ -47,63 +47,19 @@ bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir,
 }
 
 
-void processInput(GLFWwindow* window, Camera& camera, float deltaTime) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(Movement::LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(Movement::RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(Movement::FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(Movement::BACKWARD, deltaTime);
-}
-
-// TODO: Change these from global variables later
-static bool firstMouse = true;
-static bool mouseCaptured = false;
-static float lastX = 0.0f;
-static float lastY = 0.0f;
-
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    if (!mouseCaptured) return;
-    // Retrieve camera instance
-    Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
-    Camera* cam = &scene->camera;
-    if (!cam) return;
-
-    if (firstMouse) {
-        lastX = (float)xpos;
-        lastY = (float)ypos;
-        firstMouse = false;
-    }
-
-    // Calculate movement offset
-    float xoffset = (float)xpos - lastX;
-    float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = (float)xpos;
-    lastY = (float)ypos;
-
-    // Pass offsets to camera
-    cam->processMouseMovement(xoffset, yoffset);
-}
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        if (action == GLFW_PRESS && !mouseCaptured) {
-            mouseCaptured = true;
-            firstMouse = true;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        }
-        else if (action == GLFW_RELEASE && mouseCaptured) {
-            mouseCaptured = false;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
-    }
+    // if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+    //     if (action == GLFW_PRESS && !mouseCaptured) {
+    //         mouseCaptured = true;
+    //         firstMouse = true;
+    //         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //     }
+    //     else if (action == GLFW_RELEASE && mouseCaptured) {
+    //         mouseCaptured = false;
+    //         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    //     }
+    // }
     // else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
     //     // Get cursor as ray in world space
     //     double mouseX, mouseY;
@@ -169,24 +125,16 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glLineWidth(10.0f);
 
-    Shader cubeShader("../vertexShader.glsl", "../fragmentShader.glsl");
-
-    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    glm::mat4 view;
-    glm::mat4 projection = camera.getProjMatrix();
-    Camera* camPtr = &camera;
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-
     double lastFrame = glfwGetTime();
 
-    // gShader = &cubeShader;
-    // gMesh  = &mesh;
-    // gCube  = &cube;
-
     Scene scene(window);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* w, int b, int a, int m){
+        Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(w));
+        if (scene)
+            scene->handleMouseButton(b, a, m);
+    });
 
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
@@ -194,12 +142,11 @@ int main() {
         double deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window, camera, deltaTime);
-
+        glfwPollEvents();
+        scene.processInput(deltaTime);
         scene.draw();
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     glfwTerminate();

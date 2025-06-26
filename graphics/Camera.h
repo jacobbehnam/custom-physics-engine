@@ -30,7 +30,13 @@ public:
 
     glm::mat4 getProjMatrix() const;
 
+    void resetMouse();
+    void handleMouseMovement(double xpos, double ypos);
     void processMouseMovement(float xoffset, float yoffset);
 
     void processKeyboard(Movement direction, float deltaTime);
+private:
+    bool firstMouse  = true;
+    float lastX      = 0.0f;
+    float lastY      = 0.0f;
 };

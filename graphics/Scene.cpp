@@ -55,3 +55,40 @@ void Scene::addObject(SceneObject* obj) {
     sceneObjects.push_back(obj);
 }
 
+void Scene::processInput(float dt) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (mouseCaptured) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        camera.handleMouseMovement(xpos, ypos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.processKeyboard(Movement::LEFT, dt);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.processKeyboard(Movement::RIGHT, dt);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.processKeyboard(Movement::FORWARD, dt);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.processKeyboard(Movement::BACKWARD, dt);
+}
+
+void Scene::handleMouseButton(int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (action == GLFW_PRESS && !mouseCaptured) {
+            mouseCaptured = true;
+            camera.resetMouse();
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        else if (action == GLFW_RELEASE && mouseCaptured) {
+            mouseCaptured = false;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+}
+
+
+
+
