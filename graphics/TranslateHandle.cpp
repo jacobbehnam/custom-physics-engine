@@ -1,7 +1,6 @@
 #include "TranslateHandle.h"
 
 #include <glm/ext/matrix_transform.hpp>
-#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "SceneObject.h"
 
@@ -18,8 +17,8 @@ static glm::vec3 axisDir(Axis a) {
     }
 }
 
-TranslateHandle::TranslateHandle(Mesh *m, unsigned int program, SceneObject *tgt, Axis ax)
-    : mesh(m), shaderProgram(program), target(tgt), axis(ax) {}
+TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax)
+    : mesh(m), shader(sdr), target(tgt), axis(ax) {}
 
 glm::mat4 TranslateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
@@ -40,12 +39,10 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
 }
 
 void TranslateHandle::draw() const {
-    glUseProgram(shaderProgram);
+    shader->use();
 
     glm::mat4 model = getModelMatrix();
-    GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
-
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    shader->setMat4("model", model);
 
     mesh->draw();
 }

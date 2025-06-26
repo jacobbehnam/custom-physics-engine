@@ -2,10 +2,11 @@
 #include <glm/glm.hpp>
 #include <graphics/Mesh.h>
 #include <graphics/IDrawable.h>
+#include "Shader.h"
 
 class SceneObject : public IDrawable{
 public:
-    SceneObject(Mesh* meshPtr, unsigned int program);
+    SceneObject(Mesh* meshPtr, Shader *sdr);
 
     void draw() const override;
 
@@ -17,7 +18,7 @@ public:
     float getBoundingRadius() const;
 private:
     Mesh* mesh;
-    unsigned int shaderProgram;
+    Shader* shader;
 
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};

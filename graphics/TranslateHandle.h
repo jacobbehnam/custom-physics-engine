@@ -2,6 +2,7 @@
 #include <graphics/IDrawable.h>
 #include <graphics/Mesh.h>
 #include <glm/glm.hpp>
+#include <graphics/Shader.h>
 
 enum class Axis {
     X, Y, Z
@@ -11,12 +12,12 @@ class SceneObject;
 
 class TranslateHandle : IDrawable{
 public:
-    TranslateHandle(Mesh* m, unsigned int program, SceneObject* tgt, Axis ax);
+    TranslateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
 
     void draw() const override;
 private:
     Mesh* mesh;
-    unsigned int shaderProgram;
+    Shader* shader;
     SceneObject* target;
     Axis axis;
 

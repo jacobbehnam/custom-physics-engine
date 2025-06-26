@@ -11,9 +11,14 @@
 #include <graphics/Mesh.h>
 #include <graphics/SceneObject.h>
 #include <graphics/Camera.h>
+#include <graphics/Shader.h>
 
 #include "graphics/TranslateHandle.h"
 
+static Mesh*          gMesh         = nullptr;
+static SceneObject*   gCube         = nullptr;
+static Shader*   gShader = nullptr;
+static TranslateHandle* gHandle = nullptr;
 
 void framebuffer_size_callback (GLFWwindow* window, int width, int height) {
     glViewport(0,0,width,height);
@@ -132,30 +137,13 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 
         if (clickedObject) {
             std::cout << "Clicked " << clickedObject << " at t=" << closestDistance << "\n";
-
+            delete gHandle;
+            gHandle = new TranslateHandle(gMesh, gShader, gCube, Axis::X);
         }
     }
 }
 
-std::string loadFile(const std::string& path) {
-    std::ifstream file(path);
-    if (!file) {
-        std::cerr << "Error: Could not open file " << path << std::endl;
-        return "";
-    }
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
-
 int main() {
-    std::string vertexSource = loadFile("../vertexShader.glsl");
-    std::string fragmentSource = loadFile("../fragmentShader.glsl");
-    std::string edgeSource = loadFile("../edgeShader.glsl");
-    const char* vertexShaderSource = vertexSource.c_str();
-    const char* fragmentShaderSource = fragmentSource.c_str();
-    const char* edgeShaderSource = edgeSource.c_str();
-
     glfwInit();
 
     // We are on OpenGL version 4.6
@@ -206,43 +194,10 @@ int main() {
         4, 7, 6
     };
 
-    unsigned int edges[] {
-        0,1, 1,2, 2,3, 3,0, // Bottom
-        4,5, 5,6, 6,7, 7,4, // Top
-        0,4, 1,5, 2,6, 3,7 // Vertical
-    };
-
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    unsigned int edgeShader;
-    edgeShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(edgeShader, 1, &edgeShaderSource, NULL);
-    glCompileShader(edgeShader);
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    unsigned int edgeShaderProgram = glCreateProgram();
-    glAttachShader(edgeShaderProgram, edgeShader);
-    glAttachShader(edgeShaderProgram, fragmentShader);
-    glLinkProgram(edgeShaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    glDeleteShader(edgeShader);
-
-    // int tmatUniform = glGetUniformLocation(shaderProgram, "tmat");
-    // int tmat2Uniform = glGetUniformLocation(edgeShaderProgram, "tmat");
-    int camUniform = glGetUniformLocation(shaderProgram, "view");
-    int projUniform = glGetUniformLocation(shaderProgram, "projection");
-
     glEnable(GL_DEPTH_TEST);
     glLineWidth(10.0f);
+
+    Shader cubeShader("../vertexShader.glsl", "../fragmentShader.glsl");
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glm::mat4 view;
@@ -256,7 +211,11 @@ int main() {
     double lastFrame = glfwGetTime();
 
     Mesh mesh(vertices, indices);
-    SceneObject cube(&mesh, shaderProgram);
+    SceneObject cube(&mesh, &cubeShader);
+
+    gShader = &cubeShader;
+    gMesh  = &mesh;
+    gCube  = &cube;
 
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
@@ -270,26 +229,14 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
-        glUniformMatrix4fv(camUniform, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projUniform, 1, GL_FALSE, glm::value_ptr(projection));
+        // TODO: Create a set of shaders to iterate over
+        cubeShader.setMat4("view", view);
+        cubeShader.setMat4("projection", projection);
+
         cube.draw();
-
-        // glBindVertexArray(VAO);
-        // glEnable(GL_POLYGON_OFFSET_FILL);     // enables offset for fill mode
-        // glPolygonOffset(4.0f, 100.0f);          // adjust the offset
-        // glUseProgram(shaderProgram);          // your fill shader
-        // glUniformMatrix4fv(tmatUniform, 1, GL_FALSE, glm::value_ptr(tmat));
-        // glUniformMatrix4fv(camUniform, 1, GL_FALSE, glm::value_ptr(view));
-        // glUniformMatrix4fv(projUniform, 1, GL_FALSE, glm::value_ptr(proj));
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // triangles
-        // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        // glDisable(GL_POLYGON_OFFSET_FILL);    // stop offset after drawing the filled cube
-
-        // glUseProgram(edgeShaderProgram);
-        // glUniformMatrix4fv(tmat2Uniform, 1, GL_FALSE, glm::value_ptr(tmat));
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
-        // glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0);
+        if (gHandle) {
+            gHandle->draw();
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -1,10 +1,9 @@
 #include "SceneObject.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-SceneObject::SceneObject(Mesh *meshPtr, unsigned int program)
-    : mesh(meshPtr), shaderProgram(program) {
+SceneObject::SceneObject(Mesh *meshPtr, Shader *sdr)
+    : mesh(meshPtr), shader(sdr) {
     sceneObjects.push_back(this);
     boundingRadius = 1.0f;
 }
@@ -20,12 +19,10 @@ glm::mat4 SceneObject::getModelMatrix() const {
 }
 
 void SceneObject::draw() const {
-    glUseProgram(shaderProgram);
+    shader->use();
 
     glm::mat4 model = getModelMatrix();
-    unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    shader->setMat4("model", model);
 
     mesh->draw();
 }

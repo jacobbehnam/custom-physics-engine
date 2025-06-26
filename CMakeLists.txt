@@ -28,7 +28,9 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         graphics/Camera.h
         graphics/IDrawable.h
         graphics/TranslateHandle.cpp
-        graphics/TranslateHandle.h)
+        graphics/TranslateHandle.h
+        graphics/Shader.cpp
+        graphics/Shader.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}
