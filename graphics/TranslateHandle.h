@@ -15,6 +15,8 @@ public:
     TranslateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
 
     void draw() const override;
+
+    Shader* getShader() const;
 private:
     Mesh* mesh;
     Shader* shader;

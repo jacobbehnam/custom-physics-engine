@@ -32,7 +32,9 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         graphics/Shader.cpp
         graphics/Shader.h
         graphics/Scene.cpp
-        graphics/Scene.h)
+        graphics/Scene.h
+        graphics/Gizmo.cpp
+        graphics/Gizmo.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}

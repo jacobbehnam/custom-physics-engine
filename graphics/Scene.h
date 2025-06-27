@@ -3,7 +3,7 @@
 #include<GLFW/glfw3.h>
 #include <graphics/Camera.h>
 #include <graphics/SceneObject.h>
-#include <graphics/TranslateHandle.h>
+#include <graphics/Gizmo.h>
 #include <vector>
 
 class Scene {
@@ -19,7 +19,7 @@ public:
 private:
     GLFWwindow* window;
     std::vector<SceneObject*> sceneObjects;
-    TranslateHandle* handle;
+    Gizmo* translationGizmo;
     Shader basicShader;
 
     bool mouseCaptured = false;

@@ -17,6 +17,7 @@ public:
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
     Shader* getShader() const;
+    static bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sphereCenter, float sphereRadius, float &outDistance);
 
     float getBoundingRadius() const;
 private:

@@ -28,6 +28,28 @@ void SceneObject::draw() const {
     mesh->draw();
 }
 
+bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sphereCenter, float sphereRadius, float &outDistance) {
+    // Assumes rayDir is normalized!
+    // Math is solving for t when || P(t) - C || = r where P(t) = O + tD
+
+    glm::vec3 OC = rayOrigin - sphereCenter;
+    float b = 2.0f * glm::dot(OC, rayDir);
+    float c = glm::dot(OC, OC) - sphereRadius * sphereRadius;
+    float discriminant = b*b - 4*c;
+    if (discriminant < 0.0f) return false;
+
+    float sqrtDisc = glm::sqrt(discriminant);
+    float t1 = (-b - sqrtDisc)/2.0f; // Entry ray
+    float t2 = (-b + sqrtDisc)/2.0f; // Exit ray
+
+    float t = (t1 >= 0.0f) ? t1 : t2; // If the ray began inside the object, only the exit value will be positive
+    if (t < 0.0f) return false; // If both values are negative, then the object is behind the camera, so no intersection
+
+    outDistance = t;
+    return true;
+}
+
+
 void SceneObject::setPosition(const glm::vec3 &pos) {
     position = pos;
 }
