@@ -18,10 +18,9 @@ public:
 
     double yaw = -90.0f;
     double pitch = 0.0f;
-    double sensitivity = 0.05f;
 
     float movementSpeed = 3.0f;
-    float mouseSensitivity = 1.0f;
+    float mouseSensitivity = 0.05f;
     float fov = 45.0f;
 
     Camera(glm::vec3 initPosition);

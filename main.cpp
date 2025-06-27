@@ -62,6 +62,13 @@ int main() {
             scene->handleMouseButton(b, a, m);
     });
 
+    // Without this, the camera is pretty choppy
+    if (glfwRawMouseMotionSupported()) {
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    } else {
+        std::cout << "Raw mouse movement not supported" << std::endl;
+    }
+
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
         double currentFrame = glfwGetTime();

@@ -1,10 +1,12 @@
 #include "Camera.h"
+
+#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 initPosition) {
     position = initPosition;
     worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-    front = glm::normalize(-position);
+    front = glm::vec3(0.0f, 0.0f, -1.0f);
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::cross(right, front);
 }
@@ -41,8 +43,8 @@ void Camera::handleMouseMovement(double xpos, double ypos) {
 
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-    yaw += xoffset * sensitivity;
-    pitch += yoffset * sensitivity;
+    yaw += xoffset * mouseSensitivity;
+    pitch += yoffset * mouseSensitivity;
 
     if (pitch > 90)
         pitch = 90;
@@ -53,7 +55,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     newDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     newDir.y = sin(glm::radians(pitch));
     newDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = newDir;
+    front = glm::normalize(newDir);
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 }
