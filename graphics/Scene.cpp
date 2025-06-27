@@ -114,7 +114,7 @@ void Scene::handleMouseButton(int button, int action, int mods) {
 
         for (auto obj : sceneObjects) {
             float t;
-            if (obj->rayIntersection(cam->position, worldDir, obj->getPosition(), obj->getBoundingRadius(), t)) {
+            if (obj->rayIntersection(cam->position, worldDir, t)) {
                 if (t < closestDistance) {
                     closestDistance = t;
                     clickedObject = obj;

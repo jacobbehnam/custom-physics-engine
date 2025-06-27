@@ -17,9 +17,8 @@ public:
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
     Shader* getShader() const;
-    static bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sphereCenter, float sphereRadius, float &outDistance);
+    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance);
 
-    float getBoundingRadius() const;
 private:
     Mesh* mesh;
     Shader* shader;
@@ -28,8 +27,6 @@ private:
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};
     glm::vec3 scale    {1.0f};
-
-    float boundingRadius;
 
     glm::mat4 getModelMatrix() const;
 };

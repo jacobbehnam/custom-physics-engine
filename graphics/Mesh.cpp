@@ -1,8 +1,8 @@
 #include "Mesh.h"
 #include "glad/glad.h"
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned> &indices)
-    : indexCount(indices.size()){
+Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &idx)
+    : indexCount(indices.size()), vertices(verts), indices(idx){
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -30,4 +30,12 @@ void Mesh::draw() const {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+}
+
+std::vector<Vertex> Mesh::getVertices() const {
+    return vertices;
+}
+
+std::vector<unsigned int> Mesh::getIndices() const {
+    return indices;
 }
