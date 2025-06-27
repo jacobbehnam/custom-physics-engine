@@ -10,13 +10,16 @@ enum class Axis {
 
 class SceneObject;
 
-class TranslateHandle : IDrawable{
+class TranslateHandle : public IDrawable{
 public:
     TranslateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
 
     void draw() const override;
+    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const override;
 
-    Shader* getShader() const;
+    void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
+
+    Shader* getShader() const override;
 private:
     Mesh* mesh;
     Shader* shader;

@@ -1,8 +1,10 @@
 #include "TranslateHandle.h"
 
+#include <iostream>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "SceneObject.h"
+#include <graphics/MathUtils.h>
 
 static glm::vec3 axisDir(Axis a) {
     switch (a) {
@@ -38,6 +40,40 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
     model = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
     return model;
 }
+
+bool TranslateHandle::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const{
+    bool hitSomething = false;
+    float closestT = std::numeric_limits<float>::infinity();
+
+    const std::vector<Vertex>& verts = mesh->getVertices();
+    const std::vector<unsigned int>& indices = mesh->getIndices();
+    const glm::mat4 model = getModelMatrix();
+
+    for (int i = 0; i + 2 < indices.size(); i += 3) {
+        // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
+        const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
+        const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
+        const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
+
+        float outT;
+        if (intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
+            if (outT < closestT) {
+                closestT = outT;
+                hitSomething = true;
+            }
+        }
+    }
+
+    if (hitSomething) {
+        outDistance = closestT;
+    }
+    return hitSomething;
+}
+
+void TranslateHandle::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
+    std::cout << "click" << std::endl;
+}
+
 
 void TranslateHandle::draw() const {
     shader->use();

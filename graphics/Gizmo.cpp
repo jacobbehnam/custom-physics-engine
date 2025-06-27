@@ -7,7 +7,7 @@ Gizmo::Gizmo(Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
 }
 
 void Gizmo::draw() const {
-    for (auto handle : handles) {
+    for (TranslateHandle* handle : handles) {
         handle->draw();
     }
 }

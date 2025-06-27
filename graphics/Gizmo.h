@@ -14,8 +14,10 @@ public:
     void handleMousePress(double x, double y, const Camera& cam, GLFWwindow* window);
     void handleMouseDrag(double x, double y, const Camera& cam, GLFWwindow* window);
     void handleMouseRelease();
+    //TODO: make private
+    std::vector<TranslateHandle*> handles;
+
 private:
     SceneObject* target;
-    std::vector<TranslateHandle*> handles;
     TranslateHandle* activeHandle = nullptr;
 };

@@ -16,9 +16,10 @@ public:
     void setRotation(const glm::vec3& rot);
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
-    Shader* getShader() const;
-    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance);
+    Shader* getShader() const override;
+    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const override;
 
+    void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
 private:
     Mesh* mesh;
     Shader* shader;

@@ -30,8 +30,7 @@ std::vector<unsigned int> indices {
 Scene::Scene(GLFWwindow *win) : window(win), translationGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(Shader("../vertexShader.glsl", "../fragmentShader.glsl")){
     Mesh* cubeMesh = new Mesh(vertices, indices);
     SceneObject* cube = new SceneObject(this, cubeMesh, &basicShader);
-    cube->setPosition(glm::vec3(0.0f,0.0f,0.0f));
-    sceneObjects.push_back(cube);
+    cube->setPosition(glm::vec3(1.0f,0.0f,0.0f));
 
     glfwSetWindowUserPointer(window, this);
 }
@@ -44,7 +43,7 @@ void Scene::draw() {
     glm::mat4 projection = camera.getProjMatrix();
 
     // TODO: Optimize later by only setting the view and projection matrix per shader rather than per object
-    for (SceneObject* obj: sceneObjects) {
+    for (IDrawable* obj: drawableObjects) {
         obj->getShader()->use();
         obj->getShader()->setMat4("view", view);
         obj->getShader()->setMat4("projection", projection);
@@ -56,8 +55,8 @@ void Scene::draw() {
     }
 }
 
-void Scene::addObject(SceneObject* obj) {
-    sceneObjects.push_back(obj);
+void Scene::addObject(IDrawable* obj) {
+    drawableObjects.push_back(obj);
 }
 
 void Scene::processInput(float dt) {
@@ -97,8 +96,11 @@ void Scene::handleMouseButton(int button, int action, int mods) {
         double mouseX, mouseY;
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
-        float x = (2.0f * mouseX) / 800 - 1.0f;
-        float y = 1.0f - (2.0f * mouseY) / 600;
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+        float x = (2.0f * mouseX) / fbWidth - 1.0f;
+        float y = 1.0f - (2.0f * mouseY) / fbHeight;
 
         glm::vec4 clip = glm::vec4(x, y, -1.0f, 1.0f);
         Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
@@ -110,9 +112,9 @@ void Scene::handleMouseButton(int button, int action, int mods) {
         glm::vec3 worldDir = glm::normalize(glm::vec3(worldDir4));
 
         float closestDistance = std::numeric_limits<float>::max();
-        SceneObject* clickedObject = nullptr;
+        IDrawable* clickedObject = nullptr;
 
-        for (auto obj : sceneObjects) {
+        for (auto obj : drawableObjects) {
             float t;
             if (obj->rayIntersection(cam->position, worldDir, t)) {
                 if (t < closestDistance) {
@@ -122,15 +124,7 @@ void Scene::handleMouseButton(int button, int action, int mods) {
             }
         }
         if (clickedObject) {
-            std::cout << "Clicked " << clickedObject << " at t=" << closestDistance << "\n";
-            if (translationGizmo) {
-                delete translationGizmo;
-                translationGizmo = nullptr;
-            }
-
-            Mesh* mesh = new Mesh(vertices, indices);
-
-            translationGizmo = new Gizmo(mesh, clickedObject, &basicShader);
+            clickedObject->handleClick(cam->position, worldDir, closestDistance);
         }
     }
 }

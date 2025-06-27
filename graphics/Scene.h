@@ -11,15 +11,16 @@ public:
     Scene(GLFWwindow* win);
     ~Scene() = default;
     void draw();
-    void addObject(SceneObject* obj);
+    void addObject(IDrawable* obj);
 
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
+    // TODO: remove from public
     Camera camera;
+    Gizmo* translationGizmo;
 private:
     GLFWwindow* window;
-    std::vector<SceneObject*> sceneObjects;
-    Gizmo* translationGizmo;
+    std::vector<IDrawable*> drawableObjects;
     Shader basicShader;
 
     bool mouseCaptured = false;
