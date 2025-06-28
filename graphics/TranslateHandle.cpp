@@ -42,37 +42,14 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
 }
 
 void TranslateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
-    glm::vec3 axisOrigin = originalPosition - glm::vec3(1.0f,1.0f,1.0f);
-    glm::vec3 u = axisDir(axis);
-    glm::vec3 v = rayDir;
-    glm::vec3 w0 = rayOrig - axisOrigin;
+    glm::vec3 axisDirection = axisDir(axis);
+    // To solve for t, minimize the quantity || (rayOrig + rayDir * t) - initialHitPoint ||
+    float t = glm::dot(-(rayOrig - initialHitPoint), rayDir);
 
-    float a = glm::dot(u,u);
-    float b = glm::dot(u,v);
-    float c = glm::dot(v,v);
-    float d = glm::dot(u,w0);
-    float e = glm::dot(v,w0);
-
-    float denom = a*c - b*b;
-    if (std::abs(denom) < 1e-6f) {
-        // lines are nearly parallel; fallback: project w0 onto axis
-        float t = d / a;
-        glm::vec3 closest = axisOrigin + u * t;
-        glm::vec3 delta   = closest - initialHitPoint;
-        target->setPosition(originalPosition + delta);
-        return;
-    }
-
-    // parameter along axis line:
-    float t = (b*e - c*d) / denom;
-
-    glm::vec3 newHitPoint = axisOrigin + u * t;
-    glm::vec3 delta       = newHitPoint - initialHitPoint;
-    std::cout << delta[0] << "," << delta[1] << "," << delta[2] << std::endl;
-
+    glm::vec3 delta = (rayOrig + rayDir * t) - initialHitPoint;
     // apply translation only along the axis direction component:
-    float moveAmount = glm::dot(delta, axisDir(axis));
-    target->setPosition(originalPosition + axisDir(axis) * moveAmount);
+    float moveAmount = glm::dot(delta, axisDirection);
+    target->setPosition(originalPosition + axisDirection * moveAmount);
 }
 
 
