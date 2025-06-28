@@ -20,7 +20,7 @@ static glm::vec3 axisDir(Axis a) {
 }
 
 TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax)
-    : mesh(m), shader(sdr), target(tgt), axis(ax) {}
+    : mesh(m), shader(sdr), target(tgt), axis(ax){}
 
 glm::mat4 TranslateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
@@ -41,37 +41,38 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
     return model;
 }
 
-bool TranslateHandle::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const{
-    bool hitSomething = false;
-    float closestT = std::numeric_limits<float>::infinity();
+void TranslateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
+    glm::vec3 axisOrigin = originalPosition - glm::vec3(1.0f,1.0f,1.0f);
+    glm::vec3 u = axisDir(axis);
+    glm::vec3 v = rayDir;
+    glm::vec3 w0 = rayOrig - axisOrigin;
 
-    const std::vector<Vertex>& verts = mesh->getVertices();
-    const std::vector<unsigned int>& indices = mesh->getIndices();
-    const glm::mat4 model = getModelMatrix();
+    float a = glm::dot(u,u);
+    float b = glm::dot(u,v);
+    float c = glm::dot(v,v);
+    float d = glm::dot(u,w0);
+    float e = glm::dot(v,w0);
 
-    for (int i = 0; i + 2 < indices.size(); i += 3) {
-        // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
-        const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
-        const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
-        const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
-
-        float outT;
-        if (intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
-            if (outT < closestT) {
-                closestT = outT;
-                hitSomething = true;
-            }
-        }
+    float denom = a*c - b*b;
+    if (std::abs(denom) < 1e-6f) {
+        // lines are nearly parallel; fallback: project w0 onto axis
+        float t = d / a;
+        glm::vec3 closest = axisOrigin + u * t;
+        glm::vec3 delta   = closest - initialHitPoint;
+        target->setPosition(originalPosition + delta);
+        return;
     }
 
-    if (hitSomething) {
-        outDistance = closestT;
-    }
-    return hitSomething;
-}
+    // parameter along axis line:
+    float t = (b*e - c*d) / denom;
 
-void TranslateHandle::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
-    std::cout << "click" << std::endl;
+    glm::vec3 newHitPoint = axisOrigin + u * t;
+    glm::vec3 delta       = newHitPoint - initialHitPoint;
+    std::cout << delta[0] << "," << delta[1] << "," << delta[2] << std::endl;
+
+    // apply translation only along the axis direction component:
+    float moveAmount = glm::dot(delta, axisDir(axis));
+    target->setPosition(originalPosition + axisDir(axis) * moveAmount);
 }
 
 
@@ -84,7 +85,11 @@ void TranslateHandle::draw() const {
     mesh->draw();
 }
 
-Shader *TranslateHandle::getShader() const {
+Shader* TranslateHandle::getShader() const {
     return shader;
+}
+
+Mesh* TranslateHandle::getMesh() const {
+    return mesh;
 }
 

@@ -6,7 +6,8 @@
 
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     : mesh(meshPtr), shader(sdr), ownerScene(scene) {
-    ownerScene->addObject(this);
+    ownerScene->addObject((IDrawable*)this);
+    ownerScene->addObject((IPickable*)this);
 }
 
 glm::mat4 SceneObject::getModelMatrix() const {
@@ -28,7 +29,7 @@ void SceneObject::draw() const {
     mesh->draw();
 }
 
-bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const {
+bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) {
     bool hitSomething = false;
     float closestT = std::numeric_limits<float>::infinity();
 
@@ -63,10 +64,7 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
         ownerScene->translationGizmo = nullptr;
     }
 
-    ownerScene->translationGizmo = new Gizmo(mesh, this, shader);
-    ownerScene->addObject(ownerScene->translationGizmo->handles[0]);
-    ownerScene->addObject(ownerScene->translationGizmo->handles[1]);
-    ownerScene->addObject(ownerScene->translationGizmo->handles[2]);
+    ownerScene->translationGizmo = new Gizmo(ownerScene, mesh, this, shader);
 }
 
 

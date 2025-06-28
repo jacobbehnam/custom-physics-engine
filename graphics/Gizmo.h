@@ -5,15 +5,16 @@
 #include <GLFW/glfw3.h>
 #include <graphics/TranslateHandle.h>
 
-class Gizmo {
+class Gizmo : public IDrawable, public IPickable{
 public:
-    Gizmo(Mesh* mesh, SceneObject* tgt, Shader* shader);
+    Gizmo(Scene* scene, Mesh* mesh, SceneObject* tgt, Shader* shader);
 
-    void draw() const;
+    void draw() const override;
+    Shader* getShader() const override;
+    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
+    void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
+    void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
 
-    void handleMousePress(double x, double y, const Camera& cam, GLFWwindow* window);
-    void handleMouseDrag(double x, double y, const Camera& cam, GLFWwindow* window);
-    void handleMouseRelease();
     //TODO: make private
     std::vector<TranslateHandle*> handles;
 

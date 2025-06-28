@@ -4,9 +4,11 @@
 #include <graphics/IDrawable.h>
 #include <graphics/Shader.h>
 
+#include "IPickable.h"
+
 class Scene;
 
-class SceneObject : public IDrawable{
+class SceneObject : public IDrawable, public IPickable{
 public:
     SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr);
 
@@ -17,7 +19,7 @@ public:
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
     Shader* getShader() const override;
-    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) const override;
+    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
 private:

@@ -36,7 +36,8 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         graphics/Gizmo.cpp
         graphics/Gizmo.h
         graphics/MathUtils.cpp
-        graphics/MathUtils.h)
+        graphics/MathUtils.h
+        graphics/IPickable.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}

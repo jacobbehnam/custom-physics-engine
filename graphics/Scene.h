@@ -12,6 +12,7 @@ public:
     ~Scene() = default;
     void draw();
     void addObject(IDrawable* obj);
+    void addObject(IPickable* obj);
 
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
@@ -21,7 +22,9 @@ public:
 private:
     GLFWwindow* window;
     std::vector<IDrawable*> drawableObjects;
+    std::vector<IPickable*> pickableObjects;
     Shader basicShader;
 
     bool mouseCaptured = false;
+    bool isDragging = false;
 };
