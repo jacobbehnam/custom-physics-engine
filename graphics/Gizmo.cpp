@@ -54,7 +54,13 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
 void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
     // Only fires if a handle was clicked
     activeHandle->setDragState(rayOrig + rayDir*distance, target->getPosition());
+    isDragging = true;
 }
+
+void Gizmo::handleRelease() {
+    isDragging = false;
+}
+
 
 void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
     activeHandle->onDrag(rayOrig, rayDir);

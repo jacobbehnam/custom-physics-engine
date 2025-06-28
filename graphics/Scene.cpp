@@ -51,16 +51,6 @@ void Scene::draw() {
         obj->getShader()->setMat4("projection", projection);
         obj->draw();
     }
-
-    if (translationGizmo) {
-        translationGizmo->draw();
-    }
-
-    if (isDragging && translationGizmo) {
-        MathUtils::Ray ray = getMouseRay();
-        // 5) drag!
-        translationGizmo->handleDrag(ray.origin, ray.dir);
-    }
 }
 
 MathUtils::Ray Scene::getMouseRay() {
@@ -84,13 +74,30 @@ void Scene::addObject(IPickable* obj) {
 }
 
 void Scene::processInput(float dt) {
+    // Mouse stuff
+    double mouseCurrX, mouseCurrY;
+    glfwGetCursorPos(window, &mouseCurrX, &mouseCurrY);
+    bool hasMoved = (std::abs(mouseCurrX - mouseLastX) > 1e-2 || std::abs(mouseCurrY - mouseLastY) > 1e-2);
+    mouseDragging = (mouseLeftHeld || mouseRightHeld) && hasMoved;
+    mouseLastX = mouseCurrX;
+    mouseLastY = mouseCurrY;
+
+    if (translationGizmo) {
+        translationGizmo->draw();
+        if (translationGizmo->isDragging) {
+            MathUtils::Ray ray = getMouseRay();
+            translationGizmo->handleDrag(ray.origin, ray.dir);
+        }
+    }
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
     if (mouseCaptured) {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        camera.handleMouseMovement(xpos, ypos);
+        if (camera.firstMouse) {
+            camera.handleMouseMovement(mouseLastXBeforeCapture, mouseLastYBeforeCapture);
+        } else
+        camera.handleMouseMovement(mouseLastX, mouseLastY);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -104,18 +111,23 @@ void Scene::processInput(float dt) {
 }
 
 void Scene::handleMouseButton(int button, int action, int mods) {
+    mouseLeftHeld = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
+    mouseRightHeld = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        if (action == GLFW_PRESS && !mouseCaptured) {
+        if (mouseRightHeld && !mouseCaptured) {
             mouseCaptured = true;
-            camera.resetMouse();
+            glfwGetCursorPos(window, &mouseLastXBeforeCapture, &mouseLastYBeforeCapture);
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            camera.resetMouse();
         }
-        else if (action == GLFW_RELEASE && mouseCaptured) {
+        else if (!mouseRightHeld && mouseCaptured) {
             mouseCaptured = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetCursorPos(window, mouseLastXBeforeCapture, mouseLastYBeforeCapture);
+            camera.resetMouse();
         }
     }
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    else if (mouseLeftHeld) {
         // Get cursor as ray in world space
         MathUtils::Ray ray = getMouseRay();
 
@@ -132,13 +144,12 @@ void Scene::handleMouseButton(int button, int action, int mods) {
             }
         }
         if (clickedObject) {
-            if (translationGizmo)
-                isDragging = true;
+            mouseDragging = false;
             clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
         }
-    }
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        isDragging = false;
+    } else if (!mouseLeftHeld) {
+        if (translationGizmo)
+            translationGizmo->handleRelease();
     }
 }
 

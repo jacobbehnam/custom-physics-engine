@@ -30,6 +30,12 @@ private:
     std::vector<IPickable*> pickableObjects;
     Shader basicShader;
 
+    // Mouse logic
+    double mouseLastX, mouseLastY; // last FRAME x and y position
+    bool mouseLeftHeld = false;
+    bool mouseRightHeld = false;
     bool mouseCaptured = false;
-    bool isDragging = false;
+    bool mouseDragging = false;
+
+    double mouseLastXBeforeCapture, mouseLastYBeforeCapture; // used to restore previous mouse position after capture
 };

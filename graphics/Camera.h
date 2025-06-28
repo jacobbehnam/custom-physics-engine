@@ -34,8 +34,9 @@ public:
     void processMouseMovement(float xoffset, float yoffset);
 
     void processKeyboard(Movement direction, float deltaTime);
-private:
+
     bool firstMouse  = true;
+private:
     float lastX      = 0.0f;
     float lastY      = 0.0f;
 };
