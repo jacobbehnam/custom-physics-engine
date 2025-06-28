@@ -16,11 +16,16 @@ public:
 
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
+
+    Camera* getCamera();
+
     // TODO: remove from public
-    Camera camera;
     Gizmo* translationGizmo;
 private:
+    MathUtils::Ray getMouseRay();
+
     GLFWwindow* window;
+    Camera camera;
     std::vector<IDrawable*> drawableObjects;
     std::vector<IPickable*> pickableObjects;
     Shader basicShader;

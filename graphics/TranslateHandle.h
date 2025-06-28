@@ -21,8 +21,7 @@ public:
     Mesh* getMesh() const;
 
     glm::mat4 getModelMatrix() const;
-    glm::vec3 initialHitPoint;
-    glm::vec3 originalPosition;
+    void setDragState(glm::vec3 initHitPos, glm::vec3 originPos);
 private:
     Mesh* mesh;
     Shader* shader;
@@ -31,4 +30,7 @@ private:
 
     float length = 1.0f;
     float thickness = 0.05f;
+
+    glm::vec3 initialHitPoint;
+    glm::vec3 originalPosition;
 };

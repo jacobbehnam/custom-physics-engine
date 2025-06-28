@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include <iostream>
 
+#include "MathUtils.h"
+
 std::vector<Vertex> vertices = {
     { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
     { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
@@ -55,29 +57,22 @@ void Scene::draw() {
     }
 
     if (isDragging && translationGizmo) {
-        // 1) get current mouse pos
-        double mx, my;
-        glfwGetCursorPos(window, &mx, &my);
-
-        // 2) convert to NDC
-        int fbW, fbH;
-        glfwGetFramebufferSize(window, &fbW, &fbH);
-        float ndcX =  2.0f * float(mx) / fbW  - 1.0f;
-        float ndcY =  1.0f - 2.0f * float(my) / fbH;
-
-        // 3) build eye‐space direction
-        glm::vec4 clip   = glm::vec4(ndcX, ndcY, -1.0f, 1.0f);
-        glm::vec4 eye    = glm::inverse(camera.getProjMatrix()) * clip;
-        eye.z = -1.0f; eye.w = 0.0f;
-
-        // 4) build world‐space ray
-        glm::vec4 worldD4 = glm::inverse(camera.getViewMatrix()) * eye;
-        glm::vec3 rayDir  = glm::normalize(glm::vec3(worldD4));
-        glm::vec3 rayOrig = camera.position;
-
+        MathUtils::Ray ray = getMouseRay();
         // 5) drag!
-        translationGizmo->handleDrag(rayOrig, rayDir);
+        translationGizmo->handleDrag(ray.origin, ray.dir);
     }
+}
+
+MathUtils::Ray Scene::getMouseRay() {
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    int fbWidth, fbHeight;
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+    Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
+    Camera* cam = (scene->getCamera());
+    return {cam->position, MathUtils::screenToWorldRayDirection(mouseX, mouseY, fbWidth, fbHeight, cam->getViewMatrix(), cam->getProjMatrix())};
 }
 
 void Scene::addObject(IDrawable* obj) {
@@ -121,32 +116,15 @@ void Scene::handleMouseButton(int button, int action, int mods) {
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // TODO: Put in MathUtils
         // Get cursor as ray in world space
-        double mouseX, mouseY;
-        glfwGetCursorPos(window, &mouseX, &mouseY);
-
-        int fbWidth, fbHeight;
-        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
-
-        float x = (2.0f * mouseX) / fbWidth - 1.0f;
-        float y = 1.0f - (2.0f * mouseY) / fbHeight;
-
-        glm::vec4 clip = glm::vec4(x, y, -1.0f, 1.0f);
-        Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-        glm::mat4 invProj = glm::inverse(cam->getProjMatrix());
-        glm::vec4 eye = invProj * clip;
-        eye.z = -1.0f; eye.w = 0.0f;
-        glm::mat4 invView = glm::inverse(cam->getViewMatrix());
-        glm::vec4 worldDir4 = invView * eye;
-        glm::vec3 worldDir = glm::normalize(glm::vec3(worldDir4));
+        MathUtils::Ray ray = getMouseRay();
 
         float closestDistance = std::numeric_limits<float>::max();
         IPickable* clickedObject = nullptr;
 
         for (auto obj : pickableObjects) {
             float t;
-            if (obj->rayIntersection(cam->position, worldDir, t)) {
+            if (obj->rayIntersection(ray.origin, ray.dir, t)) {
                 if (t < closestDistance) {
                     closestDistance = t;
                     clickedObject = obj;
@@ -154,10 +132,9 @@ void Scene::handleMouseButton(int button, int action, int mods) {
             }
         }
         if (clickedObject) {
-            std::cout << "press" << std::endl;
             if (translationGizmo)
                 isDragging = true;
-            clickedObject->handleClick(cam->position, worldDir, closestDistance);
+            clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
@@ -165,6 +142,7 @@ void Scene::handleMouseButton(int button, int action, int mods) {
     }
 }
 
-
-
+Camera *Scene::getCamera() {
+    return &camera;
+}
 

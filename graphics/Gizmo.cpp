@@ -35,7 +35,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
             const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
 
             float outT;
-            if (intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
+            if (MathUtils::intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
                 if (outT < closestT) {
                     closestT = outT;
                     hitHandle = handle;
@@ -53,8 +53,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
 
 void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
     // Only fires if a handle was clicked
-    activeHandle->originalPosition = target->getPosition();
-    activeHandle->initialHitPoint = rayOrig + rayDir*distance;
+    activeHandle->setDragState(rayOrig + rayDir*distance, target->getPosition());
 }
 
 void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {

@@ -70,3 +70,7 @@ Mesh* TranslateHandle::getMesh() const {
     return mesh;
 }
 
+void TranslateHandle::setDragState(glm::vec3 initHitPos, glm::vec3 originPos) {
+    initialHitPoint = initHitPos;
+    originalPosition = originPos;
+}

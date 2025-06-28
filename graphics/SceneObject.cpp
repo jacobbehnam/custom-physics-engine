@@ -1,4 +1,6 @@
 #include "SceneObject.h"
+
+#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <graphics/Scene.h>
@@ -44,7 +46,7 @@ bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &
         const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
 
         float outT;
-        if (intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
+        if (MathUtils::intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
             if (outT < closestT) {
                 closestT = outT;
                 hitSomething = true;

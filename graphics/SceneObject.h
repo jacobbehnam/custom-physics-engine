@@ -3,6 +3,7 @@
 #include <graphics/Mesh.h>
 #include <graphics/IDrawable.h>
 #include <graphics/Shader.h>
+#include <graphics/MathUtils.h>
 
 #include "IPickable.h"
 
