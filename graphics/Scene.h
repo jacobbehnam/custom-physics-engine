@@ -17,6 +17,9 @@ public:
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
 
+    void setGizmoFor(SceneObject* newTarget);
+    void deleteGizmo();
+
     Camera* getCamera();
 
     // TODO: remove from public

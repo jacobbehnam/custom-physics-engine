@@ -67,8 +67,12 @@ void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
 }
 
 
-Shader *Gizmo::getShader() const {
+Shader* Gizmo::getShader() const {
     // TODO: make the gizmo own the shader
     return handles[0]->getShader();
+}
+
+SceneObject* Gizmo::getTarget() {
+    return target;
 }
 

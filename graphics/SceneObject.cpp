@@ -61,15 +61,8 @@ bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &
 }
 
 void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
-    if (ownerScene->translationGizmo) {
-        delete ownerScene->translationGizmo;
-        ownerScene->translationGizmo = nullptr;
-    }
-
-    ownerScene->translationGizmo = new Gizmo(ownerScene, mesh, this, shader);
+    ownerScene->setGizmoFor(this);
 }
-
-
 
 void SceneObject::setPosition(const glm::vec3 &pos) {
     position = pos;

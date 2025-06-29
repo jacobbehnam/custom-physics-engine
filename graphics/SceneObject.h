@@ -23,9 +23,11 @@ public:
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
-private:
+
+    // TODO: Make private
     Mesh* mesh;
     Shader* shader;
+private:
     Scene* ownerScene;
 
     glm::vec3 position {0.0f};

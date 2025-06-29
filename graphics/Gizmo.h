@@ -16,6 +16,8 @@ public:
     void handleRelease();
     void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
 
+    SceneObject* getTarget();
+
     //TODO: make private
     std::vector<TranslateHandle*> handles;
     bool isDragging = false;

@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include <iostream>
+#include <algorithm>
 
 #include "MathUtils.h"
 
@@ -33,6 +34,8 @@ Scene::Scene(GLFWwindow *win) : window(win), translationGizmo(nullptr), camera(C
     Mesh* cubeMesh = new Mesh(vertices, indices);
     SceneObject* cube = new SceneObject(this, cubeMesh, &basicShader);
     cube->setPosition(glm::vec3(1.0f,0.0f,0.0f));
+    SceneObject* cube2 = new SceneObject(this, cubeMesh, &basicShader);
+    cube2->setPosition(glm::vec3(-1.0f,0.0f,0.0f));
 
     glfwSetWindowUserPointer(window, this);
 }
@@ -156,4 +159,25 @@ void Scene::handleMouseButton(int button, int action, int mods) {
 Camera *Scene::getCamera() {
     return &camera;
 }
+
+void Scene::setGizmoFor(SceneObject *newTarget) {
+    if (translationGizmo) {
+        if (translationGizmo->getTarget() == newTarget) {
+            deleteGizmo();
+        } else {
+            deleteGizmo();
+            translationGizmo = new Gizmo(this, newTarget->mesh, newTarget, newTarget->shader);
+        }
+    } else {
+        translationGizmo = new Gizmo(this, newTarget->mesh, newTarget, newTarget->shader);
+    }
+}
+
+void Scene::deleteGizmo() {
+    drawableObjects.erase(std::remove(drawableObjects.begin(), drawableObjects.end(), translationGizmo), drawableObjects.end());
+    pickableObjects.erase(std::remove(pickableObjects.begin(), pickableObjects.end(), translationGizmo), pickableObjects.end());
+    delete translationGizmo;
+    translationGizmo = nullptr;
+}
+
 
