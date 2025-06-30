@@ -3,8 +3,8 @@
 #include <iostream>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "SceneObject.h"
-#include <graphics/MathUtils.h>
+#include "graphics/core/SceneObject.h"
+#include <graphics/utils/MathUtils.h>
 
 static glm::vec3 axisDir(Axis a) {
     switch (a) {

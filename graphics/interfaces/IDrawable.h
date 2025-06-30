@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/vec3.hpp>
-#include <graphics/Shader.h>
+#include <graphics/components/Shader.h>
 
 class IDrawable {
 public:

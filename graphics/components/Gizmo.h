@@ -1,9 +1,8 @@
 #pragma once
-#include <graphics/SceneObject.h>
-#include <graphics/Shader.h>
-#include <graphics/Camera.h>
-#include <GLFW/glfw3.h>
-#include <graphics/TranslateHandle.h>
+#include <graphics/core/SceneObject.h>
+#include <graphics/components/Shader.h>
+#include <graphics/core/Camera.h>
+#include <graphics/components/TranslateHandle.h>
 
 class Gizmo : public IDrawable, public IPickable{
 public:

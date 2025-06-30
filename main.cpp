@@ -1,19 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <string>
 #include <fstream>
-#include <sstream>
 #include <iostream>
-#include <filesystem>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <graphics/Mesh.h>
-#include <graphics/SceneObject.h>
-#include <graphics/Camera.h>
-#include <graphics/Shader.h>
-#include "graphics/TranslateHandle.h"
-#include <graphics/Scene.h>
+#include <graphics/components/Mesh.h>
+#include <graphics/core/SceneObject.h>
+#include <graphics/components/Shader.h>
+#include "graphics/components/TranslateHandle.h"
+#include <graphics/core/Scene.h>
 
 static Mesh*          gMesh         = nullptr;
 static SceneObject*   gCube         = nullptr;

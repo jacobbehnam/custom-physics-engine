@@ -1,10 +1,10 @@
 #pragma once
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
-#include <graphics/Camera.h>
-#include <graphics/SceneObject.h>
-#include <graphics/Gizmo.h>
+#include <graphics/core/Camera.h>
+#include <graphics/core/SceneObject.h>
+#include <graphics/components/Gizmo.h>
+#include <graphics/utils/MathUtils.h>
 #include <vector>
+#include <GLFW/glfw3.h>
 
 class Scene {
 public:

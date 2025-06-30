@@ -21,25 +21,25 @@ include_directories("${GLAD_DIR}/include")
 
 # add glad.c to your target
 add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
-        graphics/Mesh.cpp
-        graphics/SceneObject.cpp
-        graphics/SceneObject.h
-        graphics/Camera.cpp
-        graphics/Camera.h
-        graphics/IDrawable.h
-        graphics/TranslateHandle.cpp
-        graphics/TranslateHandle.h
-        graphics/Shader.cpp
-        graphics/Shader.h
-        graphics/Scene.cpp
-        graphics/Scene.h
-        graphics/Gizmo.cpp
-        graphics/Gizmo.h
-        graphics/MathUtils.cpp
-        graphics/MathUtils.h
-        graphics/IPickable.h
-        graphics/ResourceManager.cpp
-        graphics/ResourceManager.h)
+        graphics/components/Mesh.cpp
+        graphics/core/SceneObject.cpp
+        graphics/core/SceneObject.h
+        graphics/core/Camera.cpp
+        graphics/core/Camera.h
+        graphics/interfaces/IDrawable.h
+        graphics/components/TranslateHandle.cpp
+        graphics/components/TranslateHandle.h
+        graphics/components/Shader.cpp
+        graphics/components/Shader.h
+        graphics/core/Scene.cpp
+        graphics/core/Scene.h
+        graphics/components/Gizmo.cpp
+        graphics/components/Gizmo.h
+        graphics/utils/MathUtils.cpp
+        graphics/utils/MathUtils.h
+        graphics/interfaces/IPickable.h
+        graphics/core/ResourceManager.cpp
+        graphics/core/ResourceManager.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}

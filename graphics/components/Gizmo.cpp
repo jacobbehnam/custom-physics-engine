@@ -1,9 +1,8 @@
 #include "Gizmo.h"
 
 #include <iostream>
-#include <graphics/MathUtils.h>
-
-#include "Scene.h"
+#include <graphics/utils/MathUtils.h>
+#include <graphics/core/Scene.h>
 
 Gizmo::Gizmo(Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
     scene->addObject((IDrawable*)this);

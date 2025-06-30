@@ -3,8 +3,8 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <graphics/Scene.h>
-#include <graphics/MathUtils.h>
+#include <graphics/core/Scene.h>
+#include <graphics/utils/MathUtils.h>
 
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     : mesh(meshPtr), shader(sdr), ownerScene(scene) {

@@ -2,8 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "MathUtils.h"
-#include <graphics/ResourceManager.h>
+#include "graphics/utils/MathUtils.h"
+#include <graphics/core/ResourceManager.h>
 
 std::vector<Vertex> vertices = {
     { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
@@ -168,10 +168,10 @@ void Scene::setGizmoFor(SceneObject *newTarget) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            translationGizmo = new Gizmo(this, newTarget->mesh, newTarget, newTarget->shader);
+            translationGizmo = new Gizmo(this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
         }
     } else {
-        translationGizmo = new Gizmo(this, newTarget->mesh, newTarget, newTarget->shader);
+        translationGizmo = new Gizmo(this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
     }
 }
 

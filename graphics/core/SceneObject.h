@@ -1,11 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <graphics/Mesh.h>
-#include <graphics/IDrawable.h>
-#include <graphics/Shader.h>
-#include <graphics/MathUtils.h>
+#include <graphics/components/Mesh.h>
+#include <graphics/interfaces/IDrawable.h>
+#include <graphics/components/Shader.h>
 
-#include "IPickable.h"
+#include "graphics/interfaces/IPickable.h"
 
 class Scene;
 
@@ -24,10 +23,9 @@ public:
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
 
-    // TODO: Make private
+private:
     Mesh* mesh;
     Shader* shader;
-private:
     Scene* ownerScene;
 
     glm::vec3 position {0.0f};

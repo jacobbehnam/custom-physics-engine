@@ -1,8 +1,8 @@
 #pragma once
-#include <graphics/IDrawable.h>
-#include <graphics/Mesh.h>
+#include <graphics/interfaces/IDrawable.h>
+#include <graphics/components/Mesh.h>
 #include <glm/glm.hpp>
-#include <graphics/Shader.h>
+#include <graphics/components/Shader.h>
 
 enum class Axis {
     X, Y, Z

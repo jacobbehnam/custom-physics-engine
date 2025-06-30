@@ -8,12 +8,12 @@ Mesh* ResourceManager::LoadMesh(const std::vector<Vertex>& verts, const std::vec
     return &meshes.try_emplace(name, verts, idx).first->second;
 }
 
-Shader& ResourceManager::GetShader(const std::string &name) {
-    return shaders.find(name)->second;
+Shader* ResourceManager::GetShader(const std::string &name) {
+    return &shaders.find(name)->second;
 }
 
-Mesh& ResourceManager::GetMesh(const std::string &name) {
-    return meshes.find(name)->second;
+Mesh* ResourceManager::GetMesh(const std::string &name) {
+    return &meshes.find(name)->second;
 }
 
 std::unordered_map<std::string, Mesh> ResourceManager::meshes;
