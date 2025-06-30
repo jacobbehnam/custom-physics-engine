@@ -1,5 +1,7 @@
 #include "Mesh.h"
 #include "glad/glad.h"
+#include <vector>
+#include <glm/glm.hpp>
 
 Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &idx)
     : indexCount(indices.size()), vertices(verts), indices(idx){

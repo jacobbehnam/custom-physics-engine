@@ -29,7 +29,7 @@ private:
     Axis axis;
 
     float length = 1.0f;
-    float thickness = 0.05f;
+    float thickness = 0.5f;
 
     glm::vec3 initialHitPoint;
     glm::vec3 originalPosition;
