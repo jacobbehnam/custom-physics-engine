@@ -31,7 +31,7 @@ private:
     Camera camera;
     std::vector<IDrawable*> drawableObjects;
     std::vector<IPickable*> pickableObjects;
-    Shader basicShader;
+    Shader* basicShader;
 
     // Mouse logic
     double mouseLastX, mouseLastY; // last FRAME x and y position

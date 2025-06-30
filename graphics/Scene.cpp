@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "MathUtils.h"
+#include <graphics/ResourceManager.h>
 
 std::vector<Vertex> vertices = {
     { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
@@ -30,12 +31,13 @@ std::vector<unsigned int> indices {
     4, 7, 6
 };
 
-Scene::Scene(GLFWwindow *win) : window(win), translationGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(Shader("../vertexShader.glsl", "../fragmentShader.glsl")){
-    Mesh* cubeMesh = new Mesh(vertices, indices);
-    SceneObject* cube = new SceneObject(this, cubeMesh, &basicShader);
-    cube->setPosition(glm::vec3(1.0f,0.0f,0.0f));
-    SceneObject* cube2 = new SceneObject(this, cubeMesh, &basicShader);
-    cube2->setPosition(glm::vec3(-1.0f,0.0f,0.0f));
+Scene::Scene(GLFWwindow *win) : window(win), translationGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr) {
+    basicShader = ResourceManager::LoadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
+    Mesh* cubeMesh = ResourceManager::LoadMesh(vertices, indices, "cube");
+    SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
+    cube->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
+    cube2->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 
     glfwSetWindowUserPointer(window, this);
 }
