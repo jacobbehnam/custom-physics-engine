@@ -30,5 +30,5 @@ private:
     float scale = 2.0f;
 
     glm::vec3 initialHitPoint;
-    glm::vec3 originalRotation;
+    glm::quat originalQuat;
 };

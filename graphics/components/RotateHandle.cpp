@@ -47,12 +47,16 @@ void RotateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
 
     float angle = glm::atan(glm::dot(glm::cross(from, to), axisDirection), glm::dot(from, to));
 
-    target->setRotation(originalRotation + axisDirection * angle);
+    glm::quat delta = glm::angleAxis(angle, axisDirection);
+
+    glm::quat finalQuat = delta * originalQuat;
+
+    target->setRotationQuat(finalQuat);
 }
 
 void RotateHandle::setDragState(glm::vec3 initHitPos) {
     initialHitPoint = initHitPos;
-    originalRotation = target->getRotation();
+    originalQuat    = target->getRotationQuat();
 }
 
 glm::mat4 RotateHandle::getModelMatrix() const {

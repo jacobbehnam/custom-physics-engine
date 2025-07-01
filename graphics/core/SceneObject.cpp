@@ -15,9 +15,7 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
 glm::mat4 SceneObject::getModelMatrix() const{
     glm::mat4 model(1.0f);
     model = glm::translate(model, position);
-    model = glm::rotate(model, rotation.x, glm::vec3(1,0,0));
-    model = glm::rotate(model, rotation.y, glm::vec3(0,1,0));
-    model = glm::rotate(model, rotation.z, glm::vec3(0,0,1));
+    model = model * glm::mat4_cast(orientation);
     model = glm::scale(model, scale);
     return model;
 }
@@ -68,8 +66,8 @@ void SceneObject::setPosition(const glm::vec3 &pos) {
     position = pos;
 }
 
-void SceneObject::setRotation(const glm::vec3 &rot) {
-    rotation = rot;
+void SceneObject::setRotation(const glm::vec3 &euler) {
+    orientation = glm::quat(euler);
 }
 
 void SceneObject::setScale(const glm::vec3 &scl) {
@@ -81,15 +79,16 @@ glm::vec3 SceneObject::getPosition() const{
 }
 
 glm::vec3 SceneObject::getRotation() const {
-    return rotation;
+    return glm::eulerAngles(orientation);
 }
-
 
 Shader* SceneObject::getShader() const {
     return shader;
 }
 
-
-
-
-
+void SceneObject::setRotationQuat(const glm::quat &q) {
+    orientation = q;
+}
+glm::quat SceneObject::getRotationQuat()   const {
+    return orientation;
+}
