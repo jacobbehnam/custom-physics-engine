@@ -7,8 +7,9 @@
 #include <graphics/components/RotateHandle.h>
 
 Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
-    scene->addObject((IDrawable*)this);
-    scene->addObject((IPickable*)this);
+    scene->addObject(static_cast<IDrawable*>(this));
+    scene->addObject(static_cast<IPickable*>(this));
+
     switch (type) {
         case GizmoType::TRANSLATE:
             handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X));
@@ -41,7 +42,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
         const glm::mat4 model = handle->getModelMatrix();
 
         for (int i = 0; i + 2 < indices.size(); i += 3) {
-            // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
+            // TODO: do not do expensive matrix multiplication on the CPU, move to GPU
             const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
             const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
             const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));

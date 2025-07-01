@@ -32,8 +32,8 @@ std::vector<unsigned int> indices {
 };
 
 Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr) {
-    basicShader = ResourceManager::LoadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
-    Mesh* cubeMesh = ResourceManager::LoadMesh(vertices, indices, "cube");
+    basicShader = ResourceManager::loadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
+    Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
     cube->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
     SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
@@ -168,10 +168,10 @@ void Scene::setGizmoFor(SceneObject *newTarget) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
+            currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
         }
     } else {
-        currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
+        currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
     }
 }
 
