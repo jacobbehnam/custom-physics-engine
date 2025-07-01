@@ -2,11 +2,17 @@
 #include <graphics/core/SceneObject.h>
 #include <graphics/components/Shader.h>
 #include <graphics/core/Camera.h>
-#include <graphics/components/TranslateHandle.h>
+#include <graphics/interfaces/IHandle.h>
+
+enum class GizmoType {
+    TRANSLATE,
+    ROTATE,
+    SCALE
+};
 
 class Gizmo : public IDrawable, public IPickable{
 public:
-    Gizmo(Scene* scene, Mesh* mesh, SceneObject* tgt, Shader* shader);
+    Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject* tgt, Shader* shader);
 
     void draw() const override;
     Shader* getShader() const override;
@@ -18,10 +24,10 @@ public:
     SceneObject* getTarget();
 
     //TODO: make private
-    std::vector<TranslateHandle*> handles;
+    std::vector<IHandle*> handles;
     bool isDragging = false;
 
 private:
     SceneObject* target;
-    TranslateHandle* activeHandle = nullptr;
+    IHandle* activeHandle = nullptr;
 };

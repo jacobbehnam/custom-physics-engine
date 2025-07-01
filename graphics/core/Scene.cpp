@@ -31,7 +31,7 @@ std::vector<unsigned int> indices {
     4, 7, 6
 };
 
-Scene::Scene(GLFWwindow *win) : window(win), translationGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr) {
+Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr) {
     basicShader = ResourceManager::LoadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
     Mesh* cubeMesh = ResourceManager::LoadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
@@ -87,11 +87,11 @@ void Scene::processInput(float dt) {
     mouseLastX = mouseCurrX;
     mouseLastY = mouseCurrY;
 
-    if (translationGizmo) {
-        translationGizmo->draw();
-        if (translationGizmo->isDragging) {
+    if (currentGizmo) {
+        currentGizmo->draw();
+        if (currentGizmo->isDragging) {
             MathUtils::Ray ray = getMouseRay();
-            translationGizmo->handleDrag(ray.origin, ray.dir);
+            currentGizmo->handleDrag(ray.origin, ray.dir);
         }
     }
 
@@ -153,8 +153,8 @@ void Scene::handleMouseButton(int button, int action, int mods) {
             clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
         }
     } else if (!mouseLeftHeld) {
-        if (translationGizmo)
-            translationGizmo->handleRelease();
+        if (currentGizmo)
+            currentGizmo->handleRelease();
     }
 }
 
@@ -163,23 +163,23 @@ Camera *Scene::getCamera() {
 }
 
 void Scene::setGizmoFor(SceneObject *newTarget) {
-    if (translationGizmo) {
-        if (translationGizmo->getTarget() == newTarget) {
+    if (currentGizmo) {
+        if (currentGizmo->getTarget() == newTarget) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            translationGizmo = new Gizmo(this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
+            currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
         }
     } else {
-        translationGizmo = new Gizmo(this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
+        currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::GetMesh("cube"), newTarget, ResourceManager::GetShader("basic"));
     }
 }
 
 void Scene::deleteGizmo() {
-    drawableObjects.erase(std::remove(drawableObjects.begin(), drawableObjects.end(), translationGizmo), drawableObjects.end());
-    pickableObjects.erase(std::remove(pickableObjects.begin(), pickableObjects.end(), translationGizmo), pickableObjects.end());
-    delete translationGizmo;
-    translationGizmo = nullptr;
+    drawableObjects.erase(std::remove(drawableObjects.begin(), drawableObjects.end(), currentGizmo), drawableObjects.end());
+    pickableObjects.erase(std::remove(pickableObjects.begin(), pickableObjects.end(), currentGizmo), pickableObjects.end());
+    delete currentGizmo;
+    currentGizmo = nullptr;
 }
 
 

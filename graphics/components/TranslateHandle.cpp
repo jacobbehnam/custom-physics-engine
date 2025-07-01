@@ -12,7 +12,7 @@
 #include "graphics/core/ResourceManager.h"
 
 // Expects triangulated obj files!
-bool loadOBJ(const std::string& path, std::vector<Vertex>& outVertices, std::vector<unsigned int>& outIndices) {
+static bool loadOBJ(const std::string& path, std::vector<Vertex>& outVertices, std::vector<unsigned int>& outIndices) {
     std::ifstream file(path);
     if (!file.is_open()) return false;
 

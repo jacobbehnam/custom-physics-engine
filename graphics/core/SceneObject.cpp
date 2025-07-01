@@ -12,7 +12,7 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     ownerScene->addObject((IPickable*)this);
 }
 
-glm::mat4 SceneObject::getModelMatrix() const {
+glm::mat4 SceneObject::getModelMatrix() const{
     glm::mat4 model(1.0f);
     model = glm::translate(model, position);
     model = glm::rotate(model, rotation.x, glm::vec3(1,0,0));

@@ -23,7 +23,7 @@ public:
     Camera* getCamera();
 
     // TODO: remove from public
-    Gizmo* translationGizmo;
+    Gizmo* currentGizmo;
 private:
     MathUtils::Ray getMouseRay();
 

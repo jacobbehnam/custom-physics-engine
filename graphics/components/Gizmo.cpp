@@ -3,26 +3,39 @@
 #include <iostream>
 #include <graphics/utils/MathUtils.h>
 #include <graphics/core/Scene.h>
+#include <graphics/components/TranslateHandle.h>
+#include <graphics/components/RotateHandle.h>
 
-Gizmo::Gizmo(Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
+Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
     scene->addObject((IDrawable*)this);
     scene->addObject((IPickable*)this);
-    handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X));
-    handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Y));
-    handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Z));
+    switch (type) {
+        case GizmoType::TRANSLATE:
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X));
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Y));
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Z));
+            break;
+        case GizmoType::ROTATE:
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::X));
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Y));
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Z));
+            break;
+        case GizmoType::SCALE:
+            break;
+    }
 }
 
 void Gizmo::draw() const {
-    for (TranslateHandle* handle : handles) {
+    for (IHandle* handle : handles) {
         handle->draw();
     }
 }
 
 bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance){
-    TranslateHandle* hitHandle = nullptr;
+    IHandle* hitHandle = nullptr;
     float closestT = std::numeric_limits<float>::infinity();
 
-    for (TranslateHandle* handle : handles) {
+    for (IHandle* handle : handles) {
         const std::vector<Vertex>& verts = handle->getMesh()->getVertices();
         const std::vector<unsigned int>& indices = handle->getMesh()->getIndices();
         const glm::mat4 model = handle->getModelMatrix();

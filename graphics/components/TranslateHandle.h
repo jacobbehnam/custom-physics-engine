@@ -1,27 +1,24 @@
 #pragma once
-#include <graphics/interfaces/IDrawable.h>
 #include <graphics/components/Mesh.h>
 #include <glm/glm.hpp>
 #include <graphics/components/Shader.h>
 
-enum class Axis {
-    X, Y, Z
-};
+#include "graphics/interfaces/IHandle.h"
 
 class SceneObject;
 
-class TranslateHandle : public IDrawable{
+class TranslateHandle : public IHandle{
 public:
     TranslateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
 
     void draw() const override;
-    void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir);
+    void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir) override;
+    void setDragState(glm::vec3 initHitPos, glm::vec3 originPos) override;
 
     Shader* getShader() const override;
-    Mesh* getMesh() const;
+    Mesh* getMesh() const override;
 
-    glm::mat4 getModelMatrix() const;
-    void setDragState(glm::vec3 initHitPos, glm::vec3 originPos);
+    glm::mat4 getModelMatrix() const override;
 private:
     Mesh* mesh;
     Shader* shader;
