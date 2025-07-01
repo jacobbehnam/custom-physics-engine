@@ -18,6 +18,8 @@ public:
     void setRotation(const glm::vec3& rot);
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
+    glm::vec3 getRotation() const;
+
     Shader* getShader() const override;
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 

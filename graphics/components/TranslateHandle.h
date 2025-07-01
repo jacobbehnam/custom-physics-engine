@@ -13,7 +13,7 @@ public:
 
     void draw() const override;
     void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir) override;
-    void setDragState(glm::vec3 initHitPos, glm::vec3 originPos) override;
+    void setDragState(glm::vec3 initHitPos) override;
 
     Shader* getShader() const override;
     Mesh* getMesh() const override;

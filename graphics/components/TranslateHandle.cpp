@@ -64,7 +64,7 @@ Mesh* TranslateHandle::getMesh() const {
     return mesh;
 }
 
-void TranslateHandle::setDragState(glm::vec3 initHitPos, glm::vec3 originPos) {
+void TranslateHandle::setDragState(glm::vec3 initHitPos) {
     initialHitPoint = initHitPos;
-    originalPosition = originPos;
+    originalPosition = target->getPosition();
 }

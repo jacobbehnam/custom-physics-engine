@@ -80,6 +80,11 @@ glm::vec3 SceneObject::getPosition() const{
     return position;
 }
 
+glm::vec3 SceneObject::getRotation() const {
+    return rotation;
+}
+
+
 Shader* SceneObject::getShader() const {
     return shader;
 }

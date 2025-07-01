@@ -31,11 +31,28 @@ Shader * RotateHandle::getShader() const {
 }
 
 void RotateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
-    //TODO
+    glm::vec3 axisDirection = axisDir(axis);
+    glm::vec3& planeNormal = axisDirection;
+    glm::vec3 center = target->getPosition();
+
+    // Ray-plane intersection
+    float denom = glm::dot(rayDir, planeNormal);
+    if (glm::abs(denom) < 1e-6f) return; // ray is parallel to plane
+
+    float t = glm::dot(center - rayOrig, planeNormal) / denom;
+    glm::vec3 currentHitPoint = rayOrig + t * rayDir;
+
+    glm::vec3 from = glm::normalize(initialHitPoint - center);
+    glm::vec3 to   = glm::normalize(currentHitPoint - center);
+
+    float angle = glm::atan(glm::dot(glm::cross(from, to), axisDirection), glm::dot(from, to));
+
+    target->setRotation(originalRotation + axisDirection * angle);
 }
 
-void RotateHandle::setDragState(glm::vec3 initHitPos, glm::vec3 originPos) {
-    //TODO
+void RotateHandle::setDragState(glm::vec3 initHitPos) {
+    initialHitPoint = initHitPos;
+    originalRotation = target->getRotation();
 }
 
 glm::mat4 RotateHandle::getModelMatrix() const {
@@ -44,7 +61,7 @@ glm::mat4 RotateHandle::getModelMatrix() const {
     model = glm::translate(model, pos);
 
     glm::vec3 dir = axisDir(axis);
-    glm::vec3 from = {0,1,0}, to = dir; // We assume the handle mesh points in the +Y axis direction.
+    glm::vec3 from = {0,1,0}, to = dir;
     float cosA = glm::dot(from, to);
     glm::vec3 crossA = glm::cross(from, to);
     if (glm::length(crossA) > 1e-3f) {
@@ -53,7 +70,6 @@ glm::mat4 RotateHandle::getModelMatrix() const {
     }
 
     model = glm::scale(model, glm::vec3(scale, scale, scale));
-    // model = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
     return model;
 }
 
