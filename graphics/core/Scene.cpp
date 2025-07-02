@@ -168,10 +168,10 @@ void Scene::setGizmoFor(SceneObject *newTarget) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+            currentGizmo = new Gizmo(GizmoType::SCALE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
         }
     } else {
-        currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+        currentGizmo = new Gizmo(GizmoType::SCALE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
     }
 }
 

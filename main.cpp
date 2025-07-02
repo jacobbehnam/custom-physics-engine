@@ -8,11 +8,6 @@
 #include "graphics/components/TranslateHandle.h"
 #include <graphics/core/Scene.h>
 
-static Mesh*          gMesh         = nullptr;
-static SceneObject*   gCube         = nullptr;
-static Shader*   gShader = nullptr;
-static TranslateHandle* gHandle = nullptr;
-
 void framebuffer_size_callback (GLFWwindow* window, int width, int height) {
     glViewport(0,0,width,height);
 }

@@ -16,6 +16,8 @@ static glm::vec3 axisDir(Axis a) {
     }
 }
 
+class Mesh;
+
 class IHandle : public IDrawable{
 public:
     virtual void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir) = 0;

@@ -92,3 +92,8 @@ void SceneObject::setRotationQuat(const glm::quat &q) {
 glm::quat SceneObject::getRotationQuat()   const {
     return orientation;
 }
+
+glm::vec3 SceneObject::getScale() const {
+    return scale;
+}
+

@@ -32,7 +32,6 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
     }
 
     model = glm::scale(model, glm::vec3(thickness, length, thickness));
-    // model = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
     return model;
 }
 

@@ -22,6 +22,7 @@ public:
     glm::vec3 getPosition() const;
     glm::vec3 getRotation() const;
     glm::quat getRotationQuat() const;
+    glm::vec3 getScale() const;
 
     Shader* getShader() const override;
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;

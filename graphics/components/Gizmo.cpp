@@ -6,6 +6,8 @@
 #include <graphics/components/TranslateHandle.h>
 #include <graphics/components/RotateHandle.h>
 
+#include "ScaleHandle.h"
+
 Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
     scene->addObject(static_cast<IDrawable*>(this));
     scene->addObject(static_cast<IPickable*>(this));
@@ -22,6 +24,9 @@ Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader 
             handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Z));
             break;
         case GizmoType::SCALE:
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::X));
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Y));
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Z));
             break;
     }
 }
