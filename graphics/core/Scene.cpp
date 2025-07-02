@@ -49,11 +49,37 @@ void Scene::draw() {
     glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = camera.getProjMatrix();
 
-    // TODO: Optimize later by only setting the view and projection matrix per shader rather than per object
+    // TODO: Optimize later by only setting the view and projection matrix per shader rather than per object. Also repeated calls of shader.use() is not good
+    MathUtils::Ray ray = getMouseRay();
+    float closestT = std::numeric_limits<float>::infinity();
+    IPickable* hovered = nullptr;
+
+    for (IPickable* obj : pickableObjects) {
+        float t;
+        if (obj->rayIntersection(ray.origin, ray.dir, t)) {
+            if (t < closestT) {
+                closestT = t;
+                hovered = obj;
+            }
+        }
+    }
+
+    // Mark only the hovered one as hovered
+    for (IPickable* obj : pickableObjects) {
+        obj->setHovered(obj == hovered);
+    }
+
     for (IDrawable* obj: drawableObjects) {
         obj->getShader()->use();
         obj->getShader()->setMat4("view", view);
         obj->getShader()->setMat4("projection", projection);
+
+        bool hovered = false;
+        if (IPickable* pickable = dynamic_cast<IPickable*>(obj)) {
+            hovered = pickable->getHovered();
+        }
+
+        obj->getShader()->setBool("isHovered", hovered);
         obj->draw();
     }
 }

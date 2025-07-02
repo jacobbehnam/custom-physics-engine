@@ -18,6 +18,8 @@ public:
     Shader* getShader() const override;
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
+    void setHovered(bool hovered) override;
+    bool getHovered() override;
     void handleRelease();
     void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
 
@@ -30,4 +32,6 @@ public:
 private:
     SceneObject* target;
     IHandle* activeHandle = nullptr;
+
+    bool isHovered = false;
 };

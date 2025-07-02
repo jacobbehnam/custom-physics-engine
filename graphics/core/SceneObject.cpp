@@ -8,6 +8,9 @@
 
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     : mesh(meshPtr), shader(sdr), ownerScene(scene) {
+    shader->use();
+    shader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
+    shader->setBool("isHovered", false);
     ownerScene->addObject((IDrawable*)this);
     ownerScene->addObject((IPickable*)this);
 }
@@ -95,5 +98,13 @@ glm::quat SceneObject::getRotationQuat()   const {
 
 glm::vec3 SceneObject::getScale() const {
     return scale;
+}
+
+void SceneObject::setHovered(bool hovered) {
+    isHovered = hovered;
+}
+
+bool SceneObject::getHovered() {
+    return isHovered;
 }
 

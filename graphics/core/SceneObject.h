@@ -28,6 +28,8 @@ public:
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
+    void setHovered(bool hovered) override;
+    bool getHovered() override;
 
 private:
     Mesh* mesh;
@@ -38,6 +40,8 @@ private:
     glm::vec3 rotation {0.0f};
     glm::quat orientation {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 scale    {1.0f};
+
+    bool isHovered = false;
 
     glm::mat4 getModelMatrix() const;
 };

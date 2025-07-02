@@ -94,3 +94,10 @@ SceneObject* Gizmo::getTarget() {
     return target;
 }
 
+void Gizmo::setHovered(bool hovered) {
+    isHovered = hovered;
+}
+
+bool Gizmo::getHovered() {
+    return isHovered;
+}
