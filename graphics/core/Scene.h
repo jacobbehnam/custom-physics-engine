@@ -3,6 +3,7 @@
 #include <graphics/core/SceneObject.h>
 #include <graphics/components/Gizmo.h>
 #include <graphics/utils/MathUtils.h>
+#include <graphics/core/UniformBuffer.h>
 #include <vector>
 #include <GLFW/glfw3.h>
 
@@ -29,6 +30,7 @@ private:
 
     GLFWwindow* window;
     Camera camera;
+    UniformBuffer cameraUBO;
     std::vector<IDrawable*> drawableObjects;
     std::vector<IPickable*> pickableObjects;
     Shader* basicShader;

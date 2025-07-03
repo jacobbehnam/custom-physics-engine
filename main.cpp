@@ -57,6 +57,10 @@ int main() {
         std::cout << "Raw mouse movement not supported" << std::endl;
     }
 
+    // TODO: put this into a class
+    unsigned int uboCamera;
+
+
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
         double currentFrame = glfwGetTime();

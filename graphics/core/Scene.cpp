@@ -4,6 +4,7 @@
 
 #include "graphics/utils/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
+#include <glm/gtc/type_ptr.hpp>
 
 std::vector<Vertex> vertices = {
     { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f} },
@@ -31,13 +32,15 @@ std::vector<unsigned int> indices {
     4, 7, 6
 };
 
-Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr) {
+Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0) {
     basicShader = ResourceManager::loadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
     Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
     cube->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
     SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
     cube2->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
+
+    cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
 
     glfwSetWindowUserPointer(window, this);
 }
@@ -46,8 +49,7 @@ void Scene::draw() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 view = camera.getViewMatrix();
-    glm::mat4 projection = camera.getProjMatrix();
+    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
     // TODO: Optimize later by only setting the view and projection matrix per shader rather than per object. Also repeated calls of shader.use() is not good
     MathUtils::Ray ray = getMouseRay();
@@ -71,8 +73,6 @@ void Scene::draw() {
 
     for (IDrawable* obj: drawableObjects) {
         obj->getShader()->use();
-        obj->getShader()->setMat4("view", view);
-        obj->getShader()->setMat4("projection", projection);
 
         bool hovered = false;
         if (IPickable* pickable = dynamic_cast<IPickable*>(obj)) {

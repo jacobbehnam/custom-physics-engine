@@ -44,7 +44,9 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         graphics/components/RotateHandle.h
         graphics/interfaces/IHandle.h
         graphics/components/ScaleHandle.cpp
-        graphics/components/ScaleHandle.h)
+        graphics/components/ScaleHandle.h
+        graphics/core/UniformBuffer.cpp
+        graphics/core/UniformBuffer.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}
