@@ -1,10 +1,10 @@
 #include "Mesh.h"
 #include "glad/glad.h"
 #include <vector>
-#include <glm/glm.hpp>
+#include <iostream>
 
 Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &idx)
-    : indexCount(indices.size()), vertices(verts), indices(idx){
+    : indexCount(idx.size()), vertices(verts), indices(idx){
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -20,8 +20,7 @@ Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &id
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-    glEnableVertexAttribArray(2);
-    glVertexAttribIPointer(2, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void*)offsetof(Vertex, objectID));
+    setupInstanceAttributes();
 }
 
 Mesh::~Mesh() {
@@ -30,9 +29,41 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &EBO);
 }
 
+void Mesh::setupInstanceAttributes() {
+    glGenBuffers(1, &instanceVBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+
+    // Model matrix = 4 vec4s = locations 2, 3, 4, 5
+    for (int i = 0; i < 4; ++i) {
+        glEnableVertexAttribArray(2 + i);
+        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)(sizeof(glm::vec4) * i));
+        glVertexAttribDivisor(2 + i, 1);
+    }
+
+    // objectID = location 6
+    glEnableVertexAttribArray(6);
+    glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(InstanceData), (void*)offsetof(InstanceData, objectID));
+    glVertexAttribDivisor(6, 1);
+
+    glBindVertexArray(0);
+}
+
+
 void Mesh::draw() const {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+}
+
+void Mesh::drawInstanced(const std::vector<InstanceData>& instances) const {
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(InstanceData), instances.data(), GL_DYNAMIC_DRAW);
+
+    glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instances.size());
+
     glBindVertexArray(0);
 }
 

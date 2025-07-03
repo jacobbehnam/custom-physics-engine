@@ -8,4 +8,5 @@ public:
     virtual void handleClick(const glm::vec3& rayOrig, const glm::vec3& rayDir, float distance) = 0;
     virtual void setHovered(bool hovered) = 0;
     virtual bool getHovered() = 0;
+    virtual uint32_t getObjectID() const = 0;
 };

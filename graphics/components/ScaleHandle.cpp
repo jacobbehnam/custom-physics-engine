@@ -2,8 +2,8 @@
 #include <graphics/core/ResourceManager.h>
 #include <iostream>
 
-ScaleHandle::ScaleHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax)
-    : mesh(m), shader(sdr), target(tgt), axis(ax) {
+ScaleHandle::ScaleHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32_t objID)
+    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
     if (ResourceManager::loadMeshFromOBJ("../Scale.obj", "scale")) {
         mesh = ResourceManager::getMesh("scale");
     } else {
@@ -61,4 +61,8 @@ glm::mat4 ScaleHandle::getModelMatrix() const {
 
     model = glm::scale(model, glm::vec3(thickness, length, thickness));
     return model;
+}
+
+uint32_t ScaleHandle::getObjectID() const {
+    return objectID;
 }

@@ -5,16 +5,17 @@
 #include "graphics/utils/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <unordered_set>
 
 std::vector<Vertex> vertices = {
-    { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {-0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {-0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}, 1 },
-    { {-0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}, 1 }
+    { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+    { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+    { {0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+    { {-0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+    { {-0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+    { {0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+    { {0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+    { {-0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}}
 };
 
 std::vector<unsigned int> indices {
@@ -32,7 +33,7 @@ std::vector<unsigned int> indices {
     4, 7, 6
 };
 
-Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0) {
+Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     basicShader = ResourceManager::loadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
     Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
@@ -45,13 +46,17 @@ Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camer
     glfwSetWindowUserPointer(window, this);
 }
 
+uint32_t Scene::allocateObjectID() {
+    return nextID++;
+}
+
+
 void Scene::draw() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
-    // TODO: Optimize later by only setting the view and projection matrix per shader rather than per object. Also repeated calls of shader.use() is not good
     MathUtils::Ray ray = getMouseRay();
     float closestT = std::numeric_limits<float>::infinity();
     IPickable* hovered = nullptr;
@@ -66,20 +71,40 @@ void Scene::draw() {
         }
     }
 
-    // Mark only the hovered one as hovered
-    for (IPickable* obj : pickableObjects) {
-        obj->setHovered(obj == hovered);
+    std::unordered_set<int32_t> hoveredIDs;
+    if (hovered != nullptr) {
+        hoveredIDs.insert(hovered->getObjectID());
     }
 
-    for (IDrawable* obj: drawableObjects) {
-        obj->getShader()->use();
+    std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
+    for (uint32_t id : hoveredIDs)
+        hoverVec[id] = glm::ivec4(1); // or glm::ivec4(1,0,0,0)
 
-        bool hovered = false;
-        if (IPickable* pickable = dynamic_cast<IPickable*>(obj)) {
-            hovered = pickable->getHovered();
+    hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
+
+    // === INSTANCED DRAWING FOR CUBES ===
+    std::vector<InstanceData> cubeInstances;
+    Mesh* cubeMesh = ResourceManager::getMesh("cube");
+    for (IDrawable* obj : drawableObjects) {
+        if (obj->getMesh() == cubeMesh) {
+            InstanceData instance;
+            instance.model = obj->getModelMatrix();
+            instance.objectID = obj->getObjectID();
+            cubeInstances.push_back(instance);
         }
+    }
 
-        obj->getShader()->setBool("isHovered", hovered);
+    if (!cubeInstances.empty()) {
+        basicShader->use();
+        cubeMesh->drawInstanced(cubeInstances);
+    }
+
+    // === NORMAL DRAWING FOR OTHER OBJECTS ===
+    for (IDrawable* obj : drawableObjects) {
+        if (obj->getMesh() == cubeMesh)
+            continue;
+
+        obj->getShader()->use();
         obj->draw();
     }
 }

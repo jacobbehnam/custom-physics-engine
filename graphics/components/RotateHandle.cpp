@@ -8,8 +8,8 @@
 #include <graphics/core/ResourceManager.h>
 
 
-RotateHandle::RotateHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax)
-    : mesh(m), shader(sdr), target(tgt), axis(ax) {
+RotateHandle::RotateHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32_t objID)
+    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
     if (ResourceManager::loadMeshFromOBJ("../Rotate.obj", "rotate")) {
         mesh = ResourceManager::getMesh("rotate");
     } else {
@@ -80,3 +80,8 @@ glm::mat4 RotateHandle::getModelMatrix() const {
 Mesh * RotateHandle::getMesh() const {
     return mesh;
 }
+
+uint32_t RotateHandle::getObjectID() const {
+    return objectID;
+}
+

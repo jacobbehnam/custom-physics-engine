@@ -9,6 +9,7 @@
 
 class Scene;
 
+// TODO: put setters and getter definitions in the header files
 class SceneObject : public IDrawable, public IPickable{
 public:
     SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr);
@@ -30,6 +31,8 @@ public:
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
     void setHovered(bool hovered) override;
     bool getHovered() override;
+    Mesh* getMesh() const override {return mesh;}
+    uint32_t getObjectID() const override;
 
 private:
     Mesh* mesh;
@@ -42,6 +45,8 @@ private:
     glm::vec3 scale    {1.0f};
 
     bool isHovered = false;
+
+    uint32_t objectID;
 
     glm::mat4 getModelMatrix() const;
 };

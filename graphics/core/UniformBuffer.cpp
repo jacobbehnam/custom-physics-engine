@@ -1,5 +1,7 @@
 #include "UniformBuffer.h"
 #include <glad/glad.h>
+#include <iostream>
+#include <glm/vec4.hpp>
 
 UniformBuffer::UniformBuffer(unsigned int size, unsigned int bindingPoint)
     : binding(bindingPoint), bufferSize(size) {

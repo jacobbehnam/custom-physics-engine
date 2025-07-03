@@ -15,6 +15,8 @@ public:
     void addObject(IDrawable* obj);
     void addObject(IPickable* obj);
 
+    uint32_t allocateObjectID();
+
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
 
@@ -30,10 +32,14 @@ private:
 
     GLFWwindow* window;
     Camera camera;
-    UniformBuffer cameraUBO;
     std::vector<IDrawable*> drawableObjects;
     std::vector<IPickable*> pickableObjects;
     Shader* basicShader;
+
+    UniformBuffer cameraUBO;
+    UniformBuffer hoverUBO;
+
+    uint32_t nextID = 0;
 
     // Mouse logic
     double mouseLastX, mouseLastY; // last FRAME x and y position

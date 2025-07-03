@@ -9,7 +9,7 @@ class SceneObject;
 
 class RotateHandle : public IHandle{
 public:
-    RotateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
+    RotateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax, uint32_t objID);
     void draw() const override;
 
     Shader * getShader() const override;
@@ -19,6 +19,7 @@ public:
     void setDragState(glm::vec3 initHitPos) override;
 
     glm::mat4 getModelMatrix() const override;
+    uint32_t getObjectID() const override;
 
     Mesh * getMesh() const override;
 private:
@@ -31,4 +32,6 @@ private:
 
     glm::vec3 initialHitPoint;
     glm::quat originalQuat;
+
+    uint32_t objectID;
 };

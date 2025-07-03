@@ -1,17 +1,18 @@
 #version 460 core
 out vec4 FragColor;
-layout (location = 2) in flat uint objectID;
+flat in uint fragObjectID;
 
 uniform vec3 color;
 layout(std140, binding = 1) uniform hoverData {
-    int isHovered[1024];
+    ivec4 isHovered[1024];
 };
 
 void main()
 {
     vec3 finalColor = color;
-    if (isHovered[objectID] != 0)
-        finalColor = mix(color, vec3(1.0, 1.0, 1.0), 0.5); // lighten when hovered
 
-    FragColor = vec4(finalColor, 1.0);
+    if (isHovered[fragObjectID].x != 0)
+        finalColor = vec3(1.0f,1.0f,1.0f); // lighten when hovered
+
+    FragColor = vec4(finalColor, 1.0f);
 }

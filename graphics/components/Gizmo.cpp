@@ -8,25 +8,25 @@
 
 #include "ScaleHandle.h"
 
-Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt){
+Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt), objectID(scene->allocateObjectID()){
     scene->addObject(static_cast<IDrawable*>(this));
     scene->addObject(static_cast<IPickable*>(this));
 
     switch (type) {
         case GizmoType::TRANSLATE:
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X));
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Y));
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Z));
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
+            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
             break;
         case GizmoType::ROTATE:
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::X));
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Y));
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Z));
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
+            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
             break;
         case GizmoType::SCALE:
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::X));
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Y));
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Z));
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
+            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
             break;
     }
 }
@@ -100,4 +100,8 @@ void Gizmo::setHovered(bool hovered) {
 
 bool Gizmo::getHovered() {
     return isHovered;
+}
+
+uint32_t Gizmo::getObjectID() const {
+    return objectID;
 }

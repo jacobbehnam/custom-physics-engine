@@ -8,8 +8,8 @@
 
 #include "graphics/core/ResourceManager.h"
 
-TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax)
-    : mesh(m), shader(sdr), target(tgt), axis(ax) {
+TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax, uint32_t objID)
+    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
     if (ResourceManager::loadMeshFromOBJ("../Arrow.obj", "arrow")) {
         mesh = ResourceManager::getMesh("arrow");
     } else {
@@ -62,6 +62,11 @@ Shader* TranslateHandle::getShader() const {
 Mesh* TranslateHandle::getMesh() const {
     return mesh;
 }
+
+uint32_t TranslateHandle::getObjectID() const {
+    return objectID;
+}
+
 
 void TranslateHandle::setDragState(glm::vec3 initHitPos) {
     initialHitPoint = initHitPos;

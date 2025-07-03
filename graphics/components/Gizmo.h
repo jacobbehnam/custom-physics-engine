@@ -20,8 +20,11 @@ public:
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
     void setHovered(bool hovered) override;
     bool getHovered() override;
+    uint32_t getObjectID() const override;
     void handleRelease();
     void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
+    Mesh* getMesh() const override {return handles[0]->getMesh();}
+    glm::mat4 getModelMatrix() const override {return glm::mat4(1.0f);}
 
     SceneObject* getTarget();
 
@@ -34,4 +37,6 @@ private:
     IHandle* activeHandle = nullptr;
 
     bool isHovered = false;
+
+    uint32_t objectID;
 };

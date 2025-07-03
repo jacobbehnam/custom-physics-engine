@@ -7,7 +7,7 @@
 #include <graphics/utils/MathUtils.h>
 
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
-    : mesh(meshPtr), shader(sdr), ownerScene(scene) {
+    : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
     shader->setBool("isHovered", false);
@@ -107,4 +107,9 @@ void SceneObject::setHovered(bool hovered) {
 bool SceneObject::getHovered() {
     return isHovered;
 }
+
+uint32_t SceneObject::getObjectID() const {
+    return objectID;
+}
+
 

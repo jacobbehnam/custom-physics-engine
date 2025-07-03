@@ -3,7 +3,7 @@
 
 class ScaleHandle : public IHandle{
 public:
-    ScaleHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax);
+    ScaleHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax, uint32_t objID);
     void draw() const override;
 
     Shader * getShader() const override;
@@ -14,6 +14,8 @@ public:
 
     glm::mat4 getModelMatrix() const override;
     Mesh* getMesh() const override;
+
+    uint32_t getObjectID() const override;
 private:
     Mesh* mesh;
     Shader* shader;
@@ -25,4 +27,6 @@ private:
 
     glm::vec3 initialHitPoint;
     glm::vec3 originalScale;
+
+    uint32_t objectID;
 };
