@@ -5,6 +5,8 @@
 struct Vertex {
     glm::vec3 pos;
     glm::vec3 normal;
+    // TODO: save object ID with instancing rather than per vertex
+    uint32_t objectID;
 
     bool operator==(const Vertex& other) const {
         return pos == other.pos &&

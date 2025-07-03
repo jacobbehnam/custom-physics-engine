@@ -5,6 +5,8 @@
 class IDrawable {
 public:
     virtual ~IDrawable() = default;
+
     virtual void draw() const = 0;
     virtual Shader* getShader() const = 0;
+    //virtual unsigned int getObjectId() const = 0;
 };
