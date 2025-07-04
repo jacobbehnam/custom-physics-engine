@@ -77,8 +77,9 @@ void Scene::draw() {
     }
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
-    for (uint32_t id : hoveredIDs)
-        hoverVec[id] = glm::ivec4(1); // or glm::ivec4(1,0,0,0)
+    for (uint32_t id : hoveredIDs) {
+        hoverVec[id] = glm::ivec4(1);
+    }
 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
 
@@ -104,7 +105,6 @@ void Scene::draw() {
         if (obj->getMesh() == cubeMesh)
             continue;
 
-        obj->getShader()->use();
         obj->draw();
     }
 }

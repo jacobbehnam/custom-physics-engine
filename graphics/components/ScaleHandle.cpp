@@ -11,13 +11,15 @@ ScaleHandle::ScaleHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32
     }
 }
 
+// TODO: might not need anymore
 void ScaleHandle::draw() const {
     shader->use();
 
-    glm::mat4 model = getModelMatrix();
-    shader->setMat4("model", model);
+    std::vector<InstanceData> data;
+    InstanceData a = {getModelMatrix(), objectID};
+    data.push_back(a);
 
-    mesh->draw();
+    mesh->drawInstanced(data);
 }
 
 Shader * ScaleHandle::getShader() const {

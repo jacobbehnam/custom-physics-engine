@@ -32,9 +32,13 @@ Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader 
 }
 
 void Gizmo::draw() const {
+    getShader()->use();
+    std::vector<InstanceData> drawData;
     for (IHandle* handle : handles) {
-        handle->draw();
+        InstanceData handleData = {handle->getModelMatrix(), getObjectID()};
+        drawData.push_back(handleData);
     }
+    getMesh()->drawInstanced(drawData);
 }
 
 bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance){
