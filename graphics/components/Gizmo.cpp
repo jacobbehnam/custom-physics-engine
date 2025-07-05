@@ -69,7 +69,9 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
             outDistance = closestT;
         }
     }
-    activeHandle = hitHandle;
+    if (!activeHandle || !isDragging)
+        activeHandle = hitHandle;
+
     return (bool) hitHandle;
 }
 
@@ -81,6 +83,7 @@ void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float
 
 void Gizmo::handleRelease() {
     isDragging = false;
+    activeHandle = nullptr;
 }
 
 
