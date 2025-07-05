@@ -20,13 +20,10 @@ public:
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
 
-    void setGizmoFor(SceneObject* newTarget);
+    void setGizmoFor(SceneObject* newTarget, bool redraw = false);
     void deleteGizmo();
 
     Camera* getCamera();
-
-    // TODO: remove from public
-    Gizmo* currentGizmo;
 private:
     MathUtils::Ray getMouseRay();
 
@@ -38,6 +35,9 @@ private:
 
     UniformBuffer cameraUBO;
     UniformBuffer hoverUBO;
+
+    GizmoType selectedGizmoType = GizmoType::TRANSLATE;
+    Gizmo* currentGizmo;
 
     uint32_t nextID = 0;
 

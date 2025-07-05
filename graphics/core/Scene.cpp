@@ -138,6 +138,26 @@ void Scene::processInput(float dt) {
     mouseLastX = mouseCurrX;
     mouseLastY = mouseCurrY;
 
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    GizmoType oldType = selectedGizmoType;
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+        selectedGizmoType = GizmoType::TRANSLATE;
+        if (currentGizmo && oldType == selectedGizmoType)
+            setGizmoFor(currentGizmo->getTarget(), true);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        selectedGizmoType = GizmoType::ROTATE;
+        if (currentGizmo && oldType != selectedGizmoType)
+            setGizmoFor(currentGizmo->getTarget(), true);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        selectedGizmoType = GizmoType::SCALE;
+        if (currentGizmo && oldType == selectedGizmoType)
+            setGizmoFor(currentGizmo->getTarget(), true);
+    }
+
     if (currentGizmo) {
         currentGizmo->draw();
         if (currentGizmo->isDragging) {
@@ -145,9 +165,6 @@ void Scene::processInput(float dt) {
             currentGizmo->handleDrag(ray.origin, ray.dir);
         }
     }
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 
     if (mouseCaptured) {
         if (camera.firstMouse) {
@@ -213,16 +230,16 @@ Camera *Scene::getCamera() {
     return &camera;
 }
 
-void Scene::setGizmoFor(SceneObject *newTarget) {
+void Scene::setGizmoFor(SceneObject *newTarget, bool redraw) {
     if (currentGizmo) {
-        if (currentGizmo->getTarget() == newTarget) {
+        if (currentGizmo->getTarget() == newTarget && redraw == false) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+            currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
         }
     } else {
-        currentGizmo = new Gizmo(GizmoType::ROTATE, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+        currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
     }
 }
 
