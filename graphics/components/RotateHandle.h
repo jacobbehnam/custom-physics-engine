@@ -10,6 +10,7 @@ class SceneObject;
 class RotateHandle : public IHandle{
 public:
     RotateHandle(Mesh* m, Shader* sdr, SceneObject* tgt, Axis ax, uint32_t objID);
+
     void draw() const override;
 
     Shader * getShader() const override;

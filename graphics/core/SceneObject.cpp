@@ -15,6 +15,10 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     ownerScene->addObject((IPickable*)this);
 }
 
+SceneObject::~SceneObject() {
+    ownerScene->freeObjectID(objectID);
+}
+
 glm::mat4 SceneObject::getModelMatrix() const{
     glm::mat4 model(1.0f);
     model = glm::translate(model, position);

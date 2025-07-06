@@ -13,6 +13,7 @@ enum class GizmoType {
 class Gizmo : public IDrawable, public IPickable{
 public:
     Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject* tgt, Shader* shader);
+    ~Gizmo();
 
     void draw() const override;
     Shader* getShader() const override;
@@ -33,6 +34,7 @@ public:
     bool isDragging = false;
 
 private:
+    Scene* ownerScene;
     SceneObject* target;
     IHandle* activeHandle = nullptr;
 

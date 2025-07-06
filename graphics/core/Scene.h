@@ -5,6 +5,7 @@
 #include <graphics/utils/MathUtils.h>
 #include <graphics/core/UniformBuffer.h>
 #include <vector>
+#include <deque>
 #include <GLFW/glfw3.h>
 
 class Scene {
@@ -16,6 +17,7 @@ public:
     void addObject(IPickable* obj);
 
     uint32_t allocateObjectID();
+    void freeObjectID(uint32_t objID);
 
     void processInput(float dt);
     void handleMouseButton(int button, int action, int mods);
@@ -40,6 +42,7 @@ private:
     Gizmo* currentGizmo;
 
     uint32_t nextID = 0;
+    std::deque<uint32_t> freeIDs;
 
     // Mouse logic
     double mouseLastX, mouseLastY; // last FRAME x and y position

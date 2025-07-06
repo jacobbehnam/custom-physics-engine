@@ -13,6 +13,7 @@ class Scene;
 class SceneObject : public IDrawable, public IPickable{
 public:
     SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr);
+    ~SceneObject();
 
     void draw() const override;
 

@@ -8,7 +8,7 @@
 
 #include "ScaleHandle.h"
 
-Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt), objectID(scene->allocateObjectID()){
+Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
     scene->addObject(static_cast<IDrawable*>(this));
     scene->addObject(static_cast<IPickable*>(this));
 
@@ -30,6 +30,14 @@ Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader 
             break;
     }
 }
+
+Gizmo::~Gizmo() {
+    for (auto handle : handles) {
+        ownerScene->freeObjectID(handle->getObjectID());
+    }
+    ownerScene->freeObjectID(objectID);
+}
+
 
 void Gizmo::draw() const {
     getShader()->use();

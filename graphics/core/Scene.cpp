@@ -47,9 +47,17 @@ Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camer
 }
 
 uint32_t Scene::allocateObjectID() {
+    if (!freeIDs.empty()) {
+        uint32_t id = freeIDs.back();
+        freeIDs.pop_back();
+        return id;
+    }
     return nextID++;
 }
 
+void Scene::freeObjectID(uint32_t objID) {
+    freeIDs.push_back(objID);
+}
 
 void Scene::draw() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -78,6 +86,7 @@ void Scene::draw() {
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
+        std::cout << id << std::endl;
         hoverVec[id] = glm::ivec4(1);
     }
 
@@ -141,21 +150,20 @@ void Scene::processInput(float dt) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    GizmoType oldType = selectedGizmoType;
-    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        selectedGizmoType = GizmoType::TRANSLATE;
-        if (currentGizmo && oldType == selectedGizmoType)
-            setGizmoFor(currentGizmo->getTarget(), true);
-    }
-    else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        selectedGizmoType = GizmoType::ROTATE;
-        if (currentGizmo && oldType != selectedGizmoType)
-            setGizmoFor(currentGizmo->getTarget(), true);
-    }
-    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        selectedGizmoType = GizmoType::SCALE;
-        if (currentGizmo && oldType == selectedGizmoType)
-            setGizmoFor(currentGizmo->getTarget(), true);
+    static const std::unordered_map<int, GizmoType> keyToGizmoType = {
+        {GLFW_KEY_T, GizmoType::TRANSLATE},
+        {GLFW_KEY_R, GizmoType::ROTATE},
+        {GLFW_KEY_E, GizmoType::SCALE}
+    };
+
+    for (auto& [key, type] : keyToGizmoType) {
+        if (glfwGetKey(window, key) == GLFW_PRESS) {
+            GizmoType oldType = selectedGizmoType;
+            selectedGizmoType = type;
+            if (currentGizmo && oldType == selectedGizmoType)
+                setGizmoFor(currentGizmo->getTarget(), true);
+            break;
+        }
     }
 
     if (currentGizmo) {
