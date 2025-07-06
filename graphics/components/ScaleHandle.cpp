@@ -50,7 +50,9 @@ void ScaleHandle::setDragState(glm::vec3 initHitPos) {
 glm::mat4 ScaleHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
     glm::vec3 pos = target->getPosition();
+    glm::quat rotation = target->getRotationQuat();
     model = glm::translate(model, pos);
+    model = model * glm::mat4_cast(rotation);
 
     glm::vec3 dir = axisDir(axis);
     glm::vec3 from = {0,1,0}, to = dir;

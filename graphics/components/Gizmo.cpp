@@ -9,7 +9,7 @@
 #include "ScaleHandle.h"
 #include "graphics/core/ResourceManager.h"
 
-Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *sdr) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
+Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
     scene->addObject(static_cast<IDrawable*>(this));
     scene->addObject(static_cast<IPickable*>(this));
 
@@ -46,11 +46,13 @@ void Gizmo::draw() const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
     std::vector<InstanceData> drawData;
-    // TODO: set an object limit of 65535 so that this doesn't cause any errors.
-    auto gizmoID = static_cast<uint16_t>(getObjectID());
     for (IHandle* handle : handles) {
-        uint32_t packedID = packIDs(gizmoID, static_cast<uint16_t>(handle->getObjectID()));
-        InstanceData handleData = {handle->getModelMatrix(), packedID, handle->getAxisDir()};
+        uint32_t passedObjectID;
+        if (activeHandle && isDragging)
+            passedObjectID = handle->getObjectID();
+        else
+            passedObjectID = objectID;
+        InstanceData handleData = {handle->getModelMatrix(), passedObjectID, handle->getAxisDir()};
         drawData.push_back(handleData);
     }
     getMesh()->drawInstanced(drawData);
@@ -109,7 +111,6 @@ void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
 
 
 Shader* Gizmo::getShader() const {
-    // TODO: make the gizmo own the shader
     return shader;
 }
 

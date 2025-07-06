@@ -1,3 +1,4 @@
+#pragma once
 #include "graphics/interfaces/IHandle.h"
 #include <graphics/core/SceneObject.h>
 

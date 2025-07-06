@@ -9,10 +9,8 @@ layout(std140, binding = 1) uniform hoverData {
 
 void main()
 {
-    uint gizmoID  = fragObjectID >> 16;
-    uint handleID = fragObjectID & 0xFFFFu;
     vec3 color = baseColor;
-    if (isHovered[gizmoID].x != 0 || isHovered[handleID].x != 0)
+    if (isHovered[fragObjectID].x != 0)
         color = mix(vec3(1.0f), color, 0.2f); // lighten when hovered
 
     FragColor = vec4(color, 1.0f);

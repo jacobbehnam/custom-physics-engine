@@ -167,7 +167,7 @@ void Scene::processInput(float dt) {
 
     if (currentGizmo) {
         currentGizmo->draw();
-        if (currentGizmo->isDragging) {
+        if (currentGizmo->getIsDragging()) {
             hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
             MathUtils::Ray ray = getMouseRay();
             currentGizmo->handleDrag(ray.origin, ray.dir);
@@ -244,10 +244,10 @@ void Scene::setGizmoFor(SceneObject *newTarget, bool redraw) {
             deleteGizmo();
         } else {
             deleteGizmo();
-            currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+            currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget);
         }
     } else {
-        currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget, ResourceManager::getShader("basic"));
+        currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("cube"), newTarget);
     }
 }
 
