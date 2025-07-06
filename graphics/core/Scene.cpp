@@ -64,19 +64,8 @@ void Scene::draw() {
 
     cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
-    MathUtils::Ray ray = getMouseRay();
-    float closestT = std::numeric_limits<float>::infinity();
-    IPickable* hovered = nullptr;
-
-    for (IPickable* obj : pickableObjects) {
-        float t;
-        if (obj->rayIntersection(ray.origin, ray.dir, t)) {
-            if (t < closestT) {
-                closestT = t;
-                hovered = obj;
-            }
-        }
-    }
+    float closestT;
+    IPickable* hovered = findFistHit(pickableObjects, getMouseRay(), closestT, currentGizmo);
 
     if (hovered != nullptr) {
         hoveredIDs.insert(hovered->getObjectID());
@@ -128,6 +117,31 @@ MathUtils::Ray Scene::getMouseRay() {
     Camera* cam = (scene->getCamera());
     return {cam->position, MathUtils::screenToWorldRayDirection(mouseX, mouseY, fbWidth, fbHeight, cam->getViewMatrix(), cam->getProjMatrix())};
 }
+
+IPickable *Scene::findFistHit(const std::vector<IPickable *> &objects, const MathUtils::Ray &ray, float &outT, IPickable *priority) {
+    outT = std::numeric_limits<float>::infinity();
+    IPickable* best = nullptr;
+
+    for (IPickable* obj : objects) {
+        float t;
+        if (!obj->rayIntersection(ray.origin, ray.dir, t))
+            continue;
+
+        // If this is the priority object, take it immediately
+        if (obj == priority) {
+            outT = t;
+            return obj;
+        }
+
+        if (t < outT) {
+            outT = t;
+            best = obj;
+        }
+    }
+
+    return best;
+}
+
 
 void Scene::addObject(IDrawable* obj) {
     drawableObjects.push_back(obj);
@@ -213,17 +227,8 @@ void Scene::handleMouseButton(int button, int action, int mods) {
         MathUtils::Ray ray = getMouseRay();
 
         float closestDistance = std::numeric_limits<float>::max();
-        IPickable* clickedObject = nullptr;
+        IPickable* clickedObject = findFistHit(pickableObjects, ray, closestDistance, currentGizmo);
 
-        for (auto obj : pickableObjects) {
-            float t;
-            if (obj->rayIntersection(ray.origin, ray.dir, t)) {
-                if (t < closestDistance) {
-                    closestDistance = t;
-                    clickedObject = obj;
-                }
-            }
-        }
         if (clickedObject) {
             mouseDragging = false;
             clickedObject->handleClick(ray.origin, ray.dir, closestDistance);

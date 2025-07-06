@@ -29,6 +29,7 @@ public:
     Camera* getCamera();
 private:
     MathUtils::Ray getMouseRay();
+    IPickable* findFistHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority = nullptr);
 
     GLFWwindow* window;
     Camera camera;
