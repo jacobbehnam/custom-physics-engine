@@ -21,6 +21,7 @@ public:
 
     glm::mat4 getModelMatrix() const override;
     uint32_t getObjectID() const override;
+    glm::vec3 getAxisDir() const override {return axisDir(axis);}
 
     Mesh * getMesh() const override;
 private:

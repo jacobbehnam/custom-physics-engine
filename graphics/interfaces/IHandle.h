@@ -22,6 +22,7 @@ class IHandle : public IDrawable{
 public:
     virtual void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir) = 0;
     virtual void setDragState(glm::vec3 initHitPos) = 0;
-    virtual glm::mat4 getModelMatrix() const = 0;
-    virtual Mesh* getMesh() const = 0;
+    virtual glm::vec3 getAxisDir() const = 0;
+    glm::mat4 getModelMatrix() const override = 0;
+    Mesh* getMesh() const override = 0;
 };

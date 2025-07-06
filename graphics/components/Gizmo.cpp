@@ -7,10 +7,13 @@
 #include <graphics/components/RotateHandle.h>
 
 #include "ScaleHandle.h"
+#include "graphics/core/ResourceManager.h"
 
-Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *shader) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
+Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt, Shader *sdr) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
     scene->addObject(static_cast<IDrawable*>(this));
     scene->addObject(static_cast<IPickable*>(this));
+
+    Shader* shader = ResourceManager::loadShader("../shaders/gizmo/gizmo.vert", "../shaders/gizmo/gizmo.frag", "gizmo");
 
     switch (type) {
         case GizmoType::TRANSLATE:
@@ -40,13 +43,15 @@ Gizmo::~Gizmo() {
 
 
 void Gizmo::draw() const {
+    glDisable(GL_DEPTH_TEST);
     getShader()->use();
     std::vector<InstanceData> drawData;
     for (IHandle* handle : handles) {
-        InstanceData handleData = {handle->getModelMatrix(), getObjectID()};
+        InstanceData handleData = {handle->getModelMatrix(), getObjectID(), handle->getAxisDir()};
         drawData.push_back(handleData);
     }
     getMesh()->drawInstanced(drawData);
+    glEnable(GL_DEPTH_TEST);
 }
 
 bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance){

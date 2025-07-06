@@ -15,6 +15,7 @@ struct Vertex {
 struct InstanceData {
     glm::mat4 model;
     uint32_t objectID;
+    glm::vec3 color;
 };
 
 // TODO: understand what this does

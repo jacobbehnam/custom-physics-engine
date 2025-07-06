@@ -46,6 +46,11 @@ void Mesh::setupInstanceAttributes() {
     glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(InstanceData), (void*)offsetof(InstanceData, objectID));
     glVertexAttribDivisor(6, 1);
 
+    // color = location 7
+    glEnableVertexAttribArray(7);
+    glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)offsetof(InstanceData, color));
+    glVertexAttribDivisor(7, 1);
+
     glBindVertexArray(0);
 }
 

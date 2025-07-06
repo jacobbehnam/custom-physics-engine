@@ -34,7 +34,7 @@ std::vector<unsigned int> indices {
 };
 
 Scene::Scene(GLFWwindow *win) : window(win), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
-    basicShader = ResourceManager::loadShader("../vertexShader.glsl", "../fragmentShader.glsl", "basic");
+    basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
     Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader);
     cube->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -86,7 +86,6 @@ void Scene::draw() {
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
-        std::cout << id << std::endl;
         hoverVec[id] = glm::ivec4(1);
     }
 
@@ -160,7 +159,7 @@ void Scene::processInput(float dt) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
             GizmoType oldType = selectedGizmoType;
             selectedGizmoType = type;
-            if (currentGizmo && oldType == selectedGizmoType)
+            if (currentGizmo && oldType != selectedGizmoType)
                 setGizmoFor(currentGizmo->getTarget(), true);
             break;
         }
