@@ -6,13 +6,17 @@
 #include <graphics/components/Shader.h>
 
 #include "graphics/interfaces/IPickable.h"
+#include "physics/PhysicsSystem.h"
 
 class Scene;
+namespace Physics {
+    class RigidBody;
+}
 
 // TODO: put setters and getter definitions in the header files
 class SceneObject : public IDrawable, public IPickable{
 public:
-    SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr);
+    SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr, bool wantPhysics = false);
     ~SceneObject();
 
     void draw() const override;
@@ -34,6 +38,9 @@ public:
     bool getHovered() override;
     Mesh* getMesh() const override {return mesh;}
     uint32_t getObjectID() const override;
+
+    // TODO: make private
+    Physics::RigidBody* rigidBody = nullptr;
 
 private:
     Mesh* mesh;

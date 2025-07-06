@@ -6,13 +6,17 @@
 #include <graphics/core/Scene.h>
 #include <graphics/utils/MathUtils.h>
 
-SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
+SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhysics)
     : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
     ownerScene->addObject((IDrawable*)this);
     ownerScene->addObject((IPickable*)this);
+
+    if (wantPhysics) {
+        rigidBody = new Physics::RigidBody(1.0f, position);
+    }
 }
 
 SceneObject::~SceneObject() {
@@ -20,6 +24,13 @@ SceneObject::~SceneObject() {
 }
 
 glm::mat4 SceneObject::getModelMatrix() const{
+    if (rigidBody) {
+        glm::mat4 model(1.0f);
+        model = glm::translate(model, rigidBody->getPosition());
+        model = model * glm::mat4_cast(orientation);
+        model = glm::scale(model, scale);
+        return model;
+    }
     glm::mat4 model(1.0f);
     model = glm::translate(model, position);
     model = model * glm::mat4_cast(orientation);

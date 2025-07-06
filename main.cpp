@@ -8,6 +8,8 @@
 #include "graphics/components/TranslateHandle.h"
 #include <graphics/core/Scene.h>
 
+#include "physics/PhysicsSystem.h"
+
 void framebuffer_size_callback (GLFWwindow* window, int width, int height) {
     glViewport(0,0,width,height);
 }
@@ -41,8 +43,6 @@ int main() {
 
     double lastFrame = glfwGetTime();
 
-    Scene scene(window);
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     glfwSetMouseButtonCallback(window, [](GLFWwindow* w, int b, int a, int m){
         Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(w));
@@ -57,11 +57,16 @@ int main() {
         std::cout << "Raw mouse movement not supported" << std::endl;
     }
 
+    Physics::PhysicsSystem physicsSystem;
+    Scene scene(window, &physicsSystem);
+
     // === 7. Main render loop ===
     while (!glfwWindowShouldClose(window)) {
         double currentFrame = glfwGetTime();
         double deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        physicsSystem.step(deltaTime);
 
         glfwPollEvents();
         scene.processInput(deltaTime);

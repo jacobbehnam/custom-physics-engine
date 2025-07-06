@@ -11,7 +11,7 @@
 
 class Scene {
 public:
-    Scene(GLFWwindow* win);
+    Scene(GLFWwindow* win, Physics::PhysicsSystem* physicsSystem);
     ~Scene() = default;
     void draw();
     void addObject(IDrawable* obj);
@@ -46,6 +46,8 @@ private:
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
     std::unordered_set<int32_t> hoveredIDs;
+
+    Physics::PhysicsSystem* physicsSystem;
 
     // Mouse logic
     double mouseLastX, mouseLastY; // last FRAME x and y position
