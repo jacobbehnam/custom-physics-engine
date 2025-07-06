@@ -5,7 +5,6 @@
 #include "graphics/utils/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <unordered_set>
 
 std::vector<Vertex> vertices = {
     { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
@@ -79,7 +78,6 @@ void Scene::draw() {
         }
     }
 
-    std::unordered_set<int32_t> hoveredIDs;
     if (hovered != nullptr) {
         hoveredIDs.insert(hovered->getObjectID());
     }
@@ -115,6 +113,8 @@ void Scene::draw() {
 
         obj->draw();
     }
+
+    hoveredIDs.clear();
 }
 
 MathUtils::Ray Scene::getMouseRay() {
@@ -168,6 +168,7 @@ void Scene::processInput(float dt) {
     if (currentGizmo) {
         currentGizmo->draw();
         if (currentGizmo->isDragging) {
+            hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
             MathUtils::Ray ray = getMouseRay();
             currentGizmo->handleDrag(ray.origin, ray.dir);
         }
@@ -256,5 +257,3 @@ void Scene::deleteGizmo() {
     delete currentGizmo;
     currentGizmo = nullptr;
 }
-
-

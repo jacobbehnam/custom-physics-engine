@@ -9,7 +9,7 @@
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr)
     : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()) {
     shader->use();
-    shader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
+    shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
     ownerScene->addObject((IDrawable*)this);
     ownerScene->addObject((IPickable*)this);

@@ -6,6 +6,7 @@
 #include <graphics/core/UniformBuffer.h>
 #include <vector>
 #include <deque>
+#include <unordered_set>
 #include <GLFW/glfw3.h>
 
 class Scene {
@@ -43,6 +44,7 @@ private:
 
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
+    std::unordered_set<int32_t> hoveredIDs;
 
     // Mouse logic
     double mouseLastX, mouseLastY; // last FRAME x and y position

@@ -10,6 +10,10 @@ enum class GizmoType {
     SCALE
 };
 
+inline uint32_t packIDs(uint16_t gizmoID, uint16_t handleID) {
+    return (gizmoID << 16) | handleID;
+}
+
 class Gizmo : public IDrawable, public IPickable{
 public:
     Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject* tgt, Shader* shader);
@@ -28,6 +32,7 @@ public:
     glm::mat4 getModelMatrix() const override {return glm::mat4(1.0f);}
 
     SceneObject* getTarget();
+    IHandle* getActiveHandle() {return activeHandle;}
 
     //TODO: make private
     std::vector<IHandle*> handles;
@@ -37,6 +42,7 @@ private:
     Scene* ownerScene;
     SceneObject* target;
     IHandle* activeHandle = nullptr;
+    Shader* shader;
 
     bool isHovered = false;
 
