@@ -11,12 +11,11 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhys
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
-    ownerScene->addObject((IDrawable*)this);
-    ownerScene->addObject((IPickable*)this);
 
     if (wantPhysics) {
         rigidBody = new Physics::RigidBody(1.0f, position);
     }
+    ownerScene->addObject(this);
 }
 
 SceneObject::~SceneObject() {

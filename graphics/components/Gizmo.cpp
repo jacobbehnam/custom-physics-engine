@@ -10,8 +10,7 @@
 #include "graphics/core/ResourceManager.h"
 
 Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
-    scene->addObject(static_cast<IDrawable*>(this));
-    scene->addObject(static_cast<IPickable*>(this));
+    scene->addObject(this);
 
     shader = ResourceManager::loadShader("../shaders/gizmo/gizmo.vert", "../shaders/gizmo/gizmo.frag", "gizmo");
 

@@ -14,8 +14,9 @@ public:
     Scene(GLFWwindow* win, Physics::PhysicsSystem* physicsSystem);
     ~Scene() = default;
     void draw();
-    void addObject(IDrawable* obj);
-    void addObject(IPickable* obj);
+
+    template<typename T>
+    void addObject(T* obj);
 
     uint32_t allocateObjectID();
     void freeObjectID(uint32_t objID);
@@ -58,3 +59,19 @@ private:
 
     double mouseLastXBeforeCapture, mouseLastYBeforeCapture; // used to restore previous mouse position after capture
 };
+
+template<typename T>
+void Scene::addObject(T* obj) {
+    if constexpr (std::is_base_of_v<IDrawable, T>) {
+        drawableObjects.push_back(static_cast<IDrawable*>(obj));
+    }
+    if constexpr (std::is_base_of_v<IPickable, T>) {
+        pickableObjects.push_back(static_cast<IPickable*>(obj));
+    }
+    if constexpr (std::is_same_v<SceneObject, T>) {
+        auto *body = static_cast<SceneObject*>(obj)->rigidBody;
+        if (body) {
+            physicsSystem->addBody(body);
+        }
+    }
+}

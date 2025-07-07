@@ -7,7 +7,9 @@ void Physics::PhysicsSystem::addBody(RigidBody *body) {
 }
 
 void Physics::PhysicsSystem::step(float dt) {
-    for (auto body : bodies) {
-        body->step(dt);
+    if (physicsEnabled) {
+        for (auto body : bodies) {
+            body->step(dt);
+        }
     }
 }

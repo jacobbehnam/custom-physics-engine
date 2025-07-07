@@ -37,7 +37,6 @@ Scene::Scene(GLFWwindow *win, Physics::PhysicsSystem* physicsSys) : window(win),
     Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader, true);
     cube->rigidBody->applyForce(glm::vec3(0.0f, -1.0f, 0.0f));
-    physicsSystem->addBody(cube->rigidBody);
     SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
     cube2->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 
@@ -143,15 +142,6 @@ IPickable *Scene::findFistHit(const std::vector<IPickable *> &objects, const Mat
     return best;
 }
 
-
-void Scene::addObject(IDrawable* obj) {
-    drawableObjects.push_back(obj);
-}
-
-void Scene::addObject(IPickable* obj) {
-    pickableObjects.push_back(obj);
-}
-
 void Scene::processInput(float dt) {
     // Mouse stuff
     double mouseCurrX, mouseCurrY;
@@ -204,6 +194,13 @@ void Scene::processInput(float dt) {
         camera.processKeyboard(Movement::FORWARD, dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera.processKeyboard(Movement::BACKWARD, dt);
+
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+        physicsSystem->enablePhysics();
+    }
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+        physicsSystem->disablePhysics();
+    }
 }
 
 void Scene::handleMouseButton(int button, int action, int mods) {

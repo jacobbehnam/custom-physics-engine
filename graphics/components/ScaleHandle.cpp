@@ -33,12 +33,13 @@ Mesh *ScaleHandle::getMesh() const {
 
 void ScaleHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
     glm::vec3 axisDirection = axisDir(axis);
+    glm::vec3 localAxisDirection = target->getRotationQuat() * axisDirection;
     // To solve for t, minimize the quantity || (rayOrig + rayDir * t) - initialHitPoint ||
     float t = glm::dot(-(rayOrig - initialHitPoint), rayDir);
 
     glm::vec3 delta = (rayOrig + rayDir * t) - initialHitPoint;
 
-    float scaleAmount = glm::dot(delta, axisDirection);
+    float scaleAmount = glm::dot(delta, localAxisDirection);
     target->setScale(originalScale + axisDirection * scaleAmount);
 }
 

@@ -12,9 +12,14 @@ namespace Physics {
 
         void step(float dt);
 
+        void enablePhysics() {physicsEnabled = true;}
+        void disablePhysics() {physicsEnabled = false;}
+
     private:
         glm::vec3 globalAcceleration;
         std::vector<RigidBody*> bodies;
+
+        bool physicsEnabled = false;
     };
 
 }
