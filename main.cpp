@@ -60,7 +60,7 @@ int main() {
     Physics::PhysicsSystem physicsSystem;
     Scene scene(window, &physicsSystem);
 
-    // === 7. Main render loop ===
+    // === Main render loop ===
     while (!glfwWindowShouldClose(window)) {
         double currentFrame = glfwGetTime();
         double deltaTime = currentFrame - lastFrame;

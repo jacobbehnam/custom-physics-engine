@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
+#include <physics/bounding/AABB.h>
 
 struct Vertex {
     glm::vec3 pos;
@@ -39,11 +40,14 @@ public:
 
     std::vector<Vertex> getVertices() const;
     std::vector<unsigned int> getIndices() const;
+    const Physics::Bounding::AABB& getLocalAABB() const { return localAABB; }
 private:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    Physics::Bounding::AABB localAABB;
     unsigned int VAO, VBO, instanceVBO, EBO, indexCount;
 
     void setupInstanceAttributes();
+    void createLocalAABB();
 };
 

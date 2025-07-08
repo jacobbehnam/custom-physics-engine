@@ -59,37 +59,53 @@ void Gizmo::draw() const {
 }
 
 bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance){
+    Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
     IHandle* hitHandle = nullptr;
     float closestT = std::numeric_limits<float>::infinity();
-
     for (IHandle* handle : handles) {
-        const std::vector<Vertex>& verts = handle->getMesh()->getVertices();
-        const std::vector<unsigned int>& indices = handle->getMesh()->getIndices();
-        const glm::mat4 model = handle->getModelMatrix();
-
-        for (int i = 0; i + 2 < indices.size(); i += 3) {
-            // TODO: do not do expensive matrix multiplication on the CPU, move to GPU
-            const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
-            const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
-            const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
-
-            float outT;
-            if (MathUtils::intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
-                if (outT < closestT) {
-                    closestT = outT;
-                    hitHandle = handle;
-                }
+        float outT;
+        if (localAABB.getTransformed(handle->getModelMatrix()).intersectsRay(rayOrigin, rayDir, outT)) {
+            if (outT < closestT) {
+                closestT = outT;
+                hitHandle = handle;
             }
         }
-
-        if (hitHandle) {
-            outDistance = closestT;
-        }
     }
-    if (!activeHandle || !isDragging)
-        activeHandle = hitHandle;
-
+    if (hitHandle)
+        outDistance = closestT;
     return (bool) hitHandle;
+
+    // IHandle* hitHandle = nullptr;
+    // float closestT = std::numeric_limits<float>::infinity();
+    //
+    // for (IHandle* handle : handles) {
+    //     const std::vector<Vertex>& verts = handle->getMesh()->getVertices();
+    //     const std::vector<unsigned int>& indices = handle->getMesh()->getIndices();
+    //     const glm::mat4 model = handle->getModelMatrix();
+    //
+    //     for (int i = 0; i + 2 < indices.size(); i += 3) {
+    //         // TODO: do not do expensive matrix multiplication on the CPU, move to GPU
+    //         const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
+    //         const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
+    //         const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
+    //
+    //         float outT;
+    //         if (MathUtils::intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
+    //             if (outT < closestT) {
+    //                 closestT = outT;
+    //                 hitHandle = handle;
+    //             }
+    //         }
+    //     }
+    //
+    //     if (hitHandle) {
+    //         outDistance = closestT;
+    //     }
+    // }
+    // if (!activeHandle || !isDragging)
+    //     activeHandle = hitHandle;
+    //
+    // return (bool) hitHandle;
 }
 
 void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
