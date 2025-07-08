@@ -46,7 +46,24 @@ void SceneObject::draw() const {
     mesh->draw();
 }
 
-bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) {
+bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
+    Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
+    bool hitSomething = false;
+    float closestT = std::numeric_limits<float>::infinity();
+    float outDistance;
+    if (localAABB.getTransformed(getModelMatrix()).intersectsRay(orig, dir, outT)) {
+        if (outDistance < closestT) {
+            closestT = outDistance;
+            hitSomething = true;
+        }
+    }
+    if (hitSomething)
+        outT = closestT;
+
+    return hitSomething;
+}
+
+bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
     bool hitSomething = false;
     float closestT = std::numeric_limits<float>::infinity();
 
@@ -60,19 +77,35 @@ bool SceneObject::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &
         const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
         const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
 
-        float outT;
-        if (MathUtils::intersectTriangle(rayOrigin, rayDir, v0, v1, v2, outT)) {
-            if (outT < closestT) {
-                closestT = outT;
+        float outDistance;
+        if (MathUtils::intersectTriangle(orig, dir, v0, v1, v2, outDistance)) {
+            if (outDistance < closestT) {
+                closestT = outDistance;
                 hitSomething = true;
             }
         }
     }
 
     if (hitSomething) {
-        outDistance = closestT;
+        outT = closestT;
     }
     return hitSomething;
+}
+
+
+
+bool SceneObject::rayIntersection(glm::vec3 orig, glm::vec3 dir, float &outT) {
+    float tAABB;
+    if (!intersectsAABB(orig, dir, tAABB))
+        return false;
+
+    float tTri;
+    if (intersectsMesh(orig, dir, tTri)) {
+        outT = tTri;
+        return true;
+    }
+
+    return false;
 }
 
 void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {

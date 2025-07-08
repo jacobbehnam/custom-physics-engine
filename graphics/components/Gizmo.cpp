@@ -70,9 +70,11 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
                 hitHandle = handle;
             }
         }
+        if (hitHandle)
+            outDistance = closestT;
     }
-    if (hitHandle)
-        outDistance = closestT;
+    if (!activeHandle || !isDragging)
+        activeHandle = hitHandle;
     return (bool) hitHandle;
 
     // IHandle* hitHandle = nullptr;

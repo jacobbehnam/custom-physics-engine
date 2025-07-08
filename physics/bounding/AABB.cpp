@@ -16,7 +16,7 @@ Physics::Bounding::AABB Physics::Bounding::AABB::getTransformed(const glm::mat4 
     glm::vec3 newHalfExtents = absL * halfExtents;
     glm::vec3 newCenter = L * center + T;
 
-    return AABB(newCenter - newHalfExtents, newCenter + newHalfExtents);
+    return AABB(newCenter, newHalfExtents);
 }
 
 bool Physics::Bounding::AABB::intersectsAABB(const AABB &other) const {

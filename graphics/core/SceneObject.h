@@ -57,4 +57,7 @@ private:
     uint32_t objectID;
 
     glm::mat4 getModelMatrix() const;
+
+    bool intersectsAABB(const glm::vec3& orig, const glm::vec3& dir, float& outT) const;
+    bool intersectsMesh(const glm::vec3& orig, const glm::vec3& dir, float& outT) const;
 };

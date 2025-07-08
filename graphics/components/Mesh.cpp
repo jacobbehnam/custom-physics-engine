@@ -57,13 +57,9 @@ void Mesh::setupInstanceAttributes() {
 
 void Mesh::createLocalAABB() {
     glm::vec3 minV(std::numeric_limits<float>::max()), maxV(-std::numeric_limits<float>::max());
-    for (Vertex& vertex : vertices) {
-        minV.x = std::min(minV.x, vertex.pos.x);
-        minV.y = std::min(minV.y, vertex.pos.y);
-        minV.z = std::min(minV.z, vertex.pos.z);
-        maxV.x = std::max(maxV.x, vertex.pos.x);
-        maxV.y = std::max(maxV.y, vertex.pos.y);
-        maxV.z = std::max(maxV.z, vertex.pos.z);
+    for (const Vertex& vertex : vertices) {
+        minV = glm::min(minV, vertex.pos);
+        maxV = glm::max(maxV, vertex.pos);
     }
     glm::vec3 center = (minV + maxV) * 0.5f;
     glm::vec3 halfExtents = (maxV - minV) * 0.5f;
