@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/gtc/constants.hpp>
 
 Shader* ResourceManager::loadShader(const std::string &vShaderPath, const std::string &fShaderPath, const std::string &name) {
     return &shaders.try_emplace(name, vShaderPath, fShaderPath).first->second;
@@ -89,6 +91,96 @@ bool ResourceManager::loadOBJ(const std::string &path, std::vector<Vertex> &outV
     }
 
     return true;
+}
+
+// Primitive loading
+void ResourceManager::loadPrimitives() {
+    loadPrimCube();
+    loadPrimSphere();
+}
+
+void ResourceManager::loadPrimCube() {
+    std::vector<Vertex> vertices = {
+        { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+        { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+        { {0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+        { {-0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
+        { {-0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+        { {0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+        { {0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
+        { {-0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}}
+    };
+
+    std::vector<unsigned int> indices {
+        0, 1, 2,
+        0, 3, 2,
+        0, 1, 5,
+        0, 4, 5,
+        0, 4, 7,
+        0, 3, 7,
+        1, 2, 6,
+        1, 5, 6,
+        2, 3, 7,
+        2, 6, 7,
+        4, 5, 6,
+        4, 7, 6
+    };
+
+    loadMesh(vertices, indices, "prim_cube");
+}
+
+void ResourceManager::loadPrimSphere() {
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    unsigned int latitudeSegments = 64;
+    unsigned int longitudeSegments = 64;
+
+    // 1) Generate vertices
+    for (unsigned int y = 0; y <= latitudeSegments; ++y) {
+        float v = float(y) / latitudeSegments;
+        float theta = v * glm::pi<float>();
+
+        for (unsigned int x = 0; x <= longitudeSegments; ++x) {
+            float u = float(x) / longitudeSegments;
+            float phi = u * glm::two_pi<float>();
+
+            // spherical to Cartesian
+            float sinT = std::sin(theta);
+            glm::vec3 pos{
+                sinT * std::cos(phi),
+                std::cos(theta),
+                sinT * std::sin(phi)
+            };
+
+            glm::vec3 normal = glm::normalize(pos);
+
+            vertices.push_back({ pos, normal });
+        }
+    }
+
+    // 2) Generate indices
+    // we create quads between each (y, x) and (y+1, x+1) and split each quad into two tris
+    for (unsigned int y = 0; y < latitudeSegments; ++y) {
+        for (unsigned int x = 0; x < longitudeSegments; ++x) {
+            // indices to the four corners of this quad
+            unsigned int i0 =  y      * (longitudeSegments + 1) + x;
+            unsigned int i1 = (y + 1) * (longitudeSegments + 1) + x;
+            unsigned int i2 = (y + 1) * (longitudeSegments + 1) + (x + 1);
+            unsigned int i3 =  y      * (longitudeSegments + 1) + (x + 1);
+
+            // lower‐left triangle  (i0, i1, i2)
+            indices.push_back(i0);
+            indices.push_back(i1);
+            indices.push_back(i2);
+
+            // upper‐right triangle (i0, i2, i3)
+            indices.push_back(i0);
+            indices.push_back(i2);
+            indices.push_back(i3);
+        }
+    }
+    loadMesh(vertices, indices, "prim_sphere");
 }
 
 

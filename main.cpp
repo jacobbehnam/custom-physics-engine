@@ -8,6 +8,7 @@
 #include "graphics/components/TranslateHandle.h"
 #include <graphics/core/Scene.h>
 
+#include "graphics/core/ResourceManager.h"
 #include "physics/PhysicsSystem.h"
 
 void framebuffer_size_callback (GLFWwindow* window, int width, int height) {

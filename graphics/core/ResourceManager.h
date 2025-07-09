@@ -6,6 +6,8 @@
 
 class ResourceManager {
 public:
+    static void loadPrimitives();
+
     static Shader* loadShader(const std::string &vShaderPath, const std::string &fShaderPath, const std::string &name);
     static Mesh* loadMesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& idx, const std::string &name);
     static Mesh* loadMeshFromOBJ(const std::string& path, const std::string &name);
@@ -18,6 +20,9 @@ private:
     ~ResourceManager() = default;
 
     static bool loadOBJ(const std::string& path, std::vector<Vertex>& outVertices, std::vector<unsigned int>& outIndices);
+
+    static void loadPrimCube();
+    static void loadPrimSphere();
 
     static std::unordered_map<std::string, Shader> shaders;
     static std::unordered_map<std::string, Mesh> meshes;

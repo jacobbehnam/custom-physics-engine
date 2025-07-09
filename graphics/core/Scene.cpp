@@ -33,8 +33,9 @@ std::vector<unsigned int> indices {
 };
 
 Scene::Scene(GLFWwindow *win, Physics::PhysicsSystem* physicsSys) : window(win), physicsSystem(physicsSys), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
+    ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
-    Mesh* cubeMesh = ResourceManager::loadMesh(vertices, indices, "cube");
+    Mesh* cubeMesh = ResourceManager::getMesh("prim_sphere");
     SceneObject *cube = new SceneObject(this, cubeMesh, basicShader, true);
     cube->rigidBody->applyForce(glm::vec3(0.0f, -1.0f, 0.0f));
     SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
@@ -80,7 +81,7 @@ void Scene::draw() {
 
     // === INSTANCED DRAWING FOR CUBES ===
     std::vector<InstanceData> cubeInstances;
-    Mesh* cubeMesh = ResourceManager::getMesh("cube");
+    Mesh* cubeMesh = ResourceManager::getMesh("prim_sphere");
     for (IDrawable* obj : drawableObjects) {
         if (obj->getMesh() == cubeMesh) {
             InstanceData instance;
