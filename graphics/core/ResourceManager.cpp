@@ -164,10 +164,10 @@ void ResourceManager::loadPrimSphere() {
     for (unsigned int y = 0; y < latitudeSegments; ++y) {
         for (unsigned int x = 0; x < longitudeSegments; ++x) {
             // indices to the four corners of this quad
-            unsigned int i0 =  y      * (longitudeSegments + 1) + x;
+            unsigned int i0 = y * (longitudeSegments + 1) + x;
             unsigned int i1 = (y + 1) * (longitudeSegments + 1) + x;
             unsigned int i2 = (y + 1) * (longitudeSegments + 1) + (x + 1);
-            unsigned int i3 =  y      * (longitudeSegments + 1) + (x + 1);
+            unsigned int i3 = y * (longitudeSegments + 1) + (x + 1);
 
             // lower‐left triangle  (i0, i1, i2)
             indices.push_back(i0);

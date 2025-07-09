@@ -43,7 +43,10 @@ void TranslateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) 
     glm::vec3 delta = (rayOrig + rayDir * t) - initialHitPoint;
     // apply translation only along the axis direction component:
     float moveAmount = glm::dot(delta, axisDirection);
-    target->setPosition(originalPosition + axisDirection * moveAmount);
+    if (target->rigidBody)
+        target->rigidBody->setPosition(originalPosition + axisDirection * moveAmount);
+    else
+        target->setPosition(originalPosition + axisDirection * moveAmount);
 }
 
 void TranslateHandle::draw() const {

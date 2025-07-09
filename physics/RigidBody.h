@@ -14,6 +14,7 @@ namespace Physics {
         bool isStatic() const;
 
         glm::vec3 getPosition() {return position;}
+        void setPosition(glm::vec3 pos) {position = pos;}
 
     private:
         glm::vec3 position;

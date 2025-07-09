@@ -35,16 +35,33 @@ std::vector<unsigned int> indices {
 Scene::Scene(GLFWwindow *win, Physics::PhysicsSystem* physicsSys) : window(win), physicsSystem(physicsSys), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
-    Mesh* cubeMesh = ResourceManager::getMesh("prim_sphere");
-    SceneObject *cube = new SceneObject(this, cubeMesh, basicShader, true);
+    SceneObject *cube = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(1.0f,0.0f,0.0f));
     cube->rigidBody->applyForce(glm::vec3(0.0f, -1.0f, 0.0f));
-    SceneObject *cube2 = new SceneObject(this, cubeMesh, basicShader);
-    cube2->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
+    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, false, glm::vec3(-1.0f, 0.0f, 0.0f));
 
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
 
     glfwSetWindowUserPointer(window, this);
 }
+
+SceneObject* Scene::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3& initPos) {
+    SceneObject* primitive = nullptr;
+    switch (type) {
+        case Primitive::CUBE:
+            primitive = new SceneObject(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
+            break;
+        case Primitive::SPHERE:
+            primitive = new SceneObject(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
+            break;
+    }
+    assert(primitive != nullptr);
+
+    if (wantPhysics) {
+        physicsSystem->addBody(primitive->rigidBody);
+    }
+    return primitive;
+}
+
 
 uint32_t Scene::allocateObjectID() {
     if (!freeIDs.empty()) {
@@ -81,7 +98,7 @@ void Scene::draw() {
 
     // === INSTANCED DRAWING FOR CUBES ===
     std::vector<InstanceData> cubeInstances;
-    Mesh* cubeMesh = ResourceManager::getMesh("prim_sphere");
+    Mesh* cubeMesh = ResourceManager::getMesh("prim_cube");
     for (IDrawable* obj : drawableObjects) {
         if (obj->getMesh() == cubeMesh) {
             InstanceData instance;

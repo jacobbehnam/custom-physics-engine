@@ -16,7 +16,7 @@ namespace Physics {
 // TODO: put setters and getter definitions in the header files
 class SceneObject : public IDrawable, public IPickable{
 public:
-    SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr, bool wantPhysics = false);
+    SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr, bool wantPhysics = false, const glm::vec3& initPos = glm::vec3{0.0f});
     ~SceneObject();
 
     void draw() const override;

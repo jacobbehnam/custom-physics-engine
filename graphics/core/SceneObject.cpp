@@ -6,8 +6,8 @@
 #include <graphics/core/Scene.h>
 #include <graphics/utils/MathUtils.h>
 
-SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhysics)
-    : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()) {
+SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhysics, const glm::vec3& initPos)
+    : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()), position(initPos) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
@@ -125,6 +125,8 @@ void SceneObject::setScale(const glm::vec3 &scl) {
 }
 
 glm::vec3 SceneObject::getPosition() const{
+    if (rigidBody)
+        return rigidBody->getPosition();
     return position;
 }
 

@@ -9,11 +9,18 @@
 #include <unordered_set>
 #include <GLFW/glfw3.h>
 
+enum class Primitive {
+    CUBE,
+    SPHERE
+};
+
 class Scene {
 public:
     Scene(GLFWwindow* win, Physics::PhysicsSystem* physicsSystem);
     ~Scene() = default;
     void draw();
+
+    SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
 
     template<typename T>
     void addObject(T* obj);
