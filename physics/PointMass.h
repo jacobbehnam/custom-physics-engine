@@ -5,7 +5,7 @@
 
 namespace Physics {
     class PointMass : public IPhysicsBody{
-        public:
+    public:
         glm::vec3 position;
         glm::vec3 velocity = glm::vec3(0.0f);
         glm::vec3 netForce = glm::vec3(0.0f);
@@ -16,8 +16,11 @@ namespace Physics {
 
         void applyForce(const glm::vec3& force) override;
         void step(float deltaTime) override;
-        glm::vec3 getPosition() override {return position;}
+        glm::vec3 getPosition() const override {return position;}
         void setPosition(const glm::vec3& pos) override {position = pos;}
+
+        bool collidesWith(const IPhysicsBody& other) const override;
+
     };
 
 }

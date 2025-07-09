@@ -15,7 +15,7 @@ namespace Physics {
 
         bool isStatic() const;
 
-        glm::vec3 getPosition() override {return position;}
+        glm::vec3 getPosition() const override {return position;}
         void setPosition(const glm::vec3& pos) override {position = pos;}
 
     private:
