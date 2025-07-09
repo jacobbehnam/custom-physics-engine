@@ -76,7 +76,7 @@ void Scene::addObject(T* obj) {
         pickableObjects.push_back(static_cast<IPickable*>(obj));
     }
     if constexpr (std::is_same_v<SceneObject, T>) {
-        auto *body = static_cast<SceneObject*>(obj)->rigidBody;
+        auto *body = static_cast<SceneObject*>(obj)->physicsBody;
         if (body) {
             physicsSystem->addBody(body);
         }

@@ -40,7 +40,7 @@ public:
     uint32_t getObjectID() const override;
 
     // TODO: make private
-    Physics::RigidBody* rigidBody = nullptr;
+    IPhysicsBody* physicsBody = nullptr;
 
 private:
     Mesh* mesh;

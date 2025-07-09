@@ -2,7 +2,7 @@
 
 Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
 
-void Physics::PhysicsSystem::addBody(RigidBody *body) {
+void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
     bodies.push_back(body);
 }
 

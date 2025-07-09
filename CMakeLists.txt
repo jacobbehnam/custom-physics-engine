@@ -52,7 +52,10 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         physics/PhysicsSystem.cpp
         physics/PhysicsSystem.h
         physics/bounding/AABB.cpp
-        physics/bounding/AABB.h)
+        physics/bounding/AABB.h
+        physics/PointMass.cpp
+        physics/PointMass.h
+        graphics/interfaces/IPhysicsBody.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}

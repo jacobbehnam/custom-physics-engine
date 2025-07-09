@@ -2,19 +2,21 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "graphics/interfaces/IPhysicsBody.h"
+
 namespace Physics {
 
-    class RigidBody {
+    class RigidBody : public IPhysicsBody {
     public:
         RigidBody(float mass, glm::vec3 pos);
 
-        void applyForce(const glm::vec3& force);
-        void step(float dt);
+        void applyForce(const glm::vec3& force) override;
+        void step(float dt) override;
 
         bool isStatic() const;
 
-        glm::vec3 getPosition() {return position;}
-        void setPosition(glm::vec3 pos) {position = pos;}
+        glm::vec3 getPosition() override {return position;}
+        void setPosition(const glm::vec3& pos) override {position = pos;}
 
     private:
         glm::vec3 position;

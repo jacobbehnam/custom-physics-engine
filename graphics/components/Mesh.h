@@ -19,7 +19,6 @@ struct InstanceData {
     glm::vec3 color;
 };
 
-// TODO: understand what this does
 namespace std {
     template <>
     struct hash<Vertex> {

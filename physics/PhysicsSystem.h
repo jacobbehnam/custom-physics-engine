@@ -8,7 +8,7 @@ namespace Physics {
     public:
         explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -9.81f, 0.0f));
 
-        void addBody(RigidBody* body);
+        void addBody(IPhysicsBody* body);
 
         void step(float dt);
 
@@ -17,7 +17,7 @@ namespace Physics {
 
     private:
         glm::vec3 globalAcceleration;
-        std::vector<RigidBody*> bodies;
+        std::vector<IPhysicsBody*> bodies;
 
         bool physicsEnabled = false;
     };

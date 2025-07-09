@@ -6,6 +6,8 @@
 #include <graphics/core/Scene.h>
 #include <graphics/utils/MathUtils.h>
 
+#include "physics/PointMass.h"
+
 SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhysics, const glm::vec3& initPos)
     : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()), position(initPos) {
     shader->use();
@@ -13,7 +15,7 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhys
     shader->setBool("isHovered", false);
 
     if (wantPhysics) {
-        rigidBody = new Physics::RigidBody(1.0f, position);
+        physicsBody = new Physics::PointMass(1.0f, position);
     }
     ownerScene->addObject(this);
 }
@@ -23,9 +25,9 @@ SceneObject::~SceneObject() {
 }
 
 glm::mat4 SceneObject::getModelMatrix() const{
-    if (rigidBody) {
+    if (physicsBody) {
         glm::mat4 model(1.0f);
-        model = glm::translate(model, rigidBody->getPosition());
+        model = glm::translate(model, physicsBody->getPosition());
         model = model * glm::mat4_cast(orientation);
         model = glm::scale(model, scale);
         return model;
@@ -125,8 +127,8 @@ void SceneObject::setScale(const glm::vec3 &scl) {
 }
 
 glm::vec3 SceneObject::getPosition() const{
-    if (rigidBody)
-        return rigidBody->getPosition();
+    if (physicsBody)
+        return physicsBody->getPosition();
     return position;
 }
 
