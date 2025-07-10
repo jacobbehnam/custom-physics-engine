@@ -36,7 +36,7 @@ Scene::Scene(GLFWwindow *win, Physics::PhysicsSystem* physicsSys) : window(win),
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
     SceneObject *cube = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(1.0f,0.0f,0.0f));
-    cube->physicsBody->applyForce(glm::vec3(0.0f, -1.0f, 0.0f));
+    cube->physicsBody->applyForce(glm::vec3(-1.0f, 0.0f, 0.0f));
     SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
 
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);

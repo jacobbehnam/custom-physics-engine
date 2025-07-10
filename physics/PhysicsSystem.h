@@ -12,8 +12,8 @@ namespace Physics {
 
         void step(float dt);
 
-        void enablePhysics() {physicsEnabled = true;}
-        void disablePhysics() {physicsEnabled = false;}
+        void enablePhysics();
+        void disablePhysics();
 
     private:
         glm::vec3 globalAcceleration;
