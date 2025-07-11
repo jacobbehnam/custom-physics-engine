@@ -20,7 +20,12 @@ namespace Physics {
         void setPosition(const glm::vec3& pos) override {position = pos;}
 
         bool collidesWith(const IPhysicsBody& other) const override;
+        bool collidesWithPointMass(const PointMass& pm) const override;
+        bool collidesWithRigidBody(const RigidBody &rb) const override;
 
+        bool resolveCollisionWith(IPhysicsBody &other) override;
+        bool resolveCollisionWithPointMass(PointMass &pm) override;
+        bool resolveCollisionWithRigidBody(RigidBody &rb) override;
     };
 
 }

@@ -28,26 +28,7 @@ void Physics::PhysicsSystem::step(float dt) {
             // if (a->isStatic() && b->isStatic()) continue;
 
             if (a->collidesWith(*b)) {
-                // Perfectly Elastic Collision
-                std::cout << "hi" << std::endl;
-                glm::vec3 normal = glm::normalize(b->position - a->position);
-                glm::vec3 relativeVelocity = b->velocity - a->velocity;
-
-                // Project relative velocity onto the normal
-                float velocityAlongNormal = glm::dot(relativeVelocity, normal);
-
-                // If they're moving apart, no collision to resolve
-                if (velocityAlongNormal <= 0) return;
-
-                float m1 = a->mass;
-                float m2 = b->mass;
-
-                // Compute impulse scalar for perfectly elastic collision
-                float impulse = (2.0f * velocityAlongNormal) / (m1 + m2);
-
-                // Apply impulses to both velocities
-                a->velocity += impulse * m2 * normal;
-                b->velocity -= impulse * m1 * normal;
+                a->resolveCollisionWith(*b);
             }
         }
     }
