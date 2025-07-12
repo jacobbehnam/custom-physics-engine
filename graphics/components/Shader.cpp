@@ -5,19 +5,22 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
+    funcs = new QOpenGLFunctions_4_5_Core;
+    funcs->initializeOpenGLFunctions();
+
     std::string vertexCode = loadFile(vertexPath);
     std::string fragmentCode = loadFile(fragmentPath);
 
     unsigned int vertex = compileShader(GL_VERTEX_SHADER, vertexCode);
     unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fragmentCode);
 
-    ID = glCreateProgram();
-    glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
-    glLinkProgram(ID);
+    ID = funcs->glCreateProgram();
+    funcs->glAttachShader(ID, vertex);
+    funcs->glAttachShader(ID, fragment);
+    funcs->glLinkProgram(ID);
 
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
+    funcs->glDeleteShader(vertex);
+    funcs->glDeleteShader(fragment);
 }
 
 std::string Shader::loadFile(const std::string &path) const {
@@ -32,37 +35,37 @@ std::string Shader::loadFile(const std::string &path) const {
 }
 
 unsigned int Shader::compileShader(GLenum type, const std::string &source) const {
-    unsigned int shader = glCreateShader(type);
+    unsigned int shader = funcs->glCreateShader(type);
     const char* src = source.c_str();
-    glShaderSource(shader, 1, &src, nullptr);
-    glCompileShader(shader);
+    funcs->glShaderSource(shader, 1, &src, nullptr);
+    funcs->glCompileShader(shader);
 
     int success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    funcs->glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if(!success) {
         char infoLog[1024];
-        glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
+        funcs->glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
         std::cerr << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << std::endl;
     }
     return shader;
 }
 
 void Shader::use() const {
-    glUseProgram(ID);
+    funcs->glUseProgram(ID);
 }
 
 void Shader::setBool(const std::string &name, bool value) const {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+    funcs->glUniform1i(funcs->glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 void Shader::setInt(const std::string &name, int value) const {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+    funcs->glUniform1i(funcs->glGetUniformLocation(ID, name.c_str()), value);
 }
 void Shader::setFloat(const std::string &name, float value) const {
-    glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    funcs->glUniform1f(funcs->glGetUniformLocation(ID, name.c_str()), value);
 }
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    funcs->glUniformMatrix4fv(funcs->glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 void Shader::setVec3(const std::string &name, const glm::vec3 &vec) const {
-    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
+    funcs->glUniform3fv(funcs->glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(vec));
 }

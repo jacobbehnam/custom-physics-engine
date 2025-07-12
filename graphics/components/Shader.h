@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <QOpenGLFunctions_4_5_Core>
 
 class Shader {
 public:
@@ -15,6 +15,7 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
     void setVec3(const std::string &name, const glm::vec3 &vec) const;
 private:
+    QOpenGLFunctions_4_5_Core* funcs;
     unsigned int ID;
     std::string loadFile(const std::string &path) const;
     unsigned int compileShader(GLenum type, const std::string &source) const;

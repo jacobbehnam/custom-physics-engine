@@ -9,12 +9,7 @@
 
 
 RotateHandle::RotateHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32_t objID)
-    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
-    if (ResourceManager::loadMeshFromOBJ("../Rotate.obj", "rotate")) {
-        mesh = ResourceManager::getMesh("rotate");
-    } else {
-        std::cout << "Unable to load obj" << std::endl;
-    }
+    : mesh(ResourceManager::getMesh("rotate")), shader(sdr), target(tgt), axis(ax), objectID(objID) {
 }
 
 void RotateHandle::draw() const {

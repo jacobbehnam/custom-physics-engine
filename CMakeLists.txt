@@ -12,6 +12,15 @@ set(GLFW3_LIBRARY "${VCPKG_INSTALLED_DIR}/lib/libglfw3dll.a")
 # Also pull in OpenGL itself
 find_package(OpenGL REQUIRED)
 
+# === Qt ===
+set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/mingw_64")
+find_package(Qt6 REQUIRED COMPONENTS Widgets Gui Core OpenGLWidgets)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_WIN32_EXECUTABLE FALSE)
+
 # === GLM ===
 find_package(glm CONFIG REQUIRED)  # << Added this line
 
@@ -55,7 +64,9 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         physics/bounding/AABB.h
         physics/PointMass.cpp
         physics/PointMass.h
-        graphics/interfaces/IPhysicsBody.h)
+        graphics/interfaces/IPhysicsBody.h
+        ui/OpenGLWindow.cpp
+        ui/OpenGLWindow.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}
@@ -66,4 +77,8 @@ target_link_libraries(OpenGLApp PRIVATE
         ${GLFW3_LIBRARY}
         OpenGL::GL
         glm::glm                 # << Added this link
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::Core
+        Qt6::OpenGLWidgets
 )

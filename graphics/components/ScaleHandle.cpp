@@ -3,12 +3,7 @@
 #include <iostream>
 
 ScaleHandle::ScaleHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32_t objID)
-    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
-    if (ResourceManager::loadMeshFromOBJ("../Scale.obj", "scale")) {
-        mesh = ResourceManager::getMesh("scale");
-    } else {
-        std::cout << "Unable to load obj" << std::endl;
-    }
+    : mesh(ResourceManager::getMesh("scale")), shader(sdr), target(tgt), axis(ax), objectID(objID) {
 }
 
 // TODO: might not need anymore

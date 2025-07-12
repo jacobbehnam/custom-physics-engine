@@ -1,4 +1,5 @@
 #pragma once
+#include <QOpenGLFunctions_4_5_Core>
 #include <vector>
 #include <glm/glm.hpp>
 #include <physics/bounding/AABB.h>
@@ -35,12 +36,13 @@ public:
     Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& idx);
     ~Mesh();
     void draw() const;
-    void drawInstanced(const std::vector<InstanceData>& instances) const;
+    void drawInstanced(const std::vector<InstanceData>& instances);
 
     std::vector<Vertex> getVertices() const;
     std::vector<unsigned int> getIndices() const;
     const Physics::Bounding::AABB& getLocalAABB() const { return localAABB; }
 private:
+    QOpenGLFunctions_4_5_Core* funcs;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     Physics::Bounding::AABB localAABB;

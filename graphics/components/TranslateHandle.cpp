@@ -9,12 +9,8 @@
 #include "graphics/core/ResourceManager.h"
 
 TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax, uint32_t objID)
-    : mesh(m), shader(sdr), target(tgt), axis(ax), objectID(objID) {
-    if (ResourceManager::loadMeshFromOBJ("../Arrow.obj", "arrow")) {
-        mesh = ResourceManager::getMesh("arrow");
-    } else {
-        std::cout << "Unable to load obj" << std::endl;
-    }
+    : mesh(ResourceManager::getMesh("arrow")), shader(sdr), target(tgt), axis(ax), objectID(objID) {
+
 }
 
 glm::mat4 TranslateHandle::getModelMatrix() const {

@@ -52,7 +52,7 @@ bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, fl
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
     bool hitSomething = false;
     float closestT = std::numeric_limits<float>::infinity();
-    float outDistance;
+    float outDistance = -std::numeric_limits<float>::max();
     if (localAABB.getTransformed(getModelMatrix()).intersectsRay(orig, dir, outT)) {
         if (outDistance < closestT) {
             closestT = outDistance;
@@ -79,7 +79,7 @@ bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, fl
         const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
         const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
 
-        float outDistance;
+        float outDistance = 0.0f;
         if (MathUtils::intersectTriangle(orig, dir, v0, v1, v2, outDistance)) {
             if (outDistance < closestT) {
                 closestT = outDistance;

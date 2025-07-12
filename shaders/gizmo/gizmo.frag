@@ -1,4 +1,4 @@
-#version 460 core
+#version 450 core
 out vec4 FragColor;
 flat in uint fragObjectID;
 flat in vec3 baseColor;

@@ -1,4 +1,5 @@
 #include "AABB.h"
+#include <algorithm>
 
 Physics::Bounding::AABB::AABB(const glm::vec3 &ctr, const glm::vec3 &halfExt)
     : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}

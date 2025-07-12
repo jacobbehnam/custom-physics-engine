@@ -25,11 +25,21 @@ Mesh *ResourceManager::loadMeshFromOBJ(const std::string &path, const std::strin
 
 
 Shader* ResourceManager::getShader(const std::string &name) {
-    return &shaders.find(name)->second;
+    auto it = shaders.find(name);
+    if (it != shaders.end()) {
+        return &it->second;
+    } else {
+        return nullptr;
+    }
 }
 
 Mesh* ResourceManager::getMesh(const std::string &name) {
-    return &meshes.find(name)->second;
+    auto it = meshes.find(name);
+    if (it != meshes.end()) {
+        return &it->second;
+    } else {
+        return nullptr;
+    }
 }
 
 // Expects triangulated obj files!
@@ -97,6 +107,9 @@ bool ResourceManager::loadOBJ(const std::string &path, std::vector<Vertex> &outV
 void ResourceManager::loadPrimitives() {
     loadPrimCube();
     loadPrimSphere();
+    loadMeshFromOBJ("../Arrow.obj", "arrow");
+    loadMeshFromOBJ("../Scale.obj", "scale");
+    loadMeshFromOBJ("../Rotate.obj", "rotate");
 }
 
 void ResourceManager::loadPrimCube() {

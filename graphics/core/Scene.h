@@ -9,6 +9,8 @@
 #include <unordered_set>
 #include <GLFW/glfw3.h>
 
+#include "ui/OpenGLWindow.h"
+
 enum class Primitive {
     CUBE,
     SPHERE
@@ -16,7 +18,7 @@ enum class Primitive {
 
 class Scene {
 public:
-    Scene(GLFWwindow* win, Physics::PhysicsSystem* physicsSystem);
+    Scene(OpenGLWindow* win, Physics::PhysicsSystem* physicsSystem);
     ~Scene() = default;
     void draw();
 
@@ -39,7 +41,7 @@ private:
     MathUtils::Ray getMouseRay();
     IPickable* findFistHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority = nullptr);
 
-    GLFWwindow* window;
+    OpenGLWindow* window;
     Camera camera;
     std::vector<IDrawable*> drawableObjects;
     std::vector<IPickable*> pickableObjects;
