@@ -35,8 +35,8 @@ std::vector<unsigned int> indices {
 Scene::Scene(GLFWwindow *win, Physics::PhysicsSystem* physicsSys) : window(win), physicsSystem(physicsSys), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
-    SceneObject *cube = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(1.0f,0.0f,0.0f));
-    cube->physicsBody->applyForce(glm::vec3(-1.0f, 0.0f, 0.0f));
+    SceneObject *cube = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
+    cube->physicsBody->applyForce(glm::vec3(-1.0f, -1.0f, 0.0f));
     SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
 
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);

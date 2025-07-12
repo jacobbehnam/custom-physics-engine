@@ -5,6 +5,10 @@ void Physics::PointMass::applyForce(const glm::vec3 &force) {
     netForce += force;
 }
 
+void Physics::PointMass::applyImpulse(const glm::vec3 &impulse) {
+    velocity += impulse * (1.0f / mass);
+}
+
 void Physics::PointMass::step(float dt) {
     velocity = velocity + (netForce/mass)*dt;
     position = position + velocity * dt + (netForce/(2 * mass)) * dt * dt;
@@ -37,11 +41,12 @@ bool Physics::PointMass::resolveCollisionWithPointMass(PointMass &pm) {
     if (velNorm <= 0.0f)
         return false;   // moving apart, nothing applied
 
-    float j = (2.0f * velNorm) / (mass + pm.mass);
+    float j = (2.0f * velNorm) / (mass + pm.mass); // collision‐impulse scalar
+    glm::vec3 impulse = j * normal;
 
-    // apply impulse
-    velocity += (j * pm.mass) * normal;
-    pm.velocity -= (j * mass) * normal;
+    // newton's third law
+    applyImpulse(impulse);
+    pm.applyImpulse(-impulse);
     return true;
 }
 

@@ -15,6 +15,8 @@ namespace Physics {
             : position(pos), mass(m) {}
 
         void applyForce(const glm::vec3& force) override;
+        void applyImpulse(const glm::vec3& impulse);
+
         void step(float deltaTime) override;
         glm::vec3 getPosition() const override {return position;}
         void setPosition(const glm::vec3& pos) override {position = pos;}
