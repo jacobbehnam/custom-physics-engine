@@ -143,7 +143,7 @@ void Scene::processInput(float dt) {
     mouseLastY = mouseCurrY;
 
     if (window->isKeyPressed(Qt::Key_Escape))
-        window->close();
+        qApp->quit();
 
     static const std::unordered_map<int, GizmoType> keyToGizmoType = {
         {Qt::Key_T, GizmoType::TRANSLATE},

@@ -5,11 +5,7 @@
 #include "graphics/core/Scene.h"
 #include <iostream>
 
-OpenGLWindow::OpenGLWindow(QWidget* parent)
-    : QOpenGLWidget(parent),
-      scene(nullptr),
-        physicsSystem(new Physics::PhysicsSystem)
-{
+OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent), scene(nullptr), physicsSystem(new Physics::PhysicsSystem) {
     frameTimer.setInterval(16); // ~60 FPS
     connect(&frameTimer, &QTimer::timeout, this, QOverload<>::of(&OpenGLWindow::update));
     frameTimer.start();

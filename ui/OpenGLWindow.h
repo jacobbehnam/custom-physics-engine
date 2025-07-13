@@ -16,7 +16,7 @@ class OpenGLWindow : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 
 public:
-    OpenGLWindow(QWidget* parent = nullptr);
+    explicit OpenGLWindow(QWidget* parent = nullptr);
     ~OpenGLWindow();
 
     bool isKeyPressed(int qtKey) const {
