@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QToolBar>
+#include <QLabel>
 
 class OpenGLWindow;
 
@@ -14,4 +15,5 @@ public:
 
 private:
     OpenGLWindow* glWindow;
+    QLabel* fpsLabel;
 };
