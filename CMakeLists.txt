@@ -21,6 +21,11 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_WIN32_EXECUTABLE FALSE)
 
+# === SDL2 ===
+set(SDL2_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/include/SDL2")
+set(SDL2_LIBRARY "${VCPKG_INSTALLED_DIR}/lib/libSDL2.dll.a")
+include_directories(${SDL2_INCLUDE_DIR})
+
 # === GLM ===
 find_package(glm CONFIG REQUIRED)  # << Added this line
 
@@ -68,11 +73,15 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         ui/OpenGLWindow.cpp
         ui/OpenGLWindow.h
         ui/MainWindow.cpp
-        ui/MainWindow.h)
+        ui/MainWindow.h
+        ui/RawInputFilter.cpp
+        ui/RawInputFilter.h)
 
 # Include directories
-target_include_directories(OpenGLApp PRIVATE ${GLFW3_INCLUDE_DIR}
-        ${CMAKE_SOURCE_DIR})
+target_include_directories(OpenGLApp PRIVATE
+        ${GLFW3_INCLUDE_DIR}
+        ${CMAKE_SOURCE_DIR}
+        ${SDL2_INCLUDE_DIR})
 
 # Link all the libraries
 target_link_libraries(OpenGLApp PRIVATE
@@ -83,4 +92,5 @@ target_link_libraries(OpenGLApp PRIVATE
         Qt6::Gui
         Qt6::Core
         Qt6::OpenGLWidgets
+        ${SDL2_LIBRARY}
 )

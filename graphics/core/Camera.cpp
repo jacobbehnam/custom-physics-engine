@@ -43,6 +43,7 @@ void Camera::handleMouseMovement(double xpos, double ypos) {
 
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
+    std::cout << xoffset << " " << yoffset << std::endl;
     yaw += xoffset * mouseSensitivity;
     pitch += yoffset * mouseSensitivity;
 

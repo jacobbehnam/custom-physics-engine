@@ -170,12 +170,12 @@ void Scene::processInput(float dt) {
         }
     }
 
-    if (mouseCaptured) {
-        if (camera.firstMouse) {
-            camera.handleMouseMovement(mouseLastXBeforeCapture, mouseLastYBeforeCapture);
-        } else
-        camera.handleMouseMovement(mouseLastX, mouseLastY);
-    }
+    // if (window->isMouseCaptured()) {
+    //     if (camera.firstMouse) {
+    //         camera.handleMouseMovement(mouseLastXBeforeCapture, mouseLastYBeforeCapture);
+    //     } else
+    //     camera.handleMouseMovement(mouseLastX, mouseLastY);
+    // }
 
     if (window->isKeyPressed(Qt::Key_A))
         camera.processKeyboard(Movement::LEFT, dt);
@@ -204,7 +204,7 @@ void Scene::handleMouseButton(int button, int action, int mods) {
             QPointF mousePos = window->getMousePos();
             mouseLastXBeforeCapture = mousePos.x();
             mouseLastYBeforeCapture = mousePos.y();
-            window->setMouseCaptured(true);  // Qt version of hiding cursor + grabbing
+            window->setMouseCaptured(true);
             camera.resetMouse();
         }
         else if (!mouseRightHeld && mouseCaptured) {

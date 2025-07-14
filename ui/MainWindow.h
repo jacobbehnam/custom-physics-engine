@@ -13,6 +13,8 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
+    OpenGLWindow* getGlWindow() { return glWindow; }
+
 private:
     OpenGLWindow* glWindow;
     QLabel* fpsLabel;

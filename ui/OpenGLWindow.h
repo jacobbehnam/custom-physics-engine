@@ -36,6 +36,8 @@ public:
 
     bool isMouseButtonHeld(Qt::MouseButton button) const;
 
+    void handleRawMouseDelta(int dx, int dy);
+
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
@@ -57,7 +59,9 @@ private:
     double mouseLastY = 0.0f;
     double mouseLastXBeforeCapture = 0.0f;
     double mouseLastYBeforeCapture = 0.0f;
+    QPoint mouseLastPosBeforeCapture;
 
+    bool firstMouse = false;
     bool mouseCaptured = false;
 
     Scene* scene;

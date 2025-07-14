@@ -5,6 +5,8 @@
 #include "graphics/core/Scene.h"
 #include <iostream>
 
+#include "graphics/components/Gizmo.h"
+
 OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent), scene(nullptr), physicsSystem(new Physics::PhysicsSystem) {
 
 }
@@ -84,18 +86,13 @@ void OpenGLWindow::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void OpenGLWindow::setMouseCaptured(bool captured) {
-    if (captured && !mouseCaptured) {
-        mouseCaptured = true;
-        QPoint globalPos = QCursor::pos();
-        mouseLastXBeforeCapture = globalPos.x();
-        mouseLastYBeforeCapture = globalPos.y();
-        setCursor(Qt::BlankCursor);
-        grabMouse();
-    } else if (!captured && mouseCaptured) {
-        mouseCaptured = false;
-        releaseMouse();
+    mouseCaptured = captured;
+    if (captured) {
+        mouseLastPosBeforeCapture = QCursor::pos();
+        setCursor(Qt::BlankCursor);    // hide the OS cursor
+    } else {
         setCursor(Qt::ArrowCursor);
-        QCursor::setPos(mapToGlobal(QPoint(mouseLastXBeforeCapture, mouseLastYBeforeCapture)));
+        QCursor::setPos(mouseLastPosBeforeCapture);
     }
 }
 
@@ -103,4 +100,11 @@ bool OpenGLWindow::isMouseButtonHeld(Qt::MouseButton button) const {
     if (button == Qt::LeftButton) return mouseLeftHeld;
     if (button == Qt::RightButton) return mouseRightHeld;
     return false;
+}
+
+void OpenGLWindow::handleRawMouseDelta(int dx, int dy) {
+    if (mouseCaptured) {
+        QCursor::setPos(mouseLastPosBeforeCapture);
+        scene->getCamera()->processMouseMovement(dx, -dy);
+    }
 }
