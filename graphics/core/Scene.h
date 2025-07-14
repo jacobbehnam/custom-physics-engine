@@ -18,9 +18,10 @@ enum class Primitive {
 
 class Scene {
 public:
-    Scene(OpenGLWindow* win, Physics::PhysicsSystem* physicsSystem);
+    Scene(OpenGLWindow* win);
     ~Scene() = default;
     void draw();
+    void update(float dt);
 
     SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
 
@@ -57,16 +58,12 @@ private:
     std::deque<uint32_t> freeIDs;
     std::unordered_set<int32_t> hoveredIDs;
 
-    Physics::PhysicsSystem* physicsSystem;
+    std::unique_ptr<Physics::PhysicsSystem> physicsSystem;
 
     // Mouse logic
-    double mouseLastX, mouseLastY; // last FRAME x and y position
     bool mouseLeftHeld = false;
     bool mouseRightHeld = false;
     bool mouseCaptured = false;
-    bool mouseDragging = false;
-
-    double mouseLastXBeforeCapture, mouseLastYBeforeCapture; // used to restore previous mouse position after capture
 };
 
 template<typename T>

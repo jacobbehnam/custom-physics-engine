@@ -8,9 +8,10 @@ int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
     MainWindow mainWindow;
-    mainWindow.resize(800, 600); // or whatever size you want
+    mainWindow.resize(800, 600);
     mainWindow.show();
 
+    // input gets handled by RawInputFilter before Qt handles it
     auto filter = new RawInputFilter([&](int dx, int dy){
     mainWindow.getGlWindow()->handleRawMouseDelta(dx, dy); });
     app.installNativeEventFilter(filter);

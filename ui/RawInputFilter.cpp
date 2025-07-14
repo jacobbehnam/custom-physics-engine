@@ -7,6 +7,7 @@
 RawInputFilter::RawInputFilter(MouseCallback callback)
     : mouseCallback(std::move(callback)) {}
 
+// TODO: raw input handling is OS-specific, this only works for windows. I also dont really know how this works.
 bool RawInputFilter::nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) {
     // Only handle Windows generic messages
     if (eventType != "windows_generic_MSG")

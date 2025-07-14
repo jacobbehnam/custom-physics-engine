@@ -7,13 +7,10 @@
 
 #include "graphics/components/Gizmo.h"
 
-OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent), scene(nullptr), physicsSystem(new Physics::PhysicsSystem) {
-
-}
+OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent), scene(nullptr) {}
 
 OpenGLWindow::~OpenGLWindow() {
     delete scene;
-    delete physicsSystem;
 }
 
 void OpenGLWindow::initializeGL() {
@@ -27,7 +24,7 @@ void OpenGLWindow::initializeGL() {
 
     glLineWidth(10.0f);
 
-    scene = new Scene(this, physicsSystem);
+    scene = new Scene(this);
     lastFrame = std::chrono::steady_clock::now();
 }
 
@@ -41,8 +38,7 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
-    physicsSystem->step(deltaTime);
-    scene->processInput(deltaTime);
+    scene->update(deltaTime);
     scene->draw();
 
     // FPS tracking
@@ -89,7 +85,7 @@ void OpenGLWindow::setMouseCaptured(bool captured) {
     mouseCaptured = captured;
     if (captured) {
         mouseLastPosBeforeCapture = QCursor::pos();
-        setCursor(Qt::BlankCursor);    // hide the OS cursor
+        setCursor(Qt::BlankCursor);
     } else {
         setCursor(Qt::ArrowCursor);
         QCursor::setPos(mouseLastPosBeforeCapture);

@@ -6,7 +6,7 @@
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
 
-Scene::Scene(OpenGLWindow* win, Physics::PhysicsSystem* physicsSys) : window(win), physicsSystem(physicsSys), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
+Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
@@ -93,6 +93,11 @@ void Scene::draw() {
     hoveredIDs.clear();
 }
 
+void Scene::update(float dt) {
+    physicsSystem->step(dt);
+    processInput(dt);
+}
+
 MathUtils::Ray Scene::getMouseRay() {
     QPointF mousePos = window->getMousePos();
     QSize fbSize = window->getFramebufferSize();
@@ -131,17 +136,6 @@ IPickable *Scene::findFistHit(const std::vector<IPickable *> &objects, const Mat
 }
 
 void Scene::processInput(float dt) {
-    // Mouse stuff
-    QPointF mousePos = window->getMousePos();
-    double mouseCurrX = mousePos.x();
-    double mouseCurrY = mousePos.y();
-
-    bool hasMoved = (std::abs(mouseCurrX - mouseLastX) > 1e-2 || std::abs(mouseCurrY - mouseLastY) > 1e-2);
-    mouseDragging = (window->isMouseButtonHeld(Qt::LeftButton) || window->isMouseButtonHeld(Qt::RightButton)) && hasMoved;
-
-    mouseLastX = mouseCurrX;
-    mouseLastY = mouseCurrY;
-
     if (window->isKeyPressed(Qt::Key_Escape))
         qApp->quit();
 
@@ -170,13 +164,6 @@ void Scene::processInput(float dt) {
         }
     }
 
-    // if (window->isMouseCaptured()) {
-    //     if (camera.firstMouse) {
-    //         camera.handleMouseMovement(mouseLastXBeforeCapture, mouseLastYBeforeCapture);
-    //     } else
-    //     camera.handleMouseMovement(mouseLastX, mouseLastY);
-    // }
-
     if (window->isKeyPressed(Qt::Key_A))
         camera.processKeyboard(Movement::LEFT, dt);
     if (window->isKeyPressed(Qt::Key_D))
@@ -201,9 +188,6 @@ void Scene::handleMouseButton(int button, int action, int mods) {
     if (button == Qt::RightButton) {
         if (mouseRightHeld && !mouseCaptured) {
             mouseCaptured = true;
-            QPointF mousePos = window->getMousePos();
-            mouseLastXBeforeCapture = mousePos.x();
-            mouseLastYBeforeCapture = mousePos.y();
             window->setMouseCaptured(true);
             camera.resetMouse();
         }
@@ -221,7 +205,6 @@ void Scene::handleMouseButton(int button, int action, int mods) {
         IPickable* clickedObject = findFistHit(pickableObjects, ray, closestDistance, currentGizmo);
 
         if (clickedObject) {
-            mouseDragging = false;
             clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
         }
     } else if (!mouseLeftHeld) {

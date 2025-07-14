@@ -24,9 +24,9 @@ public:
     uint32_t getObjectID() const override;
     void handleRelease();
     void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
-    Mesh* getMesh() const override {return handles[0]->getMesh();}
-    glm::mat4 getModelMatrix() const override {return glm::mat4(1.0f);}
-    bool getIsDragging() {return isDragging;}
+    Mesh* getMesh() const override { return handles[0]->getMesh(); }
+    glm::mat4 getModelMatrix() const override { return glm::mat4(1.0f); }
+    bool getIsDragging() { return isDragging; }
 
     SceneObject* getTarget();
     IHandle* getActiveHandle() {return activeHandle;}

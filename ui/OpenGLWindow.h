@@ -65,5 +65,4 @@ private:
     bool mouseCaptured = false;
 
     Scene* scene;
-    Physics::PhysicsSystem* physicsSystem;
 };

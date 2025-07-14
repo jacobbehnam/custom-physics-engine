@@ -24,26 +24,25 @@ glm::mat4 Camera::getProjMatrix() const {
 );
 }
 
-void Camera::handleMouseMovement(double xpos, double ypos) {
-    if (firstMouse) {
-        lastX = (float)xpos;
-        lastY = (float)ypos;
-        firstMouse = false;
-    }
-
-    // Calculate movement offset
-    float xoffset = (float)xpos - lastX;
-    float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = (float)xpos;
-    lastY = (float)ypos;
-
-    processMouseMovement(xoffset, yoffset);
-}
+// void Camera::handleMouseMovement(double xpos, double ypos) {
+//     if (firstMouse) {
+//         lastX = (float)xpos;
+//         lastY = (float)ypos;
+//         firstMouse = false;
+//     }
+//
+//     // Calculate movement offset
+//     float xoffset = (float)xpos - lastX;
+//     float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
+//
+//     lastX = (float)xpos;
+//     lastY = (float)ypos;
+//
+//     processMouseMovement(xoffset, yoffset);
+// }
 
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-    std::cout << xoffset << " " << yoffset << std::endl;
     yaw += xoffset * mouseSensitivity;
     pitch += yoffset * mouseSensitivity;
 
