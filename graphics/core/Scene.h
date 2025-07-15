@@ -23,10 +23,9 @@ public:
     void draw();
     void update(float dt);
 
-    SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
-
     template<typename T>
     void addObject(T* obj);
+    void deleteSceneObject(SceneObject* obj);
 
     uint32_t allocateObjectID();
     void freeObjectID(uint32_t objID);

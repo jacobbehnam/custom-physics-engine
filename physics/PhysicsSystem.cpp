@@ -1,6 +1,6 @@
 #include "PhysicsSystem.h"
 #include <iostream>
-
+#include <algorithm>
 #include "PointMass.h"
 
 namespace Physics {
@@ -9,8 +9,11 @@ namespace Physics {
 
 Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
 
-void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
-    bodies.push_back(body);
+void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
+    bodies.erase(
+        std::remove(bodies.begin(), bodies.end(), body),
+        bodies.end()
+        );
 }
 
 void Physics::PhysicsSystem::step(float dt) {

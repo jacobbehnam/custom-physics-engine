@@ -7,7 +7,7 @@
 
 #include "graphics/components/Gizmo.h"
 
-OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent), scene(nullptr) {}
+OpenGLWindow::OpenGLWindow(Scene* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}
 
 OpenGLWindow::~OpenGLWindow() {
     delete scene;
@@ -25,8 +25,8 @@ void OpenGLWindow::initializeGL() {
 
     glLineWidth(10.0f);
 
-    scene = new Scene(this);
     lastFrame = std::chrono::steady_clock::now();
+    emit glInitialized();
 }
 
 void OpenGLWindow::resizeGL(int w, int h) {
@@ -75,6 +75,7 @@ void OpenGLWindow::keyReleaseEvent(QKeyEvent* event) {
 
 void OpenGLWindow::mousePressEvent(QMouseEvent* event) {
     pressedMouseButtons.insert(event->button());
+    setFocus();
     if (scene)
         scene->handleMouseButton(event->button(), event->type(), event->modifiers()); // adapt as needed
     update();

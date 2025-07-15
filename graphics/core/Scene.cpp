@@ -9,26 +9,7 @@
 Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
-    cube->physicsBody->applyForce(glm::vec3(-1.0f, -1.0f, 0.0f));
-    SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
-
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
-}
-
-SceneObject* Scene::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3& initPos) {
-    SceneObject* primitive = nullptr;
-    switch (type) {
-        case Primitive::CUBE:
-            primitive = new SceneObject(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
-            break;
-        case Primitive::SPHERE:
-            primitive = new SceneObject(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
-            break;
-    }
-    assert(primitive != nullptr);
-
-    return primitive;
 }
 
 
@@ -229,4 +210,24 @@ void Scene::deleteGizmo() {
     pickableObjects.erase(std::remove(pickableObjects.begin(), pickableObjects.end(), currentGizmo), pickableObjects.end());
     delete currentGizmo;
     currentGizmo = nullptr;
+}
+
+void Scene::deleteSceneObject(SceneObject *obj) {
+    if (!obj) return;
+
+    drawableObjects.erase(
+        std::remove(drawableObjects.begin(), drawableObjects.end(), static_cast<IDrawable*>(obj)),
+        drawableObjects.end()
+    );
+
+    pickableObjects.erase(
+        std::remove(pickableObjects.begin(), pickableObjects.end(), static_cast<IPickable*>(obj)),
+        pickableObjects.end()
+    );
+
+    if (obj->physicsBody) {
+        physicsSystem->removeBody(obj->physicsBody);
+    }
+
+    delete obj;
 }

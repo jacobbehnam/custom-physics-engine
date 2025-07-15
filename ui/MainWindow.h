@@ -4,6 +4,8 @@
 #include <QToolBar>
 #include <QLabel>
 
+#include "graphics/core/SceneManager.h"
+
 class OpenGLWindow;
 
 class MainWindow : public QMainWindow {
@@ -17,5 +19,9 @@ public:
 
 private:
     OpenGLWindow* glWindow;
+    SceneManager* sceneManager;
+
     QLabel* fpsLabel;
+
+    void setupDockWidgets();
 };

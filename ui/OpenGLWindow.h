@@ -17,9 +17,10 @@ class OpenGLWindow : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 signals:
     void fpsUpdated(double fps);
+    void glInitialized();
 
 public:
-    explicit OpenGLWindow(QWidget* parent = nullptr);
+    explicit OpenGLWindow(Scene* scene, QWidget* parent = nullptr);
     ~OpenGLWindow();
 
     bool isKeyPressed(int qtKey) const { return pressedKeys.contains(qtKey); }
