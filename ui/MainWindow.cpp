@@ -1,7 +1,9 @@
 #include "MainWindow.h"
+
+#include <iostream>
+
 #include "OpenGLWindow.h"
 #include <QDockWidget>
-#include <QTreeWidget>
 #include <QStatusBar>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -24,15 +26,27 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         Scene* scene = new Scene(glWindow);
         sceneManager = new SceneManager(scene);
         glWindow->setScene(scene);
+        setupDockWidgets();
+        sceneManager->defaultSetup();
     });
-
-    setupDockWidgets();
 }
 
 void MainWindow::setupDockWidgets() {
     auto* hierarchyDock = new QDockWidget(tr("Objects"), this);
     hierarchyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    hierarchyTree = new QTreeWidget(hierarchyDock);  // store as member
+    hierarchyTree->setHeaderLabels({ "Name", "Type" });
+    hierarchyDock->setWidget(hierarchyTree);
+
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
+
+    connect(sceneManager, &SceneManager::objectAdded, this, [=]() {
+        auto* item = new QTreeWidgetItem();
+        item->setText(0, QString::fromStdString("Cube"));
+        item->setText(1, QString::fromStdString("SceneObject"));
+        hierarchyTree->addTopLevelItem(item);
+    });
 
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);

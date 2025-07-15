@@ -11,6 +11,8 @@ public:
     void deleteObject(SceneObject* obj);
     QVector<SceneObject*> getSceneObjects() const { return sceneObjects; }
 
+    void defaultSetup(); // TODO: prob will remove later.
+
 signals:
     void objectAdded(SceneObject* obj);
     void objectRemoved(SceneObject* obj);

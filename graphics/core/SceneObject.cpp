@@ -17,7 +17,6 @@ SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhys
     if (wantPhysics) {
         physicsBody = new Physics::PointMass(1.0f, position);
     }
-    ownerScene->addObject(this);
 }
 
 SceneObject::~SceneObject() {

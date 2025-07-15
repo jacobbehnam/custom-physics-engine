@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QToolBar>
 #include <QLabel>
+#include <QTreeWidget>
 
 #include "graphics/core/SceneManager.h"
 
@@ -21,6 +22,7 @@ private:
     OpenGLWindow* glWindow;
     SceneManager* sceneManager;
 
+    QTreeWidget* hierarchyTree;
     QLabel* fpsLabel;
 
     void setupDockWidgets();
