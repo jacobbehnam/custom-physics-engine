@@ -52,7 +52,7 @@ void Scene::draw() {
     cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
     float closestT;
-    IPickable* hovered = findFistHit(pickableObjects, getMouseRay(), closestT, currentGizmo);
+    IPickable* hovered = findFirstHit(pickableObjects, getMouseRay(), closestT, currentGizmo);
 
     if (hovered != nullptr) {
         hoveredIDs.insert(hovered->getObjectID());
@@ -111,7 +111,7 @@ MathUtils::Ray Scene::getMouseRay() {
     };
 }
 
-IPickable *Scene::findFistHit(const std::vector<IPickable *> &objects, const MathUtils::Ray &ray, float &outT, IPickable *priority) {
+IPickable *Scene::findFirstHit(const std::vector<IPickable *> &objects, const MathUtils::Ray &ray, float &outT, IPickable *priority) {
     outT = std::numeric_limits<float>::infinity();
     IPickable* best = nullptr;
 
@@ -136,6 +136,7 @@ IPickable *Scene::findFistHit(const std::vector<IPickable *> &objects, const Mat
 }
 
 void Scene::processInput(float dt) {
+    // TODO: make a separate input handler class?
     if (window->isKeyPressed(Qt::Key_Escape))
         qApp->quit();
 
@@ -155,13 +156,10 @@ void Scene::processInput(float dt) {
         }
     }
 
-    if (currentGizmo) {
-        currentGizmo->draw();
-        if (currentGizmo->getIsDragging()) {
-            hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
-            MathUtils::Ray ray = getMouseRay();
-            currentGizmo->handleDrag(ray.origin, ray.dir);
-        }
+    if (currentGizmo && currentGizmo->getIsDragging()) {
+        hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
+        MathUtils::Ray ray = getMouseRay();
+        currentGizmo->handleDrag(ray.origin, ray.dir);
     }
 
     if (window->isKeyPressed(Qt::Key_A))
@@ -181,35 +179,31 @@ void Scene::processInput(float dt) {
     }
 }
 
-void Scene::handleMouseButton(int button, int action, int mods) {
-    mouseLeftHeld = (button == Qt::LeftButton && action == QEvent::MouseButtonPress);
-    mouseRightHeld = (button == Qt::RightButton && action == QEvent::MouseButtonPress);
+void Scene::handleMouseButton(Qt::MouseButton button, QEvent::Type eventType, Qt::KeyboardModifiers mods) {
+    const bool isPress = (eventType == QEvent::MouseButtonPress);
+    const bool isRelease = (eventType == QEvent::MouseButtonRelease);
 
     if (button == Qt::RightButton) {
-        if (mouseRightHeld && !mouseCaptured) {
-            mouseCaptured = true;
+        if (isPress && !window->isMouseCaptured()) {
             window->setMouseCaptured(true);
             camera.resetMouse();
-        }
-        else if (!mouseRightHeld && mouseCaptured) {
-            mouseCaptured = false;
+        } else if (isRelease && window->isMouseCaptured()) {
             window->setMouseCaptured(false);
             camera.resetMouse();
         }
     }
-    else if (mouseLeftHeld) {
-        // Get cursor as ray in world space
-        MathUtils::Ray ray = getMouseRay();
 
-        float closestDistance = std::numeric_limits<float>::max();
-        IPickable* clickedObject = findFistHit(pickableObjects, ray, closestDistance, currentGizmo);
-
-        if (clickedObject) {
-            clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
-        }
-    } else if (!mouseLeftHeld) {
-        if (currentGizmo)
+    if (button == Qt::LeftButton) {
+        if (isPress) {
+            MathUtils::Ray ray = getMouseRay();
+            float closestDistance = std::numeric_limits<float>::max();
+            IPickable* clickedObject = findFirstHit(pickableObjects, ray, closestDistance, currentGizmo);
+            if (clickedObject) {
+                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
+            }
+        } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
+        }
     }
 }
 

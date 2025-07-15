@@ -32,7 +32,7 @@ public:
     void freeObjectID(uint32_t objID);
 
     void processInput(float dt);
-    void handleMouseButton(int button, int action, int mods);
+    void handleMouseButton(Qt::MouseButton button, QEvent::Type eventType, Qt::KeyboardModifiers mods);
 
     void setGizmoFor(SceneObject* newTarget, bool redraw = false);
     void deleteGizmo();
@@ -40,7 +40,7 @@ public:
     Camera* getCamera();
 private:
     MathUtils::Ray getMouseRay();
-    IPickable* findFistHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority = nullptr);
+    static IPickable* findFirstHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority = nullptr);
 
     OpenGLWindow* window;
     Camera camera;
@@ -59,11 +59,6 @@ private:
     std::unordered_set<int32_t> hoveredIDs;
 
     std::unique_ptr<Physics::PhysicsSystem> physicsSystem;
-
-    // Mouse logic
-    bool mouseLeftHeld = false;
-    bool mouseRightHeld = false;
-    bool mouseCaptured = false;
 };
 
 template<typename T>

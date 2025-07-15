@@ -16,6 +16,7 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
+
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,
     //                           GLsizei length, const GLchar* message, const void* userParam) {
@@ -41,22 +42,28 @@ void OpenGLWindow::paintGL() {
     scene->update(deltaTime);
     scene->draw();
 
-    // FPS tracking
-    static int frameCount = 0;
-    static std::chrono::steady_clock::time_point lastFpsUpdate = currentFrame;
-
-    frameCount++;
-
-    std::chrono::duration<double> fpsDuration = currentFrame - lastFpsUpdate;
-    if (fpsDuration.count() >= 1.0) {  // Every second
-        double fps = frameCount / fpsDuration.count();
-        emit fpsUpdated(fps);
-        frameCount = 0;
-        lastFpsUpdate = currentFrame;
-    }
+    double fps = calculateFPS();
+    emit fpsUpdated(fps);
 
     update();
 }
+
+double OpenGLWindow::calculateFPS() {
+    static int frameCount = 0;
+    static double fps = 0.0f;
+    static std::chrono::steady_clock::time_point lastFpsUpdate = lastFrame;
+
+    frameCount++;
+
+    std::chrono::duration<double> fpsDuration = lastFrame - lastFpsUpdate;
+    if (fpsDuration.count() >= 0.1) {  // Every 100 milliseconds
+        fps = frameCount / fpsDuration.count();
+        frameCount = 0;
+        lastFpsUpdate = lastFrame;
+    }
+    return fps;
+}
+
 
 void OpenGLWindow::keyPressEvent(QKeyEvent* event) {
     pressedKeys.insert(event->key());
@@ -67,14 +74,14 @@ void OpenGLWindow::keyReleaseEvent(QKeyEvent* event) {
 }
 
 void OpenGLWindow::mousePressEvent(QMouseEvent* event) {
+    pressedMouseButtons.insert(event->button());
     if (scene)
-        scene->handleMouseButton(event->button(), event->type(), 0); // adapt as needed
+        scene->handleMouseButton(event->button(), event->type(), event->modifiers()); // adapt as needed
     update();
 }
 
 void OpenGLWindow::mouseReleaseEvent(QMouseEvent* event) {
-    if (event->button() == Qt::LeftButton) mouseLeftHeld = false;
-    if (event->button() == Qt::RightButton) mouseRightHeld = false;
+    pressedMouseButtons.remove(event->button());
 
     if (scene)
         scene->handleMouseButton(event->button(), QEvent::MouseButtonRelease, event->modifiers());
@@ -90,12 +97,6 @@ void OpenGLWindow::setMouseCaptured(bool captured) {
         setCursor(Qt::ArrowCursor);
         QCursor::setPos(mouseLastPosBeforeCapture);
     }
-}
-
-bool OpenGLWindow::isMouseButtonHeld(Qt::MouseButton button) const {
-    if (button == Qt::LeftButton) return mouseLeftHeld;
-    if (button == Qt::RightButton) return mouseRightHeld;
-    return false;
 }
 
 void OpenGLWindow::handleRawMouseDelta(int dx, int dy) {

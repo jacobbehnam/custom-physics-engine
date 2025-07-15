@@ -34,7 +34,7 @@ public:
 
     bool isMouseCaptured() const { return mouseCaptured; }
 
-    bool isMouseButtonHeld(Qt::MouseButton button) const;
+    bool isMouseButtonHeld(Qt::MouseButton button) const { return pressedMouseButtons.contains(button); };
 
     void handleRawMouseDelta(int dx, int dy);
 
@@ -52,17 +52,16 @@ private:
     std::chrono::steady_clock::time_point lastFrame;
 
     QSet<int> pressedKeys;
+    QSet<Qt::MouseButton> pressedMouseButtons;
     bool mouseLeftHeld = false;
     bool mouseRightHeld = false;
 
-    double mouseLastX = 0.0f;
-    double mouseLastY = 0.0f;
-    double mouseLastXBeforeCapture = 0.0f;
-    double mouseLastYBeforeCapture = 0.0f;
     QPoint mouseLastPosBeforeCapture;
 
     bool firstMouse = false;
     bool mouseCaptured = false;
 
     Scene* scene;
+
+    double calculateFPS();
 };
