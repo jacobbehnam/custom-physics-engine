@@ -7,7 +7,9 @@
 #include <QSet>
 #include <QCursor>
 #include <chrono>
+#include <graphics/utils/MathUtils.h>
 
+#include "graphics/core/SceneManager.h"
 #include "physics/PhysicsSystem.h"
 
 class Scene;
@@ -30,6 +32,7 @@ public:
     QSize getFramebufferSize() const { return size(); }
 
     void setScene(Scene* sc) { scene = sc; }
+    void setSceneManager(SceneManager* scm) { sceneManager = scm; }
 
     void setMouseCaptured(bool captured);
 
@@ -63,6 +66,8 @@ private:
     bool mouseCaptured = false;
 
     Scene* scene;
+    SceneManager* sceneManager;
 
     double calculateFPS();
+    MathUtils::Ray getMouseRay();
 };

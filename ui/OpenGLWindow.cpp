@@ -30,6 +30,7 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::resizeGL(int w, int h) {
+    // TODO: camera should be in SceneManager
     glViewport(0, 0, w, h);
     scene->getCamera()->setAspectRatio(static_cast<float>(w) / h);
 }
@@ -41,13 +42,30 @@ void OpenGLWindow::paintGL() {
     lastFrame = currentFrame;
 
     scene->update(deltaTime);
-    scene->draw();
+
+    MathUtils::Ray ray = getMouseRay();
+    sceneManager->updateHoverState(ray);
+    scene->draw(sceneManager->hoveredIDs);
 
     double fps = calculateFPS();
     emit fpsUpdated(fps);
 
     update();
 }
+
+MathUtils::Ray OpenGLWindow::getMouseRay() {
+    QPointF mousePos = getMousePos();
+    QSize fbSize = getFramebufferSize();
+
+    return {
+        scene->getCamera()->position,
+        MathUtils::screenToWorldRayDirection(
+            mousePos.x(), mousePos.y(),
+            fbSize.width(), fbSize.height(),
+            scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
+    };
+}
+
 
 double OpenGLWindow::calculateFPS() {
     static int frameCount = 0;

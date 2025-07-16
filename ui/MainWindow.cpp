@@ -27,9 +27,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 void MainWindow::onGLInitialized() {
-    Scene* scene = new Scene(glWindow);
+    scene = new Scene(glWindow);
     sceneManager = new SceneManager(scene);
     glWindow->setScene(scene);
+    glWindow->setSceneManager(sceneManager);
     setupDockWidgets();
     sceneManager->defaultSetup();
 }
@@ -41,13 +42,15 @@ void MainWindow::setupDockWidgets() {
     hierarchyTree = new QTreeWidget(hierarchyDock);  // store as member
     hierarchyTree->setHeaderLabels({ "Name", "Type" });
     hierarchyDock->setWidget(hierarchyTree);
+    connect(hierarchyTree, &QTreeWidget::itemSelectionChanged, this, &MainWindow::onHierarchyItemSelected);
 
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
 
-    connect(sceneManager, &SceneManager::objectAdded, this, [=]() {
+    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) {
         auto* item = new QTreeWidgetItem();
         item->setText(0, QString::fromStdString("Cube"));
         item->setText(1, QString::fromStdString("SceneObject"));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(obj));
         hierarchyTree->addTopLevelItem(item);
     });
 
@@ -57,6 +60,18 @@ void MainWindow::setupDockWidgets() {
 
 }
 
+void MainWindow::onHierarchyItemSelected() {
+    QTreeWidgetItem* selectedItem = hierarchyTree->currentItem();
+    if (selectedItem) {
+        QString name = selectedItem->text(0);
+        qDebug() << "Selected:" << name;
+
+        QVariant var = selectedItem->data(0, Qt::UserRole);
+        void* ptr = var.value<void*>();
+        SceneObject* sceneObject = static_cast<SceneObject*>(ptr);
+        scene->setHoveredFor(sceneObject, true);
+    }
+}
 
 MainWindow::~MainWindow() {
     // automatically handled

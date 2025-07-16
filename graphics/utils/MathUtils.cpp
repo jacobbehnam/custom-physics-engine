@@ -54,4 +54,28 @@ namespace MathUtils {
 
         return glm::normalize(glm::vec3(worldDir4));
     }
+
+    IPickable* findFirstHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority) {
+        outT = std::numeric_limits<float>::infinity();
+        IPickable* best = nullptr;
+
+        for (IPickable* obj : objects) {
+            float t;
+            if (!obj->rayIntersection(ray.origin, ray.dir, t))
+                continue;
+
+            // If this is the priority object, take it immediately
+            if (obj == priority) {
+                outT = t;
+                return obj;
+            }
+
+            if (t < outT) {
+                outT = t;
+                best = obj;
+            }
+        }
+
+        return best;
+    }
 }

@@ -20,8 +20,10 @@ public:
 
 private slots:
     void onGLInitialized();
+    void onHierarchyItemSelected();
 
 private:
+    Scene* scene;
     OpenGLWindow* glWindow;
     SceneManager* sceneManager;
 

@@ -6,6 +6,8 @@
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "ui/OpenGLWindow.h"
+
 Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
@@ -25,19 +27,22 @@ void Scene::freeObjectID(uint32_t objID) {
     freeIDs.push_back(objID);
 }
 
-void Scene::draw() {
+void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
     cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
-    float closestT;
-    IPickable* hovered = findFirstHit(pickableObjects, getMouseRay(), closestT, currentGizmo);
-
-    if (hovered != nullptr) {
-        hoveredIDs.insert(hovered->getObjectID());
-    }
+    // float closestT;
+    // IPickable* hovered = findFirstHit(pickableObjects, getMouseRay(), closestT, currentGizmo);
+    //
+    // MathUtils::Ray ray = getMouseRay();
+    // sceneManager->updateHover(ray, currentGizmo);
+    //
+    // if (hovered != nullptr) {
+    //     hoveredIDs.insert(hovered->getObjectID());
+    // }
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
@@ -71,7 +76,8 @@ void Scene::draw() {
         obj->draw();
     }
 
-    hoveredIDs.clear();
+    // if (hovered)
+    //     hoveredIDs.erase(hovered->getObjectID());
 }
 
 void Scene::update(float dt) {
@@ -92,28 +98,15 @@ MathUtils::Ray Scene::getMouseRay() {
     };
 }
 
-IPickable *Scene::findFirstHit(const std::vector<IPickable *> &objects, const MathUtils::Ray &ray, float &outT, IPickable *priority) {
-    outT = std::numeric_limits<float>::infinity();
-    IPickable* best = nullptr;
-
-    for (IPickable* obj : objects) {
-        float t;
-        if (!obj->rayIntersection(ray.origin, ray.dir, t))
-            continue;
-
-        // If this is the priority object, take it immediately
-        if (obj == priority) {
-            outT = t;
-            return obj;
-        }
-
-        if (t < outT) {
-            outT = t;
-            best = obj;
-        }
+void Scene::setHoveredFor(SceneObject *obj, bool flag) {
+    assert(obj);
+    uint32_t objID = obj->getObjectID();
+    if (flag) {
+        if (hoveredIDs.find(objID) == hoveredIDs.end())
+            hoveredIDs.insert(objID);
+    } else {
+        hoveredIDs.erase(objID);
     }
-
-    return best;
 }
 
 void Scene::processInput(float dt) {

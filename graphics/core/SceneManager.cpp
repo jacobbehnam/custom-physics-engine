@@ -24,8 +24,9 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool 
             break;
     }
     assert(primitive != nullptr);
-    sceneObjects.append(primitive);
-    scene->addObject(primitive);
+    sceneObjects.push_back(primitive);
+    addDrawable(primitive);
+    addPickable(primitive);
     emit objectAdded(primitive);
 
     return primitive;
@@ -40,4 +41,14 @@ void SceneManager::deleteObject(SceneObject *obj) {
 
     scene->deleteSceneObject(obj);
     emit objectRemoved(obj);
+}
+
+void SceneManager::updateHoverState(const MathUtils::Ray &mouseRay) {
+    hoveredIDs.clear();
+
+    float closestT;
+    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, closestT);
+    if (hovered) {
+        hoveredIDs.insert(hovered->getObjectID());
+    }
 }

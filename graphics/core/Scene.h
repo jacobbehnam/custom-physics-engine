@@ -8,23 +8,21 @@
 #include <deque>
 #include <unordered_set>
 #include <GLFW/glfw3.h>
+#include <QEvent>
 
-#include "ui/OpenGLWindow.h"
+class OpenGLWindow;
 
-enum class Primitive {
-    CUBE,
-    SPHERE
-};
 
 class Scene {
 public:
     Scene(OpenGLWindow* win);
     ~Scene() = default;
-    void draw();
+    void draw(const std::unordered_set<uint32_t>& hoverIDs);
     void update(float dt);
 
     template<typename T>
     void addObject(T* obj);
+    void addDrawable(IDrawable* obj) { drawableObjects.push_back(obj); }
     void deleteSceneObject(SceneObject* obj);
 
     uint32_t allocateObjectID();
@@ -36,10 +34,11 @@ public:
     void setGizmoFor(SceneObject* newTarget, bool redraw = false);
     void deleteGizmo();
 
+    void setHoveredFor(SceneObject* obj, bool flag);
+
     Camera* getCamera();
 private:
     MathUtils::Ray getMouseRay();
-    static IPickable* findFirstHit(const std::vector<IPickable*>& objects, const MathUtils::Ray& ray, float &outT, IPickable* priority = nullptr);
 
     OpenGLWindow* window;
     Camera camera;
