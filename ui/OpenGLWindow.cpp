@@ -41,7 +41,8 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
-    scene->update(deltaTime);
+    scene->physicsSystem->step(deltaTime);
+    sceneManager->processHeldKeys(pressedKeys, deltaTime);
 
     MathUtils::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
@@ -95,16 +96,16 @@ void OpenGLWindow::keyReleaseEvent(QKeyEvent* event) {
 void OpenGLWindow::mousePressEvent(QMouseEvent* event) {
     pressedMouseButtons.insert(event->button());
     setFocus();
-    if (scene)
-        scene->handleMouseButton(event->button(), event->type(), event->modifiers()); // adapt as needed
+    if (sceneManager)
+        sceneManager->handleMouseButton(event->button(), event->type(), event->modifiers()); // adapt as needed
     update();
 }
 
 void OpenGLWindow::mouseReleaseEvent(QMouseEvent* event) {
     pressedMouseButtons.remove(event->button());
 
-    if (scene)
-        scene->handleMouseButton(event->button(), QEvent::MouseButtonRelease, event->modifiers());
+    if (sceneManager)
+        sceneManager->handleMouseButton(event->button(), QEvent::MouseButtonRelease, event->modifiers());
     update();
 }
 

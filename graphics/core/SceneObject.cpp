@@ -7,9 +7,10 @@
 #include <graphics/utils/MathUtils.h>
 
 #include "physics/PointMass.h"
+#include <graphics/core/SceneManager.h>
 
-SceneObject::SceneObject(Scene* scene, Mesh *meshPtr, Shader *sdr, bool wantPhysics, const glm::vec3& initPos)
-    : mesh(meshPtr), shader(sdr), ownerScene(scene), objectID(scene->allocateObjectID()), position(initPos) {
+SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, bool wantPhysics, const glm::vec3& initPos)
+    : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), position(initPos) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
@@ -110,7 +111,7 @@ bool SceneObject::rayIntersection(glm::vec3 orig, glm::vec3 dir, float &outT) {
 }
 
 void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
-    ownerScene->setGizmoFor(this);
+    sceneManager->setGizmoFor(this);
 }
 
 void SceneObject::setPosition(const glm::vec3 &pos) {

@@ -18,10 +18,19 @@ public:
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
     void addDrawable(IDrawable* obj) { scene->addDrawable(obj); }
+    void removePickable(IPickable* obj);
+    void removeDrawable(IDrawable* obj) { scene->removeDrawable(obj); }
     void updateHoverState(const MathUtils::Ray& mouseRay);
+
+    void processHeldKeys(QSet<int> heldKeys, float dt);
+    void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods);
+    void setGizmoFor(SceneObject *newTarget, bool redraw = false);
+    void deleteCurrentGizmo();
 
     void defaultSetup(); // TODO: prob will remove later.
     std::unordered_set<uint32_t> hoveredIDs, selectedIDs; // TODO: dont make public
+
+    Scene* scene; // TODO: move
 
 signals:
     void objectAdded(SceneObject* obj);
@@ -29,7 +38,11 @@ signals:
     void objectRenamed(SceneObject* obj, const QString& oldName);
 
 private:
-    Scene* scene;
     std::vector<SceneObject*> sceneObjects;
     std::vector<IPickable*> pickableObjects;
+
+    GizmoType selectedGizmoType = GizmoType::TRANSLATE;
+    std::unique_ptr<Gizmo> currentGizmo;
+
+    MathUtils::Ray getMouseRay();
 };

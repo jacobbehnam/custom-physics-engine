@@ -2,15 +2,17 @@
 
 #include <iostream>
 #include <graphics/utils/MathUtils.h>
-#include <graphics/core/Scene.h>
 #include <graphics/components/TranslateHandle.h>
 #include <graphics/components/RotateHandle.h>
 
 #include "ScaleHandle.h"
 #include "graphics/core/ResourceManager.h"
+#include "graphics/core/SceneManager.h"
 
-Gizmo::Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(scene), objectID(scene->allocateObjectID()){
-    scene->addObject(this);
+Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
+    Scene* scene = sceneManager->scene;
+    sceneManager->addDrawable(this);
+    sceneManager->addPickable(this);
 
     shader = ResourceManager::loadShader("../shaders/gizmo/gizmo.vert", "../shaders/gizmo/gizmo.frag", "gizmo");
 

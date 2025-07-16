@@ -8,7 +8,7 @@
 
 #include "ui/OpenGLWindow.h"
 
-Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), currentGizmo(nullptr), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
+Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
 }
@@ -80,10 +80,10 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs) {
     //     hoveredIDs.erase(hovered->getObjectID());
 }
 
-void Scene::update(float dt) {
-    physicsSystem->step(dt);
-    processInput(dt);
-}
+// void Scene::update(float dt) {
+//     physicsSystem->step(dt);
+//     processInput(dt);
+// }
 
 MathUtils::Ray Scene::getMouseRay() {
     QPointF mousePos = window->getMousePos();
@@ -109,100 +109,8 @@ void Scene::setHoveredFor(SceneObject *obj, bool flag) {
     }
 }
 
-void Scene::processInput(float dt) {
-    // TODO: make a separate input handler class?
-    if (window->isKeyPressed(Qt::Key_Escape))
-        qApp->quit();
-
-    static const std::unordered_map<int, GizmoType> keyToGizmoType = {
-        {Qt::Key_T, GizmoType::TRANSLATE},
-        {Qt::Key_R, GizmoType::ROTATE},
-        {Qt::Key_E, GizmoType::SCALE}
-    };
-
-    for (auto& [key, type] : keyToGizmoType) {
-        if (window->isKeyPressed(key)) {
-            GizmoType oldType = selectedGizmoType;
-            selectedGizmoType = type;
-            if (currentGizmo && oldType != selectedGizmoType)
-                setGizmoFor(currentGizmo->getTarget(), true);
-            break;
-        }
-    }
-
-    if (currentGizmo && currentGizmo->getIsDragging()) {
-        hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
-        MathUtils::Ray ray = getMouseRay();
-        currentGizmo->handleDrag(ray.origin, ray.dir);
-    }
-
-    if (window->isKeyPressed(Qt::Key_A))
-        camera.processKeyboard(Movement::LEFT, dt);
-    if (window->isKeyPressed(Qt::Key_D))
-        camera.processKeyboard(Movement::RIGHT, dt);
-    if (window->isKeyPressed(Qt::Key_W))
-        camera.processKeyboard(Movement::FORWARD, dt);
-    if (window->isKeyPressed(Qt::Key_S))
-        camera.processKeyboard(Movement::BACKWARD, dt);
-
-    if (window->isKeyPressed(Qt::Key_Z)) {
-        physicsSystem->enablePhysics();
-    }
-    if (window->isKeyPressed(Qt::Key_X)) {
-        physicsSystem->disablePhysics();
-    }
-}
-
-void Scene::handleMouseButton(Qt::MouseButton button, QEvent::Type eventType, Qt::KeyboardModifiers mods) {
-    const bool isPress = (eventType == QEvent::MouseButtonPress);
-    const bool isRelease = (eventType == QEvent::MouseButtonRelease);
-
-    if (button == Qt::RightButton) {
-        if (isPress && !window->isMouseCaptured()) {
-            window->setMouseCaptured(true);
-            camera.resetMouse();
-        } else if (isRelease && window->isMouseCaptured()) {
-            window->setMouseCaptured(false);
-            camera.resetMouse();
-        }
-    }
-
-    if (button == Qt::LeftButton) {
-        if (isPress) {
-            MathUtils::Ray ray = getMouseRay();
-            float closestDistance = std::numeric_limits<float>::max();
-            IPickable* clickedObject = findFirstHit(pickableObjects, ray, closestDistance, currentGizmo);
-            if (clickedObject) {
-                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
-            }
-        } else if (isRelease && currentGizmo) {
-            currentGizmo->handleRelease();
-        }
-    }
-}
-
 Camera *Scene::getCamera() {
     return &camera;
-}
-
-void Scene::setGizmoFor(SceneObject *newTarget, bool redraw) {
-    if (currentGizmo) {
-        if (currentGizmo->getTarget() == newTarget && redraw == false) {
-            deleteGizmo();
-        } else {
-            deleteGizmo();
-            currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
-        }
-    } else {
-        currentGizmo = new Gizmo(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
-    }
-}
-
-void Scene::deleteGizmo() {
-    drawableObjects.erase(std::remove(drawableObjects.begin(), drawableObjects.end(), currentGizmo), drawableObjects.end());
-    pickableObjects.erase(std::remove(pickableObjects.begin(), pickableObjects.end(), currentGizmo), pickableObjects.end());
-    delete currentGizmo;
-    currentGizmo = nullptr;
 }
 
 void Scene::deleteSceneObject(SceneObject *obj) {
@@ -213,14 +121,15 @@ void Scene::deleteSceneObject(SceneObject *obj) {
         drawableObjects.end()
     );
 
-    pickableObjects.erase(
-        std::remove(pickableObjects.begin(), pickableObjects.end(), static_cast<IPickable*>(obj)),
-        pickableObjects.end()
-    );
-
     if (obj->physicsBody) {
         physicsSystem->removeBody(obj->physicsBody);
     }
 
     delete obj;
+}
+
+void Scene::removeDrawable(IDrawable *obj) {
+    drawableObjects.erase(
+        std::remove(drawableObjects.begin(), drawableObjects.end(), obj),
+        drawableObjects.end());
 }

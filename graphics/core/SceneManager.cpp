@@ -1,5 +1,9 @@
 #include "SceneManager.h"
+
+#include <iostream>
+
 #include "graphics/core/ResourceManager.h"
+#include "ui/OpenGLWindow.h"
 
 SceneManager::SceneManager(Scene *scn) : scene(scn) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
@@ -12,15 +16,14 @@ void SceneManager::defaultSetup() {
     SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
 }
 
-
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3 &initPos) {
     SceneObject* primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
-            primitive = new SceneObject(scene, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
+            primitive = new SceneObject(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
             break;
         case Primitive::SPHERE:
-            primitive = new SceneObject(scene, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
+            primitive = new SceneObject(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
             break;
     }
     assert(primitive != nullptr);
@@ -43,12 +46,127 @@ void SceneManager::deleteObject(SceneObject *obj) {
     emit objectRemoved(obj);
 }
 
+MathUtils::Ray SceneManager::getMouseRay() {
+    QPointF mousePos = scene->getWindow()->getMousePos();
+    QSize fbSize = scene->getWindow()->getFramebufferSize();
+
+    return {
+        scene->getCamera()->position,
+        MathUtils::screenToWorldRayDirection(
+            mousePos.x(), mousePos.y(),
+            fbSize.width(), fbSize.height(),
+            scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
+    };
+}
+
 void SceneManager::updateHoverState(const MathUtils::Ray &mouseRay) {
     hoveredIDs.clear();
 
     float closestT;
-    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, closestT);
+    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, closestT, currentGizmo.get());
     if (hovered) {
         hoveredIDs.insert(hovered->getObjectID());
     }
+}
+
+void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods) {
+    const bool isPress = (type == QEvent::MouseButtonPress);
+    const bool isRelease = (type == QEvent::MouseButtonRelease);
+    OpenGLWindow* window = scene->getWindow();
+    Camera* camera = scene->getCamera();
+
+    if (button == Qt::RightButton) {
+        if (isPress && !window->isMouseCaptured()) {
+            window->setMouseCaptured(true);
+            camera->resetMouse();
+        } else if (isRelease && window->isMouseCaptured()) {
+            window->setMouseCaptured(false);
+            camera->resetMouse();
+        }
+    }
+
+    if (button == Qt::LeftButton) {
+        if (isPress) {
+            MathUtils::Ray ray = getMouseRay();
+            float closestDistance = std::numeric_limits<float>::max();
+            IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
+            if (clickedObject) {
+                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
+            }
+        } else if (isRelease && currentGizmo) {
+            currentGizmo->handleRelease();
+        }
+    }
+}
+
+void SceneManager::processHeldKeys(QSet<int> heldKeys, float dt) {
+    std::cout << "hi" << std::endl;
+    OpenGLWindow* window = scene->getWindow();
+    Camera* camera = scene->getCamera();
+
+    if (heldKeys.contains(Qt::Key_Escape))
+        qApp->quit();
+
+    static const std::unordered_map<int, GizmoType> keyToGizmoType = {
+        {Qt::Key_T, GizmoType::TRANSLATE},
+        {Qt::Key_R, GizmoType::ROTATE},
+        {Qt::Key_E, GizmoType::SCALE}
+    };
+
+    for (auto& [key, type] : keyToGizmoType) {
+        if (heldKeys.contains(key)) {
+            GizmoType oldType = selectedGizmoType;
+            selectedGizmoType = type;
+            if (currentGizmo && oldType != selectedGizmoType)
+                setGizmoFor(currentGizmo->getTarget(), true);
+            break;
+        }
+    }
+
+    if (currentGizmo && currentGizmo->getIsDragging()) {
+        hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
+        MathUtils::Ray ray = getMouseRay();
+        currentGizmo->handleDrag(ray.origin, ray.dir);
+    }
+
+    if (heldKeys.contains(Qt::Key_A))
+        camera->processKeyboard(Movement::LEFT, dt);
+    if (heldKeys.contains(Qt::Key_D))
+        camera->processKeyboard(Movement::RIGHT, dt);
+    if (heldKeys.contains(Qt::Key_W))
+        camera->processKeyboard(Movement::FORWARD, dt);
+    if (heldKeys.contains(Qt::Key_S))
+        camera->processKeyboard(Movement::BACKWARD, dt);
+
+    if (heldKeys.contains(Qt::Key_Z)) {
+        scene->physicsSystem->enablePhysics();
+    }
+    if (heldKeys.contains(Qt::Key_X)) {
+        scene->physicsSystem->disablePhysics();
+    }
+}
+
+void SceneManager::setGizmoFor(SceneObject *newTarget, bool redraw) {
+    if (currentGizmo) {
+        if (currentGizmo->getTarget() == newTarget && redraw == false) {
+            deleteCurrentGizmo();
+        } else {
+            deleteCurrentGizmo();
+            currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
+        }
+    } else {
+        currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
+    }
+}
+
+void SceneManager::deleteCurrentGizmo() {
+    removeDrawable(currentGizmo.get());
+    removePickable(currentGizmo.get());
+    currentGizmo.reset();
+}
+
+void SceneManager::removePickable(IPickable *obj) {
+    pickableObjects.erase(
+        std::remove(pickableObjects.begin(), pickableObjects.end(), obj),
+        pickableObjects.end());
 }

@@ -9,6 +9,7 @@
 #include "physics/PhysicsSystem.h"
 
 class Scene;
+class SceneManager;
 namespace Physics {
     class RigidBody;
 }
@@ -16,7 +17,7 @@ namespace Physics {
 // TODO: put setters and getter definitions in the header files
 class SceneObject : public IDrawable, public IPickable{
 public:
-    SceneObject(Scene* scene, Mesh* meshPtr, Shader *sdr, bool wantPhysics = false, const glm::vec3& initPos = glm::vec3{0.0f});
+    SceneObject(SceneManager* sceneManager, Mesh* meshPtr, Shader *sdr, bool wantPhysics = false, const glm::vec3& initPos = glm::vec3{0.0f});
     ~SceneObject();
 
     void draw() const override;
@@ -46,6 +47,7 @@ private:
     Mesh* mesh;
     Shader* shader;
     Scene* ownerScene;
+    SceneManager* sceneManager;
 
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};

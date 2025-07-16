@@ -4,6 +4,8 @@
 #include <graphics/core/Camera.h>
 #include <graphics/interfaces/IHandle.h>
 
+class SceneManager;
+
 enum class GizmoType {
     TRANSLATE,
     ROTATE,
@@ -12,7 +14,7 @@ enum class GizmoType {
 
 class Gizmo : public IDrawable, public IPickable{
 public:
-    Gizmo(GizmoType type, Scene* scene, Mesh* mesh, SceneObject* tgt);
+    Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject* tgt);
     ~Gizmo();
 
     void draw() const override;
