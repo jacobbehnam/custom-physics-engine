@@ -26,17 +26,16 @@ public:
     Camera(glm::vec3 initPosition);
 
     glm::mat4 getViewMatrix() const;
-
     glm::mat4 getProjMatrix() const;
 
+    void setAspectRatio(float ratio) { aspectRatio = ratio; }
+
     void resetMouse();
-    void handleMouseMovement(double xpos, double ypos);
     void processMouseMovement(float xoffset, float yoffset);
 
     void processKeyboard(Movement direction, float deltaTime);
 
     bool firstMouse  = true;
 private:
-    float lastX      = 0.0f;
-    float lastY      = 0.0f;
+    float aspectRatio;
 };

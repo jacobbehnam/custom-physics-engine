@@ -18,6 +18,9 @@ public:
 
     OpenGLWindow* getGlWindow() { return glWindow; }
 
+private slots:
+    void onGLInitialized();
+
 private:
     OpenGLWindow* glWindow;
     SceneManager* sceneManager;

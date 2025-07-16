@@ -31,6 +31,7 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
+    scene->getCamera()->setAspectRatio(static_cast<float>(w) / h);
 }
 
 void OpenGLWindow::paintGL() {

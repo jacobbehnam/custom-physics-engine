@@ -20,15 +20,18 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     statusBar()->addPermanentWidget(fpsLabel);
 
     connect(glWindow, &OpenGLWindow::fpsUpdated, this, [this](double fps) {
-    fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 1)); });
-
-    connect(glWindow, &OpenGLWindow::glInitialized, this, [=]() {
-        Scene* scene = new Scene(glWindow);
-        sceneManager = new SceneManager(scene);
-        glWindow->setScene(scene);
-        setupDockWidgets();
-        sceneManager->defaultSetup();
+        fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 1));
     });
+
+    connect(glWindow, &OpenGLWindow::glInitialized, this, &MainWindow::onGLInitialized);
+}
+
+void MainWindow::onGLInitialized() {
+    Scene* scene = new Scene(glWindow);
+    sceneManager = new SceneManager(scene);
+    glWindow->setScene(scene);
+    setupDockWidgets();
+    sceneManager->defaultSetup();
 }
 
 void MainWindow::setupDockWidgets() {
