@@ -52,6 +52,13 @@ unsigned int Shader::compileShader(GLenum type, const std::string &source) const
 
 void Shader::use() const {
     funcs->glUseProgram(ID);
+
+    GLuint idxHover  = funcs->glGetUniformBlockIndex(ID, "hoverData");
+
+    // selectData → binding = 2
+    GLuint idxSelect = funcs->glGetUniformBlockIndex(ID, "selectData");
+
+    std::cout << idxHover << ", " << idxSelect << std::endl;
 }
 
 void Shader::setBool(const std::string &name, bool value) const {

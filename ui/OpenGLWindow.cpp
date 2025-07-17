@@ -46,7 +46,7 @@ void OpenGLWindow::paintGL() {
 
     MathUtils::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
-    scene->draw(sceneManager->hoveredIDs);
+    scene->draw(sceneManager->hoveredIDs, sceneManager->selectedIDs);
 
     double fps = calculateFPS();
     emit fpsUpdated(fps);

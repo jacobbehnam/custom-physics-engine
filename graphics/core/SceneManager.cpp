@@ -92,6 +92,7 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
             IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
             if (clickedObject) {
                 clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
+                selectedIDs.insert(clickedObject->getObjectID());
             }
         } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
@@ -100,7 +101,6 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
 }
 
 void SceneManager::processHeldKeys(QSet<int> heldKeys, float dt) {
-    std::cout << "hi" << std::endl;
     OpenGLWindow* window = scene->getWindow();
     Camera* camera = scene->getCamera();
 

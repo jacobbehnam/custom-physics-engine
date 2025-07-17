@@ -17,7 +17,7 @@ class Scene {
 public:
     Scene(OpenGLWindow* win);
     ~Scene() = default;
-    void draw(const std::unordered_set<uint32_t>& hoverIDs);
+    void draw(const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
     void update(float dt);
 
     template<typename T>
@@ -46,6 +46,7 @@ private:
 
     UniformBuffer cameraUBO;
     UniformBuffer hoverUBO;
+    UniformBuffer selectUBO;
 
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
