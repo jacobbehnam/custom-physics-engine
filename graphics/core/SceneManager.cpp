@@ -86,16 +86,26 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
     }
 
     if (button == Qt::LeftButton) {
+        MathUtils::Ray ray = getMouseRay();
+        float closestDistance = std::numeric_limits<float>::max();
+        IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
+
         if (isPress) {
-            MathUtils::Ray ray = getMouseRay();
-            float closestDistance = std::numeric_limits<float>::max();
-            IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
-            if (clickedObject) {
+            if (clickedObject && (selectedIDs.empty() || (currentGizmo && clickedObject->getObjectID() == currentGizmo->getObjectID()))) {
                 clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
                 selectedIDs.insert(clickedObject->getObjectID());
+            } else { // If we select a non gizmo not currently selected, clear the selection list and select it.
+                selectedIDs.clear();
+                if (currentGizmo)
+                    deleteCurrentGizmo();
+                if (clickedObject) {
+                    clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
+                    selectedIDs.insert(clickedObject->getObjectID());
+                }
             }
         } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
+            selectedIDs.erase(currentGizmo->getObjectID());
         }
     }
 }
