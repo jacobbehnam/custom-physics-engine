@@ -16,6 +16,8 @@ public:
     void deleteObject(SceneObject* obj);
     std::vector<SceneObject*> getSceneObjects() const { return sceneObjects; }
 
+    void addToPhysicsSystem(IPhysicsBody* body) const;
+
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
     void addDrawable(IDrawable* obj) { scene->addDrawable(obj); }
     void removePickable(IPickable* obj);
@@ -23,7 +25,7 @@ public:
     void updateHoverState(const MathUtils::Ray& mouseRay);
     void setSelectFor(SceneObject *obj, bool flag);
 
-    void processHeldKeys(QSet<int> heldKeys, float dt);
+    void processHeldKeys(const QSet<int> &heldKeys, float dt);
     void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods);
     void setGizmoFor(SceneObject *newTarget, bool redraw = false);
     void deleteCurrentGizmo();

@@ -5,6 +5,9 @@
 #include "OpenGLWindow.h"
 #include <QDockWidget>
 #include <QStatusBar>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QCheckBox>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
@@ -57,6 +60,17 @@ void MainWindow::setupDockWidgets() {
 
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    // Create a container widget
+    QWidget* inspectorWidget = new QWidget;
+    QFormLayout* layout = new QFormLayout(inspectorWidget); // assign layout to this widget
+
+    layout->addRow("Name:", new QLineEdit);
+    layout->addRow("Visible:", new QCheckBox);
+
+    // Set the widget into the dock
+    inspectorDock->setWidget(inspectorWidget);
+
+    // Add the dock to the window
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 }
 
@@ -94,6 +108,7 @@ void MainWindow::changeHierarchyItemSelected(SceneObject* obj) {
         void* ptr = var.value<void*>();
         if (ptr == obj) {
             hierarchyTree->setCurrentItem(item);
+            // Above will then call onHierarchyItemSelected
             break;
         }
     }

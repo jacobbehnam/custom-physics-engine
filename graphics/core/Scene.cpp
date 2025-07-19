@@ -41,10 +41,8 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unor
 
     std::vector<glm::ivec4> selectVec(1024, glm::ivec4(0));
     for (uint32_t id : selectedIDs) {
-        std::cout << id << ",";
         selectVec[id] = glm::ivec4(1);
     }
-    std::cout << std::endl;
 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
     selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));

@@ -35,6 +35,11 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool 
     return primitive;
 }
 
+void SceneManager::addToPhysicsSystem(IPhysicsBody *body) const {
+    if (scene->physicsSystem)
+        scene->physicsSystem->addBody(body);
+}
+
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
@@ -114,8 +119,7 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
     }
 }
 
-void SceneManager::processHeldKeys(QSet<int> heldKeys, float dt) {
-    OpenGLWindow* window = scene->getWindow();
+void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     Camera* camera = scene->getCamera();
 
     if (heldKeys.contains(Qt::Key_Escape))
