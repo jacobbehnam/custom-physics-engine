@@ -89,19 +89,23 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
         MathUtils::Ray ray = getMouseRay();
         float closestDistance = std::numeric_limits<float>::max();
         IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
+        const bool clickedCurrentGizmo = clickedObject && currentGizmo && (clickedObject->getObjectID() == currentGizmo->getObjectID());
 
         if (isPress) {
-            if (clickedObject && (selectedIDs.empty() || (currentGizmo && clickedObject->getObjectID() == currentGizmo->getObjectID()))) {
-                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
-                selectedIDs.insert(clickedObject->getObjectID());
-            } else { // If we select a non gizmo not currently selected, clear the selection list and select it.
+            if (!(clickedObject && (selectedIDs.empty() || clickedCurrentGizmo))) {
+                // If we select a non gizmo not currently selected, clear the selection list and delete the gizmo
                 selectedIDs.clear();
                 if (currentGizmo)
                     deleteCurrentGizmo();
-                if (clickedObject) {
-                    clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
-                    selectedIDs.insert(clickedObject->getObjectID());
-                }
+            }
+            if (clickedObject) {
+                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
+                selectedIDs.insert(clickedObject->getObjectID());
+                if (!clickedCurrentGizmo)
+                    // Fine with dynamic cast here because this method is not executed often
+                    emit selectedItem(dynamic_cast<SceneObject*>(clickedObject));
+            } else {
+                emit selectedItem(nullptr); // Deselect all items in hierarchy
             }
         } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
@@ -166,6 +170,17 @@ void SceneManager::setGizmoFor(SceneObject *newTarget, bool redraw) {
         }
     } else {
         currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
+    }
+}
+
+void SceneManager::setSelectFor(SceneObject *obj, bool flag) {
+    assert(obj);
+    uint32_t objID = obj->getObjectID();
+    if (flag) {
+        if (selectedIDs.find(objID) == hoveredIDs.end())
+            selectedIDs.insert(objID);
+    } else {
+        selectedIDs.erase(objID);
     }
 }
 

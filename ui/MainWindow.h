@@ -21,6 +21,7 @@ public:
 private slots:
     void onGLInitialized();
     void onHierarchyItemSelected();
+    void changeHierarchyItemSelected(SceneObject* obj);
 
 private:
     Scene* scene;
@@ -28,6 +29,7 @@ private:
     SceneManager* sceneManager;
 
     QTreeWidget* hierarchyTree;
+    QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
 
     void setupDockWidgets();

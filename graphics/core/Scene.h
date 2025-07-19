@@ -29,8 +29,6 @@ public:
     uint32_t allocateObjectID();
     void freeObjectID(uint32_t objID);
 
-    void setHoveredFor(SceneObject* obj, bool flag);
-
     Camera* getCamera();
     OpenGLWindow* getWindow() { return window; }
 

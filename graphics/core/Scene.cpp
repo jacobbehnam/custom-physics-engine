@@ -96,17 +96,6 @@ MathUtils::Ray Scene::getMouseRay() {
     };
 }
 
-void Scene::setHoveredFor(SceneObject *obj, bool flag) {
-    assert(obj);
-    uint32_t objID = obj->getObjectID();
-    if (flag) {
-        if (hoveredIDs.find(objID) == hoveredIDs.end())
-            hoveredIDs.insert(objID);
-    } else {
-        hoveredIDs.erase(objID);
-    }
-}
-
 Camera *Scene::getCamera() {
     return &camera;
 }

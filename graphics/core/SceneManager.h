@@ -21,6 +21,7 @@ public:
     void removePickable(IPickable* obj);
     void removeDrawable(IDrawable* obj) { scene->removeDrawable(obj); }
     void updateHoverState(const MathUtils::Ray& mouseRay);
+    void setSelectFor(SceneObject *obj, bool flag);
 
     void processHeldKeys(QSet<int> heldKeys, float dt);
     void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods);
@@ -36,6 +37,8 @@ signals:
     void objectAdded(SceneObject* obj);
     void objectRemoved(SceneObject* obj);
     void objectRenamed(SceneObject* obj, const QString& oldName);
+
+    void selectedItem(SceneObject* object);
 
 private:
     std::vector<SceneObject*> sceneObjects;

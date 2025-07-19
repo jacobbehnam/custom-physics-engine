@@ -53,25 +53,52 @@ void MainWindow::setupDockWidgets() {
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(obj));
         hierarchyTree->addTopLevelItem(item);
     });
+    connect(sceneManager, &SceneManager::selectedItem, this, &MainWindow::changeHierarchyItemSelected);
 
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
-
 }
 
 void MainWindow::onHierarchyItemSelected() {
-    QTreeWidgetItem* selectedItem = hierarchyTree->currentItem();
-    if (selectedItem) {
-        QString name = selectedItem->text(0);
-        qDebug() << "Selected:" << name;
+    QTreeWidgetItem* currentItem = hierarchyTree->currentItem();
 
-        QVariant var = selectedItem->data(0, Qt::UserRole);
+    if (previousItem && previousItem != currentItem) {
+        QVariant var = previousItem->data(0, Qt::UserRole);
         void* ptr = var.value<void*>();
-        SceneObject* sceneObject = static_cast<SceneObject*>(ptr);
-        scene->setHoveredFor(sceneObject, true);
+        SceneObject* previousObject = static_cast<SceneObject*>(ptr);
+        sceneManager->setSelectFor(previousObject, false);
+    }
+
+    if (currentItem) {
+        QVariant var = currentItem->data(0, Qt::UserRole);
+        void* ptr = var.value<void*>();
+        SceneObject* currentObject = static_cast<SceneObject*>(ptr);
+        sceneManager->setSelectFor(currentObject, true);
+        sceneManager->setGizmoFor(currentObject, true);
+    }
+
+    previousItem = currentItem;
+}
+
+void MainWindow::changeHierarchyItemSelected(SceneObject* obj) {
+    if (!obj) { // nullptr is the indicator for "deselect all items in hierarchy"
+        hierarchyTree->setCurrentItem(nullptr);
+        hierarchyTree->clearSelection();
+        return;
+    }
+
+    for (int i = 0; i < hierarchyTree->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = hierarchyTree->topLevelItem(i);
+        QVariant var = item->data(0, Qt::UserRole);
+        void* ptr = var.value<void*>();
+        if (ptr == obj) {
+            hierarchyTree->setCurrentItem(item);
+            break;
+        }
     }
 }
+
 
 MainWindow::~MainWindow() {
     // automatically handled
