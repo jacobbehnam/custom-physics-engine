@@ -8,6 +8,7 @@
 #include "graphics/core/SceneManager.h"
 
 class OpenGLWindow;
+class InspectorWidget;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -31,6 +32,8 @@ private:
     QTreeWidget* hierarchyTree;
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
+
+    InspectorWidget* inspector;
 
     void setupDockWidgets();
 };

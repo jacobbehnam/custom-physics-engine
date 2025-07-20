@@ -117,6 +117,9 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 
 void SceneObject::setPosition(const glm::vec3 &pos) {
     position = pos;
+    if (physicsBody) {
+        physicsBody->setPosition(pos);
+    }
 }
 
 void SceneObject::setRotation(const glm::vec3 &euler) {

@@ -72,7 +72,9 @@ add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
         ui/RawInputFilter.cpp
         ui/RawInputFilter.h
         graphics/core/SceneManager.cpp
-        graphics/core/SceneManager.h)
+        graphics/core/SceneManager.h
+        ui/InspectorWidget.cpp
+        ui/InspectorWidget.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

@@ -9,6 +9,8 @@
 #include <QLineEdit>
 #include <QCheckBox>
 
+#include "InspectorWidget.h"
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
 
@@ -58,19 +60,10 @@ void MainWindow::setupDockWidgets() {
     });
     connect(sceneManager, &SceneManager::selectedItem, this, &MainWindow::changeHierarchyItemSelected);
 
+    inspector = new InspectorWidget(this);
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    // Create a container widget
-    QWidget* inspectorWidget = new QWidget;
-    QFormLayout* layout = new QFormLayout(inspectorWidget); // assign layout to this widget
-
-    layout->addRow("Name:", new QLineEdit);
-    layout->addRow("Visible:", new QCheckBox);
-
-    // Set the widget into the dock
-    inspectorDock->setWidget(inspectorWidget);
-
-    // Add the dock to the window
+    inspectorDock->setWidget(inspector);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 }
 
@@ -90,6 +83,8 @@ void MainWindow::onHierarchyItemSelected() {
         SceneObject* currentObject = static_cast<SceneObject*>(ptr);
         sceneManager->setSelectFor(currentObject, true);
         sceneManager->setGizmoFor(currentObject, true);
+        inspector->loadObject(currentObject);
+
     }
 
     previousItem = currentItem;
@@ -113,7 +108,6 @@ void MainWindow::changeHierarchyItemSelected(SceneObject* obj) {
         }
     }
 }
-
 
 MainWindow::~MainWindow() {
     // automatically handled
