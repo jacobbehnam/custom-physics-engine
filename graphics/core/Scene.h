@@ -15,7 +15,7 @@ class OpenGLWindow;
 
 class Scene {
 public:
-    Scene(OpenGLWindow* win);
+    Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
     void draw(const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
     void update(float dt);
@@ -30,13 +30,12 @@ public:
     void freeObjectID(uint32_t objID);
 
     Camera* getCamera();
-    OpenGLWindow* getWindow() { return window; }
 
     std::unique_ptr<Physics::PhysicsSystem> physicsSystem; // TODO: move
 private:
     MathUtils::Ray getMouseRay();
+    QOpenGLFunctions_4_5_Core* funcs;
 
-    OpenGLWindow* window;
     Camera camera;
     std::vector<IDrawable*> drawableObjects;
 

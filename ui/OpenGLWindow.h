@@ -15,7 +15,7 @@
 class Scene;
 namespace Physics { class PhysicsSystem; }
 
-class OpenGLWindow : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
+class OpenGLWindow : public QOpenGLWidget, public QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 signals:
     void fpsUpdated(double fps);

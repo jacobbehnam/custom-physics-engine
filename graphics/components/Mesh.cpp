@@ -2,12 +2,10 @@
 #include <vector>
 #include <iostream>
 
-Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &idx)
-    : indexCount(idx.size()), vertices(verts), indices(idx), localAABB(){
+Mesh::Mesh(const std::vector<Vertex> &verts, const std::vector<unsigned int> &idx, QOpenGLFunctions_4_5_Core* glFuncs)
+    : indexCount(idx.size()), vertices(verts), indices(idx), funcs(glFuncs), localAABB(){
     assert(QOpenGLContext::currentContext() != nullptr && "GL context is NOT current during Mesh construction!");
-
-    funcs = new QOpenGLFunctions_4_5_Core;
-    funcs->initializeOpenGLFunctions();
+    assert(funcs != nullptr);
 
     funcs->glGenVertexArrays(1, &VAO);
     assert(VAO != 0 && "VAO generation failed — is GL context current?");

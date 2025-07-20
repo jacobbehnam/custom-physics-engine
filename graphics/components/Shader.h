@@ -5,7 +5,7 @@
 
 class Shader {
 public:
-    Shader(const std::string &vertexPath, const std::string &fragmentPath);
+    Shader(const std::string &vertexPath, const std::string &fragmentPath, QOpenGLFunctions_4_5_Core* glFuncs);
 
     void use() const;
 

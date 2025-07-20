@@ -6,12 +6,18 @@
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/gtc/constants.hpp>
 
+void ResourceManager::initialize(QOpenGLFunctions_4_5_Core *funcs) {
+    glFuncs = funcs;
+}
+
 Shader* ResourceManager::loadShader(const std::string &vShaderPath, const std::string &fShaderPath, const std::string &name) {
-    return &shaders.try_emplace(name, vShaderPath, fShaderPath).first->second;
+    assert(glFuncs && "QOpenGLFunctions not initialized!");
+    return &shaders.try_emplace(name, vShaderPath, fShaderPath, glFuncs).first->second;
 }
 
 Mesh* ResourceManager::loadMesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& idx, const std::string &name) {
-    return &meshes.try_emplace(name, verts, idx).first->second;
+    assert(glFuncs && "QOpenGLFunctions not initialized!");
+    return &meshes.try_emplace(name, verts, idx, glFuncs).first->second;
 }
 
 Mesh *ResourceManager::loadMeshFromOBJ(const std::string &path, const std::string &name) {
@@ -196,6 +202,6 @@ void ResourceManager::loadPrimSphere() {
     loadMesh(vertices, indices, "prim_sphere");
 }
 
-
+QOpenGLFunctions_4_5_Core* ResourceManager::glFuncs = nullptr;
 std::unordered_map<std::string, Mesh> ResourceManager::meshes;
 std::unordered_map<std::string, Shader> ResourceManager::shaders;

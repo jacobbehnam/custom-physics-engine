@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
 void MainWindow::onGLInitialized() {
     scene = new Scene(glWindow);
-    sceneManager = new SceneManager(scene);
+    sceneManager = new SceneManager(glWindow, scene);
     glWindow->setScene(scene);
     glWindow->setSceneManager(sceneManager);
     setupDockWidgets();

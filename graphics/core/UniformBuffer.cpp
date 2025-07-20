@@ -2,10 +2,9 @@
 #include <iostream>
 #include <glm/vec4.hpp>
 
-UniformBuffer::UniformBuffer(unsigned int size, unsigned int bindingPoint)
-    : binding(bindingPoint), bufferSize(size) {
-    funcs = new QOpenGLFunctions_4_5_Core;
-    funcs->initializeOpenGLFunctions();
+UniformBuffer::UniformBuffer(unsigned int size, unsigned int bindingPoint, QOpenGLFunctions_4_5_Core* glFuncs)
+    : binding(bindingPoint), bufferSize(size), funcs(glFuncs) {
+
     funcs->glGenBuffers(1, &id);
     funcs->glBindBuffer(GL_UNIFORM_BUFFER, id);
     funcs->glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);

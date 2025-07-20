@@ -26,15 +26,12 @@ SceneObject::~SceneObject() {
 }
 
 glm::mat4 SceneObject::getModelMatrix() const{
+    glm::vec3 currentPosition = position;
     if (physicsBody) {
-        glm::mat4 model(1.0f);
-        model = glm::translate(model, physicsBody->getPosition());
-        model = model * glm::mat4_cast(orientation);
-        model = glm::scale(model, scale);
-        return model;
+        currentPosition = physicsBody->getPosition();
     }
     glm::mat4 model(1.0f);
-    model = glm::translate(model, position);
+    model = glm::translate(model, currentPosition);
     model = model * glm::mat4_cast(orientation);
     model = glm::scale(model, scale);
     return model;
@@ -116,9 +113,10 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 }
 
 void SceneObject::setPosition(const glm::vec3 &pos) {
-    position = pos;
     if (physicsBody) {
         physicsBody->setPosition(pos);
+    } else {
+        position = pos;
     }
 }
 

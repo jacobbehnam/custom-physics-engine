@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "graphics/components/Gizmo.h"
+#include "graphics/core/ResourceManager.h"
 
 OpenGLWindow::OpenGLWindow(Scene* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}
 
@@ -15,6 +16,7 @@ OpenGLWindow::~OpenGLWindow() {
 
 void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
+    ResourceManager::initialize(this); // inherits from QOpenGLFunctions so can be cast to it
     glEnable(GL_DEPTH_TEST);
 
     // glEnable(GL_DEBUG_OUTPUT);

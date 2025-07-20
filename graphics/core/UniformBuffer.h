@@ -3,7 +3,7 @@
 
 class UniformBuffer {
 public:
-    UniformBuffer(unsigned int size, unsigned int bindingPoint);
+    UniformBuffer(unsigned int size, unsigned int bindingPoint, QOpenGLFunctions_4_5_Core* glFuncs);
     ~UniformBuffer();
 
     void bind() const;

@@ -4,10 +4,7 @@
 #include <sstream>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
-    funcs = new QOpenGLFunctions_4_5_Core;
-    funcs->initializeOpenGLFunctions();
-
+Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs) {
     std::string vertexCode = loadFile(vertexPath);
     std::string fragmentCode = loadFile(fragmentPath);
 

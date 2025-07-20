@@ -5,7 +5,7 @@
 #include "graphics/core/ResourceManager.h"
 #include "ui/OpenGLWindow.h"
 
-SceneManager::SceneManager(Scene *scn) : scene(scn) {
+SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
 }
 
@@ -52,8 +52,8 @@ void SceneManager::deleteObject(SceneObject *obj) {
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {
-    QPointF mousePos = scene->getWindow()->getMousePos();
-    QSize fbSize = scene->getWindow()->getFramebufferSize();
+    QPointF mousePos = window->getMousePos();
+    QSize fbSize = window->getFramebufferSize();
 
     return {
         scene->getCamera()->position,
@@ -77,7 +77,6 @@ void SceneManager::updateHoverState(const MathUtils::Ray &mouseRay) {
 void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods) {
     const bool isPress = (type == QEvent::MouseButtonPress);
     const bool isRelease = (type == QEvent::MouseButtonRelease);
-    OpenGLWindow* window = scene->getWindow();
     Camera* camera = scene->getCamera();
 
     if (button == Qt::RightButton) {

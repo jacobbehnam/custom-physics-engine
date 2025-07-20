@@ -8,11 +8,10 @@
 
 #include "ui/OpenGLWindow.h"
 
-Scene::Scene(OpenGLWindow* win) : window(win), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0), hoverUBO(sizeof(glm::ivec4) * 1024, 1), selectUBO(sizeof(glm::ivec4) * 1024, 2) {
+Scene::Scene(QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0, funcs), hoverUBO(sizeof(glm::ivec4) * 1024, 1, funcs), selectUBO(sizeof(glm::ivec4) * 1024, 2, funcs) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
 }
-
 
 uint32_t Scene::allocateObjectID() {
     if (!freeIDs.empty()) {
@@ -80,19 +79,6 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unor
 //     physicsSystem->step(dt);
 //     processInput(dt);
 // }
-
-MathUtils::Ray Scene::getMouseRay() {
-    QPointF mousePos = window->getMousePos();
-    QSize fbSize = window->getFramebufferSize();
-
-    return {
-        camera.position,
-        MathUtils::screenToWorldRayDirection(
-            mousePos.x(), mousePos.y(),
-            fbSize.width(), fbSize.height(),
-            camera.getViewMatrix(), camera.getProjMatrix())
-    };
-}
 
 Camera *Scene::getCamera() {
     return &camera;

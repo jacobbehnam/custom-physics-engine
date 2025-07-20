@@ -11,7 +11,7 @@ class SceneManager : public QObject {
     Q_OBJECT
 
 public:
-    explicit SceneManager(Scene* scene);
+    SceneManager(OpenGLWindow* win, Scene* scene);
     SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
     void deleteObject(SceneObject* obj);
     std::vector<SceneObject*> getSceneObjects() const { return sceneObjects; }
@@ -43,6 +43,8 @@ signals:
     void selectedItem(SceneObject* object);
 
 private:
+    OpenGLWindow* window;
+
     std::vector<SceneObject*> sceneObjects;
     std::vector<IPickable*> pickableObjects;
 

@@ -33,7 +33,7 @@ namespace std {
 
 class Mesh {
 public:
-    Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& idx);
+    Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& idx, QOpenGLFunctions_4_5_Core* funcs);
     ~Mesh();
     void draw() const;
     void drawInstanced(const std::vector<InstanceData>& instances);
