@@ -43,7 +43,7 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
-    scene->physicsSystem->step(deltaTime);
+    sceneManager->stepPhysics(deltaTime);
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
 
     MathUtils::Ray ray = getMouseRay();

@@ -24,12 +24,8 @@ set(CMAKE_WIN32_EXECUTABLE FALSE)
 # === GLM ===
 find_package(glm CONFIG REQUIRED)  # << Added this line
 
-# === GLAD ===
-set(GLAD_DIR "${CMAKE_SOURCE_DIR}/glad")
-include_directories("${GLAD_DIR}/include")
-
 # add glad.c to your target
-add_executable(OpenGLApp main.cpp "${GLAD_DIR}/src/glad.c"
+add_executable(OpenGLApp main.cpp
         graphics/components/Mesh.cpp
         graphics/core/SceneObject.cpp
         graphics/core/SceneObject.h

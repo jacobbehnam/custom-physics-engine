@@ -5,7 +5,7 @@
 #include "graphics/core/ResourceManager.h"
 #include "ui/OpenGLWindow.h"
 
-SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn) {
+SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
 }
 
@@ -14,41 +14,51 @@ void SceneManager::defaultSetup() {
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
     cube->physicsBody->applyForce(glm::vec3(-1.0f, -1.0f, 0.0f));
     SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
+    deleteObject(cube2);
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3 &initPos) {
-    SceneObject* primitive = nullptr;
+    std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
-            primitive = new SceneObject(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
             break;
         case Primitive::SPHERE:
-            primitive = new SceneObject(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
             break;
     }
     assert(primitive != nullptr);
-    sceneObjects.push_back(primitive);
-    addDrawable(primitive);
-    addPickable(primitive);
-    emit objectAdded(primitive);
+    SceneObject* ptr = primitive.get();
 
-    return primitive;
-}
+    sceneObjects.push_back(std::move(primitive));
 
-void SceneManager::addToPhysicsSystem(IPhysicsBody *body) const {
-    if (scene->physicsSystem)
-        scene->physicsSystem->addBody(body);
+    addDrawable(ptr);
+    addPickable(ptr);
+    emit objectAdded(ptr);
+
+    return ptr;
 }
 
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
-    sceneObjects.erase(
-        std::remove(sceneObjects.begin(), sceneObjects.end(), obj),
-        sceneObjects.end());
+    if (obj->physicsBody) {
+        physicsSystem->removeBody(obj->physicsBody);
+    }
+    pickableObjects.erase(
+        std::remove(pickableObjects.begin(), pickableObjects.end(), static_cast<IPickable*>(obj)),
+        pickableObjects.end()
+    );
+    scene->removeDrawable(obj);
 
-    scene->deleteSceneObject(obj);
-    emit objectRemoved(obj);
+    auto it = std::find_if(sceneObjects.begin(), sceneObjects.end(),
+    [obj](const std::unique_ptr<SceneObject>& ptr) {
+        return ptr.get() == obj;
+    });
+
+    if (it != sceneObjects.end()) {
+        sceneObjects.erase(it);
+    }
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {
@@ -156,10 +166,10 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
         camera->processKeyboard(Movement::BACKWARD, dt);
 
     if (heldKeys.contains(Qt::Key_Z)) {
-        scene->physicsSystem->enablePhysics();
+        physicsSystem->enablePhysics();
     }
     if (heldKeys.contains(Qt::Key_X)) {
-        scene->physicsSystem->disablePhysics();
+        physicsSystem->disablePhysics();
     }
 }
 

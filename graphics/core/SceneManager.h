@@ -14,9 +14,9 @@ public:
     SceneManager(OpenGLWindow* win, Scene* scene);
     SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
     void deleteObject(SceneObject* obj);
-    std::vector<SceneObject*> getSceneObjects() const { return sceneObjects; }
 
-    void addToPhysicsSystem(IPhysicsBody* body) const;
+    void addToPhysicsSystem(IPhysicsBody* body) const {physicsSystem->addBody(body);}
+    void stepPhysics(float dt) const {physicsSystem->step(dt);}
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
     void addDrawable(IDrawable* obj) { scene->addDrawable(obj); }
@@ -43,9 +43,11 @@ signals:
     void selectedItem(SceneObject* object);
 
 private:
+    std::unique_ptr<Physics::PhysicsSystem> physicsSystem;
+
     OpenGLWindow* window;
 
-    std::vector<SceneObject*> sceneObjects;
+    std::vector<std::unique_ptr<SceneObject>> sceneObjects;
     std::vector<IPickable*> pickableObjects;
 
     GizmoType selectedGizmoType = GizmoType::TRANSLATE;

@@ -8,7 +8,7 @@
 
 #include "ui/OpenGLWindow.h"
 
-Scene::Scene(QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs), physicsSystem(std::make_unique<Physics::PhysicsSystem>()), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0, funcs), hoverUBO(sizeof(glm::ivec4) * 1024, 1, funcs), selectUBO(sizeof(glm::ivec4) * 1024, 2, funcs) {
+Scene::Scene(QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0, funcs), hoverUBO(sizeof(glm::ivec4) * 1024, 1, funcs), selectUBO(sizeof(glm::ivec4) * 1024, 2, funcs) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("../shaders/primitive/primitive.vert", "../shaders/primitive/primitive.frag", "basic");
 }
@@ -82,21 +82,6 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unor
 
 Camera *Scene::getCamera() {
     return &camera;
-}
-
-void Scene::deleteSceneObject(SceneObject *obj) {
-    if (!obj) return;
-
-    drawableObjects.erase(
-        std::remove(drawableObjects.begin(), drawableObjects.end(), static_cast<IDrawable*>(obj)),
-        drawableObjects.end()
-    );
-
-    if (obj->physicsBody) {
-        physicsSystem->removeBody(obj->physicsBody);
-    }
-
-    delete obj;
 }
 
 void Scene::removeDrawable(IDrawable *obj) {

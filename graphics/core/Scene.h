@@ -12,28 +12,20 @@
 
 class OpenGLWindow;
 
-
 class Scene {
 public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
     void draw(const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
-    void update(float dt);
 
-    template<typename T>
-    void addObject(T* obj);
     void addDrawable(IDrawable* obj) { drawableObjects.push_back(obj); }
     void removeDrawable(IDrawable* obj);
-    void deleteSceneObject(SceneObject* obj);
 
     uint32_t allocateObjectID();
     void freeObjectID(uint32_t objID);
 
     Camera* getCamera();
-
-    std::unique_ptr<Physics::PhysicsSystem> physicsSystem; // TODO: move
 private:
-    MathUtils::Ray getMouseRay();
     QOpenGLFunctions_4_5_Core* funcs;
 
     Camera camera;
@@ -47,5 +39,4 @@ private:
 
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
-    std::unordered_set<int32_t> hoveredIDs;
 };
