@@ -14,7 +14,6 @@ void SceneManager::defaultSetup() {
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
     cube->physicsBody->applyForce(glm::vec3(-1.0f, -1.0f, 0.0f));
     SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
-    deleteObject(cube2);
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3 &initPos) {

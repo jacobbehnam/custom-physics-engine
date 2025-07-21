@@ -201,7 +201,3 @@ void ResourceManager::loadPrimSphere() {
     }
     loadMesh(vertices, indices, "prim_sphere");
 }
-
-QOpenGLFunctions_4_5_Core* ResourceManager::glFuncs = nullptr;
-std::unordered_map<std::string, Mesh> ResourceManager::meshes;
-std::unordered_map<std::string, Shader> ResourceManager::shaders;

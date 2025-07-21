@@ -9,6 +9,7 @@
 
 class OpenGLWindow;
 class InspectorWidget;
+class HierarchyWidget;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -21,19 +22,18 @@ public:
 
 private slots:
     void onGLInitialized();
-    void onHierarchyItemSelected();
-    void changeHierarchyItemSelected(SceneObject* obj);
+    void onHierarchySelectionChanged(SceneObject* previous, SceneObject* current);
 
 private:
     Scene* scene;
     OpenGLWindow* glWindow;
     SceneManager* sceneManager;
 
-    QTreeWidget* hierarchyTree;
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
 
     InspectorWidget* inspector;
+    HierarchyWidget* hierarchy;
 
     void setupDockWidgets();
 };

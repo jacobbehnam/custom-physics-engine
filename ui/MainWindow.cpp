@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 
+#include "HierarchyWidget.h"
 #include "InspectorWidget.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -43,22 +44,13 @@ void MainWindow::onGLInitialized() {
 void MainWindow::setupDockWidgets() {
     auto* hierarchyDock = new QDockWidget(tr("Objects"), this);
     hierarchyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-
-    hierarchyTree = new QTreeWidget(hierarchyDock);  // store as member
-    hierarchyTree->setHeaderLabels({ "Name", "Type" });
-    hierarchyDock->setWidget(hierarchyTree);
-    connect(hierarchyTree, &QTreeWidget::itemSelectionChanged, this, &MainWindow::onHierarchyItemSelected);
-
+    hierarchy = new HierarchyWidget(this);
+    hierarchyDock->setWidget(hierarchy);
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
 
-    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) {
-        auto* item = new QTreeWidgetItem();
-        item->setText(0, QString::fromStdString("Cube"));
-        item->setText(1, QString::fromStdString("SceneObject"));
-        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(obj));
-        hierarchyTree->addTopLevelItem(item);
-    });
-    connect(sceneManager, &SceneManager::selectedItem, this, &MainWindow::changeHierarchyItemSelected);
+    connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
+    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); });
+    connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
     inspector = new InspectorWidget(this);
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
@@ -67,45 +59,14 @@ void MainWindow::setupDockWidgets() {
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 }
 
-void MainWindow::onHierarchyItemSelected() {
-    QTreeWidgetItem* currentItem = hierarchyTree->currentItem();
-
-    if (previousItem && previousItem != currentItem) {
-        QVariant var = previousItem->data(0, Qt::UserRole);
-        void* ptr = var.value<void*>();
-        SceneObject* previousObject = static_cast<SceneObject*>(ptr);
-        sceneManager->setSelectFor(previousObject, false);
+void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
+    if (previous) {
+        sceneManager->setSelectFor(previous, false);
     }
-
-    if (currentItem) {
-        QVariant var = currentItem->data(0, Qt::UserRole);
-        void* ptr = var.value<void*>();
-        SceneObject* currentObject = static_cast<SceneObject*>(ptr);
-        sceneManager->setSelectFor(currentObject, true);
-        sceneManager->setGizmoFor(currentObject, true);
-        inspector->loadObject(currentObject);
-
-    }
-
-    previousItem = currentItem;
-}
-
-void MainWindow::changeHierarchyItemSelected(SceneObject* obj) {
-    if (!obj) { // nullptr is the indicator for "deselect all items in hierarchy"
-        hierarchyTree->setCurrentItem(nullptr);
-        hierarchyTree->clearSelection();
-        return;
-    }
-
-    for (int i = 0; i < hierarchyTree->topLevelItemCount(); ++i) {
-        QTreeWidgetItem* item = hierarchyTree->topLevelItem(i);
-        QVariant var = item->data(0, Qt::UserRole);
-        void* ptr = var.value<void*>();
-        if (ptr == obj) {
-            hierarchyTree->setCurrentItem(item);
-            // Above will then call onHierarchyItemSelected
-            break;
-        }
+    if (current) {
+        sceneManager->setSelectFor(current, true);
+        sceneManager->setGizmoFor(current, true);
+        inspector->loadObject(current);
     }
 }
 

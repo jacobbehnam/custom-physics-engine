@@ -25,7 +25,7 @@ private:
     static void loadPrimCube();
     static void loadPrimSphere();
 
-    static QOpenGLFunctions_4_5_Core* glFuncs;
-    static std::unordered_map<std::string, Shader> shaders;
-    static std::unordered_map<std::string, Mesh> meshes;
+    inline static QOpenGLFunctions_4_5_Core* glFuncs = nullptr;
+    inline static std::unordered_map<std::string, Shader> shaders;
+    inline static std::unordered_map<std::string, Mesh> meshes;
 };
