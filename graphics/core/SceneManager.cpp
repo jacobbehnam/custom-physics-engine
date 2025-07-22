@@ -11,9 +11,8 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,1.0f,0.0f));
-    cube->physicsBody->applyForce(glm::vec3(-1.0f, -1.0f, 0.0f));
-    SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(-1.0f, 0.0f, 0.0f));
+    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,0.0f,0.0f));
+    cube->physicsBody->applyForce(glm::vec3(0, -9.81f, 0.0f));
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3 &initPos) {

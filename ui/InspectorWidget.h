@@ -21,4 +21,8 @@ private:
     QDoubleSpinBox* posX;
     QDoubleSpinBox* posY;
     QDoubleSpinBox* posZ;
+
+    QDoubleSpinBox* velX;
+    QDoubleSpinBox* velY;
+    QDoubleSpinBox* velZ;
 };

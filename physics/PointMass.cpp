@@ -10,8 +10,12 @@ void Physics::PointMass::applyImpulse(const glm::vec3 &impulse) {
 }
 
 void Physics::PointMass::step(float dt) {
-    velocity = velocity + (netForce/mass)*dt;
-    position = position + velocity * dt + (netForce/(2 * mass)) * dt * dt;
+    glm::vec3 acceleration = netForce / mass;
+    position += velocity * dt + 0.5f * acceleration * dt * dt;
+    glm::vec3 newAcceleration = netForce / mass; // if netForce changed during the step
+    velocity += 0.5f * (acceleration + newAcceleration) * dt;
+    if (glm::distance(velocity, glm::vec3(0.0f)) <= 0.01f)
+        std::cout << position.x << "," << position.y << "," << position.z << std::endl;
 }
 
 bool Physics::PointMass::collidesWith(const IPhysicsBody &other) const {

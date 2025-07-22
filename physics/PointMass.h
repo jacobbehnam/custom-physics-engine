@@ -18,8 +18,10 @@ namespace Physics {
         void applyImpulse(const glm::vec3& impulse);
 
         void step(float deltaTime) override;
-        glm::vec3 getPosition() const override {return position;}
-        void setPosition(const glm::vec3& pos) override {position = pos;}
+        glm::vec3 getPosition() const override { return position; }
+        void setPosition(const glm::vec3& pos) override { position = pos; }
+        glm::vec3 getVelocity() const override { return velocity; }
+        void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
 
         bool collidesWith(const IPhysicsBody& other) const override;
         bool collidesWithPointMass(const PointMass& pm) const override;
