@@ -58,6 +58,7 @@ void SceneManager::deleteObject(SceneObject *obj) {
     if (it != sceneObjects.end()) {
         sceneObjects.erase(it);
     }
+    emit objectRemoved(obj);
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {

@@ -23,6 +23,20 @@ void HierarchyWidget::addObject(SceneObject* obj) {
     tree->addTopLevelItem(item);
 }
 
+void HierarchyWidget::removeObject(SceneObject *obj) {
+    for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = tree->topLevelItem(i);
+
+        if (getObjectFromItem(item) == obj) {
+            if (item == previousItem)
+                previousItem = nullptr;
+
+            delete tree->takeTopLevelItem(i);
+            break;
+        }
+    }
+}
+
 void HierarchyWidget::selectObject(SceneObject* obj) {
     if (!obj) {
         tree->setCurrentItem(nullptr);

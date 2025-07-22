@@ -10,6 +10,7 @@ class HierarchyWidget : public QWidget {
 public:
     explicit HierarchyWidget(QWidget* parent = nullptr);
     void addObject(SceneObject* obj);
+    void removeObject(SceneObject* obj);
     //SceneObject* getSelectedObject() const;
 
     signals:

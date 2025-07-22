@@ -12,9 +12,11 @@ public:
     explicit InspectorWidget(QWidget* parent = nullptr);
 
     void loadObject(SceneObject* object);
+    void unloadObject();
 
 private:
     SceneObject* currentObject = nullptr;
+    QFormLayout* layout = nullptr;
 
     QDoubleSpinBox* posX;
     QDoubleSpinBox* posY;

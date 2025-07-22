@@ -50,6 +50,7 @@ void MainWindow::setupDockWidgets() {
 
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
     connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); });
+    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
     inspector = new InspectorWidget(this);
@@ -67,6 +68,8 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         sceneManager->setSelectFor(current, true);
         sceneManager->setGizmoFor(current, true);
         inspector->loadObject(current);
+    } else {
+        inspector->unloadObject();
     }
 }
 

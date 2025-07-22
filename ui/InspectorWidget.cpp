@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 
 InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
-    auto* layout = new QFormLayout(this);
+    layout = new QFormLayout(this);
 
     // Horizontal layout for X, Y, Z
     QWidget* positionWidget = new QWidget(this);
@@ -22,6 +22,7 @@ InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
     }
 
     layout->addRow("Position:", positionWidget);
+    layout->setRowVisible(0, false);
 
     // Connect all position spin boxes to update the object
     auto onPositionChanged = [=]() {
@@ -36,6 +37,7 @@ InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
 }
 
 void InspectorWidget::loadObject(SceneObject* object) {
+    layout->setRowVisible(0, true);
     currentObject = object;
 
     glm::vec3 pos = object->getPosition();
@@ -51,4 +53,8 @@ void InspectorWidget::loadObject(SceneObject* object) {
     posX->blockSignals(false);
     posY->blockSignals(false);
     posZ->blockSignals(false);
+}
+
+void InspectorWidget::unloadObject() {
+    layout->setRowVisible(0, false);
 }
