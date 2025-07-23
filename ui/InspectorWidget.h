@@ -3,26 +3,28 @@
 #include <QWidget>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <ui/InspectorRow.h>
 
 class SceneObject;
+
+struct PropertyRow {
+    QString label;
+    QWidget* widget;
+};
 
 class InspectorWidget : public QWidget {
     Q_OBJECT
 public:
     explicit InspectorWidget(QWidget* parent = nullptr);
 
-    void loadObject(SceneObject* object);
+    void loadObject(SceneObject* obj);
     void unloadObject();
 
 private:
     SceneObject* currentObject = nullptr;
     QFormLayout* layout = nullptr;
 
-    QDoubleSpinBox* posX;
-    QDoubleSpinBox* posY;
-    QDoubleSpinBox* posZ;
+    std::vector<InspectorRow> rows;
 
-    QDoubleSpinBox* velX;
-    QDoubleSpinBox* velY;
-    QDoubleSpinBox* velZ;
+    void clearLayout(QFormLayout* layout);
 };

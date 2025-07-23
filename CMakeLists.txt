@@ -72,7 +72,9 @@ add_executable(OpenGLApp main.cpp
         ui/InspectorWidget.cpp
         ui/InspectorWidget.h
         ui/HierarchyWidget.cpp
-        ui/HierarchyWidget.h)
+        ui/HierarchyWidget.h
+        ui/InspectorRow.cpp
+        ui/InspectorRow.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

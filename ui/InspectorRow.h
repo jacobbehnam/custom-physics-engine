@@ -1,0 +1,38 @@
+#pragma once
+#include <qstring.h>
+#include <qwidget.h>
+#include <glm/glm.hpp>
+#include <iostream>
+
+class InspectorRow {
+public:
+    template<typename Getter, typename Setter>
+    InspectorRow(const QString &lbl, Getter get, Setter set, QWidget *parent) {
+        label = lbl;
+        using ValueT = std::decay_t<decltype(get())>;
+
+        if constexpr (std::is_same_v<ValueT, bool>) {
+            std::cout << "bool" << std::endl;
+        }
+        else if constexpr (std::is_arithmetic_v<ValueT>) {
+            std::cout << "scalar" << std::endl;
+        }
+        else if constexpr (std::is_same_v<ValueT, glm::vec3>) {
+            editor = makeVec3Widget(get, set, parent);
+        }
+        else {
+            static_assert(!sizeof(ValueT), "Unsupported type");
+        }
+    }
+
+    QString getLabel() { return label; }
+    QWidget* getEditor() { return editor; }
+
+private:
+    QString label;
+    QWidget* editor = nullptr;
+    std::function<void()> pullFromObject;
+    std::function<void()> pushToObject;
+
+    QWidget* makeVec3Widget(std::function<glm::vec3()> get, std::function<void(glm::vec3)> set, QWidget* parent);
+};
