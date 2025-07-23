@@ -50,8 +50,7 @@ void OpenGLWindow::paintGL() {
     sceneManager->updateHoverState(ray);
     scene->draw(sceneManager->hoveredIDs, sceneManager->selectedIDs);
 
-    double fps = calculateFPS();
-    emit fpsUpdated(fps);
+    calculateFPS();
 
     update();
 }
@@ -70,7 +69,7 @@ MathUtils::Ray OpenGLWindow::getMouseRay() {
 }
 
 
-double OpenGLWindow::calculateFPS() {
+void OpenGLWindow::calculateFPS() {
     static int frameCount = 0;
     static double fps = 0.0f;
     static std::chrono::steady_clock::time_point lastFpsUpdate = lastFrame;
@@ -82,8 +81,8 @@ double OpenGLWindow::calculateFPS() {
         fps = frameCount / fpsDuration.count();
         frameCount = 0;
         lastFpsUpdate = lastFrame;
+        emit fpsUpdated(fps);
     }
-    return fps;
 }
 
 

@@ -68,6 +68,6 @@ private:
     Scene* scene;
     SceneManager* sceneManager;
 
-    double calculateFPS();
+    void calculateFPS();
     MathUtils::Ray getMouseRay();
 };

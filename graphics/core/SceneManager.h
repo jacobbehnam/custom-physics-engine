@@ -12,7 +12,7 @@ class SceneManager : public QObject {
 
 public:
     SceneManager(OpenGLWindow* win, Scene* scene);
-    SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics, const glm::vec3& initPos = glm::vec3(0.0f));
+    SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics);
     void deleteObject(SceneObject* obj);
 
     void addToPhysicsSystem(IPhysicsBody* body) const {physicsSystem->addBody(body);}

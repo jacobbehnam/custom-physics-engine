@@ -7,11 +7,13 @@
 
 InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
     layout = new QFormLayout(this);
+
+    refreshTimer.setInterval(100);
+    connect(&refreshTimer, &QTimer::timeout, this, &InspectorWidget::refresh);
+    refreshTimer.start();
 }
 
 void InspectorWidget::loadObject(SceneObject* obj) {
-    clearLayout(layout);
-    rows.clear();
     currentObject = obj;
 
     rows.emplace_back("Position",
@@ -25,11 +27,19 @@ void InspectorWidget::loadObject(SceneObject* obj) {
 }
 
 void InspectorWidget::unloadObject() {
-    // TODO
+    clearLayout();
+    rows.clear();
 }
 
-void InspectorWidget::clearLayout(QFormLayout* layout) {
+void InspectorWidget::clearLayout() {
     while (layout->rowCount() > 0) {
         layout->removeRow(0);
     }
 }
+
+void InspectorWidget::refresh() {
+    for (InspectorRow row : rows) {
+        row.update();
+    }
+}
+

@@ -11,18 +11,18 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true, glm::vec3(0.0f,0.0f,0.0f));
+    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true);
     cube->physicsBody->applyForce(glm::vec3(0, -9.81f, 0.0f));
 }
 
-SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics, const glm::vec3 &initPos) {
+SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics) {
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics, initPos);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics);
             break;
         case Primitive::SPHERE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics, initPos);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics);
             break;
     }
     assert(primitive != nullptr);

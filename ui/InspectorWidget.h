@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <QTimer>
 #include <ui/InspectorRow.h>
 
 class SceneObject;
@@ -20,11 +21,15 @@ public:
     void loadObject(SceneObject* obj);
     void unloadObject();
 
+private slots:
+    void refresh();
+
 private:
     SceneObject* currentObject = nullptr;
     QFormLayout* layout = nullptr;
+    QTimer refreshTimer;
 
     std::vector<InspectorRow> rows;
 
-    void clearLayout(QFormLayout* layout);
+    void clearLayout();
 };

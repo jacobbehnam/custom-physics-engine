@@ -9,14 +9,14 @@
 #include "physics/PointMass.h"
 #include <graphics/core/SceneManager.h>
 
-SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, bool wantPhysics, const glm::vec3& initPos)
-    : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), position(initPos) {
+SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, bool wantPhysics, QObject* objectParent)
+    : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
 
     if (wantPhysics) {
-        physicsBody = new Physics::PointMass(1.0f, position);
+        physicsBody = new Physics::PointMass(1.0f);
         sceneManager->addToPhysicsSystem(physicsBody);
     }
 }

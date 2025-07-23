@@ -8,7 +8,7 @@ class InspectorRow {
 public:
     template<typename Getter, typename Setter>
     InspectorRow(const QString &lbl, Getter get, Setter set, QWidget *parent) {
-        label = lbl;
+        label = lbl + ": ";
         using ValueT = std::decay_t<decltype(get())>;
 
         if constexpr (std::is_same_v<ValueT, bool>) {
@@ -27,6 +27,7 @@ public:
 
     QString getLabel() { return label; }
     QWidget* getEditor() { return editor; }
+    void update() { pullFromObject(); }
 
 private:
     QString label;
