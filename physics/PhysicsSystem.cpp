@@ -10,10 +10,12 @@ namespace Physics {
 Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
-    bodies.erase(
-        std::remove(bodies.begin(), bodies.end(), body),
-        bodies.end()
-        );
+    auto it = std::remove(bodies.begin(), bodies.end(), body);
+    if (it != bodies.end()) {
+        bodies.erase(it, bodies.end());
+    } else {
+        std::cerr << "[PhysicsSystem] Warning: Tried to remove a body not in the system.\n";
+    }
 }
 
 void Physics::PhysicsSystem::step(float dt) {

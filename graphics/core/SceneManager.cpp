@@ -12,7 +12,7 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true);
-    cube->physicsBody->applyForce(glm::vec3(0, -9.81f, 0.0f));
+    cube->getPhysicsBody()->applyForce(glm::vec3(0, -9.81f, 0.0f));
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics) {
@@ -40,8 +40,8 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool 
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
-    if (obj->physicsBody) {
-        physicsSystem->removeBody(obj->physicsBody);
+    if (IPhysicsBody* body = obj->getPhysicsBody()) {
+        removeFromPhysicsSystem(body);
     }
     pickableObjects.erase(
         std::remove(pickableObjects.begin(), pickableObjects.end(), static_cast<IPickable*>(obj)),

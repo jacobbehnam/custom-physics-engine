@@ -15,8 +15,9 @@ QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, std::funct
 
     for (auto* spin : { xSpin, ySpin, zSpin }) {
         spin->setRange(-10000.0, 10000.0);
-        spin->setDecimals(4);
+        spin->setDecimals(2);
         spin->setSingleStep(0.1);
+        spin->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);
         layout->addWidget(spin);
     }
 

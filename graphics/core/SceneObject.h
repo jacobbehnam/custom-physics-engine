@@ -33,6 +33,7 @@ public:
     glm::vec3 getScale() const;
 
     Shader* getShader() const override;
+    IPhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
@@ -41,15 +42,13 @@ public:
     Mesh* getMesh() const override {return mesh;}
     uint32_t getObjectID() const override;
 
-    // TODO: make private
-    IPhysicsBody* physicsBody = nullptr;
-
 private:
     QObject* parent;
     Mesh* mesh;
     Shader* shader;
     Scene* ownerScene;
     SceneManager* sceneManager;
+    std::unique_ptr<IPhysicsBody> physicsBody = nullptr;
 
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};

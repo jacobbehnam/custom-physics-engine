@@ -16,13 +16,16 @@ SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, boo
     shader->setBool("isHovered", false);
 
     if (wantPhysics) {
-        physicsBody = new Physics::PointMass(1.0f);
-        sceneManager->addToPhysicsSystem(physicsBody);
+        physicsBody = std::make_unique<Physics::PointMass>(1.0f);
+        sceneManager->addToPhysicsSystem(physicsBody.get());
     }
 }
 
 SceneObject::~SceneObject() {
     ownerScene->freeObjectID(objectID);
+    if (physicsBody) {
+        sceneManager->removeFromPhysicsSystem(physicsBody.get());
+    }
 }
 
 glm::mat4 SceneObject::getModelMatrix() const{

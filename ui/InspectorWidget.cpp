@@ -7,6 +7,7 @@
 
 InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
     layout = new QFormLayout(this);
+    setMinimumWidth(350);
 
     refreshTimer.setInterval(100);
     connect(&refreshTimer, &QTimer::timeout, this, &InspectorWidget::refresh);

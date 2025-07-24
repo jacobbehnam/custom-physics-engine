@@ -15,7 +15,8 @@ public:
     SceneObject* createPrimitive(Primitive type, Shader* shader, bool wantPhysics);
     void deleteObject(SceneObject* obj);
 
-    void addToPhysicsSystem(IPhysicsBody* body) const {physicsSystem->addBody(body);}
+    void addToPhysicsSystem(IPhysicsBody* body) const { physicsSystem->addBody(body); }
+    void removeFromPhysicsSystem(IPhysicsBody* body) const { physicsSystem->removeBody(body); }
     void stepPhysics(float dt) const {physicsSystem->step(dt);}
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
