@@ -26,7 +26,7 @@ private slots:
 
 private:
     SceneObject* currentObject = nullptr;
-    QFormLayout* layout = nullptr;
+    QVBoxLayout* mainLayout = nullptr;
     QTimer refreshTimer;
 
     std::vector<InspectorRow> rows;

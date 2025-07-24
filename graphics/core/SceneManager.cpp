@@ -13,6 +13,8 @@ void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true);
     cube->getPhysicsBody()->applyForce(glm::vec3(0, -9.81f, 0.0f));
+    SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, false);
+    cube2->setPosition(glm::vec3(1.0f, 1.0f, 0.0f));
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics) {

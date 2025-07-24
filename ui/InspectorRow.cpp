@@ -37,6 +37,11 @@ QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, std::funct
 
     pullFromObject = [=]() {
         glm::vec3 updated = get();
+
+        QSignalBlocker blockX(xSpin);
+        QSignalBlocker blockY(ySpin);
+        QSignalBlocker blockZ(zSpin);
+
         xSpin->setValue(updated.x);
         ySpin->setValue(updated.y);
         zSpin->setValue(updated.z);
