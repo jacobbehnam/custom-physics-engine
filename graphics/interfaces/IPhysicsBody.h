@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include <map>
 
 namespace Physics {
     class PointMass;
@@ -12,7 +13,8 @@ public:
     virtual ~IPhysicsBody() = default;
     virtual void applyForce(const glm::vec3& force) = 0;
     virtual void setForce(const std::string& name, const glm::vec3& force) = 0;
-    virtual glm::vec3 getForce(const std::string& name) = 0;
+    virtual glm::vec3 getForce(const std::string& name) const = 0;
+    virtual std::map<std::string, glm::vec3> getAllForces() const = 0;
     virtual void step(float dt) = 0;
 
     virtual glm::vec3 getPosition() const = 0;

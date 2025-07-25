@@ -12,12 +12,12 @@ namespace Physics {
         glm::vec3 netForce = glm::vec3(0.0f);
         float mass;
 
-        PointMass(float m, glm::vec3 pos = glm::vec3(0.0f))
-            : position(pos), mass(m) {}
+        PointMass(float m, glm::vec3 pos = glm::vec3(0.0f));
 
         void applyForce(const glm::vec3& force) override;
         void setForce(const std::string &name, const glm::vec3 &force) override { forces[name] = force; }
-        glm::vec3 getForce(const std::string &name) override { return forces.find(name)->second; }
+        glm::vec3 getForce(const std::string &name) const override { return forces.find(name)->second; }
+        std::map<std::string, glm::vec3> getAllForces() const override { return forces; }
         void applyImpulse(const glm::vec3& impulse);
 
         void step(float deltaTime) override;
@@ -34,7 +34,7 @@ namespace Physics {
         bool resolveCollisionWithPointMass(PointMass &pm) override;
         bool resolveCollisionWithRigidBody(RigidBody &rb) override;
     private:
-        std::unordered_map<std::string, glm::vec3> forces;
+        std::map<std::string, glm::vec3> forces;
     };
 
 }

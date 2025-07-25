@@ -4,7 +4,7 @@
 #include <QDoubleSpinBox>
 #include <type_traits>
 
-QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, std::function<void(glm::vec3)> set, QWidget *parent) {
+QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, QWidget *parent, std::function<void(glm::vec3)> set) {
     QWidget* container = new QWidget(parent);
     QHBoxLayout* layout = new QHBoxLayout(container);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -26,14 +26,30 @@ QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, std::funct
     ySpin->setValue(value.y);
     zSpin->setValue(value.z);
 
-    pushToObject = [=]() {
-        glm::vec3 newVal{
-            static_cast<float>(xSpin->value()),
-            static_cast<float>(ySpin->value()),
-            static_cast<float>(zSpin->value())
+    if (set != nullptr) {
+        pushToObject = [=]() {
+            glm::vec3 newVal{
+                static_cast<float>(xSpin->value()),
+                static_cast<float>(ySpin->value()),
+                static_cast<float>(zSpin->value())
+            };
+            set(newVal);
         };
-        set(newVal);
-    };
+
+        auto connectSpin = [=](QDoubleSpinBox* spin) {
+            QObject::connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), container, [=](double) {
+                pushToObject();
+            });
+        };
+
+        connectSpin(xSpin);
+        connectSpin(ySpin);
+        connectSpin(zSpin);
+    } else {
+        xSpin->setDisabled(true);
+        ySpin->setDisabled(true);
+        zSpin->setDisabled(true);
+    }
 
     pullFromObject = [=]() {
         glm::vec3 updated = get();
@@ -46,16 +62,6 @@ QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, std::funct
         ySpin->setValue(updated.y);
         zSpin->setValue(updated.z);
     };
-
-    auto connectSpin = [=](QDoubleSpinBox* spin) {
-        QObject::connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), container, [=](double) {
-            pushToObject();
-        });
-    };
-
-    connectSpin(xSpin);
-    connectSpin(ySpin);
-    connectSpin(zSpin);
 
     return container;
 }

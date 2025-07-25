@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <ui/InspectorRow.h>
 
+class IPhysicsBody;
 class SceneObject;
 
 struct PropertyRow {
@@ -29,7 +30,11 @@ private:
     QVBoxLayout* mainLayout = nullptr;
     QTimer refreshTimer;
 
-    std::vector<InspectorRow> rows;
+    // Storing in a vector keeps the InspectorRows alive for as long as InspectorWidget is alive
+    std::vector<InspectorRow> transformRows;
+    std::vector<InspectorRow> forceRows;
 
-    void clearLayout();
+    void clearLayout(QVBoxLayout* layout);
+    void clearLayout(QFormLayout* layout);
+    void populateForces(IPhysicsBody* body, QFormLayout* layout);
 };

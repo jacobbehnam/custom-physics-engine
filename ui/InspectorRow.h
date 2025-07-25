@@ -7,7 +7,7 @@
 class InspectorRow {
 public:
     template<typename Getter, typename Setter>
-    InspectorRow(const QString &lbl, Getter get, Setter set, QWidget *parent) {
+    InspectorRow(const QString &lbl, Getter get, Setter set, QWidget *parent = nullptr) {
         label = lbl + ": ";
         using ValueT = std::decay_t<decltype(get())>;
 
@@ -18,7 +18,26 @@ public:
             std::cout << "scalar" << std::endl;
         }
         else if constexpr (std::is_same_v<ValueT, glm::vec3>) {
-            editor = makeVec3Widget(get, set, parent);
+            editor = makeVec3Widget(get, parent, set);
+        }
+        else {
+            static_assert(!sizeof(ValueT), "Unsupported type");
+        }
+    }
+
+    template<typename Getter>
+    InspectorRow(const QString &lbl, Getter get, QWidget *parent = nullptr) {
+        label = lbl + ": ";
+        using ValueT = std::decay_t<decltype(get())>;
+
+        if constexpr (std::is_same_v<ValueT, bool>) {
+            std::cout << "bool" << std::endl;
+        }
+        else if constexpr (std::is_arithmetic_v<ValueT>) {
+            std::cout << "scalar" << std::endl;
+        }
+        else if constexpr (std::is_same_v<ValueT, glm::vec3>) {
+            editor = makeVec3Widget(get, parent);
         }
         else {
             static_assert(!sizeof(ValueT), "Unsupported type");
@@ -35,5 +54,5 @@ private:
     std::function<void()> pullFromObject;
     std::function<void()> pushToObject;
 
-    QWidget* makeVec3Widget(std::function<glm::vec3()> get, std::function<void(glm::vec3)> set, QWidget* parent);
+    QWidget* makeVec3Widget(std::function<glm::vec3()> get, QWidget* parent = nullptr, std::function<void(glm::vec3)> set = nullptr);
 };
