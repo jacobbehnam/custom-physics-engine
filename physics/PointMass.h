@@ -15,7 +15,7 @@ namespace Physics {
         PointMass(float m, glm::vec3 pos = glm::vec3(0.0f));
 
         void applyForce(const glm::vec3& force) override;
-        void setForce(const std::string &name, const glm::vec3 &force) override { forces[name] = force; }
+        void setForce(const std::string &name, const glm::vec3 &force) override;
         glm::vec3 getForce(const std::string &name) const override { return forces.find(name)->second; }
         std::map<std::string, glm::vec3> getAllForces() const override { return forces; }
         void applyImpulse(const glm::vec3& impulse);

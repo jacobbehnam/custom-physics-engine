@@ -50,6 +50,7 @@ void InspectorWidget::loadObject(SceneObject* obj) {
     auto* addForceLayout = new QHBoxLayout(addForceWidget);
     auto* addForceField = new QLineEdit("Add a force", addForceWidget);
     auto* addForceButton = new QPushButton(addForceWidget);
+
     addForceLayout->addWidget(addForceField);
     addForceLayout->addWidget(addForceButton);
     layout2->addWidget(addForceWidget);
@@ -59,6 +60,14 @@ void InspectorWidget::loadObject(SceneObject* obj) {
 
     if (IPhysicsBody* body = obj->getPhysicsBody()) {
         populateForces(body, forcesLayout);
+        connect(addForceButton, &QPushButton::clicked, this, [=]() {
+            std::string text = addForceField->text().toStdString();
+            if (text.empty()) return;
+            if (std::isalnum(text.front()))
+                text[0] = static_cast<char>(std::toupper(text[0]));
+            body->setForce(text, glm::vec3(0.0f));
+            populateForces(body, forcesLayout);
+        });
     }
     layout2->addWidget(forcesWidget);
 }
@@ -131,10 +140,10 @@ void InspectorWidget::clearLayout(QFormLayout* layout) {
 }
 
 void InspectorWidget::refresh() {
-    for (InspectorRow row : transformRows) {
+    for (InspectorRow &row : transformRows) {
         row.update();
     }
-    for (InspectorRow row : forceRows) {
+    for (InspectorRow &row : forceRows) {
         row.update();
     }
 }

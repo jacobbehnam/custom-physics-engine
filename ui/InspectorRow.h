@@ -52,7 +52,6 @@ private:
     QString label;
     QWidget* editor = nullptr;
     std::function<void()> pullFromObject;
-    std::function<void()> pushToObject;
 
     QWidget* makeVec3Widget(std::function<glm::vec3()> get, QWidget* parent = nullptr, std::function<void(glm::vec3)> set = nullptr);
 };

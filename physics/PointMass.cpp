@@ -14,6 +14,17 @@ void Physics::PointMass::applyImpulse(const glm::vec3 &impulse) {
     velocity += impulse * (1.0f / mass);
 }
 
+void Physics::PointMass::setForce(const std::string &name, const glm::vec3 &force) {
+    forces[name] = force;
+    // Recalculate net force
+    glm::vec3 tempNetForce(0.0f);
+    for (auto [name, vec] : forces) {
+        tempNetForce += vec;
+    }
+    netForce = tempNetForce;
+}
+
+
 void Physics::PointMass::step(float dt) {
     glm::vec3 acceleration = netForce / mass;
     position += velocity * dt + 0.5f * acceleration * dt * dt;

@@ -26,8 +26,8 @@ QWidget* InspectorRow::makeVec3Widget(std::function<glm::vec3()> get, QWidget *p
     ySpin->setValue(value.y);
     zSpin->setValue(value.z);
 
-    if (set != nullptr) {
-        pushToObject = [=]() {
+    if (set) {
+        auto pushToObject = [=]() {
             glm::vec3 newVal{
                 static_cast<float>(xSpin->value()),
                 static_cast<float>(ySpin->value()),
