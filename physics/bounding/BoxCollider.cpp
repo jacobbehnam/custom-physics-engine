@@ -20,7 +20,7 @@ ContactInfo Physics::Bounding::BoxCollider::closestPoint(const glm::vec3 &p) con
     float penetration;
     if (outsideDist > 0.0f) {
         // Point is outside: normal points from box toward point
-        localNormal = glm::normalize(delta);
+        localNormal = delta;
         penetration = -outsideDist;
     } else {
         glm::vec3 d = halfExtents - glm::abs(local);
@@ -35,7 +35,7 @@ ContactInfo Physics::Bounding::BoxCollider::closestPoint(const glm::vec3 &p) con
             penetration = d.z;
         }
     }
-    glm::vec3 worldNormal = rotation * localNormal;
+    glm::vec3 worldNormal = glm::normalize(rotation * localNormal);
 
     return { worldPoint, worldNormal, penetration };
 }
@@ -53,10 +53,6 @@ bool Physics::Bounding::BoxCollider::intersectRay(const glm::vec3 &rayOrig, cons
 
     float tmin = std::max(std::max(tsmaller.x, tsmaller.y), tsmaller.z);
     float tmax = std::min(std::min(tbigger.x, tbigger.y), tbigger.z);
-
-    // no intersection or box is behind
-    if (tmin > tmax || tmax < 0.0f)
-        return false;
 
     outT = tmin;
     return tmax >= std::max(tmin, 0.0f);

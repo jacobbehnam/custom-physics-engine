@@ -9,6 +9,8 @@
 #include "physics/PointMass.h"
 #include <graphics/core/SceneManager.h>
 
+#include "physics/bounding/BoxCollider.h"
+
 SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, bool wantPhysics, QObject* objectParent)
     : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
     shader->use();
@@ -17,6 +19,10 @@ SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, boo
 
     if (wantPhysics) {
         physicsBody = std::make_unique<Physics::PointMass>(1.0f);
+        sceneManager->addToPhysicsSystem(physicsBody.get());
+    } else {
+        auto* collider = new Physics::Bounding::BoxCollider(glm::vec3(0.0f), scale/2.0f, rotation);
+        physicsBody = std::make_unique<Physics::RigidBody>(1.0f, glm::vec3(0.0f), collider);
         sceneManager->addToPhysicsSystem(physicsBody.get());
     }
 }

@@ -1,6 +1,8 @@
 #include "PointMass.h"
 #include <iostream>
 
+#include "RigidBody.h"
+
 Physics::PointMass::PointMass(float m, glm::vec3 pos) : position(pos), mass(m) {
     PointMass::setForce("Gravity", m * glm::vec3(0.0f, -9.81f, 0.0f));
     PointMass::setForce("Normal", glm::vec3(0.0f));
@@ -18,7 +20,7 @@ void Physics::PointMass::setForce(const std::string &name, const glm::vec3 &forc
     forces[name] = force;
     // Recalculate net force
     glm::vec3 tempNetForce(0.0f);
-    for (auto [name, vec] : forces) {
+    for (const auto& [name, vec] : forces) {
         tempNetForce += vec;
     }
     netForce = tempNetForce;
@@ -44,7 +46,7 @@ bool Physics::PointMass::collidesWithPointMass(const PointMass &pm) const {
 }
 
 bool Physics::PointMass::collidesWithRigidBody(const RigidBody &rb) const {
-    return false;
+    return rb.collider->contains(position);
 }
 
 bool Physics::PointMass::resolveCollisionWith(IPhysicsBody &other) {
@@ -71,5 +73,30 @@ bool Physics::PointMass::resolveCollisionWithPointMass(PointMass &pm) {
 }
 
 bool Physics::PointMass::resolveCollisionWithRigidBody(RigidBody &rb) {
-    return false;
+    // 1) Get contact info from the rigid body
+    ContactInfo ci = rb.collider->closestPoint(position);
+
+    // ci.penetration > 0 means no overlap (point is outside)
+    if (ci.penetration > 0.0f)
+        return false;
+
+    // 2) Compute relative velocity along normal (rigid body is static, so v_rb = 0)
+    float vRel = glm::dot(velocity, ci.normal);
+    if (vRel >= 0.0f)
+        return false;   // moving away or resting
+
+    // 3) Compute collision impulse scalar (J = -(1+e) vRel * m)
+    //    We choose restitution e = 0 (perfectly inelastic) or >0 for bounce
+    constexpr float e = 0.5f;
+    float j = -(1.0f + e) * vRel * mass;
+
+    // 4) Apply impulse to this point mass
+    glm::vec3 impulse = j * ci.normal;
+    applyImpulse(impulse);
+
+    // 5) Positional correction (optional, to eliminate any penetration)
+    //    Move the point out along the normal by exactly the penetration depth
+    position += ci.normal * (-ci.penetration);
+
+    return true;
 }

@@ -35,6 +35,7 @@ namespace Physics {
         bool resolveCollisionWithRigidBody(RigidBody &rb) override;
     private:
         std::map<std::string, glm::vec3> forces;
+
     };
 
 }
