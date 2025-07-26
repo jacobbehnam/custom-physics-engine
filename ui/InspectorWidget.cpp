@@ -10,6 +10,7 @@
 
 InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
     mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(5, 0, 15, 0);
 
     setMinimumWidth(350);
 

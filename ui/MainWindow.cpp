@@ -5,9 +5,8 @@
 #include "OpenGLWindow.h"
 #include <QDockWidget>
 #include <QStatusBar>
-#include <QFormLayout>
 #include <QLineEdit>
-#include <QCheckBox>
+#include <QScrollArea>
 
 #include "HierarchyWidget.h"
 #include "InspectorWidget.h"
@@ -56,7 +55,15 @@ void MainWindow::setupDockWidgets() {
     inspector = new InspectorWidget(this);
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    inspectorDock->setWidget(inspector);
+    QScrollArea* scrollArea = new QScrollArea;
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setWidget(inspector);
+    scrollArea->setMinimumWidth(350);
+    scrollArea->setMinimumHeight(200);
+
+    inspectorDock->setWidget(scrollArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 }
 

@@ -27,7 +27,7 @@ bool Physics::Bounding::AABB::intersectsAABB(const AABB &other) const {
 }
 
 // Tavian Barnes’ branchless slab method
-bool Physics::Bounding::AABB::intersectsRay(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
+bool Physics::Bounding::AABB::intersectRay(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
     glm::vec3 invDir = 1.0f / dir;
 
     glm::vec3 t0s = (minCorner - orig) * invDir;
@@ -43,3 +43,10 @@ bool Physics::Bounding::AABB::intersectsRay(const glm::vec3 &orig, const glm::ve
     return tmax >= std::max(tmin, 0.0f);
 }
 
+bool Physics::Bounding::AABB::contains(const glm::vec3 &p) const {
+    //TODO
+}
+
+ContactInfo Physics::Bounding::AABB::closestPoint(const glm::vec3 &p) const {
+    //TODO
+}

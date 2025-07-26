@@ -1,8 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
 
-namespace Physics::Bounding {
-    class AABB {
+#include "graphics/interfaces/ICollider.h"
+
+namespace Physics::Bounding{
+    class AABB : public ICollider{
     public:
         AABB() = default;
 
@@ -10,7 +12,9 @@ namespace Physics::Bounding {
         AABB getTransformed(const glm::mat4& modelMatrix) const;
 
         bool intersectsAABB(const AABB& other) const;
-        bool intersectsRay(const glm::vec3& orig, const glm::vec3& dir, float& outT) const;
+        bool intersectRay(const glm::vec3& orig, const glm::vec3& dir, float& outT) const override;
+        bool contains(const glm::vec3& p) const override;
+        ContactInfo closestPoint(const glm::vec3& p) const override;
 
     private:
         glm::vec3 minCorner;

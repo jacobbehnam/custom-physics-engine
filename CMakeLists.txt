@@ -74,7 +74,10 @@ add_executable(OpenGLApp main.cpp
         ui/HierarchyWidget.cpp
         ui/HierarchyWidget.h
         ui/InspectorRow.cpp
-        ui/InspectorRow.h)
+        ui/InspectorRow.h
+        graphics/interfaces/ICollider.h
+        physics/bounding/BoxCollider.cpp
+        physics/bounding/BoxCollider.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

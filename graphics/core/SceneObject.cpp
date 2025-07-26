@@ -54,7 +54,7 @@ bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, fl
     bool hitSomething = false;
     float closestT = std::numeric_limits<float>::infinity();
     float outDistance = -std::numeric_limits<float>::max();
-    if (localAABB.getTransformed(getModelMatrix()).intersectsRay(orig, dir, outT)) {
+    if (localAABB.getTransformed(getModelMatrix()).intersectRay(orig, dir, outT)) {
         if (outDistance < closestT) {
             closestT = outDistance;
             hitSomething = true;
