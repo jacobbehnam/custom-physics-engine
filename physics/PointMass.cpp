@@ -73,30 +73,5 @@ bool Physics::PointMass::resolveCollisionWithPointMass(PointMass &pm) {
 }
 
 bool Physics::PointMass::resolveCollisionWithRigidBody(RigidBody &rb) {
-    // 1) Get contact info from the rigid body
-    ContactInfo ci = rb.collider->closestPoint(position);
-
-    // ci.penetration > 0 means no overlap (point is outside)
-    if (ci.penetration > 0.0f)
-        return false;
-
-    // 2) Compute relative velocity along normal (rigid body is static, so v_rb = 0)
-    float vRel = glm::dot(velocity, ci.normal);
-    if (vRel >= 0.0f)
-        return false;   // moving away or resting
-
-    // 3) Compute collision impulse scalar (J = -(1+e) vRel * m)
-    //    We choose restitution e = 0 (perfectly inelastic) or >0 for bounce
-    constexpr float e = 0.5f;
-    float j = -(1.0f + e) * vRel * mass;
-
-    // 4) Apply impulse to this point mass
-    glm::vec3 impulse = j * ci.normal;
-    applyImpulse(impulse);
-
-    // 5) Positional correction (optional, to eliminate any penetration)
-    //    Move the point out along the normal by exactly the penetration depth
-    position += ci.normal * (-ci.penetration);
-
-    return true;
+    return rb.resolveCollisionWithPointMass(*this);
 }

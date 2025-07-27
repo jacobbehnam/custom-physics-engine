@@ -166,11 +166,7 @@ void ResourceManager::loadPrimSphere() {
 
             // spherical to Cartesian
             float sinT = std::sin(theta);
-            glm::vec3 pos{
-                sinT * std::cos(phi),
-                std::cos(theta),
-                sinT * std::sin(phi)
-            };
+            auto pos = glm::vec3(sinT * std::cos(phi), std::cos(theta), sinT * std::sin(phi)) * 0.5f;
 
             glm::vec3 normal = glm::normalize(pos);
 

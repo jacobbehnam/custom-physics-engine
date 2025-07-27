@@ -22,6 +22,8 @@ public:
     virtual glm::vec3 getVelocity() const = 0;
     virtual void setVelocity(const glm::vec3& vel) = 0;
 
+    virtual void setWorldTransform(const glm::mat4& M) = 0;
+
     // Uses double dispatch
     virtual bool collidesWith(const IPhysicsBody& other) const = 0;
     virtual bool collidesWithPointMass(const Physics::PointMass& pm) const = 0;

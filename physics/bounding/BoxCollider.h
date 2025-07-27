@@ -9,6 +9,8 @@ namespace Physics::Bounding {
         BoxCollider() = default;
         BoxCollider(const glm::vec3& center, const glm::vec3& halfExtents, const glm::quat& rotation);
 
+        BoxCollider getTransformed(const glm::mat4& modelMatrix) const;
+
         bool contains(const glm::vec3 &p) const override;
 
         ContactInfo closestPoint(const glm::vec3 &p) const override;

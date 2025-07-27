@@ -12,7 +12,7 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true);
-    SceneObject *cube2 = createPrimitive(Primitive::SPHERE, basicShader, false);
+    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, false);
     cube2->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 

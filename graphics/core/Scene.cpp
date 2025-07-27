@@ -48,13 +48,20 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unor
 
     // === INSTANCED DRAWING FOR CUBES ===
     std::vector<InstanceData> cubeInstances;
-    Mesh* cubeMesh = ResourceManager::getMesh("prim_sphere");
+    Mesh* cubeMesh = ResourceManager::getMesh("prim_cube");
+    std::vector<InstanceData> sphereInstances;
+    Mesh* sphereMesh = ResourceManager::getMesh("prim_sphere");
     for (IDrawable* obj : drawableObjects) {
         if (obj->getMesh() == cubeMesh) {
             InstanceData instance;
             instance.model = obj->getModelMatrix();
             instance.objectID = obj->getObjectID();
             cubeInstances.push_back(instance);
+        } else if (obj->getMesh() == sphereMesh) {
+            InstanceData instance;
+            instance.model = obj->getModelMatrix();
+            instance.objectID = obj->getObjectID();
+            sphereInstances.push_back(instance);
         }
     }
 
@@ -62,10 +69,14 @@ void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unor
         basicShader->use();
         cubeMesh->drawInstanced(cubeInstances);
     }
+    if (!sphereInstances.empty()) {
+        basicShader->use();
+        sphereMesh->drawInstanced(sphereInstances);
+    }
 
     // === NORMAL DRAWING FOR OTHER OBJECTS ===
     for (IDrawable* obj : drawableObjects) {
-        if (obj->getMesh() == cubeMesh)
+        if (obj->getMesh() == cubeMesh || obj->getMesh() == sphereMesh)
             continue;
 
         obj->draw();

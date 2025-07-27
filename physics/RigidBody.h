@@ -27,6 +27,8 @@ namespace Physics {
         glm::vec3 getVelocity() const override { return velocity; }
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
 
+        void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
+
         bool collidesWith(const IPhysicsBody &other) const override;
         bool collidesWithPointMass(const PointMass &pm) const override;
         bool collidesWithRigidBody(const RigidBody &rb) const override;
@@ -42,6 +44,7 @@ namespace Physics {
         glm::vec3 netForce = glm::vec3(0.0f);
         std::map<std::string, glm::vec3> forces;
 
+        glm::mat4 worldMatrix = glm::mat4(1.0f);
 
         float mass;
     };

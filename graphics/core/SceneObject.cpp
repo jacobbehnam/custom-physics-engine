@@ -124,6 +124,7 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 void SceneObject::setPosition(const glm::vec3 &pos) {
     if (physicsBody) {
         physicsBody->setPosition(pos);
+        physicsBody->setWorldTransform(getModelMatrix());
     } else {
         position = pos;
     }

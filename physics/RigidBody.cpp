@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "PointMass.h"
+#include "bounding/BoxCollider.h"
 
 Physics::RigidBody::RigidBody(float m, glm::vec3 pos, ICollider* col) : mass(m), position(pos), collider(col) {}
 
@@ -31,7 +32,8 @@ bool Physics::RigidBody::collidesWith(const IPhysicsBody &other) const {
 }
 
 bool Physics::RigidBody::collidesWithPointMass(const PointMass &pm) const {
-    return collider->contains(pm.getPosition());
+    Bounding::BoxCollider worldCollider = dynamic_cast<Bounding::BoxCollider *>(collider)->getTransformed(worldMatrix);
+    return worldCollider.contains(pm.getPosition());
 }
 
 bool Physics::RigidBody::collidesWithRigidBody(const RigidBody &rb) const {
@@ -43,7 +45,8 @@ bool Physics::RigidBody::resolveCollisionWith(IPhysicsBody &other) {
 }
 
 bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
-    ContactInfo ci = collider->closestPoint(pm.getPosition());
+    Bounding::BoxCollider worldCollider = dynamic_cast<Bounding::BoxCollider *>(collider)->getTransformed(worldMatrix);
+    ContactInfo ci = worldCollider.closestPoint(pm.getPosition());
     if (ci.penetration < 0.0f) return false; // no overlap
 
     float vRel = glm::dot(pm.getVelocity(), ci.normal);
@@ -53,8 +56,9 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     float j = -(1.0f + e) * vRel * pm.mass;
 
     pm.applyImpulse(j * ci.normal);
-    glm::vec3 Fg = pm.getForce("Gravity");
-    glm::vec3 Fn = -glm::dot(Fg, ci.normal) * ci.normal;
+    glm::vec3 Fnet(0.0f);
+    for (auto const& [n, f] : pm.getAllForces()) Fnet += f;
+    glm::vec3 Fn = -glm::dot(Fnet, ci.normal) * ci.normal;
     pm.setForce("Normal", Fn);
 
     pm.setPosition(pm.getPosition() + ci.normal * (-ci.penetration));
