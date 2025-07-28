@@ -66,7 +66,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
     float closestT = std::numeric_limits<float>::infinity();
     for (IHandle* handle : handles) {
         float outT;
-        if (localAABB.getTransformed(handle->getModelMatrix()).intersectRay(rayOrigin, rayDir, outT)) {
+        if (localAABB.getTransformed(handle->getModelMatrix())->intersectRay(rayOrigin, rayDir, outT)) {
             if (outT < closestT) {
                 closestT = outT;
                 hitHandle = handle;

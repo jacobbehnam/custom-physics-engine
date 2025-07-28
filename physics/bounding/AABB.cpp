@@ -1,10 +1,13 @@
 #include "AABB.h"
 #include <algorithm>
+#include <iostream>
+
+#include <glm/gtx/matrix_decompose.hpp>
 
 Physics::Bounding::AABB::AABB(const glm::vec3 &ctr, const glm::vec3 &halfExt)
     : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}
 
-Physics::Bounding::AABB Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
+Physics::Bounding::AABB* Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
     auto L = glm::mat3(modelMatrix);
     auto T = glm::vec3(modelMatrix[3]);
 
@@ -17,7 +20,8 @@ Physics::Bounding::AABB Physics::Bounding::AABB::getTransformed(const glm::mat4 
     glm::vec3 newHalfExtents = absL * halfExtents;
     glm::vec3 newCenter = L * center + T;
 
-    return AABB(newCenter, newHalfExtents);
+    // TODO: change to smart pointers
+    return new AABB(newCenter, newHalfExtents);
 }
 
 bool Physics::Bounding::AABB::intersectsAABB(const AABB &other) const {

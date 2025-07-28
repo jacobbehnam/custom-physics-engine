@@ -46,7 +46,7 @@ bool Physics::PointMass::collidesWithPointMass(const PointMass &pm) const {
 }
 
 bool Physics::PointMass::collidesWithRigidBody(const RigidBody &rb) const {
-    return rb.collider->contains(position);
+    return rb.collidesWithPointMass(*this);
 }
 
 bool Physics::PointMass::resolveCollisionWith(IPhysicsBody &other) {
@@ -61,7 +61,7 @@ bool Physics::PointMass::resolveCollisionWithPointMass(PointMass &pm) {
     float     velNorm = glm::dot(relVel, normal);
 
     if (velNorm <= 0.0f)
-        return false;   // moving apart, nothing applied
+        return false; // moving apart, nothing applied
 
     float j = (2.0f * velNorm) / (mass + pm.mass); // collision‐impulse scalar
     glm::vec3 impulse = j * normal;

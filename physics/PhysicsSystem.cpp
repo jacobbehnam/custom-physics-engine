@@ -27,8 +27,6 @@ void Physics::PhysicsSystem::step(float dt) {
 
     for (int i = 0; i < bodies.size(); ++i) {
         for (int j = i + 1; j < bodies.size(); ++j) {
-            // PointMass* a = dynamic_cast<PointMass*>(bodies[i]);
-            // PointMass* b = dynamic_cast<PointMass*>(bodies[j]);
             IPhysicsBody* a = bodies[i];
             IPhysicsBody* b = bodies[j];
 

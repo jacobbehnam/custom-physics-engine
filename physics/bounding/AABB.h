@@ -9,7 +9,7 @@ namespace Physics::Bounding{
         AABB() = default;
 
         AABB(const glm::vec3& center, const glm::vec3& halfExtents);
-        AABB getTransformed(const glm::mat4& modelMatrix) const;
+        AABB* getTransformed(const glm::mat4 &modelMatrix) const override;
 
         bool intersectsAABB(const AABB& other) const;
         bool intersectRay(const glm::vec3& orig, const glm::vec3& dir, float& outT) const override;

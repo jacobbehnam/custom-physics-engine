@@ -1,5 +1,4 @@
 #pragma once
-#define GLM_ENABLE_EXPERIMENTAL
 #include "graphics/interfaces/ICollider.h"
 #include <glm/gtx/quaternion.hpp>
 
@@ -9,7 +8,7 @@ namespace Physics::Bounding {
         BoxCollider() = default;
         BoxCollider(const glm::vec3& center, const glm::vec3& halfExtents, const glm::quat& rotation);
 
-        BoxCollider getTransformed(const glm::mat4& modelMatrix) const;
+        BoxCollider* getTransformed(const glm::mat4 &modelMatrix) const override;
 
         bool contains(const glm::vec3 &p) const override;
 

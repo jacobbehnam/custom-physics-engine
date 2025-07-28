@@ -1,7 +1,7 @@
 #include "BoxCollider.h"
 
 #include <iostream>
-#include <glm/gtx/orthonormalize.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 Physics::Bounding::BoxCollider::BoxCollider(const glm::vec3 &center, const glm::vec3 &halfExtents, const glm::quat &rotation)
     : center(center), halfExtents(halfExtents), rotation(rotation) {}
@@ -61,25 +61,12 @@ bool Physics::Bounding::BoxCollider::intersectRay(const glm::vec3 &rayOrig, cons
     return tmax >= std::max(tmin, 0.0f);
 }
 
-Physics::Bounding::BoxCollider Physics::Bounding::BoxCollider::getTransformed(const glm::mat4 &modelMatrix) const {
-    auto L = glm::mat3(modelMatrix);
-    auto T = glm::vec3(modelMatrix[3]);
+Physics::Bounding::BoxCollider* Physics::Bounding::BoxCollider::getTransformed(const glm::mat4 &modelMatrix) const {
+    glm::vec3 skew, translation, scale;
+    glm::vec4 persp;
+    glm::quat rot;
+    glm::decompose(modelMatrix, scale, rot, translation, skew, persp);
 
-    glm::mat3 absL = glm::mat3(
-        glm::abs(L[0]),
-        glm::abs(L[1]),
-        glm::abs(L[2])
-    );
-
-    glm::vec3 newHalfExtents = absL * halfExtents;
-    glm::vec3 newCenter = L * center + T;
-
-    glm::mat3 R = glm::mat3_cast(rotation);       // your local‐space rotation
-    glm::mat3 RS = glm::mat3(modelMatrix) * R;                 // combines modelMatrix‐rotation & local rotation
-    // Re‐orthonormalize RS to extract pure rotation:
-    glm::quat newRotation = glm::quat_cast(glm::orthonormalize(RS));
-    std::cout << newCenter.x << "," << newCenter.y << "," << newCenter.z << std::endl;
-
-    // 5) Return the transformed collider
-    return BoxCollider(newCenter, newHalfExtents, newRotation);
+    // TODO: change to smart pointer
+    return new BoxCollider(translation, halfExtents*scale, rot);
 }

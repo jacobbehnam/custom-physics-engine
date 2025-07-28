@@ -32,8 +32,8 @@ bool Physics::RigidBody::collidesWith(const IPhysicsBody &other) const {
 }
 
 bool Physics::RigidBody::collidesWithPointMass(const PointMass &pm) const {
-    Bounding::BoxCollider worldCollider = dynamic_cast<Bounding::BoxCollider *>(collider)->getTransformed(worldMatrix);
-    return worldCollider.contains(pm.getPosition());
+    ICollider* worldCollider = collider->getTransformed(worldMatrix);
+    return worldCollider->contains(pm.getPosition());
 }
 
 bool Physics::RigidBody::collidesWithRigidBody(const RigidBody &rb) const {
@@ -45,8 +45,8 @@ bool Physics::RigidBody::resolveCollisionWith(IPhysicsBody &other) {
 }
 
 bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
-    Bounding::BoxCollider worldCollider = dynamic_cast<Bounding::BoxCollider *>(collider)->getTransformed(worldMatrix);
-    ContactInfo ci = worldCollider.closestPoint(pm.getPosition());
+    ICollider* worldCollider = collider->getTransformed(worldMatrix);
+    ContactInfo ci = worldCollider->closestPoint(pm.getPosition());
     if (ci.penetration < 0.0f) return false; // no overlap
 
     float vRel = glm::dot(pm.getVelocity(), ci.normal);
@@ -61,7 +61,7 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     glm::vec3 Fn = -glm::dot(Fnet, ci.normal) * ci.normal;
     pm.setForce("Normal", Fn);
 
-    pm.setPosition(pm.getPosition() + ci.normal * (-ci.penetration));
+    //pm.setPosition(pm.getPosition() + ci.normal * ci.penetration);
 
     return true;
 }

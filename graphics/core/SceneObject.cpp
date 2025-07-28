@@ -60,7 +60,7 @@ bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, fl
     bool hitSomething = false;
     float closestT = std::numeric_limits<float>::infinity();
     float outDistance = -std::numeric_limits<float>::max();
-    if (localAABB.getTransformed(getModelMatrix()).intersectRay(orig, dir, outT)) {
+    if (localAABB.getTransformed(getModelMatrix())->intersectRay(orig, dir, outT)) {
         if (outDistance < closestT) {
             closestT = outDistance;
             hitSomething = true;
@@ -132,10 +132,14 @@ void SceneObject::setPosition(const glm::vec3 &pos) {
 
 void SceneObject::setRotation(const glm::vec3 &euler) {
     orientation = glm::quat(euler);
+    if (physicsBody)
+        physicsBody->setWorldTransform(getModelMatrix());
 }
 
 void SceneObject::setScale(const glm::vec3 &scl) {
     scale = scl;
+    if (physicsBody)
+        physicsBody->setWorldTransform(getModelMatrix());
 }
 
 glm::vec3 SceneObject::getPosition() const{
@@ -154,6 +158,8 @@ Shader* SceneObject::getShader() const {
 
 void SceneObject::setRotationQuat(const glm::quat &q) {
     orientation = q;
+    if (physicsBody)
+        physicsBody->setWorldTransform(getModelMatrix());
 }
 glm::quat SceneObject::getRotationQuat()   const {
     return orientation;
