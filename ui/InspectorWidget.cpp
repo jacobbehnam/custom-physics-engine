@@ -31,6 +31,15 @@ void InspectorWidget::loadObject(SceneObject* obj) {
         [obj]()->glm::vec3{ return obj->getPosition(); },
         [obj](glm::vec3 v){ obj->setPosition(v); },
         this);
+    transformRows.emplace_back("Scale",
+        [obj]()->glm::vec3{ return obj->getScale(); },
+        [obj](glm::vec3 v) { obj->setScale(v); },
+        this);
+    // TODO: this works good enough for 2D but for 3D the conversion between euler angles and quaternions is wonky
+    transformRows.emplace_back("Rotation",
+        [obj]()->glm::vec3{ return glm::degrees(obj->getRotation()); },
+        [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); },
+        this);
 
     if (IPhysicsBody* body = obj->getPhysicsBody()) {
         transformRows.emplace_back("Velocity",

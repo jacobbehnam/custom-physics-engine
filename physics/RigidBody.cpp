@@ -61,7 +61,7 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     glm::vec3 Fn = -glm::dot(Fnet, ci.normal) * ci.normal;
     pm.setForce("Normal", Fn);
 
-    //pm.setPosition(pm.getPosition() + ci.normal * ci.penetration);
+    pm.setPosition(pm.getPosition() + ci.normal * ci.penetration);
 
     return true;
 }

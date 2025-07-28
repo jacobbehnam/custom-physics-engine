@@ -68,5 +68,5 @@ Physics::Bounding::BoxCollider* Physics::Bounding::BoxCollider::getTransformed(c
     glm::decompose(modelMatrix, scale, rot, translation, skew, persp);
 
     // TODO: change to smart pointer
-    return new BoxCollider(translation, halfExtents*scale, rot);
+    return new BoxCollider(scale * center + translation, halfExtents*scale, rot);
 }

@@ -23,6 +23,7 @@ void Physics::PhysicsSystem::step(float dt) {
 
     for (auto body : bodies) {
         body->step(dt);
+        body->setForce("Normal", glm::vec3(0.0f));
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
