@@ -4,7 +4,9 @@
 #include <QToolBar>
 #include <QLabel>
 #include <QTreeWidget>
+#include <QTableWidget>
 
+#include "SnapshotTableModel.h"
 #include "graphics/core/SceneManager.h"
 
 class OpenGLWindow;
@@ -34,6 +36,7 @@ private:
 
     InspectorWidget* inspector;
     HierarchyWidget* hierarchy;
+    SnapshotTableModel* snapshotModel;
 
     void setupDockWidgets();
 };

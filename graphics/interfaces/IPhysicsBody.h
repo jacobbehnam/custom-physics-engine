@@ -30,6 +30,7 @@ public:
 
     virtual void setWorldTransform(const glm::mat4& M) = 0;
     virtual void recordFrame(float t) = 0;
+    virtual const std::vector<ObjectSnapshot>& getAllFrames() const = 0;
 
     // Uses double dispatch
     virtual bool collidesWith(const IPhysicsBody& other) const = 0;

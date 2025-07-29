@@ -28,7 +28,8 @@ namespace Physics {
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
-        void recordFrame(float t) override {frames.push_back({t, position, velocity});}
+        void recordFrame(float t) override { frames.push_back( {t, position, velocity}); }
+        const std::vector<ObjectSnapshot> &getAllFrames() const override { return frames; }
 
         bool collidesWith(const IPhysicsBody& other) const override;
         bool collidesWithPointMass(const PointMass& pm) const override;

@@ -65,6 +65,14 @@ void MainWindow::setupDockWidgets() {
 
     inspectorDock->setWidget(scrollArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
+
+    auto* tableDock = new QDockWidget(tr("Bruh"), this);
+    tableDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    auto* tableView = new QTableView(this);
+    snapshotModel = new SnapshotTableModel(this);
+    tableView->setModel(snapshotModel);
+    tableDock->setWidget(tableView);
+    addDockWidget(Qt::RightDockWidgetArea, tableDock);
 }
 
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
@@ -75,6 +83,8 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         sceneManager->setSelectFor(current, true);
         sceneManager->setGizmoFor(current, true);
         inspector->loadObject(current);
+        const std::vector<ObjectSnapshot>& snaps = current->getPhysicsBody()->getAllFrames();
+        snapshotModel->setSnapshots(snaps);
     } else {
         inspector->unloadObject();
     }
