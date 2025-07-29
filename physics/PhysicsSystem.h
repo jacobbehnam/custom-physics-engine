@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "RigidBody.h"
+#include <chrono>
 
 namespace Physics {
 
@@ -15,12 +16,15 @@ namespace Physics {
 
         void enablePhysics();
         void disablePhysics();
+        float elapsedSeconds() const;
 
     private:
         glm::vec3 globalAcceleration;
         std::vector<IPhysicsBody*> bodies;
 
         bool physicsEnabled = false;
+        std::chrono::steady_clock::time_point startTime;
+        std::chrono::steady_clock::duration elapsed;
     };
 
 }

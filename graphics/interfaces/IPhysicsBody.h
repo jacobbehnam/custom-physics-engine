@@ -8,6 +8,12 @@ namespace Physics {
     class RigidBody;
 }
 
+struct ObjectSnapshot {
+    float time;
+    glm::vec3 position;
+    glm::vec3 velocity;
+};
+
 class IPhysicsBody {
 public:
     virtual ~IPhysicsBody() = default;
@@ -23,6 +29,7 @@ public:
     virtual void setVelocity(const glm::vec3& vel) = 0;
 
     virtual void setWorldTransform(const glm::mat4& M) = 0;
+    virtual void recordFrame(float t) = 0;
 
     // Uses double dispatch
     virtual bool collidesWith(const IPhysicsBody& other) const = 0;

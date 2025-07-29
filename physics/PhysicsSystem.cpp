@@ -7,7 +7,7 @@ namespace Physics {
     class PointMass;
 }
 
-Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
+Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel), elapsed(std::chrono::steady_clock::duration::zero()) {}
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
     auto it = std::remove(bodies.begin(), bodies.end(), body);
@@ -22,6 +22,7 @@ void Physics::PhysicsSystem::step(float dt) {
     if (!physicsEnabled) return;
 
     for (auto body : bodies) {
+        body->recordFrame(elapsedSeconds());
         body->step(dt);
         body->setForce("Normal", glm::vec3(0.0f));
     }
@@ -42,9 +43,20 @@ void Physics::PhysicsSystem::step(float dt) {
 
 void Physics::PhysicsSystem::enablePhysics() {
     physicsEnabled = true;
+    startTime = std::chrono::steady_clock::now();
 }
 
 void Physics::PhysicsSystem::disablePhysics() {
     physicsEnabled = false;
+    auto now = std::chrono::steady_clock::now();
+    elapsed += (now - startTime);
+}
+
+float Physics::PhysicsSystem::elapsedSeconds() const {
+    auto total = elapsed;
+    if (physicsEnabled) {
+        total += (std::chrono::steady_clock::now() - startTime);
+    }
+    return std::chrono::duration<float>(total).count();
 }
 

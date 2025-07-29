@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -28,6 +29,7 @@ namespace Physics {
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
+        void recordFrame(float t) override {} // TODO
 
         bool collidesWith(const IPhysicsBody &other) const override;
         bool collidesWithPointMass(const PointMass &pm) const override;
@@ -45,6 +47,7 @@ namespace Physics {
         std::map<std::string, glm::vec3> forces;
 
         glm::mat4 worldMatrix = glm::mat4(1.0f);
+        std::vector<ObjectSnapshot> frames;
 
         float mass;
     };

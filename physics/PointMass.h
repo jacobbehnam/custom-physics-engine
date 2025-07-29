@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 #include <glm/glm.hpp>
 
 #include "graphics/interfaces/IPhysicsBody.h"
@@ -27,6 +28,7 @@ namespace Physics {
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
+        void recordFrame(float t) override {frames.push_back({t, position, velocity});}
 
         bool collidesWith(const IPhysicsBody& other) const override;
         bool collidesWithPointMass(const PointMass& pm) const override;
@@ -38,7 +40,7 @@ namespace Physics {
     private:
         std::map<std::string, glm::vec3> forces;
         glm::mat4 worldMatrix = glm::mat4(1.0f);
-
+        std::vector<ObjectSnapshot> frames;
     };
 
 }
