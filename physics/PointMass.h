@@ -26,6 +26,8 @@ namespace Physics {
         void setPosition(const glm::vec3& pos) override { position = pos; }
         glm::vec3 getVelocity() const override { return velocity; }
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
+        float getMass() const override { return mass; }
+        void setMass(float newMass) override;
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
         void recordFrame(float t) override { frames.push_back( {t, position, velocity}); }

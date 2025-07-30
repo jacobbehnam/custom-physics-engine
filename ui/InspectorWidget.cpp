@@ -46,6 +46,10 @@ void InspectorWidget::loadObject(SceneObject* obj) {
             [body]()->glm::vec3{ return body->getVelocity(); },
             [body](glm::vec3 v){ body->setVelocity(v); },
             this);
+        transformRows.emplace_back("Mass",
+            [body]()->float{ return body->getMass(); },
+            [body](float newMass){ body->setMass(newMass); },
+            this);
     }
     for (InspectorRow row : transformRows) {
         layout->addRow(row.getLabel(), row.getEditor());

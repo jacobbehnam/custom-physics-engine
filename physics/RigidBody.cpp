@@ -21,6 +21,11 @@ void Physics::RigidBody::setForce(const std::string &name, const glm::vec3 &forc
     netForce = tempNetForce;
 }
 
+void Physics::RigidBody::setMass(float newMass) {
+    mass = newMass;
+    setForce("Gravity", mass * glm::vec3(0.0f, -9.81f, 0.0f));
+}
+
 
 void Physics::RigidBody::step(float dt) {
     velocity = velocity + (netForce/mass)*dt;

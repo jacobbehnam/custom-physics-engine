@@ -13,11 +13,8 @@ namespace Physics {
         RigidBody(float mass, glm::vec3 pos, ICollider* collider);
 
         void setForce(const std::string &name, const glm::vec3 &force) override;
-
         glm::vec3 getForce(const std::string &name) const override { return forces.find(name)->second; }
-
-        std::map<std::string, glm::vec3> getAllForces() const override { return forces; };
-
+        std::map<std::string, glm::vec3> getAllForces() const override { return forces; }
         void applyForce(const glm::vec3& force) override;
         void step(float dt) override;
 
@@ -27,6 +24,8 @@ namespace Physics {
         void setPosition(const glm::vec3& pos) override { position = pos; }
         glm::vec3 getVelocity() const override { return velocity; }
         void setVelocity(const glm::vec3 &vel) override { velocity = vel; }
+        float getMass() const override { return mass; }
+        void setMass(float newMass) override;
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
         void recordFrame(float t) override { frames.push_back( {t, position, velocity}); }

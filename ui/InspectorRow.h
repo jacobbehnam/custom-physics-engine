@@ -15,7 +15,7 @@ public:
             std::cout << "bool" << std::endl;
         }
         else if constexpr (std::is_arithmetic_v<ValueT>) {
-            std::cout << "scalar" << std::endl;
+            editor = makeScalarWidget(get, parent, set);
         }
         else if constexpr (std::is_same_v<ValueT, glm::vec3>) {
             editor = makeVec3Widget(get, parent, set);
@@ -34,7 +34,7 @@ public:
             std::cout << "bool" << std::endl;
         }
         else if constexpr (std::is_arithmetic_v<ValueT>) {
-            std::cout << "scalar" << std::endl;
+            editor = makeScalarWidget(get, parent);
         }
         else if constexpr (std::is_same_v<ValueT, glm::vec3>) {
             editor = makeVec3Widget(get, parent);
@@ -53,5 +53,6 @@ private:
     QWidget* editor = nullptr;
     std::function<void()> pullFromObject;
 
-    QWidget* makeVec3Widget(std::function<glm::vec3()> get, QWidget* parent = nullptr, std::function<void(glm::vec3)> set = nullptr);
+    QWidget* makeVec3Widget(const std::function<glm::vec3()>& get, QWidget* parent = nullptr, std::function<void(glm::vec3)> set = nullptr);
+    QWidget* makeScalarWidget(const std::function<float()>& get, QWidget* parent = nullptr, std::function<void(float)> set = nullptr);
 };
