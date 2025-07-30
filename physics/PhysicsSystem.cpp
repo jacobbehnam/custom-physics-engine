@@ -25,6 +25,7 @@ void Physics::PhysicsSystem::step(float dt) {
         body->recordFrame(simTime);
         body->step(dt);
         body->setForce("Normal", glm::vec3(0.0f));
+        body->setForce("Gravity", body->getMass() * globalAcceleration);
     }
 
     simTime += dt;

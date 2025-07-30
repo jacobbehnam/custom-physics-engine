@@ -16,6 +16,9 @@ namespace Physics {
         void enablePhysics();
         void disablePhysics();
 
+        glm::vec3 getGlobalAcceleration() const { return globalAcceleration; }
+        void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration = newAcceleration; }
+
     private:
         glm::vec3 globalAcceleration;
         std::vector<IPhysicsBody*> bodies;

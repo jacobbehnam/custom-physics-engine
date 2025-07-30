@@ -27,7 +27,6 @@ private slots:
     void onHierarchySelectionChanged(SceneObject* previous, SceneObject* current);
 
 private:
-    Scene* scene;
     OpenGLWindow* glWindow;
     SceneManager* sceneManager;
 

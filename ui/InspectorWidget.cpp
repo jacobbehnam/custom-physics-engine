@@ -8,7 +8,7 @@
 
 #include "InspectorRow.h"
 
-InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
+InspectorWidget::InspectorWidget(SceneManager* sceneMgr, QWidget* parent) : QWidget(parent), sceneManager(sceneMgr) {
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(5, 0, 15, 0);
 
@@ -17,10 +17,12 @@ InspectorWidget::InspectorWidget(QWidget* parent) : QWidget(parent) {
     refreshTimer.setInterval(100);
     connect(&refreshTimer, &QTimer::timeout, this, &InspectorWidget::refresh);
     refreshTimer.start();
+
+    unloadObject();
 }
 
 void InspectorWidget::loadObject(SceneObject* obj) {
-    unloadObject();
+    unloadObject(false);
     currentObject = obj;
 
     // Transform
@@ -120,11 +122,26 @@ void InspectorWidget::populateForces(IPhysicsBody* body, QFormLayout *layout) {
     layout->addRow(row.getLabel(), row.getEditor());
 }
 
+void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
+    QGroupBox* globalsGroup = new QGroupBox("Globals");
+    auto* formLayout = new QFormLayout(globalsGroup);
+    layout->addWidget(globalsGroup);
+    globalsRows.emplace_back("Gravitational \n Acceleration",
+        [this]()->glm::vec3{ return sceneManager->getGlobalAcceleration(); },
+        [this](glm::vec3 a){ sceneManager->setGlobalAcceleration(a); },
+        this);
+    for (InspectorRow row : globalsRows) {
+        formLayout->addRow(row.getLabel(), row.getEditor());
+    }
+}
 
-void InspectorWidget::unloadObject() {
+void InspectorWidget::unloadObject(bool loadGlobals) {
     clearLayout(mainLayout);
     transformRows.clear();
     forceRows.clear();
+    globalsRows.clear();
+    if (loadGlobals)
+        populateGlobals(mainLayout);
 }
 
 void InspectorWidget::clearLayout(QVBoxLayout* layout) {

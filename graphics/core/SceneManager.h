@@ -17,7 +17,9 @@ public:
 
     void addToPhysicsSystem(IPhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(IPhysicsBody* body) const { physicsSystem->removeBody(body); }
-    void stepPhysics(float dt) const {physicsSystem->step(dt);}
+    glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
+    void setGlobalAcceleration(const glm::vec3& newAcceleration) { physicsSystem->setGlobalAcceleration(newAcceleration); }
+    void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
     void addDrawable(IDrawable* obj) { scene->addDrawable(obj); }

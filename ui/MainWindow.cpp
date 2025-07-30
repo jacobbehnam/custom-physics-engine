@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 void MainWindow::onGLInitialized() {
-    scene = new Scene(glWindow);
+    auto* scene = new Scene(glWindow);
     sceneManager = new SceneManager(glWindow, scene);
     glWindow->setScene(scene);
     glWindow->setSceneManager(sceneManager);
@@ -52,7 +52,7 @@ void MainWindow::setupDockWidgets() {
     connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
-    inspector = new InspectorWidget(this);
+    inspector = new InspectorWidget(sceneManager, this);
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     QScrollArea* scrollArea = new QScrollArea;
