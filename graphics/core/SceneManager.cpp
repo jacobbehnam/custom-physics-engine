@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "graphics/core/ResourceManager.h"
+#include "physics/bounding/BoxCollider.h"
 #include "ui/OpenGLWindow.h"
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
@@ -11,20 +12,20 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, true);
-    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, false);
-    SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader, true);
+    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, PhysicsOptions(PhysicsBody::POINTMASS, false, 1.0f));
+    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, PhysicsOptions(PhysicsBody::RIGIDBODY, true));
+    SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader);
     cube2->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
-SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, bool wantPhysics) {
+SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, PhysicsOptions options) {
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, wantPhysics);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, options);
             break;
         case Primitive::SPHERE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, wantPhysics);
+            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, options);
             break;
     }
     assert(primitive != nullptr);

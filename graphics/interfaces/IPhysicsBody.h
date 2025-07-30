@@ -30,6 +30,8 @@ public:
     virtual float getMass() const = 0;
     virtual void setMass(float newMass) = 0;
 
+    virtual bool getIsStatic() const = 0;
+
     virtual void setWorldTransform(const glm::mat4& M) = 0;
     virtual void recordFrame(float t) = 0;
     virtual const std::vector<ObjectSnapshot>& getAllFrames() const = 0;

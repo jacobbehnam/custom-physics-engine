@@ -5,7 +5,9 @@
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
 
-Physics::RigidBody::RigidBody(float m, glm::vec3 pos, ICollider* col) : mass(m), position(pos), collider(col) {}
+Physics::RigidBody::RigidBody(float m, ICollider* col, glm::vec3 pos, bool bodyStatic) : mass(m), position(pos), collider(col), isStatic(bodyStatic) {}
+
+Physics::RigidBody::RigidBody(ICollider* col, glm::vec3 pos, bool bodyStatic) : collider(col), isStatic(bodyStatic), position(pos), mass(0.0f) {}
 
 void Physics::RigidBody::applyForce(const glm::vec3 &force) {
     netForce += force;
@@ -28,8 +30,12 @@ void Physics::RigidBody::setMass(float newMass) {
 
 
 void Physics::RigidBody::step(float dt) {
-    velocity = velocity + (netForce/mass)*dt;
-    position = position + velocity * dt + (netForce/(2 * mass)) * dt * dt;
+    glm::vec3 acceleration = netForce / mass;
+    glm::vec3 posIncrement = velocity * dt + 0.5f * acceleration * dt * dt;
+    position += posIncrement;
+    worldMatrix = glm::translate(worldMatrix, posIncrement);
+    glm::vec3 newAcceleration = netForce / mass; // if netForce changed during the step
+    velocity += 0.5f * (acceleration + newAcceleration) * dt;
 }
 
 bool Physics::RigidBody::collidesWith(const IPhysicsBody &other) const {

@@ -3,10 +3,9 @@
 
 #include "RigidBody.h"
 
-Physics::PointMass::PointMass(float m, glm::vec3 pos) : position(pos), mass(m) {
-    PointMass::setForce("Gravity", m * glm::vec3(0.0f, -9.81f, 0.0f));
-    PointMass::setForce("Normal", glm::vec3(0.0f));
-}
+Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) : position(pos), mass(m), isStatic(bodyStatic) {}
+
+Physics::PointMass::PointMass(glm::vec3 pos, bool bodyStatic) : position(pos), isStatic(bodyStatic), mass(0.0f) {}
 
 void Physics::PointMass::applyForce(const glm::vec3 &force) {
     netForce += force;

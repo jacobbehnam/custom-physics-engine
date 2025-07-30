@@ -13,7 +13,8 @@ namespace Physics {
         glm::vec3 netForce = glm::vec3(0.0f);
         float mass;
 
-        PointMass(float m, glm::vec3 pos = glm::vec3(0.0f));
+        PointMass(float m, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        PointMass(glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
         void applyForce(const glm::vec3& force) override;
         void setForce(const std::string &name, const glm::vec3 &force) override;
@@ -29,6 +30,8 @@ namespace Physics {
         float getMass() const override { return mass; }
         void setMass(float newMass) override;
 
+        bool getIsStatic() const override { return isStatic; }
+
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
         void recordFrame(float t) override { frames.push_back( {t, position, velocity}); }
         const std::vector<ObjectSnapshot> &getAllFrames() const override { return frames; }
@@ -41,6 +44,7 @@ namespace Physics {
         bool resolveCollisionWithPointMass(PointMass &pm) override;
         bool resolveCollisionWithRigidBody(RigidBody &rb) override;
     private:
+        bool isStatic;
         std::map<std::string, glm::vec3> forces;
         glm::mat4 worldMatrix = glm::mat4(1.0f);
         std::vector<ObjectSnapshot> frames;

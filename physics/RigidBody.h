@@ -10,7 +10,8 @@ namespace Physics {
 
     class RigidBody : public IPhysicsBody {
     public:
-        RigidBody(float mass, glm::vec3 pos, ICollider* collider);
+        RigidBody(float mass, ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        RigidBody(ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
         void setForce(const std::string &name, const glm::vec3 &force) override;
         glm::vec3 getForce(const std::string &name) const override { return forces.find(name)->second; }
@@ -18,7 +19,7 @@ namespace Physics {
         void applyForce(const glm::vec3& force) override;
         void step(float dt) override;
 
-        bool isStatic() const;
+        bool getIsStatic() const override { return isStatic; }
 
         glm::vec3 getPosition() const override { return position; }
         void setPosition(const glm::vec3& pos) override { position = pos; }
@@ -41,6 +42,8 @@ namespace Physics {
 
         ICollider* collider = nullptr;
     private:
+        bool isStatic;
+
         glm::vec3 position;
         glm::vec3 velocity = glm::vec3(0.0f);
         glm::vec3 netForce = glm::vec3(0.0f);
