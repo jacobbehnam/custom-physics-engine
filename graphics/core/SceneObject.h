@@ -7,8 +7,8 @@
 
 #include "graphics/interfaces/IPickable.h"
 #include "physics/PhysicsSystem.h"
+#include "graphics/core/SceneObjectOptions.h"
 
-struct PhysicsOptions;
 class Scene;
 class SceneManager;
 namespace Physics {
@@ -19,7 +19,7 @@ namespace Physics {
 class SceneObject : public QObject, public IDrawable, public IPickable{
     Q_OBJECT
 public:
-    SceneObject(SceneManager* sceneManager, Mesh* meshPtr, Shader *sdr, const PhysicsOptions &options, QObject* parent = nullptr);
+    SceneObject(SceneManager* sceneManager, Mesh* meshPtr, Shader *sdr, const CreationOptions &options, QObject* parent = nullptr);
     ~SceneObject();
 
     void draw() const override;

@@ -12,13 +12,14 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, PhysicsOptions(PhysicsBody::POINTMASS, false, 1.0f));
-    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, PhysicsOptions(PhysicsBody::RIGIDBODY, true));
-    SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader);
+    ObjectOptions defaultOptions{};
+    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, CreationOptions(PointMassOptions{defaultOptions}));
+    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, CreationOptions(RigidBodyOptions::Box(defaultOptions, true)));
+    SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader, defaultOptions);
     cube2->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
-SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, PhysicsOptions options) {
+SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, const CreationOptions& options) {
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:

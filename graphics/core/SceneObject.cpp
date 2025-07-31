@@ -9,28 +9,35 @@
 #include <graphics/core/SceneManager.h>
 #include "physics/bounding/BoxCollider.h"
 
-SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, const PhysicsOptions &options, QObject* objectParent)
+SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, const CreationOptions &options, QObject* objectParent)
     : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
 
-    switch(options.body) {
-        case PhysicsBody::NONE:
-            // ignore mass & collider completely
-            break;
+    std::visit([&](auto&& o) {
+        using T = std::decay_t<decltype(o)>;
 
-        case PhysicsBody::POINTMASS:
-            physicsBody = std::make_unique<Physics::PointMass>(options.mass);
+        if constexpr (std::is_same_v<T, ObjectOptions>) {
+            position = o.position;
+            scale = o.scale;
+            rotation = o.rotation;
+        } else if constexpr (std::is_same_v<T, PointMassOptions>) {
+            position = o.base.position;
+            scale = o.base.scale;
+            rotation = o.base.rotation;
+            physicsBody = std::make_unique<Physics::PointMass>(o.mass, o.base.position, o.isStatic);
             sceneManager->addToPhysicsSystem(physicsBody.get());
-            break;
-
-        case PhysicsBody::RIGIDBODY:
-            auto* collider = new Physics::Bounding::BoxCollider(glm::vec3(0.0f), scale/2.0f, rotation);
-            physicsBody = std::make_unique<Physics::RigidBody>(options.mass, collider, glm::vec3(0.0f), options.isStatic);
+        } else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
+            position = o.base.position;
+            scale = o.base.scale;
+            rotation = o.base.rotation;
+            physicsBody = std::make_unique<Physics::RigidBody>(o.mass, o.createCollider(o.base), o.base.position, o.isStatic);
             sceneManager->addToPhysicsSystem(physicsBody.get());
-            break;
-    }
+        } else {
+            std::cout << "Problem with CreationOptions on SceneObject construction!" << std::endl;
+        }
+    }, options);
 }
 
 SceneObject::~SceneObject() {

@@ -22,6 +22,8 @@ void Physics::PhysicsSystem::step(float dt) {
     if (!physicsEnabled) return;
 
     for (auto body : bodies) {
+        if (body->getIsStatic())
+            continue;
         body->recordFrame(simTime);
         body->step(dt);
         body->setForce("Normal", glm::vec3(0.0f));
@@ -35,7 +37,7 @@ void Physics::PhysicsSystem::step(float dt) {
             IPhysicsBody* a = bodies[i];
             IPhysicsBody* b = bodies[j];
 
-            // if (a->isStatic() && b->isStatic()) continue;
+            if (a->getIsStatic() && b->getIsStatic()) continue;
 
             if (a->collidesWith(*b)) {
                 a->resolveCollisionWith(*b);

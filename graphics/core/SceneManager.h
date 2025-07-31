@@ -1,38 +1,11 @@
 #pragma once
 #include <QObject>
 #include "graphics/core/Scene.h"
+#include "graphics/core/SceneObjectOptions.h"
 
 enum class Primitive {
     CUBE,
     SPHERE
-};
-
-enum class PhysicsBody {
-    NONE,
-    POINTMASS,
-    RIGIDBODY
-};
-
-// TODO: can refactor to use std::variant here
-struct PhysicsOptions {
-    PhysicsBody body = PhysicsBody::NONE;
-    bool isStatic = false;
-    float mass = 1.0f;
-    std::optional<ICollider*> collider;
-
-    explicit PhysicsOptions(PhysicsBody b, bool bodyStatic = false, float m = 1.0f)
-      : body(b), mass(m), isStatic(bodyStatic)
-    {
-        // if (b == PhysicsBody::RIGIDBODY)
-        //     throw std::invalid_argument{"RigidBody requires a collider"};
-    }
-
-    // PhysicsOptions(PhysicsBody b, ICollider* c, bool bodyStatic = false, float m = 1.0f)
-    //   : body(b), mass(m), collider(c), isStatic(bodyStatic)
-    // {
-    //     if (b != PhysicsBody::RIGIDBODY)
-    //         throw std::invalid_argument{"Only RigidBody ctor takes a collider"};
-    // }
 };
 
 class SceneManager : public QObject {
@@ -40,7 +13,7 @@ class SceneManager : public QObject {
 
 public:
     SceneManager(OpenGLWindow* win, Scene* scene);
-    SceneObject* createPrimitive(Primitive type, Shader* shader, PhysicsOptions options = PhysicsOptions(PhysicsBody::NONE));
+    SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
 
     void addToPhysicsSystem(IPhysicsBody* body) const { physicsSystem->addBody(body); }
