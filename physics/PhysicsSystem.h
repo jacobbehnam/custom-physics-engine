@@ -19,11 +19,18 @@ namespace Physics {
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration; }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration = newAcceleration; }
 
+        glm::vec3 debugSolveInitialVelocity(
+            IPhysicsBody* body,
+            float targetDistance,
+            float targetTime,
+            float dt = 0.01f
+        );
+
     private:
         glm::vec3 globalAcceleration;
         std::vector<IPhysicsBody*> bodies;
 
-        bool physicsEnabled = false;
+        bool physicsEnabled = true;
         float simTime = 0.0f;
     };
 

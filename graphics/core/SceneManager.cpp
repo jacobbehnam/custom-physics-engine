@@ -14,9 +14,9 @@ void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
     ObjectOptions defaultOptions{};
     SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, CreationOptions(PointMassOptions{defaultOptions}));
-    SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, CreationOptions(RigidBodyOptions::Box(defaultOptions, true)));
-    SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader, defaultOptions);
-    cube2->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    // SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, CreationOptions(RigidBodyOptions::Box(defaultOptions, true)));
+    // SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader, defaultOptions);
+    std::cout << (physicsSystem->debugSolveInitialVelocity(cube->getPhysicsBody(), 10.0f, 0.50f, 0.01f)).x;
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, const CreationOptions& options) {

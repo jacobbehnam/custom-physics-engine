@@ -80,7 +80,9 @@ add_executable(OpenGLApp main.cpp
         physics/bounding/BoxCollider.h
         ui/SnapshotTableModel.cpp
         ui/SnapshotTableModel.h
-        graphics/core/SceneObjectOptions.h)
+        graphics/core/SceneObjectOptions.h
+        physics/solver/OneUnknownSolver.cpp
+        physics/solver/OneUnknownSolver.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE
