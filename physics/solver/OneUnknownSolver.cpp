@@ -4,40 +4,40 @@
 
 template<typename InputT, typename OutputT>
 OneUnknownSolver<InputT, OutputT>::OneUnknownSolver(ParamSetter setParameter, SimulationRun runSimulation, ResultExtractor extractResult, OutputT tgt, OutputT toler, int maxIter)
-    : setParam(std::move(setParameter)), runSim(std::move(runSimulation)), extract(std::move(extractResult)), target(tgt), tolerance(toler), maxIterations(maxIter) {}
+    : setParam(std::move(setParameter)), runSim(std::move(runSimulation)), extract(std::move(extractResult)), target(tgt), tolerance(toler) {}
 
-// Secant solve method
 template<typename InputT, typename OutputT>
-InputT OneUnknownSolver<InputT, OutputT>::solve(InputT x0, InputT x1) {
-    OutputT f0 = eval(x0);
-    OutputT f1 = eval(x1);
-
-    for (iteration = 0; iteration < maxIterations; ++iteration) {
-        if (std::abs(f1) < tolerance)
-            return x1;
-
-        if (std::abs(f1 - f0) < std::numeric_limits<OutputT>::epsilon())
-            break;
-
-        // Secant method step
-        InputT x2 = x1 - (f1 * (x1 - x0) / (f1 - f0));
-        OutputT f2 = eval(x2);
-
-        x0 = x1;
-        f0 = f1;
-        x1 = x2;
-        f1 = f2;
-    }
-    return x1;
+void OneUnknownSolver<InputT, OutputT>::init(InputT lo, InputT hi) {
+    low = lo;
+    high = hi;
+    current = low;
+    setParam(current);
 }
 
 template<typename InputT, typename OutputT>
-OutputT OneUnknownSolver<InputT, OutputT>::eval(InputT x) {
-    setParam(x);
-    runSim();
-    OutputT result = extract();
-    lastError = result - target;
-    return lastError;
+bool OneUnknownSolver<InputT, OutputT>::stepFrame() {
+    if (runSim()) { // if stop condition is reached
+        OutputT measured = extract();
+        OutputT error    = measured - target;
+        if (std::abs(error) < tolerance) {
+            return true;
+        }
+
+        if (error > 0) {
+            // Measured > target → current guess too low
+            low = current;
+        } else {
+            // Measured < target → current guess too high
+            high = current;
+        }
+
+        // Bisection step (midpoint)
+        current = static_cast<InputT>((low + high) * static_cast<OutputT>(0.5));
+        setParam(current); // Apply next guess
+        return false;
+    } else {
+        return false;
+    }
 }
 
 template class OneUnknownSolver<float, float>;

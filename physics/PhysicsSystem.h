@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "RigidBody.h"
+#include "solver/OneUnknownSolver.h"
 
 namespace Physics {
 
@@ -19,12 +20,15 @@ namespace Physics {
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration; }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration = newAcceleration; }
 
-        glm::vec3 debugSolveInitialVelocity(
+        void debugSolveInitialVelocity(
             IPhysicsBody* body,
             float targetDistance,
-            float targetTime,
-            float dt = 0.01f
+            float targetTime
         );
+
+        float dt = 0.0f;
+        OneUnknownSolver<float, float>* solver = nullptr;
+        float thing = 20.0f;
 
     private:
         glm::vec3 globalAcceleration;

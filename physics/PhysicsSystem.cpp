@@ -8,7 +8,8 @@ namespace Physics {
     class PointMass;
 }
 
-Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
+Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {
+}
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
     auto it = std::remove(bodies.begin(), bodies.end(), body);
@@ -21,6 +22,7 @@ void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
 
 void Physics::PhysicsSystem::step(float dt) {
     //if (!physicsEnabled) return;
+    this->dt = dt;
 
     for (auto body : bodies) {
         if (body->getIsStatic())
@@ -28,7 +30,8 @@ void Physics::PhysicsSystem::step(float dt) {
         body->recordFrame(simTime);
         body->step(dt);
         body->setForce("Normal", glm::vec3(0.0f));
-        body->setForce("Gravity", body->getMass() * globalAcceleration);
+        //body->setForce("Gravity", body->getMass() * globalAcceleration);
+        body->setForce("Gravity", glm::vec3(0.0f));
     }
 
     simTime += dt;
@@ -45,18 +48,23 @@ void Physics::PhysicsSystem::step(float dt) {
             }
         }
     }
+    if (solver) {
+        if (!solver->stepFrame()) {
+            // still solving—optionally display current guess:
+            std::cout << solver->current << std::endl;
+        } else {
+            std::cout << "finished" << std::endl;
+        }
+    }
 }
-glm::vec3 Physics::PhysicsSystem::debugSolveInitialVelocity(
+void Physics::PhysicsSystem::debugSolveInitialVelocity(
     IPhysicsBody* body,
     float targetDistance,
-    float targetTime,
-    float dt
+    float targetTime
 ) {
-    // We’ll solve for a single float: the initial vx
-    float elapsed = 0.f;
 
     // 1) Setter: reset world & apply candidate vx
-    auto setVx = [&](float vx0) {
+    auto setVx = [this, body](float vx0) {
         // reset the entire world to t=0
         this->simTime       = 0.f;
         this->physicsEnabled= true;
@@ -64,40 +72,26 @@ glm::vec3 Physics::PhysicsSystem::debugSolveInitialVelocity(
         body->setPosition(glm::vec3(0.0f));
         // now apply only to our test body:
         body->setVelocity({vx0, 0.f, 0.f});
-        elapsed = 0.f;
     };
 
     // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [&]() {
-        while (body->getPosition().x < targetDistance) {
-            this->step(dt);  // now actually advances
-            elapsed += dt;
-            if (elapsed > targetTime * 2.f)
-                break;  // safety cap
-        }
+    auto runToX = [=, body]()->bool {
+        return body->getAllFrames().back().position.x > targetDistance;
     };
 
     // 3) Extractor: return how long it took
     auto getTime = [&]() -> float {
-        return elapsed;
+        return simTime;
     };
 
     // Build a scalar solver: float → float
-    OneUnknownSolver<float, float> solver(
+    solver = new OneUnknownSolver<float, float> (
         setVx,       // ParamSetter: float vx0
         runToX,      // SimulationRun
         getTime,     // ResultExtractor: float elapsed
         targetTime   // we want elapsed == targetTime
     );
-
-    // bracket guesses for vx (in m/s)
-    float guessA = 0.f;
-    float guessB = 20.f;
-
-    float vx_solution = solver.solve(guessA, guessB);
-
-    // Return it as a vec3 (only x matters here)
-    return { vx_solution, 0.f, 0.f };
+    solver->init(1.0f, 20.0f);
 }
 
 void Physics::PhysicsSystem::enablePhysics() {
