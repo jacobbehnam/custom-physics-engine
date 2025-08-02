@@ -1,5 +1,6 @@
 #include "OneUnknownSolver.h"
 
+#include <iostream>
 #include <glm/vec3.hpp>
 
 template<typename InputT, typename OutputT>
@@ -19,6 +20,7 @@ bool OneUnknownSolver<InputT, OutputT>::stepFrame() {
     if (runSim()) { // if stop condition is reached
         OutputT measured = extract();
         OutputT error    = measured - target;
+        std::cout << error << std::endl;
         if (std::abs(error) < tolerance) {
             return true;
         }

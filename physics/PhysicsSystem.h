@@ -26,15 +26,13 @@ namespace Physics {
             float targetTime
         );
 
-        float dt = 0.0f;
         OneUnknownSolver<float, float>* solver = nullptr;
-        float thing = 20.0f;
 
     private:
         glm::vec3 globalAcceleration;
         std::vector<IPhysicsBody*> bodies;
 
-        bool physicsEnabled = true;
+        bool physicsEnabled = false;
         float simTime = 0.0f;
     };
 

@@ -21,8 +21,8 @@ void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
 }
 
 void Physics::PhysicsSystem::step(float dt) {
-    //if (!physicsEnabled) return;
-    this->dt = dt;
+    if (!physicsEnabled) return;
+    dt *= 5;
 
     for (auto body : bodies) {
         if (body->getIsStatic())
@@ -51,8 +51,9 @@ void Physics::PhysicsSystem::step(float dt) {
     if (solver) {
         if (!solver->stepFrame()) {
             // still solving—optionally display current guess:
-            std::cout << solver->current << std::endl;
+            //std::cout << solver->current << std::endl;
         } else {
+            physicsEnabled = false;
             std::cout << "finished" << std::endl;
         }
     }
@@ -67,7 +68,6 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     auto setVx = [this, body](float vx0) {
         // reset the entire world to t=0
         this->simTime       = 0.f;
-        this->physicsEnabled= true;
         // assume you have a reset() that restores all bodies to their initial poses
         body->setPosition(glm::vec3(0.0f));
         // now apply only to our test body:
@@ -75,13 +75,34 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     };
 
     // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [=, body]()->bool {
+    auto runToX = [=]()->bool {
         return body->getAllFrames().back().position.x > targetDistance;
     };
 
     // 3) Extractor: return how long it took
-    auto getTime = [&]() -> float {
-        return simTime;
+    auto getTime = [=]() -> float {
+        const auto& frames = body->getAllFrames();
+        int N = (int)frames.size();
+        if (N < 2) return simTime;  // fallback
+
+        // Frame A: just before crossing, Frame B: just after
+        const auto& A = frames[N-2];
+        const auto& B = frames[N-1];
+
+        float xA = A.position.x, tA = A.time;
+        float xB = B.position.x, tB = B.time;
+
+        // Avoid division by zero
+        if (std::abs(xB - xA) < 1e-6f)
+            return tB;
+
+        // Linear interpolation fraction
+        float a = (targetDistance - xA) / (xB - xA);
+        // Clamp [0,1] just in case
+        a = std::clamp(a, 0.0f, 1.0f);
+
+        // Interpolated crossing time
+        return tA + a * (tB - tA);
     };
 
     // Build a scalar solver: float → float

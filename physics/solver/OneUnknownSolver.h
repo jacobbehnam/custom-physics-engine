@@ -16,7 +16,7 @@ public:
                      SimulationRun runSimulation,
                      ResultExtractor extractResult,
                      OutputT target,
-                     OutputT tolerance = static_cast<OutputT>(1e-3),
+                     OutputT tolerance = static_cast<OutputT>(0.001),
                      int maxIterations = 30);
 
     void init(InputT lo, InputT hi);
