@@ -19,18 +19,21 @@ public:
                      OutputT tolerance = static_cast<OutputT>(0.001),
                      int maxIterations = 30);
 
-    void init(InputT lo, InputT hi);
     bool stepFrame();
 
     InputT current;
 private:
+    bool intervalFound = false;
+    float delta = 0.5f;
+    int expandIterations = 0;
+    OutputT prevError{};
 
     ParamSetter setParam;
     SimulationRun runSim;
     ResultExtractor extract;
 
     OutputT target;
-    InputT high;
-    InputT low;
+    InputT high{};
+    InputT low{};
     OutputT tolerance;
 };

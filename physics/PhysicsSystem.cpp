@@ -76,7 +76,12 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
 
     // 2) Runner: integrate until x ≥ targetDistance
     auto runToX = [=]()->bool {
-        return body->getAllFrames().back().position.x > targetDistance;
+        if (body->getAllFrames().back().position.x > targetDistance)
+            return true;
+        if (simTime >= 10) {
+            return true;
+        }
+        return false;
     };
 
     // 3) Extractor: return how long it took
@@ -112,7 +117,6 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
         getTime,     // ResultExtractor: float elapsed
         targetTime   // we want elapsed == targetTime
     );
-    solver->init(1.0f, 20.0f);
 }
 
 void Physics::PhysicsSystem::enablePhysics() {
