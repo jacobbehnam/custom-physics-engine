@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "PointMass.h"
+#include "graphics/utils/MathUtils.h"
 #include "solver/OneUnknownSolver.h"
 
 namespace Physics {
@@ -9,6 +10,11 @@ namespace Physics {
 }
 
 Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {
+}
+
+void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
+    bodies.push_back(body);
+    body->recordFrame(simTime);
 }
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
@@ -22,7 +28,7 @@ void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
 
 void Physics::PhysicsSystem::step(float dt) {
     if (!physicsEnabled) return;
-    dt *= 5;
+    dt *= 20;
 
     for (auto body : bodies) {
         if (body->getIsStatic())
@@ -64,20 +70,23 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     float targetTime
 ) {
 
+    const auto resetState = body->getAllFrames().front();
     // 1) Setter: reset world & apply candidate vx
-    auto setVx = [this, body](float vx0) {
+    auto setVx = [this, body, resetState](float vx0) {
         // reset the entire world to t=0
         this->simTime       = 0.f;
         // assume you have a reset() that restores all bodies to their initial poses
-        body->setPosition(glm::vec3(0.0f));
+        reset(body, resetState);
         // now apply only to our test body:
         body->setVelocity({vx0, 0.f, 0.f});
     };
 
     // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [=]()->bool {
-        if (body->getAllFrames().back().position.x > targetDistance)
+    auto runToX = [this, body, targetDistance]()->bool {
+        if (body->getAllFrames().back().position.x > targetDistance) {
+            body->setPosition(glm::vec3(targetDistance, 0.0f, 0.0f));
             return true;
+        }
         if (simTime >= 10) {
             return true;
         }
@@ -85,29 +94,17 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     };
 
     // 3) Extractor: return how long it took
-    auto getTime = [=]() -> float {
+    auto getTime = [this, body, targetDistance]() -> float {
         const auto& frames = body->getAllFrames();
         int N = (int)frames.size();
         if (N < 2) return simTime;  // fallback
 
-        // Frame A: just before crossing, Frame B: just after
-        const auto& A = frames[N-2];
-        const auto& B = frames[N-1];
-
-        float xA = A.position.x, tA = A.time;
-        float xB = B.position.x, tB = B.time;
-
-        // Avoid division by zero
-        if (std::abs(xB - xA) < 1e-6f)
-            return tB;
-
-        // Linear interpolation fraction
-        float a = (targetDistance - xA) / (xB - xA);
-        // Clamp [0,1] just in case
-        a = std::clamp(a, 0.0f, 1.0f);
-
-        // Interpolated crossing time
-        return tA + a * (tB - tA);
+        return MathUtils::interpolateCrossing<float, float>(
+            frames[N-2], frames[N-1],
+            targetDistance,
+            [](const ObjectSnapshot &snap){ return snap.position.x; },
+            [](const ObjectSnapshot &snap){ return snap.time; }
+            );
     };
 
     // Build a scalar solver: float → float

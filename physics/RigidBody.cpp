@@ -38,6 +38,12 @@ void Physics::RigidBody::step(float dt) {
     velocity += 0.5f * (acceleration + newAcceleration) * dt;
 }
 
+void Physics::RigidBody::loadFrame(const ObjectSnapshot &snapshot) {
+    setPosition(snapshot.position);
+    setVelocity(snapshot.velocity);
+}
+
+
 bool Physics::RigidBody::collidesWith(const IPhysicsBody &other) const {
     return other.collidesWithRigidBody(*this);
 }

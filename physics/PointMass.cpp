@@ -38,6 +38,11 @@ void Physics::PointMass::step(float dt) {
     velocity += 0.5f * (acceleration + newAcceleration) * dt;
 }
 
+void Physics::PointMass::loadFrame(const ObjectSnapshot &snapshot) {
+    setPosition(snapshot.position);
+    setVelocity(snapshot.velocity);
+}
+
 bool Physics::PointMass::collidesWith(const IPhysicsBody &other) const {
     return other.collidesWithPointMass(*this);
 }
