@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 project(OpenGLApp)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # Where CLion’s embedded vcpkg installs stuff:
 set(VCPKG_INSTALLED_DIR "C:/Users/Jacob/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic")
@@ -82,7 +82,9 @@ add_executable(OpenGLApp main.cpp
         ui/SnapshotTableModel.h
         graphics/core/SceneObjectOptions.h
         physics/solver/OneUnknownSolver.cpp
-        physics/solver/OneUnknownSolver.h)
+        physics/solver/OneUnknownSolver.h
+        graphics/components/ComputeShader.cpp
+        graphics/components/ComputeShader.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

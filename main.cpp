@@ -4,8 +4,6 @@
 #include "ui/OpenGLWindow.h"
 #include "ui/RawInputFilter.h"
 
-Q_DECLARE_METATYPE(std::vector<ObjectSnapshot>);
-
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 

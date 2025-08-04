@@ -7,6 +7,9 @@
 #include <graphics/utils/MathUtils.h>
 #include "physics/PointMass.h"
 #include <graphics/core/SceneManager.h>
+#include <graphics/components/ComputeShader.h>
+#include <QOpenGLVersionFunctionsFactory>
+#include <QOpenGLFunctions_4_5_Core>
 #include "physics/bounding/BoxCollider.h"
 
 SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, const CreationOptions &options, QObject* objectParent)
@@ -88,32 +91,56 @@ bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, fl
 }
 
 bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
-    bool hitSomething = false;
-    float closestT = std::numeric_limits<float>::infinity();
-
     const std::vector<Vertex>& verts = mesh->getVertices();
+    std::vector<glm::vec3> vertPositions;
+    for (auto vert : verts) {
+        vertPositions.push_back({vert.pos});
+    }
+    const size_t triCount = verts.size() / 3;
+
     const std::vector<unsigned int>& indices = mesh->getIndices();
-    const glm::mat4 model = getModelMatrix();
+    auto *glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_4_5_Core>(QOpenGLContext::currentContext());
+    ComputeShader compute("../shaders/meshIntersection.comp", glFuncs);
+    (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * sizeof(glm::vec3), 0);
+    (void) compute.createSSBO(indices.data(), indices.size() * sizeof(unsigned int), 1);
+    std::vector<float> initDists(triCount, -1.0f);
+    unsigned int distancesSSBO = compute.createSSBO(initDists.data(), initDists.size() * sizeof(float), 2);
+    compute.use();
+    compute.setVec3("rayOrig", orig);
+    compute.setVec3("rayDir", dir);
+    compute.setMat4("modelMatrix", getModelMatrix());
 
-    for (int i = 0; i + 2 < indices.size(); i += 3) {
-        // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
-        const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
-        const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
-        const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
+    constexpr unsigned int groupSize = 64;
+    unsigned int groups = (triCount + groupSize - 1) / groupSize;
+    compute.dispatch(groups);
 
-        float outDistance = 0.0f;
-        if (MathUtils::intersectTriangle(orig, dir, v0, v1, v2, outDistance)) {
-            if (outDistance < closestT) {
-                closestT = outDistance;
-                hitSomething = true;
-            }
-        }
+    auto distances = compute.readSSBO<float>(distancesSSBO, triCount);
+    auto minIt = std::min_element(distances.begin(), distances.end());
+    if (minIt == distances.end()) {
+        return false;
     }
+    outT = *minIt;
+    return true;
 
-    if (hitSomething) {
-        outT = closestT;
-    }
-    return hitSomething;
+    // for (int i = 0; i + 2 < indices.size(); i += 3) {
+    //     // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
+    //     const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
+    //     const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
+    //     const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
+    //
+    //     float outDistance = 0.0f;
+    //     if (MathUtils::intersectTriangle(orig, dir, v0, v1, v2, outDistance)) {
+    //         if (outDistance < closestT) {
+    //             closestT = outDistance;
+    //             hitSomething = true;
+    //         }
+    //     }
+    // }
+    //
+    // if (hitSomething) {
+    //     outT = closestT;
+    // }
+    // return hitSomething;
 }
 
 

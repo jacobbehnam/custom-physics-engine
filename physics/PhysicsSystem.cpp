@@ -44,11 +44,26 @@ void Physics::PhysicsSystem::physicsLoop() {
     constexpr float dt = 1.0f / 1000.0f;
     int writeBuf = 0;
 
+    float accumulator = 0.0f;
+    auto lastTime = std::chrono::high_resolution_clock::now();
+
     while (running.load()) {
-        {
+        auto now = std::chrono::high_resolution_clock::now();
+        float frameTime = std::chrono::duration<float>(now - lastTime).count();
+        lastTime = now;
+
+        if (!physicsEnabled.load()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
+
+        accumulator += frameTime;
+
+        while (accumulator >= dt) {
             std::lock_guard<std::mutex> lock(bodiesMutex);
-            if (!physicsEnabled.load()) { continue; }
             step(dt);
+            simTime += dt;
+            accumulator -= dt;
         }
 
         {
@@ -72,8 +87,6 @@ void Physics::PhysicsSystem::physicsLoop() {
         }
         stepDone.notify_one();
         writeBuf = 1 - writeBuf;
-
-        std::this_thread::sleep_for(std::chrono::duration<float>(dt));
     }
 }
 
@@ -102,8 +115,6 @@ void Physics::PhysicsSystem::step(float dt) {
         //body->setForce("Gravity", body->getMass() * globalAcceleration);
         body->setForce("Gravity", glm::vec3(0.0f));
     }
-
-    simTime += dt;
 
     for (int i = 0; i < bodies.size(); ++i) {
         for (int j = i + 1; j < bodies.size(); ++j) {

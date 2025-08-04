@@ -20,6 +20,11 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, Q
     funcs->glDeleteShader(fragment);
 }
 
+Shader::~Shader() {
+    funcs->glDeleteProgram(ID);
+}
+
+
 std::string Shader::loadFile(const std::string &path) const {
     std::ifstream file(path);
     if (!file) {

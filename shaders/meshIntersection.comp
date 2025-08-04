@@ -1,0 +1,66 @@
+#version 450 core
+// Helper function that implements the Moller–Trumbore ray/triangle intersection algorithm
+
+uniform vec3 rayOrig;
+uniform vec3 rayDir;
+uniform mat4 modelMatrix;
+
+layout(std430, binding = 0) readonly buffer VertexData {
+    vec3 vertices[];
+};
+
+layout(std430, binding = 1) readonly buffer IndexData {
+    uint indices[];
+};
+
+layout(std430, binding = 2) writeonly buffer HitDistances {
+    float distances[];
+};
+
+layout(local_size_x = 64) in;
+
+void main() {
+    uint triIndex = gl_GlobalInvocationID.x;
+    uint v0Index = triIndex * 3;
+
+    if ((v0Index + 2) >= vertices.length()) return;
+
+    vec3 v0 = vec3(modelMatrix * vec4(vertices[v0Index + 0], 1.0));
+    vec3 v1 = vec3(modelMatrix * vec4(vertices[v0Index + 1], 1.0));
+    vec3 v2 = vec3(modelMatrix * vec4(vertices[v0Index + 2], 1.0));
+
+    const float EPSILON = 1e-8;
+    vec3 edge1 = v1 - v0;
+    vec3 edge2 = v2 - v0;
+
+    vec3 pvec = cross(rayDir, edge2);
+    float det = dot(edge1, pvec);
+    if (abs(det) < EPSILON) {
+        distances[triIndex] = -1.0;
+        return;
+    }
+
+    float invDet = 1.0 / det;
+
+    vec3 tvec = rayOrig - v0;
+    float u = dot(tvec, pvec) * invDet;
+    if (u < 0.0 || u > 1.0) {
+        distances[triIndex] = -1.0;
+        return;
+    }
+
+    vec3 qvec = cross(tvec, edge1);
+    float v = dot(rayDir, qvec) * invDet;
+    if (v < 0.0 || u + v > 1.0) {
+        distances[triIndex] = -1.0;
+        return;
+    }
+
+    float t = dot(edge2, qvec) * invDet;
+    if (t < EPSILON) {
+        distances[triIndex] = -1.0;
+        return;
+    }
+
+    distances[triIndex] = t;
+}
