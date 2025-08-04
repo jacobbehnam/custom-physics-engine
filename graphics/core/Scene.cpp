@@ -26,7 +26,16 @@ void Scene::freeObjectID(uint32_t objID) {
     freeIDs.push_back(objID);
 }
 
-void Scene::draw(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    if (snaps) {
+        SceneObject::PosMap posMap;
+        posMap.reserve(snaps->size());
+        for (const auto &s : *snaps) {
+            posMap.emplace(s.body, s.position);
+        }
+        SceneObject::setPhysicsPosMap(posMap);
+    }
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

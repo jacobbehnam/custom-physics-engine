@@ -1,10 +1,5 @@
 #include "SnapshotTableModel.h"
-
-struct ObjectSnapshot {
-    float time;
-    glm::vec3 position;
-    glm::vec3 velocity;
-};
+#include "graphics/interfaces/IPhysicsBody.h"
 
 SnapshotTableModel::SnapshotTableModel(QObject* parent) : QAbstractTableModel(parent){}
 

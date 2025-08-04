@@ -38,6 +38,7 @@ public:
     std::unordered_set<uint32_t> hoveredIDs, selectedIDs; // TODO: dont make public
 
     Scene* scene; // TODO: move
+    std::unique_ptr<Physics::PhysicsSystem> physicsSystem; // TODO: move
 
 signals:
     void objectAdded(SceneObject* obj);
@@ -47,7 +48,6 @@ signals:
     void selectedItem(SceneObject* object);
 
 private:
-    std::unique_ptr<Physics::PhysicsSystem> physicsSystem;
 
     OpenGLWindow* window;
 

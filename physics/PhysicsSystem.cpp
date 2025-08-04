@@ -9,8 +9,74 @@ namespace Physics {
     class PointMass;
 }
 
-Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {
+Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
+
+Physics::PhysicsSystem::~PhysicsSystem() {
+    stop();
+    waitForStop();
 }
+
+void Physics::PhysicsSystem::start() {
+    if (running.exchange(true)) return;
+    physicsThread = std::thread(&PhysicsSystem::physicsLoop, this);
+}
+
+void Physics::PhysicsSystem::stop() {
+    running = false;
+    stepDone.notify_all();
+    waitForStop();
+}
+
+void Physics::PhysicsSystem::waitForStop() {
+    if (physicsThread.joinable())
+        physicsThread.join();
+}
+
+std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot() {
+    if (!snapshotReady.load() || !physicsEnabled.load()) return std::nullopt;
+
+    std::lock_guard<std::mutex> lk(snapshotMutex);
+    int snapshotIndex = currentSnapshot;
+    return snapshotBuf[snapshotIndex];
+}
+
+void Physics::PhysicsSystem::physicsLoop() {
+    constexpr float dt = 1.0f / 1000.0f;
+    int writeBuf = 0;
+
+    while (running.load()) {
+        {
+            std::lock_guard<std::mutex> lock(bodiesMutex);
+            if (!physicsEnabled.load()) { continue; }
+            step(dt);
+        }
+
+        {
+            auto &buf = snapshotBuf[writeBuf];
+            buf.clear();
+            std::lock_guard<std::mutex> lk(snapshotMutex);
+            buf.reserve(bodies.size());
+            for (auto *body : bodies) {
+                ObjectSnapshot snap;
+                snap.body = body;
+                snap.time = simTime;
+                snap.position = body->getPosition();
+                snap.velocity = body->getVelocity();
+                buf.push_back(snap);
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lk(snapshotMutex);
+            currentSnapshot = writeBuf;
+            snapshotReady = true;
+        }
+        stepDone.notify_one();
+        writeBuf = 1 - writeBuf;
+
+        std::this_thread::sleep_for(std::chrono::duration<float>(dt));
+    }
+}
+
 
 void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
     bodies.push_back(body);
@@ -27,9 +93,6 @@ void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
 }
 
 void Physics::PhysicsSystem::step(float dt) {
-    if (!physicsEnabled) return;
-    dt *= 20;
-
     for (auto body : bodies) {
         if (body->getIsStatic())
             continue;
@@ -117,10 +180,10 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
 }
 
 void Physics::PhysicsSystem::enablePhysics() {
-    physicsEnabled = true;
+    physicsEnabled.store(true);
 }
 
 void Physics::PhysicsSystem::disablePhysics() {
-    physicsEnabled = false;
+    physicsEnabled.store(false);
 }
 

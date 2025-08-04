@@ -43,7 +43,13 @@ public:
     Mesh* getMesh() const override {return mesh;}
     uint32_t getObjectID() const override;
 
+    using PosMap = std::unordered_map<IPhysicsBody*, glm::vec3>;
+
+    static void setPhysicsPosMap(const PosMap m) { posMap = m; }
+
 private:
+    inline static PosMap posMap{};
+
     QObject* parent;
     Mesh* mesh;
     Shader* shader;

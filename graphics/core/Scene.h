@@ -16,7 +16,7 @@ class Scene {
 public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
-    void draw(const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
+    void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
 
     void addDrawable(IDrawable* obj) { drawableObjects.push_back(obj); }
     void removeDrawable(IDrawable* obj);

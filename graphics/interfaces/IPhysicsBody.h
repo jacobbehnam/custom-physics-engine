@@ -8,7 +8,10 @@ namespace Physics {
     class RigidBody;
 }
 
+class IPhysicsBody;
+
 struct ObjectSnapshot {
+    IPhysicsBody* body;
     float time;
     glm::vec3 position;
     glm::vec3 velocity;

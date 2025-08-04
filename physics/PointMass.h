@@ -33,7 +33,7 @@ namespace Physics {
         bool getIsStatic() const override { return isStatic; }
 
         void setWorldTransform(const glm::mat4& M) override { worldMatrix = M; }
-        void recordFrame(float t) override { frames.push_back( {t, position, velocity}); }
+        void recordFrame(float t) override { frames.push_back( {this, t, position, velocity}); }
         const std::vector<ObjectSnapshot> &getAllFrames() const override { return frames; }
         void clearAllFrames() override { frames.clear(); }
         void loadFrame(const ObjectSnapshot &snapshot) override;

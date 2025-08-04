@@ -43,12 +43,15 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
-    sceneManager->stepPhysics(deltaTime);
+    //sceneManager->stepPhysics(deltaTime);
+    // 1) Acquire the latest batch of snapshots
+    auto snaps = sceneManager->physicsSystem.get()->fetchLatestSnapshot();
+
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
 
     MathUtils::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
-    scene->draw(sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
 
     calculateFPS();
 

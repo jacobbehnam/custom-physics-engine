@@ -50,7 +50,9 @@ SceneObject::~SceneObject() {
 glm::mat4 SceneObject::getModelMatrix() const{
     glm::vec3 currentPosition = position;
     if (physicsBody) {
-        currentPosition = physicsBody->getPosition();
+        auto it = posMap.find(physicsBody.get());
+        if (it != posMap.end())
+            currentPosition = it->second;
     }
     glm::mat4 model(1.0f);
     model = glm::translate(model, currentPosition);
@@ -137,6 +139,7 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 void SceneObject::setPosition(const glm::vec3 &pos) {
     if (physicsBody) {
         physicsBody->setPosition(pos);
+        posMap[physicsBody.get()] = pos;
         physicsBody->setWorldTransform(getModelMatrix());
     } else {
         position = pos;

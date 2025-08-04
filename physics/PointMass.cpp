@@ -3,7 +3,7 @@
 
 #include "RigidBody.h"
 
-Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) : position(pos), mass(m), isStatic(bodyStatic) {}
+Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) : position(pos), mass(m), isStatic(bodyStatic) { velocity = glm::vec3(1.0f); }
 
 Physics::PointMass::PointMass(glm::vec3 pos, bool bodyStatic) : position(pos), isStatic(bodyStatic), mass(0.0f) {}
 
