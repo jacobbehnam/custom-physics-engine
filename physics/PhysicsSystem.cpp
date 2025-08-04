@@ -92,11 +92,13 @@ void Physics::PhysicsSystem::physicsLoop() {
 
 
 void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
+    std::lock_guard<std::mutex> lock(bodiesMutex);
     bodies.push_back(body);
     body->recordFrame(simTime);
 }
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
+    std::lock_guard<std::mutex> lock(bodiesMutex);
     auto it = std::remove(bodies.begin(), bodies.end(), body);
     if (it != bodies.end()) {
         bodies.erase(it, bodies.end());
@@ -112,8 +114,7 @@ void Physics::PhysicsSystem::step(float dt) {
         body->recordFrame(simTime);
         body->step(dt);
         body->setForce("Normal", glm::vec3(0.0f));
-        //body->setForce("Gravity", body->getMass() * globalAcceleration);
-        body->setForce("Gravity", glm::vec3(0.0f));
+        body->setForce("Gravity", body->getMass() * globalAcceleration);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {

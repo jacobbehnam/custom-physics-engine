@@ -8,14 +8,12 @@ Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) : positio
 Physics::PointMass::PointMass(glm::vec3 pos, bool bodyStatic) : position(pos), isStatic(bodyStatic), mass(0.0f) {}
 
 void Physics::PointMass::applyForce(const glm::vec3 &force) {
+    std::lock_guard<std::mutex> lock(stateMutex);
     netForce += force;
 }
 
-void Physics::PointMass::applyImpulse(const glm::vec3 &impulse) {
-    velocity += impulse * (1.0f / mass);
-}
-
 void Physics::PointMass::setForce(const std::string &name, const glm::vec3 &force) {
+    std::lock_guard<std::mutex> lock(stateMutex);
     forces[name] = force;
     // Recalculate net force
     glm::vec3 tempNetForce(0.0f);
@@ -25,22 +23,91 @@ void Physics::PointMass::setForce(const std::string &name, const glm::vec3 &forc
     netForce = tempNetForce;
 }
 
+void Physics::PointMass::applyImpulse(const glm::vec3 &impulse) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    velocity += impulse * (1.0f / mass);
+}
+
+glm::vec3 Physics::PointMass::getForce(const std::string &name) const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return forces.find(name)->second;
+}
+
+std::map<std::string, glm::vec3> Physics::PointMass::getAllForces() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return forces;
+}
+
+glm::vec3 Physics::PointMass::getPosition() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return position;
+}
+
+void Physics::PointMass::setPosition(const glm::vec3 &pos) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    position = pos;
+}
+
+glm::vec3 Physics::PointMass::getVelocity() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return velocity;
+}
+
+void Physics::PointMass::setVelocity(const glm::vec3 &vel) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    velocity = vel;
+}
+
+float Physics::PointMass::getMass() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return mass;
+}
+
 void Physics::PointMass::setMass(float newMass) {
-    mass = newMass;
+    {
+        std::lock_guard<std::mutex> lock(stateMutex);
+        mass = newMass;
+    }
     setForce("Gravity", mass * glm::vec3(0.0f, -9.81f, 0.0f));
 }
 
+bool Physics::PointMass::getIsStatic() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return isStatic;
+}
+
+void Physics::PointMass::setWorldTransform(const glm::mat4 &M) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    worldMatrix = M;
+}
+
+void Physics::PointMass::recordFrame(float t) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    frames.push_back( {this, t, position, velocity});
+}
+
+const std::vector<ObjectSnapshot> &Physics::PointMass::getAllFrames() const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return frames;
+}
+
+void Physics::PointMass::clearAllFrames() {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    frames.clear();
+}
+
+void Physics::PointMass::loadFrame(const ObjectSnapshot &snapshot) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    position = snapshot.position;
+    velocity = snapshot.velocity;
+}
 
 void Physics::PointMass::step(float dt) {
+    std::lock_guard<std::mutex> lock(stateMutex);
     glm::vec3 acceleration = netForce / mass;
     position += velocity * dt + 0.5f * acceleration * dt * dt;
     glm::vec3 newAcceleration = netForce / mass; // if netForce changed during the step
     velocity += 0.5f * (acceleration + newAcceleration) * dt;
-}
-
-void Physics::PointMass::loadFrame(const ObjectSnapshot &snapshot) {
-    setPosition(snapshot.position);
-    setVelocity(snapshot.velocity);
 }
 
 bool Physics::PointMass::collidesWith(const IPhysicsBody &other) const {
@@ -49,7 +116,7 @@ bool Physics::PointMass::collidesWith(const IPhysicsBody &other) const {
 
 bool Physics::PointMass::collidesWithPointMass(const PointMass &pm) const {
     float threshold = 0.01f;
-    return glm::distance(position, pm.getPosition()) <= threshold;
+    return glm::distance(getPosition(), pm.getPosition()) <= threshold;
 }
 
 bool Physics::PointMass::collidesWithRigidBody(const RigidBody &rb) const {
@@ -63,14 +130,14 @@ bool Physics::PointMass::resolveCollisionWith(IPhysicsBody &other) {
 bool Physics::PointMass::resolveCollisionWithPointMass(PointMass &pm) {
     // elastic collision
     // compute normal and relative velocity
-    glm::vec3 normal  = glm::normalize(pm.position - position);
-    glm::vec3 relVel  = pm.velocity - velocity;
-    float     velNorm = glm::dot(relVel, normal);
+    glm::vec3 normal = glm::normalize(pm.getPosition() - getPosition());
+    glm::vec3 relVel = pm.getVelocity() - getVelocity();
+    float velNorm = glm::dot(relVel, normal);
 
     if (velNorm <= 0.0f)
         return false; // moving apart, nothing applied
 
-    float j = (2.0f * velNorm) / (mass + pm.mass); // collision‐impulse scalar
+    float j = (2.0f * velNorm) / (getMass() + pm.getMass()); // collision‐impulse scalar
     glm::vec3 impulse = j * normal;
 
     // newton's third law
