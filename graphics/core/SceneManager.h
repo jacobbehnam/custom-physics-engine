@@ -16,8 +16,8 @@ public:
     SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
 
-    void addToPhysicsSystem(IPhysicsBody* body) const { physicsSystem->addBody(body); }
-    void removeFromPhysicsSystem(IPhysicsBody* body) const { physicsSystem->removeBody(body); }
+    void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
+    void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
     void setGlobalAcceleration(const glm::vec3& newAcceleration) { physicsSystem->setGlobalAcceleration(newAcceleration); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }

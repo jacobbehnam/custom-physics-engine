@@ -60,7 +60,6 @@ add_executable(OpenGLApp main.cpp
         physics/bounding/AABB.h
         physics/PointMass.cpp
         physics/PointMass.h
-        graphics/interfaces/IPhysicsBody.h
         ui/OpenGLWindow.cpp
         ui/OpenGLWindow.h
         ui/MainWindow.cpp
@@ -83,8 +82,11 @@ add_executable(OpenGLApp main.cpp
         graphics/core/SceneObjectOptions.h
         physics/solver/OneUnknownSolver.cpp
         physics/solver/OneUnknownSolver.h
+        physics/PhysicsBody.h
+        physics/PhysicsBody.cpp
         graphics/components/ComputeShader.cpp
-        graphics/components/ComputeShader.h)
+        graphics/components/ComputeShader.h
+        physics/PhysicsBody.cpp)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

@@ -36,7 +36,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         SceneObject::setPhysicsPosMap(posMap);
     }
 
-    std::unordered_map<IPhysicsBody*, glm::vec3> tmpMap;
+    std::unordered_map<Physics::PhysicsBody*, glm::vec3> tmpMap;
     if (snaps) {
         tmpMap.reserve(snaps->size());
         for (auto &s : *snaps)

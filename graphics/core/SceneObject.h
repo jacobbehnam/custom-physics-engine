@@ -34,7 +34,7 @@ public:
     glm::vec3 getScale() const;
 
     Shader* getShader() const override;
-    IPhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
+    Physics::PhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
 
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
@@ -43,7 +43,7 @@ public:
     Mesh* getMesh() const override {return mesh;}
     uint32_t getObjectID() const override;
 
-    using PosMap = std::unordered_map<IPhysicsBody*, glm::vec3>;
+    using PosMap = std::unordered_map<Physics::PhysicsBody*, glm::vec3>;
 
     static void setPhysicsPosMap(const PosMap& m) {
         std::lock_guard<std::mutex> lk(posMapMutex);
@@ -59,7 +59,7 @@ private:
     Shader* shader;
     Scene* ownerScene;
     SceneManager* sceneManager;
-    std::unique_ptr<IPhysicsBody> physicsBody = nullptr;
+    std::unique_ptr<Physics::PhysicsBody> physicsBody = nullptr;
 
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};

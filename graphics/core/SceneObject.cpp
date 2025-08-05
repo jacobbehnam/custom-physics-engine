@@ -147,12 +147,12 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 
 void SceneObject::setPosition(const glm::vec3 &pos) {
     if (physicsBody) {
-        physicsBody->setPosition(pos);
+        physicsBody->setPosition(pos, BodyLock::LOCK);
         {
             std::lock_guard<std::mutex> lk(posMapMutex);
             posMap[physicsBody.get()] = pos;
         }
-        physicsBody->setWorldTransform(getModelMatrix());
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
     } else {
         position = pos;
     }
@@ -161,13 +161,13 @@ void SceneObject::setPosition(const glm::vec3 &pos) {
 void SceneObject::setRotation(const glm::vec3 &euler) {
     orientation = glm::quat(euler);
     if (physicsBody)
-        physicsBody->setWorldTransform(getModelMatrix());
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
 }
 
 void SceneObject::setScale(const glm::vec3 &scl) {
     scale = scl;
     if (physicsBody)
-        physicsBody->setWorldTransform(getModelMatrix());
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
 }
 
 glm::vec3 SceneObject::getPosition() const{
@@ -187,7 +187,7 @@ Shader* SceneObject::getShader() const {
 void SceneObject::setRotationQuat(const glm::quat &q) {
     orientation = q;
     if (physicsBody)
-        physicsBody->setWorldTransform(getModelMatrix());
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
 }
 glm::quat SceneObject::getRotationQuat()   const {
     return orientation;

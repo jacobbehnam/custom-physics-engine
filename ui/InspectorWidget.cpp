@@ -43,14 +43,14 @@ void InspectorWidget::loadObject(SceneObject* obj) {
         [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); },
         this);
 
-    if (IPhysicsBody* body = obj->getPhysicsBody()) {
+    if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
         transformRows.emplace_back("Velocity",
             [body]()->glm::vec3{ return body->getVelocity(BodyLock::NOLOCK); },
-            [body](glm::vec3 v){ body->setVelocity(v); },
+            [body](glm::vec3 v){ body->setVelocity(v, BodyLock::NOLOCK); },
             this);
         transformRows.emplace_back("Mass",
             [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
-            [body](float newMass){ body->setMass(newMass); },
+            [body](float newMass){ body->setMass(newMass, BodyLock::NOLOCK); },
             this);
     }
     for (InspectorRow row : transformRows) {
@@ -74,25 +74,26 @@ void InspectorWidget::loadObject(SceneObject* obj) {
     auto* forcesWidget = new QWidget(forcesGroup);
     auto* forcesLayout = new QFormLayout(forcesWidget);
 
-    if (IPhysicsBody* body = obj->getPhysicsBody()) {
+    if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
         populateForces(body, forcesLayout);
         connect(addForceButton, &QPushButton::clicked, this, [=]() {
             std::string text = addForceField->text().toStdString();
             if (text.empty()) return;
             if (std::isalnum(text.front()))
                 text[0] = static_cast<char>(std::toupper(text[0]));
-            body->setForce(text, glm::vec3(0.0f));
+            body->setForce(text, glm::vec3(0.0f), BodyLock::NOLOCK);
             populateForces(body, forcesLayout);
         });
     }
     layout2->addWidget(forcesWidget);
 }
 
-void InspectorWidget::populateForces(IPhysicsBody* body, QFormLayout *layout) {
+void InspectorWidget::populateForces(Physics::PhysicsBody* body, QFormLayout *layout) {
     clearLayout(layout);
     forceRows.clear();
 
-    for (auto const& [name, vec] : body->getAllForces()) {
+    std::map<std::string, glm::vec3> forcesCopy = body->getAllForces(BodyLock::NOLOCK);
+    for (auto const& [name, vec] : forcesCopy) {
         if (name == "Gravity" || name == "Normal") {
             forceRows.emplace_back(
               QString::fromStdString(name),
@@ -102,7 +103,7 @@ void InspectorWidget::populateForces(IPhysicsBody* body, QFormLayout *layout) {
             forceRows.emplace_back(
               QString::fromStdString(name),
               [body, name](){ return body->getForce(name, BodyLock::NOLOCK); },
-              [body, name](glm::vec3 v){ body->setForce(name, v); },
+              [body, name](glm::vec3 v){ body->setForce(name, v, BodyLock::NOLOCK); },
               this
             );
         }

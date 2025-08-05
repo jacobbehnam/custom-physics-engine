@@ -4,58 +4,28 @@
 #include <glm/glm.hpp>
 #include <mutex>
 
-#include "graphics/interfaces/IPhysicsBody.h"
+#include "physics/PhysicsBody.h"
 
 namespace Physics {
-    class PointMass : public IPhysicsBody{
+    class PointMass : public PhysicsBody{
     public:
-        PointMass(float m, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
-        PointMass(glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
+        explicit PointMass(float m, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        explicit PointMass(glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
-        void applyForce(const glm::vec3& force) override;
-        void setForce(const std::string &name, const glm::vec3 &force) override;
-        glm::vec3 getForce(const std::string &name, BodyLock lock) const override;
-        std::map<std::string, glm::vec3> getAllForces(BodyLock lock) const override;
-        void applyImpulse(const glm::vec3& impulse);
+        void applyImpulse(const glm::vec3& impulse, BodyLock lock);
 
-        std::unique_lock<std::mutex> lockState() const override { return std::unique_lock(stateMutex); }
+        void step(float dt, BodyLock lock) override;
 
-        void step(float deltaTime) override;
-        glm::vec3 getPosition(BodyLock lock) const override;
-        void setPosition(const glm::vec3& pos) override;
-        glm::vec3 getVelocity(BodyLock lock) const override;
-        void setVelocity(const glm::vec3 &vel) override;
-        float getMass(BodyLock lock) const override;
-        void setMass(float newMass) override;
+        void recordFrame(float t, BodyLock lock) override;
+        void loadFrame(const ObjectSnapshot &snapshot, BodyLock lock) override;
 
-        bool getIsStatic() const override;
-
-        void setWorldTransform(const glm::mat4& M) override;
-        void recordFrame(float t) override;
-        const std::vector<ObjectSnapshot> &getAllFrames() const override;
-        void clearAllFrames() override;
-        void loadFrame(const ObjectSnapshot &snapshot) override;
-
-        bool collidesWith(const IPhysicsBody& other) const override;
+        bool collidesWith(const PhysicsBody& other) const override;
         bool collidesWithPointMass(const PointMass& pm) const override;
         bool collidesWithRigidBody(const RigidBody &rb) const override;
 
-        bool resolveCollisionWith(IPhysicsBody &other) override;
+        bool resolveCollisionWith(PhysicsBody &other) override;
         bool resolveCollisionWithPointMass(PointMass &pm) override;
         bool resolveCollisionWithRigidBody(RigidBody &rb) override;
-    private:
-        mutable std::mutex stateMutex;
-        bool isStatic;
-
-        glm::vec3 position;
-        glm::vec3 velocity = glm::vec3(0.0f);
-        glm::vec3 netForce = glm::vec3(0.0f);
-        std::map<std::string, glm::vec3> forces;
-
-        glm::mat4 worldMatrix = glm::mat4(1.0f);
-        std::vector<ObjectSnapshot> frames;
-
-        float mass;
     };
 
 }

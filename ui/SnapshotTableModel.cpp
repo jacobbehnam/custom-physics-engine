@@ -1,5 +1,5 @@
 #include "SnapshotTableModel.h"
-#include "graphics/interfaces/IPhysicsBody.h"
+#include "physics/PhysicsBody.h"
 
 SnapshotTableModel::SnapshotTableModel(QObject* parent) : QAbstractTableModel(parent){}
 

@@ -21,8 +21,8 @@ namespace Physics {
         void stop();
         void waitForStop();
 
-        void addBody(IPhysicsBody* body);
-        void removeBody(IPhysicsBody* body);
+        void addBody(PhysicsBody* body);
+        void removeBody(PhysicsBody* body);
 
         void step(float dt);
 
@@ -34,10 +34,10 @@ namespace Physics {
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot();
 
-        void debugSolveInitialVelocity(IPhysicsBody* body, float targetDistance, float targetTime);
-        void reset(IPhysicsBody* body, const ObjectSnapshot &state) {
+        void debugSolveInitialVelocity(PhysicsBody* body, float targetDistance, float targetTime);
+        void reset(PhysicsBody* body, const ObjectSnapshot &state) {
             body->clearAllFrames();
-            body->loadFrame(state);
+            body->loadFrame(state, BodyLock::LOCK);
             simTime = 0.0f;
         }
 
@@ -47,7 +47,7 @@ namespace Physics {
         OneUnknownSolver<float, float>* solver = nullptr;
 
         glm::vec3 globalAcceleration;
-        std::vector<IPhysicsBody*> bodies;
+        std::vector<PhysicsBody*> bodies;
 
         std::atomic<bool> physicsEnabled{false};
         float simTime = 0.0f;

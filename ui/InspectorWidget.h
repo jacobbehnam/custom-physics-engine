@@ -9,7 +9,9 @@
 #include "graphics/core/SceneManager.h"
 #include "physics/PhysicsSystem.h"
 
-class IPhysicsBody;
+namespace Physics {
+    class PhysicsBody;
+}
 class SceneObject;
 
 struct PropertyRow {
@@ -41,6 +43,6 @@ private:
 
     void clearLayout(QVBoxLayout* layout);
     void clearLayout(QFormLayout* layout);
-    void populateForces(IPhysicsBody* body, QFormLayout* layout);
+    void populateForces(Physics::PhysicsBody* body, QFormLayout* layout);
     void populateGlobals(QVBoxLayout* layout);
 };

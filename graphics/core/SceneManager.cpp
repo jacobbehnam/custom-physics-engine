@@ -45,7 +45,7 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, const
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
-    if (IPhysicsBody* body = obj->getPhysicsBody()) {
+    if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
         removeFromPhysicsSystem(body);
     }
     pickableObjects.erase(
