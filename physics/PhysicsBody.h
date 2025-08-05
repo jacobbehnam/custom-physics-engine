@@ -45,7 +45,7 @@ namespace Physics {
 
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
-        const std::vector<ObjectSnapshot>& getAllFrames() const;
+        std::vector<ObjectSnapshot> getAllFrames() const;
         void clearAllFrames();
 
         // Uses double dispatch

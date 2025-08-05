@@ -54,6 +54,8 @@ protected:
 
 private:
     std::chrono::steady_clock::time_point lastFrame;
+    float renderSimTime = 0.0f;
+    bool simulating = false;
 
     QSet<int> pressedKeys;
     QSet<Qt::MouseButton> pressedMouseButtons;

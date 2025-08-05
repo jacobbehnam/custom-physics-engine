@@ -43,9 +43,13 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
+    if (simulating) {
+        renderSimTime += deltaTime * 5.0f;
+    }
+
     //sceneManager->stepPhysics(deltaTime);
     // 1) Acquire the latest batch of snapshots
-    auto snaps = sceneManager->physicsSystem.get()->fetchLatestSnapshot();
+    auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(renderSimTime);
 
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
 
@@ -90,6 +94,7 @@ void OpenGLWindow::calculateFPS() {
 
 
 void OpenGLWindow::keyPressEvent(QKeyEvent* event) {
+    simulating = true;
     pressedKeys.insert(event->key());
 }
 

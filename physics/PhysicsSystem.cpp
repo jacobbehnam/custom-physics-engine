@@ -31,12 +31,54 @@ void Physics::PhysicsSystem::waitForStop() {
         physicsThread.join();
 }
 
-std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot() {
+std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot(float renderSimTime) {
     if (!snapshotReady.load(std::memory_order_acquire) || !physicsEnabled.load())
         return std::nullopt;
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
-    return currentSnapshots;
+
+    // first call ever: no previous to interpolate against
+    if (previousSnapshots.empty()) {
+        previousSnapshots = currentSnapshots;
+        return currentSnapshots;
+    }
+
+    // grab the two timestamps (they’re all the same within each frame)
+    float t0 = previousSnapshots[0].time;
+    float t1 = currentSnapshots[0].time;
+
+    // outside the bracket → just clamp
+    if (renderSimTime <= t0) {
+        previousSnapshots = currentSnapshots;
+        return previousSnapshots;
+    }
+    if (renderSimTime >= t1) {
+        previousSnapshots = currentSnapshots;
+        return currentSnapshots;
+    }
+
+    // compute blend factor α ∈ (0,1)
+    float alpha = (renderSimTime - t0) / (t1 - t0);
+
+    // interpolate each ObjectSnapshot
+    std::vector<ObjectSnapshot> out;
+    out.reserve(currentSnapshots.size());
+    for (size_t i = 0; i < currentSnapshots.size(); ++i) {
+        const auto &A = previousSnapshots[i];
+        const auto &B = currentSnapshots[i];
+
+        ObjectSnapshot C;
+        C.body     = A.body;                  // same pointer/ID
+        C.time     = renderSimTime;           // stamped with the render time
+        C.position = glm::mix(A.position, B.position, alpha);
+        C.velocity = glm::mix(A.velocity, B.velocity, alpha);
+
+        out.push_back(C);
+    }
+
+    // slide window: next time, previous = what we just returned
+    previousSnapshots = currentSnapshots;
+    return out;
 }
 
 void Physics::PhysicsSystem::physicsLoop() {
@@ -55,7 +97,7 @@ void Physics::PhysicsSystem::physicsLoop() {
             continue;
         }
 
-        accumulator += frameTime;
+        accumulator += frameTime * 5.0f;
 
         std::vector<PhysicsBody*> localBodies;
         {
@@ -84,7 +126,7 @@ void Physics::PhysicsSystem::physicsLoop() {
 void Physics::PhysicsSystem::addBody(PhysicsBody *body) {
     std::lock_guard<std::mutex> lock(bodiesMutex);
     bodies.push_back(body);
-    //body->recordFrame(simTime);
+    body->recordFrame(simTime, BodyLock::NOLOCK);
 }
 
 void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
@@ -105,7 +147,7 @@ void Physics::PhysicsSystem::step(float dt) {
         body->recordFrame(simTime, BodyLock::NOLOCK);
         body->step(dt, BodyLock::NOLOCK);
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
-        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * globalAcceleration, BodyLock::NOLOCK);
+        //body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * globalAcceleration, BodyLock::NOLOCK);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
@@ -123,64 +165,65 @@ void Physics::PhysicsSystem::step(float dt) {
     if (solver) {
         if (!solver->stepFrame()) {
             // still solving—optionally display current guess:
-            //std::cout << solver->current << std::endl;
+            std::cout << solver->current << std::endl;
         } else {
             physicsEnabled = false;
             std::cout << "finished" << std::endl;
         }
     }
 }
-// void Physics::PhysicsSystem::debugSolveInitialVelocity(
-//     PhysicsBody* body,
-//     float targetDistance,
-//     float targetTime
-// ) {
-//
-//     const auto resetState = body->getAllFrames().front();
-//     // 1) Setter: reset world & apply candidate vx
-//     auto setVx = [this, body, resetState](float vx0) {
-//         // reset the entire world to t=0
-//         this->simTime       = 0.f;
-//         // assume you have a reset() that restores all bodies to their initial poses
-//         reset(body, resetState);
-//         // now apply only to our test body:
-//         body->setVelocity({vx0, 0.f, 0.f});
-//     };
-//
-//     // 2) Runner: integrate until x ≥ targetDistance
-//     auto runToX = [this, body, targetDistance]()->bool {
-//         if (body->getAllFrames().back().position.x > targetDistance) {
-//             body->setPosition(glm::vec3(targetDistance, 0.0f, 0.0f));
-//             return true;
-//         }
-//         if (simTime >= 10) {
-//             return true;
-//         }
-//         return false;
-//     };
-//
-//     // 3) Extractor: return how long it took
-//     auto getTime = [this, body, targetDistance]() -> float {
-//         const auto& frames = body->getAllFrames();
-//         int N = (int)frames.size();
-//         if (N < 2) return simTime;  // fallback
-//
-//         return MathUtils::interpolateCrossing<float, float>(
-//             frames[N-2], frames[N-1],
-//             targetDistance,
-//             [](const ObjectSnapshot &snap){ return snap.position.x; },
-//             [](const ObjectSnapshot &snap){ return snap.time; }
-//             );
-//     };
-//
-//     // Build a scalar solver: float → float
-//     solver = new OneUnknownSolver<float, float> (
-//         setVx,       // ParamSetter: float vx0
-//         runToX,      // SimulationRun
-//         getTime,     // ResultExtractor: float elapsed
-//         targetTime   // we want elapsed == targetTime
-//     );
-// }
+void Physics::PhysicsSystem::debugSolveInitialVelocity(
+    PhysicsBody* body,
+    float targetDistance,
+    float targetTime
+) {
+
+    resetState = body->getAllFrames().back();
+
+    // 1) Setter: reset world & apply candidate vx
+    auto setVx = [this, body](float vx0) {
+        // reset the entire world to t=0
+        this->simTime = 0.f;
+        // assume you have a reset() that restores all bodies to their initial poses
+        reset(body, resetState);
+        // now apply only to our test body:
+        body->setVelocity({vx0, 0.f, 0.f}, BodyLock::LOCK);
+    };
+
+    // 2) Runner: integrate until x ≥ targetDistance
+    auto runToX = [this, body, targetDistance]()->bool {
+        if (body->getAllFrames().back().position.x > targetDistance) {
+            body->setPosition(glm::vec3(targetDistance, 0.0f, 0.0f), BodyLock::LOCK);
+            return true;
+        }
+        if (simTime >= 10) {
+            return true;
+        }
+        return false;
+    };
+
+    // 3) Extractor: return how long it took
+    auto getTime = [this, body, targetDistance]() -> float {
+        const auto& frames = body->getAllFrames();
+        int N = (int)frames.size();
+        if (N < 2) return simTime;  // fallback
+
+        return MathUtils::interpolateCrossing<float, float>(
+            frames[N-2], frames[N-1],
+            targetDistance,
+            [](const ObjectSnapshot &snap){ return snap.position.x; },
+            [](const ObjectSnapshot &snap){ return snap.time; }
+            );
+    };
+
+    // Build a scalar solver: float → float
+    solver = new OneUnknownSolver<float, float> (
+        setVx,       // ParamSetter: float vx0
+        runToX,      // SimulationRun
+        getTime,     // ResultExtractor: float elapsed
+        targetTime   // we want elapsed == targetTime
+    );
+}
 
 void Physics::PhysicsSystem::enablePhysics() {
     physicsEnabled.store(true);

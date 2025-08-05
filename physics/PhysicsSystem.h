@@ -32,7 +32,7 @@ namespace Physics {
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration; }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration = newAcceleration; }
 
-        std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot();
+        std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
         void debugSolveInitialVelocity(PhysicsBody* body, float targetDistance, float targetTime);
         void reset(PhysicsBody* body, const ObjectSnapshot &state) {
@@ -45,6 +45,7 @@ namespace Physics {
         void physicsLoop();
 
         OneUnknownSolver<float, float>* solver = nullptr;
+        ObjectSnapshot resetState{};
 
         glm::vec3 globalAcceleration;
         std::vector<PhysicsBody*> bodies;
@@ -57,9 +58,9 @@ namespace Physics {
         std::mutex bodiesMutex;
         std::atomic<bool> threadRunning{false};
 
-        // double‐buffer for snapshots:
         std::mutex snapshotMutex;
         std::vector<ObjectSnapshot> currentSnapshots;
+        std::vector<ObjectSnapshot> previousSnapshots;
         std::atomic<bool> snapshotReady{false};
     };
 
