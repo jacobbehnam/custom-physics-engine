@@ -17,13 +17,12 @@ Physics::PhysicsSystem::~PhysicsSystem() {
 }
 
 void Physics::PhysicsSystem::start() {
-    if (running.exchange(true)) return;
+    if (threadRunning.exchange(true)) return;
     physicsThread = std::thread(&PhysicsSystem::physicsLoop, this);
 }
 
 void Physics::PhysicsSystem::stop() {
-    running = false;
-    stepDone.notify_all();
+    threadRunning = false;
     waitForStop();
 }
 
@@ -33,21 +32,20 @@ void Physics::PhysicsSystem::waitForStop() {
 }
 
 std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot() {
-    if (!snapshotReady.load() || !physicsEnabled.load()) return std::nullopt;
+    if (!snapshotReady.load(std::memory_order_acquire) || !physicsEnabled.load())
+        return std::nullopt;
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
-    int snapshotIndex = currentSnapshot;
-    return snapshotBuf[snapshotIndex];
+    return currentSnapshots;
 }
 
 void Physics::PhysicsSystem::physicsLoop() {
     constexpr float dt = 1.0f / 1000.0f;
-    int writeBuf = 0;
 
     float accumulator = 0.0f;
     auto lastTime = std::chrono::high_resolution_clock::now();
 
-    while (running.load()) {
+    while (threadRunning.load()) {
         auto now = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float>(now - lastTime).count();
         lastTime = now;
@@ -59,34 +57,26 @@ void Physics::PhysicsSystem::physicsLoop() {
 
         accumulator += frameTime;
 
-        while (accumulator >= dt) {
+        std::vector<IPhysicsBody*> localBodies;
+        {
             std::lock_guard<std::mutex> lock(bodiesMutex);
-            step(dt);
-            simTime += dt;
-            accumulator -= dt;
+            while (accumulator >= dt) {
+                step(dt);
+                simTime += dt;
+                accumulator -= dt;
+            }
+            localBodies = bodies;
         }
 
-        {
-            auto &buf = snapshotBuf[writeBuf];
-            buf.clear();
-            std::lock_guard<std::mutex> lk(snapshotMutex);
-            buf.reserve(bodies.size());
-            for (auto *body : bodies) {
-                ObjectSnapshot snap;
-                snap.body = body;
-                snap.time = simTime;
-                snap.position = body->getPosition();
-                snap.velocity = body->getVelocity();
-                buf.push_back(snap);
-            }
+        std::vector<ObjectSnapshot> localSnaps;
+        localSnaps.reserve(localBodies.size());
+        std::lock_guard<std::mutex> lk(snapshotMutex);
+        for (auto* body : localBodies) {
+            localSnaps.push_back({ body,simTime, body->getPosition(), body->getVelocity() });
         }
-        {
-            std::lock_guard<std::mutex> lk(snapshotMutex);
-            currentSnapshot = writeBuf;
-            snapshotReady = true;
-        }
-        stepDone.notify_one();
-        writeBuf = 1 - writeBuf;
+
+        currentSnapshots = std::move(localSnaps);
+        snapshotReady.store(true, std::memory_order_release);
     }
 }
 
@@ -94,7 +84,7 @@ void Physics::PhysicsSystem::physicsLoop() {
 void Physics::PhysicsSystem::addBody(IPhysicsBody *body) {
     std::lock_guard<std::mutex> lock(bodiesMutex);
     bodies.push_back(body);
-    body->recordFrame(simTime);
+    //body->recordFrame(simTime);
 }
 
 void Physics::PhysicsSystem::removeBody(IPhysicsBody *body) {
@@ -193,6 +183,7 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
 
 void Physics::PhysicsSystem::enablePhysics() {
     physicsEnabled.store(true);
+    snapshotReady.store(false, std::memory_order_relaxed); // so we don't read from the stale buffer
 }
 
 void Physics::PhysicsSystem::disablePhysics() {

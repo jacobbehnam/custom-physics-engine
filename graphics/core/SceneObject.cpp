@@ -53,6 +53,7 @@ SceneObject::~SceneObject() {
 glm::mat4 SceneObject::getModelMatrix() const{
     glm::vec3 currentPosition = position;
     if (physicsBody) {
+        std::lock_guard<std::mutex> lk(posMapMutex);
         auto it = posMap.find(physicsBody.get());
         if (it != posMap.end())
             currentPosition = it->second;
@@ -93,6 +94,7 @@ bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, fl
 bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
     const std::vector<Vertex>& verts = mesh->getVertices();
     std::vector<glm::vec3> vertPositions;
+    vertPositions.reserve(verts.size());
     for (auto vert : verts) {
         vertPositions.push_back({vert.pos});
     }
@@ -121,26 +123,6 @@ bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, fl
     }
     outT = *minIt;
     return true;
-
-    // for (int i = 0; i + 2 < indices.size(); i += 3) {
-    //     // Converting local coordinates of the mesh to world coordinates can probably be optimized with the GPU
-    //     const glm::vec3& v0 = glm::vec3(model * glm::vec4(verts[indices[i]].pos, 1));
-    //     const glm::vec3& v1 = glm::vec3(model * glm::vec4(verts[indices[i+1]].pos, 1));
-    //     const glm::vec3& v2 = glm::vec3(model * glm::vec4(verts[indices[i+2]].pos, 1));
-    //
-    //     float outDistance = 0.0f;
-    //     if (MathUtils::intersectTriangle(orig, dir, v0, v1, v2, outDistance)) {
-    //         if (outDistance < closestT) {
-    //             closestT = outDistance;
-    //             hitSomething = true;
-    //         }
-    //     }
-    // }
-    //
-    // if (hitSomething) {
-    //     outT = closestT;
-    // }
-    // return hitSomething;
 }
 
 
@@ -166,7 +148,10 @@ void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir,
 void SceneObject::setPosition(const glm::vec3 &pos) {
     if (physicsBody) {
         physicsBody->setPosition(pos);
-        posMap[physicsBody.get()] = pos;
+        {
+            std::lock_guard<std::mutex> lk(posMapMutex);
+            posMap[physicsBody.get()] = pos;
+        }
         physicsBody->setWorldTransform(getModelMatrix());
     } else {
         position = pos;
@@ -187,7 +172,7 @@ void SceneObject::setScale(const glm::vec3 &scl) {
 
 glm::vec3 SceneObject::getPosition() const{
     if (physicsBody)
-        return physicsBody->getPosition();
+        return physicsBody->getPosition(BodyLock::NOLOCK);
     return position;
 }
 

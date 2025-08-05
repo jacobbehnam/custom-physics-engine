@@ -2,6 +2,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <map>
+#include <mutex>
 
 namespace Physics {
     class PointMass;
@@ -17,20 +18,27 @@ struct ObjectSnapshot {
     glm::vec3 velocity;
 };
 
+enum class BodyLock {
+    LOCK,
+    NOLOCK
+};
+
 class IPhysicsBody {
 public:
     virtual ~IPhysicsBody() = default;
     virtual void applyForce(const glm::vec3& force) = 0;
     virtual void setForce(const std::string& name, const glm::vec3& force) = 0;
-    virtual glm::vec3 getForce(const std::string& name) const = 0;
-    virtual std::map<std::string, glm::vec3> getAllForces() const = 0;
+    virtual glm::vec3 getForce(const std::string& name, BodyLock lock = BodyLock::LOCK) const = 0;
+    virtual std::map<std::string, glm::vec3> getAllForces(BodyLock lock = BodyLock::LOCK) const = 0;
     virtual void step(float dt) = 0;
 
-    virtual glm::vec3 getPosition() const = 0;
+    virtual std::unique_lock<std::mutex> lockState() const = 0;
+
+    virtual glm::vec3 getPosition(BodyLock lock = BodyLock::LOCK) const = 0;
     virtual void setPosition(const glm::vec3& pos) = 0;
-    virtual glm::vec3 getVelocity() const = 0;
+    virtual glm::vec3 getVelocity(BodyLock lock = BodyLock::LOCK) const = 0;
     virtual void setVelocity(const glm::vec3& vel) = 0;
-    virtual float getMass() const = 0;
+    virtual float getMass(BodyLock lock = BodyLock::LOCK) const = 0;
     virtual void setMass(float newMass) = 0;
 
     virtual bool getIsStatic() const = 0;

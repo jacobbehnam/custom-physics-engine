@@ -55,13 +55,11 @@ namespace Physics {
         // threading
         std::thread physicsThread;
         std::mutex bodiesMutex;
-        std::atomic<bool> running{false};
-        std::condition_variable stepDone;
+        std::atomic<bool> threadRunning{false};
 
         // double‐buffer for snapshots:
         std::mutex snapshotMutex;
-        std::vector<ObjectSnapshot> snapshotBuf[2];
-        int currentSnapshot = 0;
+        std::vector<ObjectSnapshot> currentSnapshots;
         std::atomic<bool> snapshotReady{false};
     };
 

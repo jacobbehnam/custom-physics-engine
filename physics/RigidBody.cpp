@@ -25,18 +25,30 @@ void Physics::RigidBody::setForce(const std::string &name, const glm::vec3 &forc
     netForce = tempNetForce;
 }
 
-glm::vec3 Physics::RigidBody::getForce(const std::string &name) const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+glm::vec3 Physics::RigidBody::getForce(const std::string &name, BodyLock lock) const {
+    if (lock == BodyLock::LOCK) {
+        std::lock_guard<std::mutex> lk(stateMutex);
+        return forces.find(name)->second;
+    }
+
     return forces.find(name)->second;
 }
 
-std::map<std::string, glm::vec3> Physics::RigidBody::getAllForces() const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+std::map<std::string, glm::vec3> Physics::RigidBody::getAllForces(BodyLock lock) const {
+    if (lock == BodyLock::LOCK) {
+        std::lock_guard<std::mutex> lk(stateMutex);
+        return forces;
+    }
+
     return forces;
 }
 
-glm::vec3 Physics::RigidBody::getPosition() const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+glm::vec3 Physics::RigidBody::getPosition(BodyLock lock) const {
+    if (lock == BodyLock::LOCK) {
+        std::lock_guard<std::mutex> lk(stateMutex);
+        return position;
+    }
+
     return position;
 }
 
@@ -45,8 +57,12 @@ void Physics::RigidBody::setPosition(const glm::vec3 &pos) {
     position = pos;
 }
 
-glm::vec3 Physics::RigidBody::getVelocity() const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+glm::vec3 Physics::RigidBody::getVelocity(BodyLock lock) const {
+    if (lock == BodyLock::LOCK) {
+        std::lock_guard<std::mutex> lk(stateMutex);
+        return velocity;
+    }
+
     return velocity;
 }
 
@@ -55,8 +71,12 @@ void Physics::RigidBody::setVelocity(const glm::vec3 &vel) {
     velocity = vel;
 }
 
-float Physics::RigidBody::getMass() const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+float Physics::RigidBody::getMass(BodyLock lock) const {
+    if (lock == BodyLock::LOCK) {
+        std::lock_guard<std::mutex> lk(stateMutex);
+        return mass;
+    }
+
     return mass;
 }
 
@@ -120,7 +140,7 @@ bool Physics::RigidBody::collidesWithPointMass(const PointMass &pm) const {
         M = worldMatrix;
     }
     ICollider* worldCollider = collider->getTransformed(M);
-    return worldCollider->contains(pm.getPosition());
+    return worldCollider->contains(pm.getPosition(BodyLock::LOCK));
 }
 
 bool Physics::RigidBody::collidesWithRigidBody(const RigidBody &rb) const {
@@ -133,22 +153,22 @@ bool Physics::RigidBody::resolveCollisionWith(IPhysicsBody &other) {
 
 bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     ICollider* worldCollider = collider->getTransformed(worldMatrix);
-    ContactInfo ci = worldCollider->closestPoint(pm.getPosition());
+    ContactInfo ci = worldCollider->closestPoint(pm.getPosition(BodyLock::LOCK));
     if (ci.penetration < 0.0f) return false; // no overlap
 
-    float vRel = glm::dot(pm.getVelocity(), ci.normal);
+    float vRel = glm::dot(pm.getVelocity(BodyLock::LOCK), ci.normal);
     if (vRel >= 0.0f) return false; // moving apart or resting
 
     float e = 0.0f; // restitution coefficient
-    float j = -(1.0f + e) * vRel * pm.getMass();
+    float j = -(1.0f + e) * vRel * pm.getMass(BodyLock::LOCK);
 
     pm.applyImpulse(j * ci.normal);
     glm::vec3 Fnet(0.0f);
-    for (auto const& [n, f] : pm.getAllForces()) Fnet += f;
+    for (auto const& [n, f] : pm.getAllForces(BodyLock::LOCK)) Fnet += f;
     glm::vec3 Fn = -glm::dot(Fnet, ci.normal) * ci.normal;
     pm.setForce("Normal", Fn);
 
-    pm.setPosition(pm.getPosition() + ci.normal * ci.penetration);
+    pm.setPosition(pm.getPosition(BodyLock::LOCK) + ci.normal * ci.penetration);
 
     return true;
 }

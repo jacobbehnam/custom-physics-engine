@@ -14,16 +14,18 @@ namespace Physics {
 
         void applyForce(const glm::vec3& force) override;
         void setForce(const std::string &name, const glm::vec3 &force) override;
-        glm::vec3 getForce(const std::string &name) const override;
-        std::map<std::string, glm::vec3> getAllForces() const override;
+        glm::vec3 getForce(const std::string &name, BodyLock lock) const override;
+        std::map<std::string, glm::vec3> getAllForces(BodyLock lock) const override;
         void applyImpulse(const glm::vec3& impulse);
 
+        std::unique_lock<std::mutex> lockState() const override { return std::unique_lock(stateMutex); }
+
         void step(float deltaTime) override;
-        glm::vec3 getPosition() const override;
+        glm::vec3 getPosition(BodyLock lock) const override;
         void setPosition(const glm::vec3& pos) override;
-        glm::vec3 getVelocity() const override;
+        glm::vec3 getVelocity(BodyLock lock) const override;
         void setVelocity(const glm::vec3 &vel) override;
-        float getMass() const override;
+        float getMass(BodyLock lock) const override;
         void setMass(float newMass) override;
 
         bool getIsStatic() const override;

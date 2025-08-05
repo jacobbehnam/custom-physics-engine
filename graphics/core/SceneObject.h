@@ -45,9 +45,13 @@ public:
 
     using PosMap = std::unordered_map<IPhysicsBody*, glm::vec3>;
 
-    static void setPhysicsPosMap(const PosMap m) { posMap = m; }
+    static void setPhysicsPosMap(const PosMap& m) {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        posMap = m;
+    }
 
 private:
+    inline static std::mutex posMapMutex;
     inline static PosMap posMap{};
 
     QObject* parent;

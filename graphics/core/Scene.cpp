@@ -36,6 +36,13 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         SceneObject::setPhysicsPosMap(posMap);
     }
 
+    std::unordered_map<IPhysicsBody*, glm::vec3> tmpMap;
+    if (snaps) {
+        tmpMap.reserve(snaps->size());
+        for (auto &s : *snaps)
+            tmpMap[s.body] = s.position;
+    }
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -90,9 +97,6 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
 
         obj->draw();
     }
-
-    // if (hovered)
-    //     hoveredIDs.erase(hovered->getObjectID());
 }
 
 // void Scene::update(float dt) {

@@ -45,11 +45,11 @@ void InspectorWidget::loadObject(SceneObject* obj) {
 
     if (IPhysicsBody* body = obj->getPhysicsBody()) {
         transformRows.emplace_back("Velocity",
-            [body]()->glm::vec3{ return body->getVelocity(); },
+            [body]()->glm::vec3{ return body->getVelocity(BodyLock::NOLOCK); },
             [body](glm::vec3 v){ body->setVelocity(v); },
             this);
         transformRows.emplace_back("Mass",
-            [body]()->float{ return body->getMass(); },
+            [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
             [body](float newMass){ body->setMass(newMass); },
             this);
     }
@@ -96,12 +96,12 @@ void InspectorWidget::populateForces(IPhysicsBody* body, QFormLayout *layout) {
         if (name == "Gravity" || name == "Normal") {
             forceRows.emplace_back(
               QString::fromStdString(name),
-              [body, name](){ return body->getForce(name); }
+              [body, name](){ return body->getForce(name, BodyLock::NOLOCK); }
             );
         } else {
             forceRows.emplace_back(
               QString::fromStdString(name),
-              [body, name](){ return body->getForce(name); },
+              [body, name](){ return body->getForce(name, BodyLock::NOLOCK); },
               [body, name](glm::vec3 v){ body->setForce(name, v); },
               this
             );
@@ -114,7 +114,7 @@ void InspectorWidget::populateForces(IPhysicsBody* body, QFormLayout *layout) {
       "Net Force",
       [body](){
         glm::vec3 sum{0.0f};
-        for (auto const& [n, f] : body->getAllForces()) sum += f;
+        for (auto const& [n, f] : body->getAllForces(BodyLock::NOLOCK)) sum += f;
         return sum;
       }
     );
@@ -171,6 +171,10 @@ void InspectorWidget::clearLayout(QFormLayout* layout) {
 }
 
 void InspectorWidget::refresh() {
+    if (!currentObject) return;
+
+    std::unique_lock<std::mutex> guard = currentObject->getPhysicsBody()->lockState();
+
     for (InspectorRow &row : transformRows) {
         row.update();
     }
