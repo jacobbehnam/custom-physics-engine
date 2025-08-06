@@ -2,6 +2,7 @@
 #include <QObject>
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneObjectOptions.h"
+#include "ui/OpenGLWindow.h"
 
 enum class Primitive {
     CUBE,
@@ -20,6 +21,8 @@ public:
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
     void setGlobalAcceleration(const glm::vec3& newAcceleration) { physicsSystem->setGlobalAcceleration(newAcceleration); }
+    float getSimSpeed() const { return window->getSimSpeed(); }
+    void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }

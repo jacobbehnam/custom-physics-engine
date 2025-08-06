@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <string>
 #include <glm/glm.hpp>
 #include <vector>
@@ -45,6 +46,7 @@ namespace Physics {
 
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
+        void setGlobalAccelerationRef(std::atomic<glm::vec3>& globalAccRef) { globalAccelPtr = &globalAccRef; }
         std::vector<ObjectSnapshot> getAllFrames() const;
         void clearAllFrames();
 
@@ -68,6 +70,7 @@ namespace Physics {
         std::map<std::string, glm::vec3> forces;
 
         glm::mat4 worldMatrix = glm::mat4(1.0f);
+        std::atomic<glm::vec3>* globalAccelPtr = nullptr;
 
         float mass = 1.0f;
     };

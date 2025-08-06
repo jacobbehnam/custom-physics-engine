@@ -5,6 +5,7 @@
 #include <qgroupbox.h>
 #include <QLineEdit>
 #include <qpushbutton.h>
+#include <qslider.h>
 
 #include "InspectorRow.h"
 
@@ -131,6 +132,11 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
         [this]()->glm::vec3{ return sceneManager->getGlobalAcceleration(); },
         [this](glm::vec3 a){ sceneManager->setGlobalAcceleration(a); },
         this);
+    globalsRows.emplace_back("Sim Speed",
+        [this]()->float{ return sceneManager->getSimSpeed(); },
+        [this](float s){ sceneManager->setSimSpeed(s); },
+        this);
+
     for (InspectorRow row : globalsRows) {
         formLayout->addRow(row.getLabel(), row.getEditor());
     }

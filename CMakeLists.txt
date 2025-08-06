@@ -102,4 +102,5 @@ target_link_libraries(OpenGLApp PRIVATE
         Qt6::Gui
         Qt6::Core
         Qt6::OpenGLWidgets
+        atomic
 )

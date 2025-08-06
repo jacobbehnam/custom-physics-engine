@@ -29,8 +29,10 @@ namespace Physics {
         void enablePhysics();
         void disablePhysics();
 
-        glm::vec3 getGlobalAcceleration() const { return globalAcceleration; }
-        void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration = newAcceleration; }
+        glm::vec3 getGlobalAcceleration() const { return globalAcceleration.load(); }
+        void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration.store(newAcceleration); }
+        float getSimSpeed() const { return simSpeed.load(); }
+        void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
@@ -47,7 +49,8 @@ namespace Physics {
         OneUnknownSolver<float, float>* solver = nullptr;
         ObjectSnapshot resetState{};
 
-        glm::vec3 globalAcceleration;
+        std::atomic<glm::vec3> globalAcceleration;
+        std::atomic<float> simSpeed = 1.0f;
         std::vector<PhysicsBody*> bodies;
 
         std::atomic<bool> physicsEnabled{false};

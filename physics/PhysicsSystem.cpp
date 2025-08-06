@@ -97,7 +97,7 @@ void Physics::PhysicsSystem::physicsLoop() {
             continue;
         }
 
-        accumulator += frameTime * 5.0f;
+        accumulator += frameTime * getSimSpeed();
 
         std::vector<PhysicsBody*> localBodies;
         {
@@ -122,11 +122,12 @@ void Physics::PhysicsSystem::physicsLoop() {
     }
 }
 
-
 void Physics::PhysicsSystem::addBody(PhysicsBody *body) {
     std::lock_guard<std::mutex> lock(bodiesMutex);
+    body->setForce("Gravity", body->getMass(BodyLock::LOCK) * getGlobalAcceleration(), BodyLock::LOCK);
+    body->setForce("Normal", glm::vec3(0.0f), BodyLock::LOCK);
     bodies.push_back(body);
-    body->recordFrame(simTime, BodyLock::NOLOCK);
+    body->recordFrame(simTime, BodyLock::LOCK);
 }
 
 void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
@@ -147,7 +148,7 @@ void Physics::PhysicsSystem::step(float dt) {
         body->recordFrame(simTime, BodyLock::NOLOCK);
         body->step(dt, BodyLock::NOLOCK);
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
-        //body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * globalAcceleration, BodyLock::NOLOCK);
+        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
@@ -172,6 +173,7 @@ void Physics::PhysicsSystem::step(float dt) {
         }
     }
 }
+
 void Physics::PhysicsSystem::debugSolveInitialVelocity(
     PhysicsBody* body,
     float targetDistance,

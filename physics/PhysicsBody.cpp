@@ -88,7 +88,6 @@ void Physics::PhysicsBody::setMass(float newMass, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
     mass = newMass;
-    //setForce("Gravity", mass * glm::vec3(0.0f, -9.81f, 0.0f), BodyLock::NOLOCK);
 }
 
 bool Physics::PhysicsBody::getIsStatic(BodyLock lock) const {

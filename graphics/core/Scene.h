@@ -10,8 +10,6 @@
 #include <GLFW/glfw3.h>
 #include <QEvent>
 
-class OpenGLWindow;
-
 class Scene {
 public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);

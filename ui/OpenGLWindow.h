@@ -9,10 +9,10 @@
 #include <chrono>
 #include <graphics/utils/MathUtils.h>
 
-#include "graphics/core/SceneManager.h"
 #include "physics/PhysicsSystem.h"
 
 class Scene;
+class SceneManager;
 namespace Physics { class PhysicsSystem; }
 
 class OpenGLWindow : public QOpenGLWidget, public QOpenGLFunctions_4_5_Core {
@@ -42,6 +42,9 @@ public:
 
     void handleRawMouseDelta(int dx, int dy);
 
+    void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
+    float getSimSpeed() const { return simSpeed.load(); }
+
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
@@ -55,6 +58,7 @@ protected:
 private:
     std::chrono::steady_clock::time_point lastFrame;
     float renderSimTime = 0.0f;
+    std::atomic<float> simSpeed = 1.0f;
     bool simulating = false;
 
     QSet<int> pressedKeys;

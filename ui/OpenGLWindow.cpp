@@ -4,6 +4,7 @@
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
 #include <iostream>
+#include "graphics/core/SceneManager.h"
 
 #include "graphics/components/Gizmo.h"
 #include "graphics/core/ResourceManager.h"
@@ -44,7 +45,7 @@ void OpenGLWindow::paintGL() {
     lastFrame = currentFrame;
 
     if (simulating) {
-        renderSimTime += deltaTime * 5.0f;
+        renderSimTime += deltaTime * simSpeed;
     }
 
     //sceneManager->stepPhysics(deltaTime);
