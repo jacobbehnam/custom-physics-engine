@@ -84,7 +84,7 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         sceneManager->setGizmoFor(current, true);
         inspector->loadObject(current);
         if (auto* body = current->getPhysicsBody()) {
-            std::vector<ObjectSnapshot> snaps = body->getAllFrames();
+            std::vector<ObjectSnapshot> snaps = body->getAllFrames(BodyLock::LOCK);
             snapshotModel->setSnapshots(snaps);
         }
     } else {

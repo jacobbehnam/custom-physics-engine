@@ -37,17 +37,13 @@ namespace Physics {
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
         void debugSolveInitialVelocity(PhysicsBody* body, float targetDistance, float targetTime);
-        void reset(PhysicsBody* body, const ObjectSnapshot &state) {
-            body->clearAllFrames();
-            body->loadFrame(state, BodyLock::LOCK);
-            simTime = 0.0f;
-        }
+        void reset();
 
     private:
         void physicsLoop();
 
         OneUnknownSolver<float, float>* solver = nullptr;
-        ObjectSnapshot resetState{};
+        std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed = 1.0f;

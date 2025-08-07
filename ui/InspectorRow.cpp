@@ -72,7 +72,8 @@ QWidget *InspectorRow::makeScalarWidget(const std::function<float()>& get, QWidg
     layout->setContentsMargins(0, 0, 0, 0);
 
     QDoubleSpinBox* spin = new QDoubleSpinBox(container);
-    spin->setRange(-10000.0, 10000.0);
+    // For now, restricting scalars to be strictly positive.
+    spin->setRange(0.005, 10000.0f);
     spin->setDecimals(2);
     spin->setSingleStep(0.1);
     spin->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);

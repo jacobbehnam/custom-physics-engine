@@ -47,8 +47,8 @@ namespace Physics {
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
         void setGlobalAccelerationRef(std::atomic<glm::vec3>& globalAccRef) { globalAccelPtr = &globalAccRef; }
-        std::vector<ObjectSnapshot> getAllFrames() const;
-        void clearAllFrames();
+        std::vector<ObjectSnapshot> getAllFrames(BodyLock lock) const;
+        void clearAllFrames(BodyLock lock);
 
         // Uses double dispatch
         virtual bool collidesWith(const PhysicsBody& other) const = 0;

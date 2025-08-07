@@ -32,7 +32,7 @@ void Physics::PhysicsSystem::waitForStop() {
 }
 
 std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot(float renderSimTime) {
-    if (!snapshotReady.load(std::memory_order_acquire) || !physicsEnabled.load())
+    if (!snapshotReady.load(std::memory_order_acquire))
         return std::nullopt;
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
@@ -104,7 +104,6 @@ void Physics::PhysicsSystem::physicsLoop() {
             std::lock_guard<std::mutex> lock(bodiesMutex);
             while (accumulator >= dt) {
                 step(dt);
-                simTime += dt;
                 accumulator -= dt;
             }
             localBodies = bodies;
@@ -127,7 +126,6 @@ void Physics::PhysicsSystem::addBody(PhysicsBody *body) {
     body->setForce("Gravity", body->getMass(BodyLock::LOCK) * getGlobalAcceleration(), BodyLock::LOCK);
     body->setForce("Normal", glm::vec3(0.0f), BodyLock::LOCK);
     bodies.push_back(body);
-    body->recordFrame(simTime, BodyLock::LOCK);
 }
 
 void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
@@ -141,12 +139,27 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
 }
 
 void Physics::PhysicsSystem::step(float dt) {
+    if (solver) {
+        if (!solver->stepFrame()) {
+            // still solving—optionally display current guess:
+            // std::cout << solver->current << std::endl;
+        } else {
+            physicsEnabled = false;
+            std::cout << "finished" << std::endl;
+            return;
+        }
+    }
+
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
         if (body->getIsStatic(BodyLock::NOLOCK))
             continue;
         body->recordFrame(simTime, BodyLock::NOLOCK);
+        if (resetState.find(body) == resetState.end()) {
+            resetState[body] = body->getAllFrames(BodyLock::NOLOCK).back();
+        }
         body->step(dt, BodyLock::NOLOCK);
+        simTime += dt;
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
         body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
     }
@@ -163,15 +176,6 @@ void Physics::PhysicsSystem::step(float dt) {
             }
         }
     }
-    if (solver) {
-        if (!solver->stepFrame()) {
-            // still solving—optionally display current guess:
-            std::cout << solver->current << std::endl;
-        } else {
-            physicsEnabled = false;
-            std::cout << "finished" << std::endl;
-        }
-    }
 }
 
 void Physics::PhysicsSystem::debugSolveInitialVelocity(
@@ -180,22 +184,20 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     float targetTime
 ) {
 
-    resetState = body->getAllFrames().back();
-
     // 1) Setter: reset world & apply candidate vx
     auto setVx = [this, body](float vx0) {
         // reset the entire world to t=0
         this->simTime = 0.f;
         // assume you have a reset() that restores all bodies to their initial poses
-        reset(body, resetState);
+        reset();
         // now apply only to our test body:
         body->setVelocity({vx0, 0.f, 0.f}, BodyLock::LOCK);
     };
 
     // 2) Runner: integrate until x ≥ targetDistance
     auto runToX = [this, body, targetDistance]()->bool {
-        if (body->getAllFrames().back().position.x > targetDistance) {
-            body->setPosition(glm::vec3(targetDistance, 0.0f, 0.0f), BodyLock::LOCK);
+        if (body->getAllFrames(BodyLock::LOCK).empty()) return false;
+        if (body->getAllFrames(BodyLock::LOCK).back().position.x > targetDistance) {
             return true;
         }
         if (simTime >= 10) {
@@ -206,7 +208,7 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
 
     // 3) Extractor: return how long it took
     auto getTime = [this, body, targetDistance]() -> float {
-        const auto& frames = body->getAllFrames();
+        const auto& frames = body->getAllFrames(BodyLock::LOCK);
         int N = (int)frames.size();
         if (N < 2) return simTime;  // fallback
 
@@ -225,6 +227,14 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
         getTime,     // ResultExtractor: float elapsed
         targetTime   // we want elapsed == targetTime
     );
+}
+
+void Physics::PhysicsSystem::reset() {
+    for (auto [body, initialState] : resetState) {
+        body->clearAllFrames(BodyLock::LOCK);
+        body->loadFrame(initialState, BodyLock::LOCK);
+    }
+    simTime = 0.0f;
 }
 
 void Physics::PhysicsSystem::enablePhysics() {

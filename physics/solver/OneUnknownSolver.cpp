@@ -17,7 +17,6 @@ bool OneUnknownSolver<InputT, OutputT>::stepFrame() {
         OutputT error    = measured - target;
 
         if (intervalFound) {
-            std::cout << error << std::endl;
             if (std::abs(error) < tolerance) {
                 return true;
             }
