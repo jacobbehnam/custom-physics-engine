@@ -24,7 +24,7 @@ namespace Physics {
         void addBody(PhysicsBody* body);
         void removeBody(PhysicsBody* body);
 
-        void step(float dt);
+        bool step(float dt);
 
         void enablePhysics();
         void disablePhysics();
@@ -46,7 +46,8 @@ namespace Physics {
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
         std::atomic<glm::vec3> globalAcceleration;
-        std::atomic<float> simSpeed = 1.0f;
+        std::atomic<float> simSpeed{1.0f};
+        std::atomic<long long> stepCount{0};
         std::vector<PhysicsBody*> bodies;
 
         std::atomic<bool> physicsEnabled{false};
