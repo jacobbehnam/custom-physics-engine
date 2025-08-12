@@ -17,11 +17,11 @@ bool OneUnknownSolver<InputT, OutputT>::stepFrame() {
         OutputT error    = measured - target;
 
         if (intervalFound) {
-            if (std::abs(error) < tolerance) {
+            if (std::abs(low - high) < tolerance && std::abs(error) < 0.1) {
                 return true;
             }
 
-            if (error > 0) {
+            if (error < 0) {
                 // Measured > target → current guess too low
                 low = current;
             } else {
@@ -56,3 +56,4 @@ bool OneUnknownSolver<InputT, OutputT>::stepFrame() {
 }
 
 template class OneUnknownSolver<float, float>;
+template class OneUnknownSolver<double, double>;

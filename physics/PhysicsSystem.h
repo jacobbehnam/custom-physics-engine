@@ -42,7 +42,7 @@ namespace Physics {
     private:
         void physicsLoop();
 
-        OneUnknownSolver<float, float>* solver = nullptr;
+        OneUnknownSolver<double, double>* solver = nullptr;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
         std::atomic<glm::vec3> globalAcceleration;

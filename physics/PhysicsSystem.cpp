@@ -192,18 +192,20 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     float targetDistance,
     float targetTime
 ) {
+    constexpr float vf = 0.0f;
+    constexpr float x = 91.5;
 
     // 1) Setter: reset world & apply candidate vx
-    auto setVx = [this, body](float vx0) {
+    auto setVx = [this, body](double vx0) {
         reset();
         // now apply only to our test body:
-        body->setVelocity({vx0, 0.f, 0.f}, BodyLock::LOCK);
+        body->setVelocity({0.0f, vx0, 0.f}, BodyLock::LOCK);
     };
 
     // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [this, body, targetDistance]()->bool {
+    auto runToX = [this, body, x]()->bool {
         if (body->getAllFrames(BodyLock::LOCK).empty()) return false;
-        if (body->getAllFrames(BodyLock::LOCK).back().position.x > targetDistance) {
+        if (body->getAllFrames(BodyLock::LOCK).back().position.y > x) {
             return true;
         }
         if (simTime >= 10) {
@@ -213,25 +215,25 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     };
 
     // 3) Extractor: return how long it took
-    auto getTime = [this, body, targetDistance]() -> float {
-        const auto& frames = body->getAllFrames(BodyLock::LOCK);
+    auto getTime = [this, body, x]() -> double {
+        const auto &frames = body->getAllFrames(BodyLock::LOCK);
         int N = (int)frames.size();
-        if (N < 2) return simTime;  // fallback
+        if (N < 2) return (N == 1) ? frames.back().velocity.y : 0.0f;
 
-        return MathUtils::interpolateCrossing<float, float>(
+        return MathUtils::interpolateCrossing<double, double>(
             frames[N-2], frames[N-1],
-            targetDistance,
-            [](const ObjectSnapshot &snap){ return snap.position.x; },
-            [](const ObjectSnapshot &snap){ return snap.time; }
-            );
+            x,
+            [](const ObjectSnapshot &snap){ return snap.position.y; },   // stop function
+            [](const ObjectSnapshot &snap){ return snap.velocity.y; }    // extract velocity
+        );
     };
 
     // Build a scalar solver: float → float
-    solver = new OneUnknownSolver<float, float> (
+    solver = new OneUnknownSolver<double, double> (
         setVx,       // ParamSetter: float vx0
         runToX,      // SimulationRun
         getTime,     // ResultExtractor: float elapsed
-        targetTime   // we want elapsed == targetTime
+        vf   // we want elapsed == targetTime
     );
 }
 
