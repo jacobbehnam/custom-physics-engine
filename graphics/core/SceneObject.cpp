@@ -18,6 +18,7 @@ SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, con
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
 
+    creationOptions = options;
     std::visit([&](auto&& o) {
         using T = std::decay_t<decltype(o)>;
 

@@ -16,6 +16,7 @@ public:
     SceneManager(OpenGLWindow* win, Scene* scene);
     SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
+    std::vector<SceneObject*> getObjects() const;
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }

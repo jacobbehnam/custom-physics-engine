@@ -5,6 +5,7 @@
 #include <graphics/interfaces/IDrawable.h>
 #include <graphics/components/Shader.h>
 
+#include "SceneManager.h"
 #include "graphics/interfaces/IPickable.h"
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/SceneObjectOptions.h"
@@ -40,8 +41,9 @@ public:
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
     void setHovered(bool hovered) override;
     bool getHovered() override;
-    Mesh* getMesh() const override {return mesh;}
+    Mesh* getMesh() const override { return mesh; }
     uint32_t getObjectID() const override;
+    CreationOptions getCreationOptions() const { return creationOptions; }
 
     using PosMap = std::unordered_map<Physics::PhysicsBody*, glm::vec3>;
 
@@ -61,6 +63,8 @@ private:
     SceneManager* sceneManager;
     std::unique_ptr<Physics::PhysicsBody> physicsBody = nullptr;
 
+    CreationOptions creationOptions;
+    Primitive type;
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};
     glm::quat orientation {1.0f, 0.0f, 0.0f, 0.0f};

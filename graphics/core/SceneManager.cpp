@@ -20,7 +20,7 @@ void SceneManager::defaultSetup() {
     physicsSystem->debugSolveInitialVelocity(cube->getPhysicsBody(), 10.0f, 1.0f);
 }
 
-SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader, const CreationOptions& options) {
+SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
@@ -63,6 +63,14 @@ void SceneManager::deleteObject(SceneObject *obj) {
         sceneObjects.erase(it);
     }
     emit objectRemoved(obj);
+}
+
+std::vector<SceneObject*> SceneManager::getObjects() const {
+    std::vector<SceneObject*> ptrs;
+    ptrs.reserve(sceneObjects.size());
+    for (const auto& obj : sceneObjects)
+        ptrs.push_back(obj.get());
+    return ptrs;
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {
