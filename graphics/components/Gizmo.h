@@ -1,10 +1,13 @@
 #pragma once
-#include <graphics/core/SceneObject.h>
 #include <graphics/components/Shader.h>
 #include <graphics/core/Camera.h>
 #include <graphics/interfaces/IHandle.h>
 
+#include "graphics/interfaces/IPickable.h"
+
 class SceneManager;
+class SceneObject;
+class Scene;
 
 enum class GizmoType {
     TRANSLATE,

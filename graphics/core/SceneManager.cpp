@@ -2,8 +2,10 @@
 
 #include <iostream>
 
+#include "SceneSerializer.h"
 #include "graphics/core/ResourceManager.h"
 #include "physics/bounding/BoxCollider.h"
+#include "graphics/core/SceneObject.h"
 #include "ui/OpenGLWindow.h"
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
@@ -24,10 +26,10 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
         case Primitive::CUBE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_cube"), shader, options);
+            primitive = std::make_unique<SceneObject>(this, "prim_cube", shader, options);
             break;
         case Primitive::SPHERE:
-            primitive = std::make_unique<SceneObject>(this, ResourceManager::getMesh("prim_sphere"), shader, options);
+            primitive = std::make_unique<SceneObject>(this, "prim_sphere", shader, options);
             break;
     }
     assert(primitive != nullptr);
@@ -183,6 +185,13 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     if (heldKeys.contains(Qt::Key_X)) {
         physicsSystem->disablePhysics();
     }
+
+    if (heldKeys.contains(Qt::Key_P)) {
+        if (saveScene("scene.json"))
+            std::cout << "Save Success!" << std::endl;
+        else
+            std::cout << "Save Failed!" << std::endl;
+    }
 }
 
 void SceneManager::setGizmoFor(SceneObject *newTarget, bool redraw) {
@@ -219,4 +228,14 @@ void SceneManager::removePickable(IPickable *obj) {
     pickableObjects.erase(
         std::remove(pickableObjects.begin(), pickableObjects.end(), obj),
         pickableObjects.end());
+}
+
+bool SceneManager::saveScene(const QString &file) {
+    SceneSerializer serializer(this);
+    return serializer.saveToJson(file);
+}
+
+bool SceneManager::loadScene(const QString &file) {
+    SceneSerializer serializer(this);
+    return serializer.loadFromJson(file);
 }

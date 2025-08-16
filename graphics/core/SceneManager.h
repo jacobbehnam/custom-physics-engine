@@ -38,6 +38,9 @@ public:
     void setGizmoFor(SceneObject *newTarget, bool redraw = false);
     void deleteCurrentGizmo();
 
+    bool saveScene(const QString &file);
+    bool loadScene(const QString &file);
+
     void defaultSetup(); // TODO: prob will remove later.
     std::unordered_set<uint32_t> hoveredIDs, selectedIDs; // TODO: dont make public
 
@@ -52,7 +55,6 @@ signals:
     void selectedItem(SceneObject* object);
 
 private:
-
     OpenGLWindow* window;
 
     std::vector<std::unique_ptr<SceneObject>> sceneObjects;

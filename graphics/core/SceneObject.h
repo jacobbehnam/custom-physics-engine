@@ -20,7 +20,7 @@ namespace Physics {
 class SceneObject : public QObject, public IDrawable, public IPickable{
     Q_OBJECT
 public:
-    SceneObject(SceneManager* sceneManager, Mesh* meshPtr, Shader *sdr, const CreationOptions &options, QObject* parent = nullptr);
+    SceneObject(SceneManager* sceneManager, const std::string &meshName, Shader *sdr, const CreationOptions &options, QObject* parent = nullptr);
     ~SceneObject();
 
     void draw() const override;
@@ -42,6 +42,7 @@ public:
     void setHovered(bool hovered) override;
     bool getHovered() override;
     Mesh* getMesh() const override { return mesh; }
+    std::string getMeshName() const { return meshName; }
     uint32_t getObjectID() const override;
     CreationOptions getCreationOptions() const { return creationOptions; }
 
@@ -58,13 +59,13 @@ private:
 
     QObject* parent;
     Mesh* mesh;
+    std::string meshName;
     Shader* shader;
     Scene* ownerScene;
     SceneManager* sceneManager;
     std::unique_ptr<Physics::PhysicsBody> physicsBody = nullptr;
 
     CreationOptions creationOptions;
-    Primitive type;
     glm::vec3 position {0.0f};
     glm::vec3 rotation {0.0f};
     glm::quat orientation {1.0f, 0.0f, 0.0f, 0.0f};

@@ -10,13 +10,17 @@
 #include <graphics/components/ComputeShader.h>
 #include <QOpenGLVersionFunctionsFactory>
 #include <QOpenGLFunctions_4_5_Core>
+
+#include "ResourceManager.h"
 #include "physics/bounding/BoxCollider.h"
 
-SceneObject::SceneObject(SceneManager* sceneMgr, Mesh *meshPtr, Shader *sdr, const CreationOptions &options, QObject* objectParent)
-    : mesh(meshPtr), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
+SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, Shader *sdr, const CreationOptions &options, QObject* objectParent)
+    : meshName(nameOfMesh), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
+
+    assert((mesh = ResourceManager::getMesh(meshName)));
 
     creationOptions = options;
     std::visit([&](auto&& o) {

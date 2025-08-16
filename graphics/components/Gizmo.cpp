@@ -8,6 +8,7 @@
 #include "ScaleHandle.h"
 #include "graphics/core/ResourceManager.h"
 #include "graphics/core/SceneManager.h"
+#include "graphics/core/SceneObject.h"
 
 Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
     Scene* scene = sceneManager->scene;

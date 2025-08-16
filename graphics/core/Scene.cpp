@@ -5,6 +5,7 @@
 #include "graphics/utils/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <graphics/core/SceneObject.h>
 
 #include "ui/OpenGLWindow.h"
 

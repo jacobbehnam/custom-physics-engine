@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics/core/Camera.h>
-#include <graphics/core/SceneObject.h>
 #include <graphics/components/Gizmo.h>
 #include <graphics/utils/MathUtils.h>
 #include <graphics/core/UniformBuffer.h>
