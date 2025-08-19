@@ -15,21 +15,23 @@ class SceneManager : public QObject {
 public:
     SceneManager(OpenGLWindow* win, Scene* scene);
     SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
+    SceneObject* createObject(const std::string &meshName, Shader* shader, const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
+    void deleteAllObjects();
     std::vector<SceneObject*> getObjects() const;
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
-    void setGlobalAcceleration(const glm::vec3& newAcceleration) { physicsSystem->setGlobalAcceleration(newAcceleration); }
+    void setGlobalAcceleration(const glm::vec3& newAcceleration) const { physicsSystem->setGlobalAcceleration(newAcceleration); }
     float getSimSpeed() const { return window->getSimSpeed(); }
     void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
-    void addDrawable(IDrawable* obj) { scene->addDrawable(obj); }
+    void addDrawable(IDrawable* obj) const { scene->addDrawable(obj); }
     void removePickable(IPickable* obj);
-    void removeDrawable(IDrawable* obj) { scene->removeDrawable(obj); }
+    void removeDrawable(IDrawable* obj) const { scene->removeDrawable(obj); }
     void updateHoverState(const MathUtils::Ray& mouseRay);
     void setSelectFor(SceneObject *obj, bool flag);
 

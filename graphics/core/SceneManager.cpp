@@ -44,6 +44,20 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     return ptr;
 }
 
+SceneObject* SceneManager::createObject(const std::string &meshName, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
+    std::unique_ptr<SceneObject> primitive = std::make_unique<SceneObject>(this, meshName, shader, options);
+    assert(primitive != nullptr);
+    SceneObject* ptr = primitive.get();
+
+    sceneObjects.push_back(std::move(primitive));
+
+    addDrawable(ptr);
+    addPickable(ptr);
+    emit objectAdded(ptr);
+
+    return ptr;
+}
+
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
@@ -65,6 +79,12 @@ void SceneManager::deleteObject(SceneObject *obj) {
         sceneObjects.erase(it);
     }
     emit objectRemoved(obj);
+}
+
+void SceneManager::deleteAllObjects() {
+    for (const auto &obj : sceneObjects) {
+        deleteObject(obj.get());
+    }
 }
 
 std::vector<SceneObject*> SceneManager::getObjects() const {
@@ -191,6 +211,12 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
             std::cout << "Save Success!" << std::endl;
         else
             std::cout << "Save Failed!" << std::endl;
+    }
+    if (heldKeys.contains(Qt::Key_O)) {
+        if (loadScene("scene.json"))
+            std::cout << "Load Success!" << std::endl;
+        else
+            std::cout << "Load Failed!" << std::endl;
     }
 }
 

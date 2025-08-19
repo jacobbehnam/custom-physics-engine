@@ -4,16 +4,29 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDebug>
+
+#include "ResourceManager.h"
 #include "graphics/core/SceneObject.h"
 
 namespace JsonUtils {
-    // Helper to convert glm::vec3 → QJsonArray
     inline QJsonArray vec3ToJson(const glm::vec3 &v) {
         QJsonArray arr;
         arr.append(v.x);
         arr.append(v.y);
         arr.append(v.z);
         return arr;
+    }
+
+    inline glm::vec3 jsonToVec3(QJsonArray arr) {
+        if (arr.size() != 3) {
+            //qWarning << "QJsonArray does not have 3 elements to cast to vec3";
+            return glm::vec3(0.0f);
+        }
+        if (!(arr[0].isDouble() || arr[1].isDouble() || arr[2].isDouble())) {
+            //qWarning << "Unable to cast to vec3: type is not double";
+            return glm::vec3(0.0f);
+        }
+        return {arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()};
     }
 }
 
@@ -79,5 +92,70 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
 }
 
 bool SceneSerializer::loadFromJson(const QString &filename) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file for loading:" << filename;
+        return false;
+    }
 
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (doc.isNull() || !doc.isObject()) {
+        qWarning() << "Invalid JSON format in file:" << filename;
+        return false;
+    }
+
+    QJsonObject root = doc.object();
+    // Can check engine version for compatibility
+
+    if (root.contains("settings") && root["settings"].isObject()) {
+        QJsonObject settings = root["settings"].toObject();
+        sceneManager->setGlobalAcceleration(JsonUtils::jsonToVec3(settings["gravity"].toArray()));
+        sceneManager->setSimSpeed(settings["simSpeed"].toDouble());
+    }
+
+    sceneManager->deleteAllObjects();
+
+    if (root.contains("objects") && root["objects"].isArray()) {
+        QJsonArray objectsArray = root["objects"].toArray();
+        for (const auto &value : objectsArray) {
+            if (!value.isObject()) continue;
+            QJsonObject objJson = value.toObject();
+
+            uint32_t id = static_cast<uint32_t>(objJson["id"].toDouble());
+            std::string meshName = objJson["meshName"].toString().toStdString();
+
+            CreationOptions options;
+            if (objJson.contains("options") && objJson["options"].isObject()) {
+                QJsonObject optionsJson = objJson["options"].toObject();
+                QString type = optionsJson["type"].toString();
+                QJsonObject data = optionsJson["data"].toObject();
+
+                ObjectOptions base;
+                base.position = JsonUtils::jsonToVec3(data["position"].toArray());
+                base.scale    = JsonUtils::jsonToVec3(data["scale"].toArray());
+                base.rotation = JsonUtils::jsonToVec3(data["rotation"].toArray());
+
+                if (type == "PointMassOptions") {
+                    PointMassOptions pointOpt;
+                    pointOpt.base = base;
+                    pointOpt.isStatic = data["isStatic"].toBool();
+                    pointOpt.mass = data["mass"].toDouble();
+                    options = pointOpt;
+                }
+                else if (type == "RigidBodyOptions") {
+                    RigidBodyOptions rigidOpt;
+                    rigidOpt.base = base;
+                    rigidOpt.isStatic = data["isStatic"].toBool();
+                    rigidOpt.mass = data["mass"].toDouble();
+                    options = rigidOpt;
+                }
+                else {
+                    options = base;
+                }
+            }
+            sceneManager->createObject(meshName, ResourceManager::getShader("basic"), options);
+        }
+    }
+    return true;
 }
