@@ -142,9 +142,7 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
         if (isPress) {
             if (!(clickedObject && (selectedIDs.empty() || clickedCurrentGizmo))) {
                 // If we select a non gizmo not currently selected, clear the selection list and delete the gizmo
-                selectedIDs.clear();
-                if (currentGizmo)
-                    deleteCurrentGizmo();
+                setSelectFor(nullptr);
             }
             if (clickedObject) {
                 clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
@@ -152,8 +150,6 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
                 if (!clickedCurrentGizmo)
                     // Fine with dynamic cast here because this method is not executed often
                     emit selectedItem(dynamic_cast<SceneObject*>(clickedObject));
-            } else {
-                emit selectedItem(nullptr); // Deselect all items in hierarchy
             }
         } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
@@ -234,7 +230,13 @@ void SceneManager::setGizmoFor(SceneObject *newTarget, bool redraw) {
 }
 
 void SceneManager::setSelectFor(SceneObject *obj, bool flag) {
-    assert(obj);
+    if (!obj) { // If passing in object as nullptr, deselect all objects
+        selectedIDs.clear();
+        if (currentGizmo)
+            deleteCurrentGizmo();
+        emit selectedItem(nullptr);
+        return;
+    }
     uint32_t objID = obj->getObjectID();
     if (flag) {
         if (selectedIDs.find(objID) == hoveredIDs.end())

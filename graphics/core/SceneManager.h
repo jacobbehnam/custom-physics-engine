@@ -33,7 +33,7 @@ public:
     void removePickable(IPickable* obj);
     void removeDrawable(IDrawable* obj) const { scene->removeDrawable(obj); }
     void updateHoverState(const MathUtils::Ray& mouseRay);
-    void setSelectFor(SceneObject *obj, bool flag);
+    void setSelectFor(SceneObject *obj, bool flag = true);
 
     void processHeldKeys(const QSet<int> &heldKeys, float dt);
     void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods);

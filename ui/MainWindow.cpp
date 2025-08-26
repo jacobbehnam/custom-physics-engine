@@ -7,6 +7,7 @@
 #include <QStatusBar>
 #include <QLineEdit>
 #include <QScrollArea>
+#include <QMenuBar>
 
 #include "HierarchyWidget.h"
 #include "InspectorWidget.h"
@@ -36,6 +37,7 @@ void MainWindow::onGLInitialized() {
     sceneManager = new SceneManager(glWindow, scene);
     glWindow->setScene(scene);
     glWindow->setSceneManager(sceneManager);
+    setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
 }
@@ -74,6 +76,28 @@ void MainWindow::setupDockWidgets() {
     tableDock->setWidget(tableView);
     addDockWidget(Qt::RightDockWidgetArea, tableDock);
 }
+
+void MainWindow::setupMenuBar() {
+    QMenu *fileMenu = menuBar()->addMenu("File");
+    QAction *saveAction = new QAction("Save", this);
+    fileMenu->addAction(saveAction);
+    QAction *loadAction = new QAction("Load", this);
+    fileMenu->addAction(loadAction);
+
+    connect(saveAction, &QAction::triggered, this, [this](){
+        if (sceneManager->saveScene("scene.json"))
+            std::cout << "Save Success!" << std::endl;
+        else
+            std::cout << "Save Failed!" << std::endl;
+    });
+    connect(loadAction, &QAction::triggered, this, [this](){
+        if (sceneManager->loadScene("scene.json"))
+            std::cout << "Load Success!" << std::endl;
+        else
+            std::cout << "Load Failed!" << std::endl;
+    });
+}
+
 
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {

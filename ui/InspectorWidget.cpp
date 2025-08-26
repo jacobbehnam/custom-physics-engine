@@ -147,6 +147,7 @@ void InspectorWidget::unloadObject(bool loadGlobals) {
     transformRows.clear();
     forceRows.clear();
     globalsRows.clear();
+    currentObject = nullptr;
     if (loadGlobals)
         populateGlobals(mainLayout);
 }

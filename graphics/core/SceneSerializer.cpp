@@ -115,6 +115,7 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
     }
 
     sceneManager->deleteAllObjects();
+    sceneManager->setSelectFor(nullptr);
 
     if (root.contains("objects") && root["objects"].isArray()) {
         QJsonArray objectsArray = root["objects"].toArray();
