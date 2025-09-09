@@ -161,8 +161,8 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
 void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     Camera* camera = scene->getCamera();
 
-    if (heldKeys.contains(Qt::Key_Escape))
-        qApp->quit();
+    // if (heldKeys.contains(Qt::Key_Escape))
+    //     qApp->quit();
 
     static const std::unordered_map<int, GizmoType> keyToGizmoType = {
         {Qt::Key_T, GizmoType::TRANSLATE},
