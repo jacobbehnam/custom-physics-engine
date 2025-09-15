@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <mutex>
 
-#include "physics/PhysicsBody.h"
+#include "PhysicsBody.h"
 
 namespace Physics {
     class PointMass : public PhysicsBody{

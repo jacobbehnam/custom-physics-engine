@@ -1,4 +1,4 @@
-#include "physics/PhysicsBody.h"
+#include "PhysicsBody.h"
 
 void Physics::PhysicsBody::applyForce(const glm::vec3 &force) {
     std::lock_guard<std::mutex> lock(stateMutex);
