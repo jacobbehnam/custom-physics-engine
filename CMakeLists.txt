@@ -88,7 +88,9 @@ add_executable(OpenGLApp main.cpp
         graphics/components/ComputeShader.h
         physics/PhysicsBody.cpp
         graphics/core/SceneSerializer.cpp
-        graphics/core/SceneSerializer.h)
+        graphics/core/SceneSerializer.h
+        physics/solver/ProblemRouter.cpp
+        physics/solver/ProblemRouter.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

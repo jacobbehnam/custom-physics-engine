@@ -187,6 +187,13 @@ bool Physics::PhysicsSystem::step(float dt) {
     return false;
 }
 
+void Physics::PhysicsSystem::solveProblem(const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
+    if (unknown.empty()) {
+        solver = router.makeSolver(knowns);
+        physicsEnabled = (solver != nullptr);
+    }
+}
+
 void Physics::PhysicsSystem::debugSolveInitialVelocity(
     PhysicsBody* body,
     float targetDistance,
@@ -229,11 +236,11 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     };
 
     // Build a scalar solver: float → float
-    solver = new OneUnknownSolver<double, double> (
+    solver = std::make_unique<OneUnknownSolver<double, double>>(
         setVx,       // ParamSetter: float vx0
         runToX,      // SimulationRun
         getTime,     // ResultExtractor: float elapsed
-        vf   // we want elapsed == targetTime
+        vf           // target value
     );
 }
 
