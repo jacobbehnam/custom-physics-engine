@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <glm/glm.hpp>
 
 template<typename InputT, typename OutputT>
 class VectorRootSolver {
@@ -13,17 +14,29 @@ public:
                      ResultExtractor extractResult,
                      const OutputT& target,
                      double tolerance = 1e-3,
-                     int maxIterations = 30);
+                     int maxIterations = 30,
+                     double jacobianStep = 0.01,
+                     double damping = 1.0);
 
     bool stepFrame();
 
     InputT current;   // current guess for unknown(s)
 
 private:
+    enum class NewtonState { WaitingForBase, PerturbComponent, WaitingForPerturbed, ComputeJacobian };
+    NewtonState state;
+
     InitialGuessSetter setGuess;
     StopCondition stopCondition;
     ResultExtractor extract;
-    OutputT target;
-    double tolerance;
-    //int maxIterations;
+
+    glm::vec3 target;
+    glm::vec3 baseOutput;
+    glm::vec3 xPerturbed;
+    std::array<glm::vec3, 3> fPerturbed;
+
+    int currentPerturbation = -1;
+    float h;
+    float tolerance;
+    float alpha;
 };

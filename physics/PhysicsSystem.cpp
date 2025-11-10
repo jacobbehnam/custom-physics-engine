@@ -188,59 +188,56 @@ bool Physics::PhysicsSystem::step(float dt) {
 }
 
 void Physics::PhysicsSystem::solveProblem(const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
-    if (unknown.empty()) {
-        solver = router.makeSolver(knowns);
-        physicsEnabled = (solver != nullptr);
-    }
+    // if (unknown.empty()) {
+    //     solver = router.makeSolver(knowns);
+    //     physicsEnabled = (solver != nullptr);
+    // }
 }
 
 void Physics::PhysicsSystem::debugSolveInitialVelocity(
     PhysicsBody* body,
-    float targetDistance,
-    float targetTime
+    const glm::vec3& targetPosition,
+    float maxSimTime
 ) {
-    constexpr float vf = 0.0f;
-    constexpr float x = 91.5;
+    // 1) Target vector
+    glm::vec3 target = targetPosition;
 
-    // 1) Setter: reset world & apply candidate vx
-    auto setVx = [this, body](double vx0) {
-        reset();
-        // now apply only to our test body:
-        body->setVelocity({0.0f, vx0, 0.f}, BodyLock::LOCK);
+    // 2) Setter: reset simulation & apply candidate initial velocity
+    auto setVelocity = [this, body](const glm::vec3& v0) {
+        reset();                  // reset world to t = 0
+        body->setVelocity(v0, BodyLock::LOCK);
     };
 
-    // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [this, body, x]()->bool {
-        if (body->getAllFrames(BodyLock::LOCK).empty()) return false;
-        if (body->getAllFrames(BodyLock::LOCK).back().position.y > x) {
-            return true;
-        }
-        if (simTime >= 10) {
-            return true;
-        }
+    // 3) Runner: wait until simulation reaches maxSimTime or last frame exceeds some reasonable bound
+    auto runSimulation = [this, body, maxSimTime]() -> bool {
+        const auto& frames = body->getAllFrames(BodyLock::LOCK);
+        if (frames.empty()) return false;
+
+        // Wait until maxSimTime reached
+        if (simTime >= maxSimTime) return true;
+
+        // Optional: also stop if the object is "effectively at rest" (small velocity)
+        const glm::vec3& v = frames.back().velocity;
+        if (glm::length(v) < 1e-3f) return true;
+
         return false;
     };
 
-    // 3) Extractor: return how long it took
-    auto getTime = [this, body, x]() -> double {
-        const auto &frames = body->getAllFrames(BodyLock::LOCK);
-        int N = (int)frames.size();
-        if (N < 2) return (N == 1) ? frames.back().velocity.y : 0.0f;
+    // 4) Extractor: return the final position vector at stop frame
+    auto extractVector = [this, body]() -> glm::vec3 {
+        const auto& frames = body->getAllFrames(BodyLock::LOCK);
+        if (frames.empty()) return glm::vec3(0.0f);
 
-        return MathUtils::interpolateCrossing<double, double>(
-            frames[N-2], frames[N-1],
-            x,
-            [](const ObjectSnapshot &snap){ return snap.position.y; },   // stop function
-            [](const ObjectSnapshot &snap){ return snap.velocity.y; }    // extract velocity
-        );
+        // Take the last frame's position as the output
+        return frames.back().position;
     };
 
-    // Build a scalar solver: float → float
-    solver = std::make_unique<OneUnknownSolver<double, double>>(
-        setVx,       // ParamSetter: float vx0
-        runToX,      // SimulationRun
-        getTime,     // ResultExtractor: float elapsed
-        vf           // target value
+    // 5) Construct the vector root solver
+    solver = std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
+        setVelocity,    // InitialGuessSetter: glm::vec3
+        runSimulation,  // StopCondition
+        extractVector,  // ResultExtractor: glm::vec3
+        target          // target value
     );
 }
 
