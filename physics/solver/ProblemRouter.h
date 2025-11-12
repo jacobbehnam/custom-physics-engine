@@ -2,15 +2,34 @@
 #include <string>
 #include <memory>
 #include "OneUnknownSolver.h"
+#include "VectorRootSolver.h"
+
+namespace Physics {
+    class PhysicsSystem;
+    class PhysicsBody;
+}
+
+enum class SolverMode {
+    SIMULATE, // no unknowns to solve for, just advance sim
+    SOLVE // unknown must be solved using VectorRootSolver
+};
+
+struct SolverDecision {
+    SolverMode mode;
+    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> solver; // nullptr if direct simulation
+};
 
 class ProblemRouter {
 public:
-    ProblemRouter() = default;
-    std::unique_ptr<OneUnknownSolver<double, double>> makeSolver(const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
+    explicit ProblemRouter(Physics::PhysicsSystem& physicsSystem);
+    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown);
 
+    SolverDecision routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown);
 private:
+    Physics::PhysicsSystem& physicsSystem;
+
     // Takes in knowns and returns a solver.
-    using SolverFactory = std::function<std::unique_ptr<OneUnknownSolver<double, double>>(const std::unordered_map<std::string,double>&)>;
+    using SolverFactory = std::function<std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>>(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>&)>;
 
     struct SolverEntry {
         std::vector<std::string> requiredKeys;

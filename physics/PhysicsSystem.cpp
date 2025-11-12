@@ -9,7 +9,7 @@ namespace Physics {
     class PointMass;
 }
 
-Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
+Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel), router(*this) {}
 
 Physics::PhysicsSystem::~PhysicsSystem() {
     stop();
@@ -187,11 +187,15 @@ bool Physics::PhysicsSystem::step(float dt) {
     return false;
 }
 
-void Physics::PhysicsSystem::solveProblem(const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
-    // if (unknown.empty()) {
-    //     solver = router.makeSolver(knowns);
-    //     physicsEnabled = (solver != nullptr);
-    // }
+void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
+    auto decision = router.routeProblem(body, knowns, unknown);
+    if (decision.mode == SolverMode::SIMULATE) {
+        // TODO
+    } else if (decision.mode == SolverMode::SOLVE) {
+        solver = std::move(decision.solver);
+    } else {
+        std::cout << "null" << std::endl;
+    }
 }
 
 void Physics::PhysicsSystem::debugSolveInitialVelocity(
@@ -199,46 +203,48 @@ void Physics::PhysicsSystem::debugSolveInitialVelocity(
     const glm::vec3& targetPosition,
     float maxSimTime
 ) {
-    // 1) Target vector
-    glm::vec3 target = targetPosition;
-
-    // 2) Setter: reset simulation & apply candidate initial velocity
-    auto setVelocity = [this, body](const glm::vec3& v0) {
-        reset();                  // reset world to t = 0
-        body->setVelocity(v0, BodyLock::LOCK);
-    };
-
-    // 3) Runner: wait until simulation reaches maxSimTime or last frame exceeds some reasonable bound
-    auto runSimulation = [this, body, maxSimTime]() -> bool {
-        const auto& frames = body->getAllFrames(BodyLock::LOCK);
-        if (frames.empty()) return false;
-
-        // Wait until maxSimTime reached
-        if (simTime >= maxSimTime) return true;
-
-        // Optional: also stop if the object is "effectively at rest" (small velocity)
-        const glm::vec3& v = frames.back().velocity;
-        if (glm::length(v) < 1e-3f) return true;
-
-        return false;
-    };
-
-    // 4) Extractor: return the final position vector at stop frame
-    auto extractVector = [this, body]() -> glm::vec3 {
-        const auto& frames = body->getAllFrames(BodyLock::LOCK);
-        if (frames.empty()) return glm::vec3(0.0f);
-
-        // Take the last frame's position as the output
-        return frames.back().position;
-    };
-
-    // 5) Construct the vector root solver
-    solver = std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
-        setVelocity,    // InitialGuessSetter: glm::vec3
-        runSimulation,  // StopCondition
-        extractVector,  // ResultExtractor: glm::vec3
-        target          // target value
-    );
+    const std::unordered_map<std::string,double>& knowns = {{"r0_x", 0.0},{"r0_y",0.0},{"r0_z",0.0}, {"rT_x",5.0},{"rT_y",5.0},{"rT_z",5.0}, {"T", 1.0}};
+    solveProblem(body, knowns, "v0");
+    // // 1) Target vector
+    // glm::vec3 target = targetPosition;
+    //
+    // // 2) Setter: reset simulation & apply candidate initial velocity
+    // auto setVelocity = [this, body](const glm::vec3& v0) {
+    //     reset();                  // reset world to t = 0
+    //     body->setVelocity(v0, BodyLock::LOCK);
+    // };
+    //
+    // // 3) Runner: wait until simulation reaches maxSimTime or last frame exceeds some reasonable bound
+    // auto runSimulation = [this, body, maxSimTime]() -> bool {
+    //     const auto& frames = body->getAllFrames(BodyLock::LOCK);
+    //     if (frames.empty()) return false;
+    //
+    //     // Wait until maxSimTime reached
+    //     if (simTime >= maxSimTime) return true;
+    //
+    //     // Optional: also stop if the object is "effectively at rest" (small velocity)
+    //     const glm::vec3& v = frames.back().velocity;
+    //     if (glm::length(v) < 1e-3f) return true;
+    //
+    //     return false;
+    // };
+    //
+    // // 4) Extractor: return the final position vector at stop frame
+    // auto extractVector = [this, body]() -> glm::vec3 {
+    //     const auto& frames = body->getAllFrames(BodyLock::LOCK);
+    //     if (frames.empty()) return glm::vec3(0.0f);
+    //
+    //     // Take the last frame's position as the output
+    //     return frames.back().position;
+    // };
+    //
+    // // 5) Construct the vector root solver
+    // solver = std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
+    //     setVelocity,    // InitialGuessSetter: glm::vec3
+    //     runSimulation,  // StopCondition
+    //     extractVector,  // ResultExtractor: glm::vec3
+    //     target          // target value
+    // );
 }
 
 void Physics::PhysicsSystem::reset() {

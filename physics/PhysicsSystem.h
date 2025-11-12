@@ -38,14 +38,16 @@ namespace Physics {
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
-        void solveProblem(const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
+        void solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
         void debugSolveInitialVelocity(PhysicsBody* body, const glm::vec3& targetPosition, float maxSimTime);
         void reset();
+
+        float simTime = 0.0f; // TODO move
 
     private:
         void physicsLoop();
 
-        ProblemRouter router = {};
+        ProblemRouter router;
         std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> solver = nullptr;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
@@ -55,7 +57,6 @@ namespace Physics {
         std::vector<PhysicsBody*> bodies;
 
         std::atomic<bool> physicsEnabled{false};
-        float simTime = 0.0f;
 
         // threading
         std::thread physicsThread;
