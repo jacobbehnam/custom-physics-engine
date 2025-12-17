@@ -11,6 +11,7 @@
 
 #include "HierarchyWidget.h"
 #include "InspectorWidget.h"
+#include "SolverDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
@@ -78,6 +79,7 @@ void MainWindow::setupDockWidgets() {
 }
 
 void MainWindow::setupMenuBar() {
+    // File Menu
     QMenu *fileMenu = menuBar()->addMenu("File");
     QAction *saveAction = new QAction("Save", this);
     fileMenu->addAction(saveAction);
@@ -96,8 +98,22 @@ void MainWindow::setupMenuBar() {
         else
             std::cout << "Load Failed!" << std::endl;
     });
+    // Solver Menu
+    QMenu *solverMenu = menuBar()->addMenu("Solver");
+    QAction *editSolverAction = new QAction("Edit Solver", this);
+    solverMenu->addAction(editSolverAction);
+
+    connect(editSolverAction, &QAction::triggered, this, &MainWindow::openSolverSettings);
 }
 
+void MainWindow::openSolverSettings() {
+    SolverDialog dialog(this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        double newValue = dialog.getSolverValue();
+        // TODO
+    }
+}
 
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {

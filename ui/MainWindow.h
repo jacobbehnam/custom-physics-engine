@@ -39,4 +39,5 @@ private:
 
     void setupDockWidgets();
     void setupMenuBar();
+    void openSolverSettings();
 };

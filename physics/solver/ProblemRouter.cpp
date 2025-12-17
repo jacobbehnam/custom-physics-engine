@@ -18,6 +18,25 @@ SolverDecision ProblemRouter::routeProblem(Physics::PhysicsBody* body, const std
     return {SolverMode::SOLVE, std::move(solver)};
 }
 
+std::vector<std::vector<std::string>> ProblemRouter::getRequiredKeys(const std::string &unknown) const {
+    std::vector<std::vector<std::string>> options;
+
+    auto it = solverMap.find(unknown);
+    if (it != solverMap.end()) {
+        // Iterate over all registered ways to solve this problem
+        for (const auto& entry : it->second) {
+            options.push_back(entry.requiredKeys);
+        }
+    }
+    return options;
+}
+
+bool ProblemRouter::areRequirementsMet(const std::vector<std::string>& required, const std::unordered_map<std::string, double>& knowns) const {
+    return std::all_of(required.begin(), required.end(), [&](const std::string& key) {
+            return knowns.find(key) != knowns.end();
+        });
+}
+
 std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
     auto it = solverMap.find(unknown);
     if (it == solverMap.end()) {
@@ -25,25 +44,13 @@ std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolve
         return nullptr;
     }
 
-    std::set<std::string> userKeys;
-    for (const auto& pair : knowns)
-        userKeys.insert(pair.first);
-
-    // Iterate through factories that solve for the unknown
     for (const auto& entry : it->second) {
-        bool hasAllKeys = true;
-        for (const auto& key : entry.requiredKeys) {
-            if (knowns.find(key) == knowns.end()) {
-                hasAllKeys = false;
-                break;
-            }
-        }
-        if (hasAllKeys) {
+        if (areRequirementsMet(entry.requiredKeys, knowns)) {
             return entry.factory(body, knowns);
         }
     }
 
-    std::cerr << "No exact matching solver found for unknown: " << unknown << std::endl;
+    std::cerr << "Insufficient knowns provided for unknown: " << unknown << std::endl;
     return nullptr;
 }
 
