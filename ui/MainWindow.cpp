@@ -111,14 +111,14 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
         Physics::PhysicsBody* body = obj->getPhysicsBody();
 
         if (body) {
+            const ProblemRouter *router = sceneManager->physicsSystem->getRouter();
             // Create and show the dialog
-            SolverDialog dialog(body, this);
-
+            SolverDialog dialog(router, body, this);
             if (dialog.exec() == QDialog::Accepted) {
-                //std::string unknown = dialog.getTargetUnknown();
-                //auto knowns = dialog.getCollectedKnowns();
+                auto knowns = dialog.getCollectedKnowns();
+                std::string unknown = dialog.getTargetUnknown();
 
-                //sceneManager->physicsSystem->solveProblem()
+                sceneManager->physicsSystem->solveProblem(body, knowns, unknown);
             }
         } else {
             qDebug() << "Selected object has no physics body attached.";

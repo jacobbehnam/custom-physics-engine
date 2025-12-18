@@ -22,8 +22,8 @@ struct SolverDecision {
 class ProblemRouter {
 public:
     explicit ProblemRouter(Physics::PhysicsSystem& physicsSystem);
-    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown);
-    SolverDecision routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown);
+    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const;
+    SolverDecision routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown) const;
 
     std::vector<std::vector<std::string>> getRequiredKeys(const std::string& unknown) const;
 private:

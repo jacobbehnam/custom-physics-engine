@@ -7,7 +7,7 @@ ProblemRouter::ProblemRouter(Physics::PhysicsSystem& physics) : physicsSystem(ph
     registerKinematicsProblems();
 }
 
-SolverDecision ProblemRouter::routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown) {
+SolverDecision ProblemRouter::routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown) const {
     // Case 1: We know all initial conditions
     if (knowns.find("r0") != knowns.end() && knowns.find("v0") != knowns.end()) {
         return {SolverMode::SIMULATE, nullptr}; // TODO
@@ -37,7 +37,7 @@ bool ProblemRouter::areRequirementsMet(const std::vector<std::string>& required,
         });
 }
 
-std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
+std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const {
     auto it = solverMap.find(unknown);
     if (it == solverMap.end()) {
         std::cerr << "No solver registered for unknown: " << unknown << std::endl;

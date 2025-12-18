@@ -38,8 +38,8 @@ namespace Physics {
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
+        const ProblemRouter* getRouter() const { return &router; }
         void solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
-        void debugSolveInitialVelocity(PhysicsBody* body, const glm::vec3& targetPosition, float maxSimTime);
         void reset();
 
         float simTime = 0.0f; // TODO move
