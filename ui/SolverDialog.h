@@ -6,7 +6,11 @@ class SolverDialog : public QDialog {
 public:
     explicit SolverDialog(QWidget* parent = nullptr);
 
-    double getSolverValue() const;
+    std::unordered_map<std::string, double> getCollectedKnowns() const;
+    std::string getTargetUnknown() const;
+private slots:
+    //void updateUiState();
+
 private:
 
 };

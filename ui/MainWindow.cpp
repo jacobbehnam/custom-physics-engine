@@ -41,6 +41,7 @@ void MainWindow::onGLInitialized() {
     setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
+    connect(sceneManager, &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
 }
 
 void MainWindow::setupDockWidgets() {
@@ -98,21 +99,33 @@ void MainWindow::setupMenuBar() {
         else
             std::cout << "Load Failed!" << std::endl;
     });
-    // Solver Menu
-    QMenu *solverMenu = menuBar()->addMenu("Solver");
-    QAction *editSolverAction = new QAction("Edit Solver", this);
-    solverMenu->addAction(editSolverAction);
-
-    connect(editSolverAction, &QAction::triggered, this, &MainWindow::openSolverSettings);
 }
 
-void MainWindow::openSolverSettings() {
-    SolverDialog dialog(this);
+void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
+    if (!obj) return;
 
-    if (dialog.exec() == QDialog::Accepted) {
-        double newValue = dialog.getSolverValue();
-        // TODO
-    }
+    QMenu contextMenu;
+    QAction* solveAction = contextMenu.addAction("Open Solver...");
+
+    connect(solveAction, &QAction::triggered, [this, obj]() {
+        Physics::PhysicsBody* body = obj->getPhysicsBody();
+
+        if (body) {
+            // Create and show the dialog
+            SolverDialog dialog(this);
+
+            if (dialog.exec() == QDialog::Accepted) {
+                //std::string unknown = dialog.getTargetUnknown();
+                //auto knowns = dialog.getCollectedKnowns();
+
+                //sceneManager->physicsSystem->solveProblem()
+            }
+        } else {
+            qDebug() << "Selected object has no physics body attached.";
+        }
+    });
+
+    contextMenu.exec(pos);
 }
 
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {

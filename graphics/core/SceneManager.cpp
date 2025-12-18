@@ -124,12 +124,27 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
     Camera* camera = scene->getCamera();
 
     if (button == Qt::RightButton) {
-        if (isPress && !window->isMouseCaptured()) {
-            window->setMouseCaptured(true);
-            camera->resetMouse();
-        } else if (isRelease && window->isMouseCaptured()) {
+        if (isPress) {
+            rightClickStartDir = camera->front;
+
+            if (!window->isMouseCaptured()) {
+                window->setMouseCaptured(true);
+                camera->resetMouse();
+            }
+        }
+        else if (isRelease && window->isMouseCaptured()) {
             window->setMouseCaptured(false);
             camera->resetMouse();
+
+            if (glm::distance(camera->front, rightClickStartDir) < 0.05f) {
+                MathUtils::Ray ray = getMouseRay();
+                float dist = 0.0f;
+                IPickable* hit = MathUtils::findFirstHit(pickableObjects, ray, dist, currentGizmo.get());
+
+                if (auto* sceneObj = dynamic_cast<SceneObject*>(hit)) {
+                    emit contextMenuRequested(QCursor::pos(), sceneObj);
+                }
+            }
         }
     }
 

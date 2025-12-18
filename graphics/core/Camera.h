@@ -9,7 +9,7 @@ enum class Movement {
 };
 
 class Camera {
-public:
+public: // TODO: make these not public
     glm::vec3 position;
     glm::vec3 front;
     glm::vec3 up;

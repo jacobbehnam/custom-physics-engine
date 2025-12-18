@@ -57,7 +57,7 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
         return currentSnapshots;
     }
 
-    // compute blend factor α ∈ (0,1)
+    // compute blend factor α in (0,1)
     float alpha = (renderSimTime - t0) / (t1 - t0);
 
     // interpolate each ObjectSnapshot
