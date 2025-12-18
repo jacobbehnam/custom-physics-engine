@@ -1,106 +1,46 @@
 #include "InspectorRow.h"
 
 #include <qboxlayout.h>
-#include <QDoubleSpinBox>
-#include <type_traits>
+
+#include "ScalarWidget.h"
+#include "Vector3Widget.h"
 
 QWidget* InspectorRow::makeVec3Widget(const std::function<glm::vec3()>& get, QWidget *parent, std::function<void(glm::vec3)> set) {
-    QWidget* container = new QWidget(parent);
-    QHBoxLayout* layout = new QHBoxLayout(container);
-    layout->setContentsMargins(0, 0, 0, 0);
+    Vector3Widget* widget = new Vector3Widget("", parent);
 
-    QDoubleSpinBox* xSpin = new QDoubleSpinBox(container);
-    QDoubleSpinBox* ySpin = new QDoubleSpinBox(container);
-    QDoubleSpinBox* zSpin = new QDoubleSpinBox(container);
-
-    for (auto* spin : { xSpin, ySpin, zSpin }) {
-        spin->setRange(-10000.0, 10000.0);
-        spin->setDecimals(2);
-        spin->setSingleStep(0.1);
-        spin->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);
-        layout->addWidget(spin);
-    }
-
-    glm::vec3 value = get();
-    xSpin->setValue(value.x);
-    ySpin->setValue(value.y);
-    zSpin->setValue(value.z);
+    widget->setValue(get());
 
     if (set) {
-        auto pushToObject = [=]() {
-            glm::vec3 newVal{
-                static_cast<float>(xSpin->value()),
-                static_cast<float>(ySpin->value()),
-                static_cast<float>(zSpin->value())
-            };
-            set(newVal);
-        };
-
-        auto connectSpin = [=](QDoubleSpinBox* spin) {
-            QObject::connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), container, [=](double) {
-                pushToObject();
-            });
-        };
-
-        connectSpin(xSpin);
-        connectSpin(ySpin);
-        connectSpin(zSpin);
+        QObject::connect(widget, &Vector3Widget::valueChanged, [=](const glm::vec3& val) {
+            set(val);
+        });
     } else {
-        xSpin->setDisabled(true);
-        ySpin->setDisabled(true);
-        zSpin->setDisabled(true);
+        widget->setEnabled(false);
     }
 
     pullFromObject = [=]() {
-        glm::vec3 updated = get();
-
-        QSignalBlocker blockX(xSpin);
-        QSignalBlocker blockY(ySpin);
-        QSignalBlocker blockZ(zSpin);
-
-        xSpin->setValue(updated.x);
-        ySpin->setValue(updated.y);
-        zSpin->setValue(updated.z);
+        widget->setValue(get());
     };
 
-    return container;
+    return widget;
 }
 
 QWidget *InspectorRow::makeScalarWidget(const std::function<float()>& get, QWidget *parent, std::function<void(float)> set) {
-    QWidget* container = new QWidget(parent);
-    QHBoxLayout* layout = new QHBoxLayout(container);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    QDoubleSpinBox* spin = new QDoubleSpinBox(container);
-    // For now, restricting scalars to be strictly positive.
-    spin->setRange(0.005, 10000.0f);
-    spin->setDecimals(2);
-    spin->setSingleStep(0.1);
-    spin->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
-    layout->addWidget(spin);
-
-    float value = get();
-    spin->setValue(value);
+    ScalarWidget* widget = new ScalarWidget("", parent);
+    widget->setValue(get());
 
     if (set) {
-        auto pushToObject = [=]() {
-            set(spin->value());
-        };
-
-        QObject::connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), container, [=](double) {
-            pushToObject();
+        QObject::connect(widget, &ScalarWidget::valueChanged, [=](double val) {
+            set(static_cast<float>(val));
         });
     } else {
-        spin->setDisabled(true);
+        widget->setEnabled(false);
     }
 
     pullFromObject = [=]() {
-        float updated = get();
-
-        QSignalBlocker block(spin);
-        spin->setValue(updated);
+        widget->setValue(get());
     };
 
-    return container;
+    return widget;
 }
 

@@ -94,7 +94,11 @@ add_executable(OpenGLApp main.cpp
         physics/solver/VectorRootSolver.cpp
         physics/solver/VectorRootSolver.h
         ui/SolverDialog.cpp
-        ui/SolverDialog.h)
+        ui/SolverDialog.h
+        ui/Vector3Widget.cpp
+        ui/Vector3Widget.h
+        ui/ScalarWidget.cpp
+        ui/ScalarWidget.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

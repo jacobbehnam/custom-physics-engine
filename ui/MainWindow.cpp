@@ -112,7 +112,7 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
 
         if (body) {
             // Create and show the dialog
-            SolverDialog dialog(this);
+            SolverDialog dialog(body, this);
 
             if (dialog.exec() == QDialog::Accepted) {
                 //std::string unknown = dialog.getTargetUnknown();
