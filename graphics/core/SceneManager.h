@@ -54,7 +54,8 @@ signals:
     void objectRemoved(SceneObject* obj);
     void objectRenamed(SceneObject* obj, const QString& oldName);
 
-    void selectedItem(SceneObject* object);
+    void selectedItem(SceneObject* object); // Left click on object
+    void contextMenuRequested(const QPoint& globalPos, SceneObject* object); // Right Click on object
 
 private:
     OpenGLWindow* window;
@@ -66,4 +67,7 @@ private:
     std::unique_ptr<Gizmo> currentGizmo;
 
     MathUtils::Ray getMouseRay();
+
+    // To track if a right click was a click or drag
+    glm::vec3 rightClickStartDir;
 };

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include <limits>
 
 struct ObjectData;
 

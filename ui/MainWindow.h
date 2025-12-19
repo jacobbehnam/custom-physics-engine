@@ -25,6 +25,7 @@ public:
 private slots:
     void onGLInitialized();
     void onHierarchySelectionChanged(SceneObject* previous, SceneObject* current);
+    void showObjectContextMenu(const QPoint& pos, SceneObject* obj);
 
 private:
     OpenGLWindow* glWindow;

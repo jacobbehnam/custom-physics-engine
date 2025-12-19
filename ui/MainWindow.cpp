@@ -11,6 +11,7 @@
 
 #include "HierarchyWidget.h"
 #include "InspectorWidget.h"
+#include "SolverDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
@@ -40,6 +41,7 @@ void MainWindow::onGLInitialized() {
     setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
+    connect(sceneManager, &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
 }
 
 void MainWindow::setupDockWidgets() {
@@ -78,6 +80,7 @@ void MainWindow::setupDockWidgets() {
 }
 
 void MainWindow::setupMenuBar() {
+    // File Menu
     QMenu *fileMenu = menuBar()->addMenu("File");
     QAction *saveAction = new QAction("Save", this);
     fileMenu->addAction(saveAction);
@@ -98,6 +101,32 @@ void MainWindow::setupMenuBar() {
     });
 }
 
+void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
+    if (!obj) return;
+
+    QMenu contextMenu;
+    QAction* solveAction = contextMenu.addAction("Open Solver...");
+
+    connect(solveAction, &QAction::triggered, [this, obj]() {
+        Physics::PhysicsBody* body = obj->getPhysicsBody();
+
+        if (body) {
+            const ProblemRouter *router = sceneManager->physicsSystem->getRouter();
+            // Create and show the dialog
+            SolverDialog dialog(router, body, this);
+            if (dialog.exec() == QDialog::Accepted) {
+                auto knowns = dialog.getCollectedKnowns();
+                std::string unknown = dialog.getTargetUnknown();
+
+                sceneManager->physicsSystem->solveProblem(body, knowns, unknown);
+            }
+        } else {
+            qDebug() << "Selected object has no physics body attached.";
+        }
+    });
+
+    contextMenu.exec(pos);
+}
 
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {

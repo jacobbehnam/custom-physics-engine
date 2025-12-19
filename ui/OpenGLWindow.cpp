@@ -107,7 +107,7 @@ void OpenGLWindow::mousePressEvent(QMouseEvent* event) {
     pressedMouseButtons.insert(event->button());
     setFocus();
     if (sceneManager)
-        sceneManager->handleMouseButton(event->button(), event->type(), event->modifiers()); // adapt as needed
+        sceneManager->handleMouseButton(event->button(), event->type(), event->modifiers());
     update();
 }
 

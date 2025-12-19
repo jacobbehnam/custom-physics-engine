@@ -9,6 +9,7 @@
 #include "RigidBody.h"
 #include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
+#include "solver/VectorRootSolver.h"
 
 namespace Physics {
 
@@ -37,15 +38,17 @@ namespace Physics {
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
-        void solveProblem(const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
-        void debugSolveInitialVelocity(PhysicsBody* body, float targetDistance, float targetTime);
+        const ProblemRouter* getRouter() const { return &router; }
+        void solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
         void reset();
+
+        float simTime = 0.0f; // TODO move
 
     private:
         void physicsLoop();
 
-        ProblemRouter router = {};
-        std::unique_ptr<OneUnknownSolver<double, double>> solver = nullptr;
+        ProblemRouter router;
+        std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> solver = nullptr;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
         std::atomic<glm::vec3> globalAcceleration;
@@ -54,7 +57,6 @@ namespace Physics {
         std::vector<PhysicsBody*> bodies;
 
         std::atomic<bool> physicsEnabled{false};
-        float simTime = 0.0f;
 
         // threading
         std::thread physicsThread;

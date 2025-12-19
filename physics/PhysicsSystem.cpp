@@ -9,7 +9,7 @@ namespace Physics {
     class PointMass;
 }
 
-Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel) {}
+Physics::PhysicsSystem::PhysicsSystem(const glm::vec3 &globalAccel) : globalAcceleration(globalAccel), router(*this) {}
 
 Physics::PhysicsSystem::~PhysicsSystem() {
     stop();
@@ -57,7 +57,7 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
         return currentSnapshots;
     }
 
-    // compute blend factor α ∈ (0,1)
+    // compute blend factor α in (0,1)
     float alpha = (renderSimTime - t0) / (t1 - t0);
 
     // interpolate each ObjectSnapshot
@@ -187,61 +187,15 @@ bool Physics::PhysicsSystem::step(float dt) {
     return false;
 }
 
-void Physics::PhysicsSystem::solveProblem(const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
-    if (unknown.empty()) {
-        solver = router.makeSolver(knowns);
-        physicsEnabled = (solver != nullptr);
+void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
+    auto decision = router.routeProblem(body, knowns, unknown);
+    if (decision.mode == SolverMode::SIMULATE) {
+        // TODO
+    } else if (decision.mode == SolverMode::SOLVE) {
+        solver = std::move(decision.solver);
+    } else {
+        std::cout << "null" << std::endl;
     }
-}
-
-void Physics::PhysicsSystem::debugSolveInitialVelocity(
-    PhysicsBody* body,
-    float targetDistance,
-    float targetTime
-) {
-    constexpr float vf = 0.0f;
-    constexpr float x = 91.5;
-
-    // 1) Setter: reset world & apply candidate vx
-    auto setVx = [this, body](double vx0) {
-        reset();
-        // now apply only to our test body:
-        body->setVelocity({0.0f, vx0, 0.f}, BodyLock::LOCK);
-    };
-
-    // 2) Runner: integrate until x ≥ targetDistance
-    auto runToX = [this, body, x]()->bool {
-        if (body->getAllFrames(BodyLock::LOCK).empty()) return false;
-        if (body->getAllFrames(BodyLock::LOCK).back().position.y > x) {
-            return true;
-        }
-        if (simTime >= 10) {
-            return true;
-        }
-        return false;
-    };
-
-    // 3) Extractor: return how long it took
-    auto getTime = [this, body, x]() -> double {
-        const auto &frames = body->getAllFrames(BodyLock::LOCK);
-        int N = (int)frames.size();
-        if (N < 2) return (N == 1) ? frames.back().velocity.y : 0.0f;
-
-        return MathUtils::interpolateCrossing<double, double>(
-            frames[N-2], frames[N-1],
-            x,
-            [](const ObjectSnapshot &snap){ return snap.position.y; },   // stop function
-            [](const ObjectSnapshot &snap){ return snap.velocity.y; }    // extract velocity
-        );
-    };
-
-    // Build a scalar solver: float → float
-    solver = std::make_unique<OneUnknownSolver<double, double>>(
-        setVx,       // ParamSetter: float vx0
-        runToX,      // SimulationRun
-        getTime,     // ResultExtractor: float elapsed
-        vf           // target value
-    );
 }
 
 void Physics::PhysicsSystem::reset() {
