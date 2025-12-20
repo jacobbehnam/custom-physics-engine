@@ -2,6 +2,8 @@
 #include <functional>
 #include <glm/glm.hpp>
 
+#include "graphics/interfaces/ISolver.h"
+
 /**
  * @brief A vector-valued root solver using Newton's method.
  *
@@ -15,7 +17,7 @@
  * - External code calls `stepFrame()` repeatedly after the simulation has advanced.
  */
 template<typename InputT, typename OutputT>
-class VectorRootSolver {
+class VectorRootSolver : public ISolver {
 public:
     using InitialGuessSetter = std::function<void(const InputT&)>; // Sets the value for the unknown parameter we are solving for
     using StopCondition = std::function<bool()>; // Runs the simulation up until a stop condition is reached

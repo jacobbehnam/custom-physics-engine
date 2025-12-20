@@ -98,7 +98,10 @@ add_executable(OpenGLApp main.cpp
         ui/Vector3Widget.cpp
         ui/Vector3Widget.h
         ui/ScalarWidget.cpp
-        ui/ScalarWidget.h)
+        ui/ScalarWidget.h
+        graphics/interfaces/ISolver.h
+        physics/solver/InterceptSolver.cpp
+        physics/solver/InterceptSolver.h)
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE

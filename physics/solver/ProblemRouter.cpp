@@ -37,7 +37,7 @@ bool ProblemRouter::areRequirementsMet(const std::vector<std::string>& required,
         });
 }
 
-std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const {
+std::unique_ptr<ISolver> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const {
     auto it = solverMap.find(unknown);
     if (it == solverMap.end()) {
         std::cerr << "No solver registered for unknown: " << unknown << std::endl;
