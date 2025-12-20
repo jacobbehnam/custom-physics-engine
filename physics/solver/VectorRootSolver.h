@@ -64,7 +64,7 @@ public:
      * @return true if the error norm ||F(x_n)|| is less than the solver's tolerance,
      * indicating convergence to a root; false otherwise.
      */
-    bool stepFrame();
+    bool stepFrame() override;
 
 private:
     enum class SolverState {

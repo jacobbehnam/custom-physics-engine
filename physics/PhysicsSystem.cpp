@@ -150,23 +150,23 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
 
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
+        body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
+        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
+
         if (body->getIsStatic(BodyLock::NOLOCK))
             continue;
 
-        if (simTime == 0.0f)
+        if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
+            continue;
+        }
 
         body->step(dt, BodyLock::NOLOCK);
-
-        simTime = stepCount.load() * dt;
         body->recordFrame(simTime, BodyLock::NOLOCK);
 
         if (resetState.find(body) == resetState.end()) {
             resetState[body] = body->getAllFrames(BodyLock::NOLOCK).front();
         }
-
-        body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
-        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
@@ -181,6 +181,7 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
             }
         }
     }
+    simTime = stepCount.load() * dt;
 }
 
 bool Physics::PhysicsSystem::step(float dt) {
@@ -188,6 +189,19 @@ bool Physics::PhysicsSystem::step(float dt) {
         std::cout << "Solver Converged!" << std::endl;
 
         float bakeTimer = 0.0f;
+        if (solverTargetTime == -1) {
+            solverTargetTime = simTime;
+        }
+
+        for (auto body : bodies) {
+            const auto& frames = body->getAllFrames(BodyLock::LOCK);
+            if (!frames.empty()) {
+                // The first frame is always t=0 for the current trajectory
+                resetState[body] = frames.front();
+            }
+        }
+        reset();
+
         while (bakeTimer < solverTargetTime) {
             advancePhysics(dt);
             bakeTimer += dt;
@@ -205,6 +219,8 @@ bool Physics::PhysicsSystem::step(float dt) {
 void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
     if (knowns.find("T") != knowns.end()) {
         solverTargetTime = static_cast<float>(knowns.at("T"));
+    } else if (unknown == "T") {
+        solverTargetTime = -1.0f;
     } else {
         solverTargetTime = 10.0f; // Default fallback
     }
