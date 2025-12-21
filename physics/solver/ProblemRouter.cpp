@@ -1,6 +1,8 @@
 #include "ProblemRouter.h"
 #include <iostream>
 #include <set>
+
+#include "InterceptSolver.h"
 #include "physics/PhysicsSystem.h"
 
 ProblemRouter::ProblemRouter(Physics::PhysicsSystem& physics) : physicsSystem(physics) {
@@ -37,7 +39,7 @@ bool ProblemRouter::areRequirementsMet(const std::vector<std::string>& required,
         });
 }
 
-std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const {
+std::unique_ptr<ISolver> ProblemRouter::makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const {
     auto it = solverMap.find(unknown);
     if (it == solverMap.end()) {
         std::cerr << "No solver registered for unknown: " << unknown << std::endl;
@@ -97,4 +99,36 @@ void ProblemRouter::registerKinematicsProblems() {
         );
     };
     solverMap["v0"].push_back(v0Entry);
+
+    SolverEntry tEntry;
+    tEntry.requiredKeys = {"r0_x","r0_y","r0_z", "v0_x","v0_y","v0_z", "rT_x","rT_y","rT_z"};
+    tEntry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns) {
+        glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
+        glm::vec3 v0(knowns.at("v0_x"), knowns.at("v0_y"), knowns.at("v0_z"));
+        glm::vec3 rT(knowns.at("rT_x"), knowns.at("rT_y"), knowns.at("rT_z"));
+
+        physicsSystem.reset();
+        body->setPosition(r0, BodyLock::LOCK);
+        body->setVelocity(v0, BodyLock::LOCK);
+
+        auto monitor = [=]() -> float {
+            glm::vec3 currentPos = body->getPosition(BodyLock::LOCK);
+            float dist = glm::distance(currentPos, rT);
+
+            std::cout << dist << std::endl;
+            if (dist < 1e-3) return -1.0f;
+
+            glm::vec3 currentVel = body->getVelocity(BodyLock::LOCK);
+            glm::vec3 toTarget = rT - currentPos;
+
+            return glm::dot(currentVel, toTarget);
+        };
+
+        auto timeout = [=]() -> bool {
+            return physicsSystem.simTime > 60.0f;
+        };
+
+        return std::make_unique<InterceptSolver>(monitor, timeout);
+    };
+    solverMap["T"].push_back(tEntry);
 }

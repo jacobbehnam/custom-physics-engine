@@ -18,6 +18,9 @@ bool VectorRootSolver<InputT, OutputT>::stepFrame() {
             if (!stopCondition()) return false;
 
             baseOutput = extract();
+            if (glm::length(baseOutput - target) < tolerance) {
+                return true;
+            }
 
             currentPerturbation = 0;
             state = SolverState::PerturbComponent;
@@ -73,8 +76,8 @@ bool VectorRootSolver<InputT, OutputT>::stepFrame() {
             setGuess(current);
             state = SolverState::WaitingForBase;
 
-            // Return true if solution has converged (error below tolerance)
-            return glm::length(error) < tolerance;
+            // Go back to WaitingForBase to check if new guess works
+            return false;
         }
         }
         return false;

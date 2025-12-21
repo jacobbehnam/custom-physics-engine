@@ -94,6 +94,8 @@ void Physics::PhysicsSystem::physicsLoop() {
 
         if (!physicsEnabled.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            accumulator = 0.0f;
+            lastTime = std::chrono::high_resolution_clock::now();
             continue;
         }
 
@@ -103,24 +105,25 @@ void Physics::PhysicsSystem::physicsLoop() {
         {
             std::lock_guard<std::mutex> lock(bodiesMutex);
             while (accumulator >= dt) {
-                if (step(dt))
-                    return;
+                if (step(dt)) {
+                    accumulator = 0.0f;
+                    break;
+                }
                 accumulator -= dt;
             }
             localBodies = bodies;
         }
 
-        if (!physicsEnabled.load())
-            break;
-
         std::vector<ObjectSnapshot> localSnaps;
         localSnaps.reserve(localBodies.size());
-        std::lock_guard<std::mutex> lk(snapshotMutex);
-        for (auto* body : localBodies) {
-            localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK) });
-        }
+        {
+            std::lock_guard<std::mutex> lk(snapshotMutex);
+            for (auto* body : localBodies) {
+                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK) });
+            }
 
-        currentSnapshots = std::move(localSnaps);
+            currentSnapshots = std::move(localSnaps);
+        }
         snapshotReady.store(true, std::memory_order_release);
     }
 }
@@ -142,34 +145,28 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
     }
 }
 
-bool Physics::PhysicsSystem::step(float dt) {
-    if (solver) {
-        if (!solver->stepFrame()) {
-            // still solving—optionally display current guess:
-            // std::cout << solver->current << std::endl;
-        } else {
-            physicsEnabled = false;
-            std::cout << "finished" << std::endl;
-            return true;
-        }
-    }
-
-    stepCount += 1;
+void Physics::PhysicsSystem::advancePhysics(float dt) {
+    stepCount++;
 
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
+        body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
+        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
+
         if (body->getIsStatic(BodyLock::NOLOCK))
             continue;
-        if (simTime == 0.0f)
+
+        if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
+            continue;
+        }
+
         body->step(dt, BodyLock::NOLOCK);
-        simTime = stepCount.load() * dt;
         body->recordFrame(simTime, BodyLock::NOLOCK);
+
         if (resetState.find(body) == resetState.end()) {
             resetState[body] = body->getAllFrames(BodyLock::NOLOCK).front();
         }
-        body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
-        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
@@ -184,10 +181,49 @@ bool Physics::PhysicsSystem::step(float dt) {
             }
         }
     }
+    simTime = stepCount.load() * dt;
+}
+
+bool Physics::PhysicsSystem::step(float dt) {
+    if (solver && solver->stepFrame()) {
+        std::cout << "Solver Converged!" << std::endl;
+
+        float bakeTimer = 0.0f;
+        if (solverTargetTime == -1) {
+            solverTargetTime = simTime;
+        }
+
+        for (auto body : bodies) {
+            const auto& frames = body->getAllFrames(BodyLock::LOCK);
+            if (!frames.empty()) {
+                // The first frame is always t=0 for the current trajectory
+                resetState[body] = frames.front();
+            }
+        }
+        reset();
+
+        while (bakeTimer < solverTargetTime) {
+            advancePhysics(dt);
+            bakeTimer += dt;
+        }
+
+        solver = nullptr;
+        physicsEnabled = false;
+        return true;
+    }
+
+    advancePhysics(dt);
     return false;
 }
 
 void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
+    if (knowns.find("T") != knowns.end()) {
+        solverTargetTime = static_cast<float>(knowns.at("T"));
+    } else if (unknown == "T") {
+        solverTargetTime = -1.0f;
+    } else {
+        solverTargetTime = 10.0f; // Default fallback
+    }
     auto decision = router.routeProblem(body, knowns, unknown);
     if (decision.mode == SolverMode::SIMULATE) {
         // TODO

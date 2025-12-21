@@ -16,13 +16,13 @@ enum class SolverMode {
 
 struct SolverDecision {
     SolverMode mode;
-    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> solver; // nullptr if direct simulation
+    std::unique_ptr<ISolver> solver; // nullptr if direct simulation
 };
 
 class ProblemRouter {
 public:
     explicit ProblemRouter(Physics::PhysicsSystem& physicsSystem);
-    std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const;
+    std::unique_ptr<ISolver> makeSolver(Physics::PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) const;
     SolverDecision routeProblem(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns, const std::string& unknown) const;
 
     std::vector<std::vector<std::string>> getRequiredKeys(const std::string& unknown) const;
@@ -30,7 +30,7 @@ private:
     Physics::PhysicsSystem& physicsSystem;
 
     // Takes in knowns and returns a solver.
-    using SolverFactory = std::function<std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>>(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>&)>;
+    using SolverFactory = std::function<std::unique_ptr<ISolver>(Physics::PhysicsBody* body, const std::unordered_map<std::string,double>&)>;
 
     struct SolverEntry {
         std::vector<std::string> requiredKeys;

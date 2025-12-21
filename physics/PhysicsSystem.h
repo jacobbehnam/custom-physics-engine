@@ -46,9 +46,11 @@ namespace Physics {
 
     private:
         void physicsLoop();
+        void advancePhysics(float dt);
 
         ProblemRouter router;
-        std::unique_ptr<VectorRootSolver<glm::vec3, glm::vec3>> solver = nullptr;
+        std::unique_ptr<ISolver> solver = nullptr;
+        float solverTargetTime = 10.0f;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
 
         std::atomic<glm::vec3> globalAcceleration;
