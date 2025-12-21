@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include <iostream>
+#include <QApplication>
 
 #include "SceneSerializer.h"
 #include "graphics/core/ResourceManager.h"

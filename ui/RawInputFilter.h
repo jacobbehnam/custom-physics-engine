@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QAbstractNativeEventFilter>
+#include <QWindow>
 #include <functional>
-#include <windows.h>
 
 class RawInputFilter : public QAbstractNativeEventFilter {
 public:
@@ -12,9 +12,15 @@ public:
 
     bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) override;
 
+    // For non-Windows platforms: call from mouseMoveEvent
+    void handleMouseMove(int dx, int dy);
+
 private:
+#ifdef _WIN32
     void registerRawInput(HWND hwnd);
+    bool initialized = false;
+#endif
 
     MouseCallback mouseCallback;
-    bool initialized = false;
 };
+

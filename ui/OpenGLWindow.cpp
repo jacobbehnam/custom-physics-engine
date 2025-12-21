@@ -1,4 +1,4 @@
-#include "OpenGLWindow.h"
+#include "ui/OpenGLWindow.h"
 #include <QMouseEvent>
 #include <QElapsedTimer>
 #include "physics/PhysicsSystem.h"

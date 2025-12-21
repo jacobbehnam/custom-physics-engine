@@ -4,25 +4,26 @@
 #include <vector>
 #include <iostream>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 RawInputFilter::RawInputFilter(MouseCallback callback)
     : mouseCallback(std::move(callback)) {}
 
-// TODO: raw input handling is OS-specific, this only works for windows. I also dont really know how this works.
-bool RawInputFilter::nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) {
-    // Only handle Windows generic messages
+bool RawInputFilter::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) {
+#ifdef _WIN32
     if (eventType != "windows_generic_MSG")
         return false;
 
     MSG* msg = static_cast<MSG*>(message);
 
-    // On first message with a valid hwnd, register for raw input
     if (!initialized && msg->hwnd) {
         registerRawInput(msg->hwnd);
         initialized = true;
     }
 
     if (msg->message == WM_INPUT) {
-        // Determine size of raw data
         UINT dataSize = 0;
         GetRawInputData((HRAWINPUT)msg->lParam, RID_INPUT, nullptr, &dataSize, sizeof(RAWINPUTHEADER));
         std::vector<BYTE> buffer(dataSize);
@@ -31,24 +32,37 @@ bool RawInputFilter::nativeEventFilter(const QByteArray& eventType, void* messag
 
         RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(buffer.data());
         if (raw->header.dwType == RIM_TYPEMOUSE) {
-            // Ignore absolute movements
             if ((raw->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == 0) {
                 int dx = raw->data.mouse.lLastX;
                 int dy = raw->data.mouse.lLastY;
-                // Invoke user callback
                 if (mouseCallback) mouseCallback(dx, dy);
             }
         }
     }
-
-    return false; // allow other handlers to process
+    return false;
+#elif defined(__linux__)
+    // TODO: Use X11 XInput2 raw events or evdev (Linux-specific)
+    Q_UNUSED(eventType)
+    Q_UNUSED(message)
+    Q_UNUSED(result)
+    return false;
+#elif defined(__APPLE__)
+    // TODO: Use CGEventTap to intercept mouse motion on macOS
+    Q_UNUSED(eventType)
+    Q_UNUSED(message)
+    Q_UNUSED(result)
+    return false;
+#else
+    return false;
+#endif
 }
 
+#ifdef _WIN32
 void RawInputFilter::registerRawInput(HWND hwnd) {
     RAWINPUTDEVICE rid;
-    rid.usUsagePage = 0x01; // Generic desktop controls
-    rid.usUsage     = 0x02; // Mouse
-    rid.dwFlags     = RIDEV_INPUTSINK;; // receive even when not focused
+    rid.usUsagePage = 0x01; 
+    rid.usUsage     = 0x02; 
+    rid.dwFlags     = RIDEV_INPUTSINK;
     rid.hwndTarget  = hwnd;
 
     if (!RegisterRawInputDevices(&rid, 1, sizeof(rid))) {
@@ -57,3 +71,5 @@ void RawInputFilter::registerRawInput(HWND hwnd) {
         std::cout << "RawInputFilter: Registered raw mouse input on window handle" << std::endl;
     }
 }
+#endif
+

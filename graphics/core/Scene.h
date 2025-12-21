@@ -6,7 +6,6 @@
 #include <vector>
 #include <deque>
 #include <unordered_set>
-#include <GLFW/glfw3.h>
 #include <QEvent>
 
 class Scene {
