@@ -1,4 +1,8 @@
 #include "InspectorWidget.h"
+
+#include <QComboBox>
+#include <QStackedWidget>
+
 #include "graphics/core/SceneObject.h"
 
 #include <glm/glm.hpp>
@@ -8,6 +12,7 @@
 #include <qslider.h>
 
 #include "InspectorRow.h"
+#include "ScalarWidget.h"
 
 InspectorWidget::InspectorWidget(SceneManager* sceneMgr, QWidget* parent) : QWidget(parent), sceneManager(sceneMgr) {
     mainLayout = new QVBoxLayout(this);
@@ -140,6 +145,82 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
     for (InspectorRow row : globalsRows) {
         formLayout->addRow(row.getLabel(), row.getEditor());
     }
+
+    // Stop conditions:
+    QGroupBox* stopGroup = new QGroupBox("Stop Simulation When...");
+    QVBoxLayout* stopLayout = new QVBoxLayout(stopGroup);
+    layout->addWidget(stopGroup);
+
+    QWidget* logicRow = new QWidget();
+    QHBoxLayout* logicLayout = new QHBoxLayout(logicRow);
+    logicLayout->setContentsMargins(0,5,0,5);
+
+    // A. SUBJECT DROPDOWN ("Who?")
+    QComboBox* subjectCombo = new QComboBox();
+    subjectCombo->addItem("-- Select Subject --", -1);
+    for (auto* obj : sceneManager->getObjects()) {
+        subjectCombo->addItem(QString::number(obj->getObjectID()), obj->getObjectID()); // TODO: change to object name
+    }
+
+    int subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
+    if (subjIdx != -1) subjectCombo->setCurrentIndex(subjIdx);
+    else subjectCombo->setCurrentIndex(0);
+
+    connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int){
+        sceneManager->stopCondition.subjectID = subjectCombo->currentData().toInt();
+    });
+
+    // B. PROPERTY DROPDOWN ("What?")
+    QComboBox* propCombo = new QComboBox();
+    propCombo->addItem("Position Y", 0);
+    propCombo->addItem("Velocity Y", 1);
+    propCombo->addItem("Distance To", 2);
+
+    propCombo->setCurrentIndex(sceneManager->stopCondition.property);
+
+    // C. OPERATOR DROPDOWN ("How?")
+    QComboBox* opCombo = new QComboBox();
+    opCombo->addItem("<", 0);
+    opCombo->addItem(">", 1);
+    opCombo->setCurrentIndex(sceneManager->stopCondition.op);
+
+    // D. TARGET VALUE / OBJECT ("Limit")
+    // We use a QStackedWidget to flip between a Number Spinner and an Object Picker
+    QStackedWidget* targetStack = new QStackedWidget();
+
+    // Page 0: Scalar Number
+    ScalarWidget* valWidget = new ScalarWidget();
+    valWidget->setValue(sceneManager->stopCondition.value);
+    targetStack->addWidget(valWidget);
+
+    // Page 1: Object Picker (For "Distance To")
+    QComboBox* targetObjCombo = new QComboBox();
+    for (auto* obj : sceneManager->getObjects()) {
+        targetObjCombo->addItem(QString::number(obj->getObjectID()), obj->getObjectID()); // TODO: change to object name
+    }
+    targetStack->addWidget(targetObjCombo);
+
+    // Logic to switch pages
+    auto updateTargetView = [=](int propIdx) {
+        if (propIdx == 2) targetStack->setCurrentIndex(1); // Distance -> Show Object Picker
+        else targetStack->setCurrentIndex(0);              // Else -> Show Number
+    };
+
+    // Initial update
+    updateTargetView(propCombo->currentIndex());
+
+    connect(propCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int idx){
+        sceneManager->stopCondition.property = idx;
+        updateTargetView(idx);
+    });
+
+    // Add widgets to row
+    logicLayout->addWidget(subjectCombo);
+    logicLayout->addWidget(propCombo);
+    logicLayout->addWidget(opCombo);
+    logicLayout->addWidget(targetStack);
+
+    stopLayout->addWidget(logicRow);
 }
 
 void InspectorWidget::unloadObject(bool loadGlobals) {

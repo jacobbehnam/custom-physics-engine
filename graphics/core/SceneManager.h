@@ -9,6 +9,15 @@ enum class Primitive {
     SPHERE
 };
 
+// TODO: make enum
+struct SimulationStopCondition {
+    int subjectID = -1; // -1 = No Selection, >=0 = Specific Object
+    int property = 0;   // 0=PosY, 1=VelY, 2=Distance...
+    int op = 0;         // 0=Less, 1=Greater
+    float value = 0.0f; // The threshold
+    int targetID = -1;  // If property is 'Distance', this is the other object
+};
+
 class SceneManager : public QObject {
     Q_OBJECT
 
@@ -48,6 +57,7 @@ public:
 
     Scene* scene; // TODO: move
     std::unique_ptr<Physics::PhysicsSystem> physicsSystem; // TODO: move
+    SimulationStopCondition stopCondition; // TODO: move
 
 signals:
     void objectAdded(SceneObject* obj);
