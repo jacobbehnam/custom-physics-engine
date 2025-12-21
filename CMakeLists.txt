@@ -3,11 +3,11 @@ project(OpenGLApp)
 set(CMAKE_CXX_STANDARD 17)
 
 # Where CLion’s embedded vcpkg installs stuff:
-set(VCPKG_INSTALLED_DIR "/home/thomastien/my_bin/vcpkg/")
+set(VCPKG_INSTALLED_DIR "C:/Users/Jacob/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic")
 
 # Manually point to the headers and lib for GLFW
-# set(GLFW3_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/include")
-# set(GLFW3_LIBRARY "${VCPKG_INSTALLED_DIR}/lib/libglfw3dll.a")
+set(GLFW3_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/include")
+set(GLFW3_LIBRARY "${VCPKG_INSTALLED_DIR}/lib/libglfw3dll.a")
 
 # Also pull in OpenGL itself
 find_package(OpenGL REQUIRED)
