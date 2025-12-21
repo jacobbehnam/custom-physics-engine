@@ -3,6 +3,9 @@
 # Exit on error
 set -e
 
+# Change to project root
+cd "$(dirname "$0")/.."
+
 echo "=========================================="
 echo "Building Custom Physics Engine"
 echo "=========================================="
@@ -11,7 +14,7 @@ echo ""
 # Check dependencies
 if ! command -v cmake &> /dev/null || ! command -v g++ &> /dev/null; then
     echo "Error: Dependencies not installed!"
-    echo "Please run ./setup-linux.sh first"
+    echo "Please run scripts/setup-linux.sh first"
     exit 1
 fi
 
@@ -21,7 +24,7 @@ cd build
 
 # Configure with CMake
 echo "Configuring with CMake..."
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 # Build
 echo ""
@@ -33,5 +36,5 @@ echo "=========================================="
 echo "✓ Build completed successfully!"
 echo "=========================================="
 echo ""
-echo "To run: ./run-linux.sh"
+echo "To run: scripts/run-linux.sh"
 echo ""
