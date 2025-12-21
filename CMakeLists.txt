@@ -5,10 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Where CLion’s embedded vcpkg installs stuff:
 set(VCPKG_INSTALLED_DIR "C:/Users/Jacob/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic")
 
-# Manually point to the headers and lib for GLFW
-set(GLFW3_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/include")
-set(GLFW3_LIBRARY "${VCPKG_INSTALLED_DIR}/lib/libglfw3dll.a")
-
 # Also pull in OpenGL itself
 find_package(OpenGL REQUIRED)
 
@@ -105,14 +101,12 @@ add_executable(OpenGLApp main.cpp
 
 # Include directories
 target_include_directories(OpenGLApp PRIVATE
-        # ${GLFW3_INCLUDE_DIR}
         ${CMAKE_SOURCE_DIR})
 
 # Link all the libraries
 target_link_libraries(OpenGLApp PRIVATE
-        # ${GLFW3_LIBRARY}
         OpenGL::GL
-        glm::glm                 # << Added this link
+        glm::glm
         Qt6::Widgets
         Qt6::Gui
         Qt6::Core
