@@ -9,8 +9,8 @@
 namespace Physics {
     class PointMass : public PhysicsBody{
     public:
-        explicit PointMass(float m, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
-        explicit PointMass(glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
+        explicit PointMass(uint32_t id, float m, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        explicit PointMass(uint32_t id, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
         void applyImpulse(const glm::vec3& impulse, BodyLock lock);
 

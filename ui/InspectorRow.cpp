@@ -44,3 +44,11 @@ QWidget *InspectorRow::makeScalarWidget(const std::function<float()>& get, QWidg
     return widget;
 }
 
+InspectorRow::InspectorRow(const QString &lbl, QWidget *customEditor, std::function<void()> updateLogic) {
+    label = lbl;
+    editor = customEditor;
+
+    if (updateLogic) pullFromObject = updateLogic;
+    else pullFromObject = [](){};
+}
+

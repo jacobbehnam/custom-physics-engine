@@ -31,6 +31,15 @@ void Physics::PhysicsSystem::waitForStop() {
         physicsThread.join();
 }
 
+Physics::PhysicsBody* Physics::PhysicsSystem::getBodyById(uint32_t id) const {
+    std::lock_guard<std::mutex> lock(bodiesMutex);
+
+    for (PhysicsBody* body : bodies) {
+        if (body->getID() == id) return body;
+    }
+    return nullptr;
+}
+
 std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSnapshot(float renderSimTime) {
     if (!snapshotReady.load(std::memory_order_acquire))
         return std::nullopt;
@@ -188,10 +197,7 @@ bool Physics::PhysicsSystem::step(float dt) {
     if (solver && solver->stepFrame()) {
         std::cout << "Solver Converged!" << std::endl;
 
-        float bakeTimer = 0.0f;
-        if (solverTargetTime == -1) {
-            solverTargetTime = simTime;
-        }
+        float finalDuration = this->simTime;
 
         for (auto body : bodies) {
             const auto& frames = body->getAllFrames(BodyLock::LOCK);
@@ -202,7 +208,9 @@ bool Physics::PhysicsSystem::step(float dt) {
         }
         reset();
 
-        while (bakeTimer < solverTargetTime) {
+        float bakeTimer = 0.0f;
+
+        while (bakeTimer < finalDuration) {
             advancePhysics(dt);
             bakeTimer += dt;
         }
@@ -217,20 +225,13 @@ bool Physics::PhysicsSystem::step(float dt) {
 }
 
 void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double> &knowns, const std::string &unknown) {
-    if (knowns.find("T") != knowns.end()) {
-        solverTargetTime = static_cast<float>(knowns.at("T"));
-    } else if (unknown == "T") {
-        solverTargetTime = -1.0f;
+    solver = router.makeSolver(body, knowns, unknown);
+
+    if (solver) {
+        std::cout << "Solver Started: " << unknown << std::endl;
+        physicsEnabled = true;
     } else {
-        solverTargetTime = 10.0f; // Default fallback
-    }
-    auto decision = router.routeProblem(body, knowns, unknown);
-    if (decision.mode == SolverMode::SIMULATE) {
-        // TODO
-    } else if (decision.mode == SolverMode::SOLVE) {
-        solver = std::move(decision.solver);
-    } else {
-        std::cout << "null" << std::endl;
+        std::cerr << "Solver Error: No recipe found for " << unknown << std::endl;
     }
 }
 

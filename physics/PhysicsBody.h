@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <unordered_set>
 
 namespace Physics {
     class PointMass;
@@ -21,6 +22,7 @@ enum class BodyLock {
 namespace Physics {
     class PhysicsBody {
     public:
+        PhysicsBody() = delete;
         virtual ~PhysicsBody() = default;
 
         virtual void step(float dt, BodyLock lock) = 0;
@@ -28,6 +30,10 @@ namespace Physics {
         virtual void loadFrame(const ObjectSnapshot& snapshot, BodyLock lock) = 0;
 
         std::unique_lock<std::mutex> lockState() const { return std::unique_lock(stateMutex); }
+
+        uint32_t getID() const { return id; }
+        bool isUnknown(const std::string& key) const;
+        void setUnknown(const std::string& key, bool active);
 
         void applyForce(const glm::vec3& force);
         void setForce(const std::string& name, const glm::vec3& force, BodyLock lock);
@@ -59,15 +65,20 @@ namespace Physics {
         virtual bool resolveCollisionWithPointMass(PointMass& pm) = 0;
         virtual bool resolveCollisionWithRigidBody(RigidBody& rb) = 0;
     protected:
+        explicit PhysicsBody(uint32_t _id) : id(_id) {}
+
         mutable std::mutex stateMutex;
         std::vector<ObjectSnapshot> frames;
     private:
         bool isStatic = false;
+        uint32_t id;
 
         glm::vec3 position = glm::vec3(0.0f);
         glm::vec3 velocity = glm::vec3(0.0f);
         glm::vec3 netForce = glm::vec3(0.0f);
         std::map<std::string, glm::vec3> forces;
+
+        std::unordered_set<std::string> unknowns;
 
         glm::mat4 worldMatrix = glm::mat4(1.0f);
         std::atomic<glm::vec3>* globalAccelPtr = nullptr;

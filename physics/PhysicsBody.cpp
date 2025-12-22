@@ -1,5 +1,19 @@
 #include "physics/PhysicsBody.h"
 
+bool Physics::PhysicsBody::isUnknown(const std::string &key) const {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return unknowns.find(key) != unknowns.end();
+}
+
+void Physics::PhysicsBody::setUnknown(const std::string &key, bool active) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    if (active) {
+        unknowns.insert(key);
+    } else {
+        unknowns.erase(key);
+    }
+}
+
 void Physics::PhysicsBody::applyForce(const glm::vec3 &force) {
     std::lock_guard<std::mutex> lock(stateMutex);
     netForce += force;

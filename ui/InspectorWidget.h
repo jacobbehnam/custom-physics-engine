@@ -28,6 +28,7 @@ public:
     void unloadObject(bool loadGlobals = true);
 
 private slots:
+    void runSolver();
     void refresh();
 
 private:

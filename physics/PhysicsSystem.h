@@ -25,6 +25,7 @@ namespace Physics {
 
         void addBody(PhysicsBody* body);
         void removeBody(PhysicsBody* body);
+        PhysicsBody* getBodyById(uint32_t id) const;
 
         bool step(float dt);
 
@@ -62,7 +63,7 @@ namespace Physics {
 
         // threading
         std::thread physicsThread;
-        std::mutex bodiesMutex;
+        mutable std::mutex bodiesMutex;
         std::atomic<bool> threadRunning{false};
 
         std::mutex snapshotMutex;

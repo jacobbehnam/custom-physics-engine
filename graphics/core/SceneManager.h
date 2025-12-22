@@ -16,6 +16,7 @@ struct SimulationStopCondition {
     int op = 0;         // 0=Less, 1=Greater
     float value = 0.0f; // The threshold
     int targetID = -1;  // If property is 'Distance', this is the other object
+    glm::vec3 targetPos = glm::vec3(0.0f);
 };
 
 class SceneManager : public QObject {

@@ -3,7 +3,7 @@
 
 #include "RigidBody.h"
 
-Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) {
+Physics::PointMass::PointMass(uint32_t id, float m, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setPosition(pos, BodyLock::NOLOCK);
     setMass(m, BodyLock::NOLOCK);
@@ -11,7 +11,7 @@ Physics::PointMass::PointMass(float m, glm::vec3 pos, bool bodyStatic) {
     setVelocity(glm::vec3(1.0f), BodyLock::NOLOCK);
 }
 
-Physics::PointMass::PointMass(glm::vec3 pos, bool bodyStatic) {
+Physics::PointMass::PointMass(uint32_t id, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setPosition(pos, BodyLock::NOLOCK);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);

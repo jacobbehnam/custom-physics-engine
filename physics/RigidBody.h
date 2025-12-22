@@ -11,8 +11,8 @@ namespace Physics {
 
     class RigidBody : public PhysicsBody {
     public:
-        RigidBody(float mass, ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
-        explicit RigidBody(ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
+        RigidBody(uint32_t id, float mass, ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        explicit RigidBody(uint32_t id, ICollider* collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
         void step(float dt, BodyLock lock) override;
 

@@ -59,76 +59,135 @@ std::unique_ptr<ISolver> ProblemRouter::makeSolver(Physics::PhysicsBody* body, c
 void ProblemRouter::registerKinematicsProblems() {
     constexpr double maxSimTime = 10.0; // Seconds
 
-    SolverEntry v0Entry;
-    v0Entry.requiredKeys = {"r0_x","r0_y","r0_z","rT_x","rT_y","rT_z", "T"};
-    v0Entry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns) {
-        glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
-        glm::vec3 rT(knowns.at("rT_x"), knowns.at("rT_y"), knowns.at("rT_z"));
-        double T = knowns.at("T");
+    // SolverEntry v0Entry;
+    // v0Entry.requiredKeys = {"r0_x","r0_y","r0_z","rT_x","rT_y","rT_z", "T"};
+    // v0Entry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns) {
+    //     glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
+    //     glm::vec3 rT(knowns.at("rT_x"), knowns.at("rT_y"), knowns.at("rT_z"));
+    //     double T = knowns.at("T");
+    //
+    //     auto setter = [=](const glm::vec3& v0){
+    //         physicsSystem.reset();
+    //         body->setVelocity(v0, BodyLock::LOCK);
+    //     };
+    //     auto stopCondition = [=]() -> bool {
+    //         const auto& frames = body->getAllFrames(BodyLock::LOCK);
+    //         if (frames.empty()) return false;
+    //
+    //         // Wait until maxSimTime reached
+    //         if (physicsSystem.simTime >= T) return true;
+    //
+    //         // Also stop if the object is effectively at rest
+    //         const glm::vec3& v = frames.back().velocity;
+    //         if (glm::length(v) < 1e-3f) return true;
+    //
+    //         return false;
+    //     };
+    //     auto extractVector = [=]() -> glm::vec3 {
+    //         const auto& frames = body->getAllFrames(BodyLock::LOCK);
+    //         if (frames.empty()) return glm::vec3(0.0f);
+    //
+    //         // Take the last frame's position as the output
+    //         return frames.back().position;
+    //     };
+    //
+    //     glm::vec3 target = rT;
+    //
+    //     return std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
+    //         setter, stopCondition, extractVector, target,
+    //         1e-3, 30, 0.01, 1.0
+    //     );
+    // };
+    // solverMap["v0"].push_back(v0Entry);
+    //
+    // SolverEntry tEntry;
+    // tEntry.requiredKeys = {"r0_x","r0_y","r0_z", "v0_x","v0_y","v0_z", "rT_x","rT_y","rT_z"};
+    // tEntry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns) {
+    //     glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
+    //     glm::vec3 v0(knowns.at("v0_x"), knowns.at("v0_y"), knowns.at("v0_z"));
+    //     glm::vec3 rT(knowns.at("rT_x"), knowns.at("rT_y"), knowns.at("rT_z"));
+    //
+    //     physicsSystem.reset();
+    //     body->setPosition(r0, BodyLock::LOCK);
+    //     body->setVelocity(v0, BodyLock::LOCK);
+    //
+    //     auto monitor = [=]() -> float {
+    //         glm::vec3 currentPos = body->getPosition(BodyLock::LOCK);
+    //         float dist = glm::distance(currentPos, rT);
+    //
+    //         std::cout << dist << std::endl;
+    //         if (dist < 1e-3) return -1.0f;
+    //
+    //         glm::vec3 currentVel = body->getVelocity(BodyLock::LOCK);
+    //         glm::vec3 toTarget = rT - currentPos;
+    //
+    //         return glm::dot(currentVel, toTarget);
+    //     };
+    //
+    //     auto timeout = [=]() -> bool {
+    //         return physicsSystem.simTime > 60.0f;
+    //     };
+    //
+    //     return std::make_unique<InterceptSolver>(monitor, timeout);
+    // };
+    // solverMap["T"].push_back(tEntry);
 
-        auto setter = [=](const glm::vec3& v0){
-            physicsSystem.reset();
-            body->setVelocity(v0, BodyLock::LOCK);
-        };
-        auto stopCondition = [=]() -> bool {
-            const auto& frames = body->getAllFrames(BodyLock::LOCK);
-            if (frames.empty()) return false;
-
-            // Wait until maxSimTime reached
-            if (physicsSystem.simTime >= T) return true;
-
-            // Also stop if the object is effectively at rest
-            const glm::vec3& v = frames.back().velocity;
-            if (glm::length(v) < 1e-3f) return true;
-
-            return false;
-        };
-        auto extractVector = [=]() -> glm::vec3 {
-            const auto& frames = body->getAllFrames(BodyLock::LOCK);
-            if (frames.empty()) return glm::vec3(0.0f);
-
-            // Take the last frame's position as the output
-            return frames.back().position;
-        };
-
-        glm::vec3 target = rT;
-
-        return std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
-            setter, stopCondition, extractVector, target,
-            1e-3, 30, 0.01, 1.0
-        );
+    // TODO: make a helper and make an enum or something for the required keys
+    SolverEntry eventEntry;
+    eventEntry.requiredKeys = {
+        "r0_x", "r0_y", "r0_z",
+        "v0_x", "v0_y", "v0_z",
+        "Stop_SubjectID", "Stop_Prop", "Stop_Op", "Stop_Val"
     };
-    solverMap["v0"].push_back(v0Entry);
 
-    SolverEntry tEntry;
-    tEntry.requiredKeys = {"r0_x","r0_y","r0_z", "v0_x","v0_y","v0_z", "rT_x","rT_y","rT_z"};
-    tEntry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string,double>& knowns) {
+    eventEntry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string, double>& knowns) {
         glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
         glm::vec3 v0(knowns.at("v0_x"), knowns.at("v0_y"), knowns.at("v0_z"));
-        glm::vec3 rT(knowns.at("rT_x"), knowns.at("rT_y"), knowns.at("rT_z"));
 
         physicsSystem.reset();
         body->setPosition(r0, BodyLock::LOCK);
         body->setVelocity(v0, BodyLock::LOCK);
 
+        int subjectID = (int)knowns.at("Stop_SubjectID");
+        int prop = (int)knowns.at("Stop_Prop");
+        int op = (int)knowns.at("Stop_Op");
+        float val = (float)knowns.at("Stop_Val");
+
+        if (subjectID == -1) {
+            std::cout << "Solver Error: No subject selected for Stop Condition." << std::endl;
+        }
+
+        Physics::PhysicsBody* subject = physicsSystem.getBodyById(subjectID);
+
         auto monitor = [=]() -> float {
-            glm::vec3 currentPos = body->getPosition(BodyLock::LOCK);
-            float dist = glm::distance(currentPos, rT);
+            float currentVal = 0.0f;
 
-            std::cout << dist << std::endl;
-            if (dist < 1e-3) return -1.0f;
+            switch (prop) {
+            case 0:
+                currentVal = subject->getPosition(BodyLock::LOCK).y;
+                break;
+            case 1:
+                currentVal = subject->getVelocity(BodyLock::LOCK).y;
+                break;
+            case 2:
+                currentVal = 0.0f;
+                break;
+            case 3:
+                currentVal = physicsSystem.simTime;
+                break;
+            }
 
-            glm::vec3 currentVel = body->getVelocity(BodyLock::LOCK);
-            glm::vec3 toTarget = rT - currentPos;
-
-            return glm::dot(currentVel, toTarget);
+            if (op == 0) {
+                return (currentVal - val);
+            }
+            else {
+                return (val - currentVal);
+            }
         };
 
-        auto timeout = [=]() -> bool {
-            return physicsSystem.simTime > 60.0f;
-        };
+        auto timeout = [=]() { return physicsSystem.simTime > 60.0f; };
 
         return std::make_unique<InterceptSolver>(monitor, timeout);
     };
-    solverMap["T"].push_back(tEntry);
+    solverMap["Event"].push_back(eventEntry);
 }

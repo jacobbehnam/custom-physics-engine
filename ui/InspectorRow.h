@@ -6,7 +6,7 @@
 
 class InspectorRow {
 public:
-    template<typename Getter, typename Setter>
+    template<typename Getter, typename Setter, typename = std::enable_if_t<std::is_invocable_v<Getter>>>
     InspectorRow(const QString &lbl, Getter get, Setter set, QWidget *parent = nullptr) {
         label = lbl + ": ";
         using ValueT = std::decay_t<decltype(get())>;
@@ -25,7 +25,7 @@ public:
         }
     }
 
-    template<typename Getter>
+    template<typename Getter, typename = std::enable_if_t<std::is_invocable_v<Getter>>>
     InspectorRow(const QString &lbl, Getter get, QWidget *parent = nullptr) {
         label = lbl + ": ";
         using ValueT = std::decay_t<decltype(get())>;
@@ -43,6 +43,9 @@ public:
             static_assert(!sizeof(ValueT), "Unsupported type");
         }
     }
+
+    // Pass through for custom widgets
+    InspectorRow(const QString &lbl, QWidget* customEditor, std::function<void()> updateLogic = nullptr);
 
     QString getLabel() { return label; }
     QWidget* getEditor() { return editor; }

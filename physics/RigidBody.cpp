@@ -5,7 +5,7 @@
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
 
-Physics::RigidBody::RigidBody(float m, ICollider* col, glm::vec3 pos, bool bodyStatic) {
+Physics::RigidBody::RigidBody(uint32_t id, float m, ICollider* col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setMass(m, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
@@ -13,7 +13,7 @@ Physics::RigidBody::RigidBody(float m, ICollider* col, glm::vec3 pos, bool bodyS
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
 }
 
-Physics::RigidBody::RigidBody(ICollider* col, glm::vec3 pos, bool bodyStatic) {
+Physics::RigidBody::RigidBody(uint32_t id, ICollider* col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     collider = col;
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
