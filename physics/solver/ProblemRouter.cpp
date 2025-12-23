@@ -219,12 +219,15 @@ void ProblemRouter::registerKinematicsProblems() {
         "r0_x", "r0_y", "r0_z",
         "Stop_SubjectID", "Stop_Prop", "Stop_Op", "Stop_Val",
         "Stop_TargetID",
-        "Stop_Val_X", "Stop_Val_Y", "Stop_Val_Z"
+        "Stop_Val_X", "Stop_Val_Y", "Stop_Val_Z",
+        "Target_Time"
     };
 
     v0Entry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string, double>& knowns) {
         int subjectID = (int)knowns.at("Stop_SubjectID");
         int stopTargetID = (int)knowns.at("Stop_TargetID");
+
+        double targetTime = knowns.count("Target_Time") ? knowns.at("Target_Time") : -1.0;
 
         Physics::PhysicsBody* subjectBody = physicsSystem.getBodyById(subjectID);
         Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(stopTargetID);
@@ -248,7 +251,9 @@ void ProblemRouter::registerKinematicsProblems() {
         };
 
         auto stopCondition = [=]() -> bool {
-            if (physicsSystem.simTime > 10.0f) return true;
+            if (targetTime > 0.0f) {
+                return physicsSystem.simTime >= targetTime;
+            }
             if (!subjectBody) return true; // Safety check
 
             float currentVal = 0.0f;

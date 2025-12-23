@@ -278,6 +278,19 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
     btnLayout->addWidget(solveBtn);
     globalsRows.emplace_back("", buttonContainer, nullptr);
 
+    QWidget* timeRow = new QWidget();
+    QHBoxLayout* timeLayout = new QHBoxLayout(timeRow);
+    timeLayout->setContentsMargins(0,0,0,0);
+
+    ScalarWidget* timeWidget = new ScalarWidget();
+    timeWidget->setValue(0.0); // 0.0 means "Don't enforce time"
+    timeLayout->addWidget(timeWidget);
+
+    // Store in member variable so we can read it later
+    this->timeConstraintWidget = timeWidget;
+
+    globalsRows.emplace_back("Flight Time (s):", timeRow, nullptr);
+
     for (auto& row : globalsRows) {
         formLayout->addRow(row.getLabel(), row.getEditor());
     }
@@ -370,6 +383,14 @@ void InspectorWidget::runSolver() {
     else if (body->isUnknown("r0")) {
         unknownKey = "r0";
     }
+
+    double targetTime = -1.0;
+    if (body->isUnknown("v0")) {
+        targetTime = timeConstraintWidget->getValue();
+        if (targetTime <= 0.0001) targetTime = -1.0;
+    }
+
+    knowns["Target_Time"] = targetTime;
 
     sceneManager->physicsSystem->solveProblem(body, knowns, unknownKey);
     refresh();

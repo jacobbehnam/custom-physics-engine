@@ -9,6 +9,8 @@
 #include "graphics/core/SceneManager.h"
 #include "physics/PhysicsSystem.h"
 
+class ScalarWidget;
+
 namespace Physics {
     class PhysicsBody;
 }
@@ -41,6 +43,9 @@ private:
     std::vector<InspectorRow> globalsRows;
     std::vector<InspectorRow> transformRows;
     std::vector<InspectorRow> forceRows;
+
+    // TODO: remove
+    ScalarWidget* timeConstraintWidget;
 
     void clearLayout(QVBoxLayout* layout);
     void clearLayout(QFormLayout* layout);
