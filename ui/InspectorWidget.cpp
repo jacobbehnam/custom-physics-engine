@@ -134,7 +134,7 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
     QGroupBox* globalsGroup = new QGroupBox("Globals");
     auto* formLayout = new QFormLayout(globalsGroup);
     layout->addWidget(globalsGroup);
-    globalsRows.emplace_back("Gravitational \n Acceleration",
+    globalsRows.emplace_back("Gravitational\nAcceleration",
         [this]()->glm::vec3{ return sceneManager->getGlobalAcceleration(); },
         [this](glm::vec3 a){ sceneManager->setGlobalAcceleration(a); },
         this);
@@ -145,8 +145,16 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
 
     // Stop condition
     QWidget* logicContainer = new QWidget();
-    QHBoxLayout* logicLayout = new QHBoxLayout(logicContainer);
-    logicLayout->setContentsMargins(0,0,0,0);
+    logicContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    logicContainer->setMinimumWidth(1);
+
+    QVBoxLayout* mainContainerLayout = new QVBoxLayout(logicContainer);
+    mainContainerLayout->setContentsMargins(0, 0, 0, 0);
+    mainContainerLayout->setSpacing(2);
+
+    QWidget* equationRow = new QWidget();
+    QHBoxLayout* equationLayout = new QHBoxLayout(equationRow);
+    equationLayout->setContentsMargins(0, 0, 0, 0);
 
     QComboBox* subjectCombo = new QComboBox();
     subjectCombo->addItem("-- Subject --", -1);
@@ -154,69 +162,69 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
         subjectCombo->addItem(QString::number(obj->getObjectID()), obj->getObjectID());
     }
 
-    connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, subjectCombo](int){
-        sceneManager->stopCondition.subjectID = subjectCombo->currentData().toInt();
-    });
-
     QComboBox* propCombo = new QComboBox();
     propCombo->addItem("Pos Y", 0);
     propCombo->addItem("Vel Y", 1);
-    propCombo->addItem("Dist Obj", 2);
-    propCombo->addItem("Dist Pnt", 3);
-
-    connect(propCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int idx){
-        sceneManager->stopCondition.property = idx;
-    });
+    propCombo->addItem("Dist to Obj", 2);
+    propCombo->addItem("Dist to Point", 3);
 
     QComboBox* opCombo = new QComboBox();
     opCombo->addItem("<", 0);
     opCombo->addItem(">", 1);
 
+    ScalarWidget* thresholdWidget = new ScalarWidget();
+    connect(thresholdWidget, &ScalarWidget::valueChanged, [this](double v){
+        sceneManager->stopCondition.value = (float)v;
+    });
+
+    equationLayout->addWidget(subjectCombo);
+    equationLayout->addWidget(propCombo);
+    equationLayout->addWidget(opCombo);
+    equationLayout->addWidget(thresholdWidget);
+    equationLayout->addStretch();
+
+    QStackedWidget* parameterStack = new QStackedWidget();
+    parameterStack->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+
+    QWidget* emptyPage = new QWidget();
+    emptyPage->setFixedHeight(0);
+    parameterStack->addWidget(emptyPage);
+
+    QComboBox* targetObjCombo = new QComboBox();
+    parameterStack->addWidget(targetObjCombo);
+
+    Vector3Widget* targetVecWidget = new Vector3Widget();
+    parameterStack->addWidget(targetVecWidget);
+
+    mainContainerLayout->addWidget(equationRow);
+    mainContainerLayout->addWidget(parameterStack);
+
+    connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, subjectCombo](int){
+        sceneManager->stopCondition.subjectID = subjectCombo->currentData().toInt();
+    });
+    connect(propCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int idx){
+        sceneManager->stopCondition.property = idx;
+    });
     connect(opCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int idx){
         sceneManager->stopCondition.op = idx;
     });
-
-    QStackedWidget* targetStack = new QStackedWidget();
-
-    ScalarWidget* valWidget = new ScalarWidget();
-    connect(valWidget, &ScalarWidget::valueChanged, [this](double v){
-        sceneManager->stopCondition.value = (float)v;
-    });
-    targetStack->addWidget(valWidget);
-
-    QComboBox* targetObjCombo = new QComboBox();
-    targetStack->addWidget(targetObjCombo);
-
     connect(targetObjCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, targetObjCombo](int){
         sceneManager->stopCondition.targetID = targetObjCombo->currentData().toInt();
     });
-
-    Vector3Widget* targetVecWidget = new Vector3Widget();
     connect(targetVecWidget, &Vector3Widget::valueChanged, [this](glm::vec3 v){
         sceneManager->stopCondition.targetPos = v;
     });
-    targetStack->addWidget(targetVecWidget);
 
-    logicLayout->addWidget(subjectCombo);
-    logicLayout->addWidget(propCombo);
-    logicLayout->addWidget(opCombo);
-    logicLayout->addWidget(targetStack);
-
-    auto stopConditionUpdater = [=]() {
+    auto updateUiState = [=]() {
         int subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
-        if (subjIdx != -1) subjectCombo->setCurrentIndex(subjIdx);
-        else subjectCombo->setCurrentIndex(0);
+        subjectCombo->setCurrentIndex(subjIdx != -1 ? subjIdx : 0);
 
         propCombo->setCurrentIndex(sceneManager->stopCondition.property);
         opCombo->setCurrentIndex(sceneManager->stopCondition.op);
 
-        int prop = sceneManager->stopCondition.property;
-        if (prop == 2) targetStack->setCurrentIndex(1);
-        else if (prop == 3) targetStack->setCurrentIndex(2);
-        else targetStack->setCurrentIndex(0);
-
-        valWidget->setValue(sceneManager->stopCondition.value);
-        targetVecWidget->setValue(sceneManager->stopCondition.targetPos);
+        thresholdWidget->blockSignals(true);
+        thresholdWidget->setValue(sceneManager->stopCondition.value);
+        thresholdWidget->blockSignals(false);
 
         targetObjCombo->clear();
         for (auto* obj : sceneManager->getObjects()) {
@@ -225,37 +233,47 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
         int tIdx = targetObjCombo->findData(sceneManager->stopCondition.targetID);
         if (tIdx != -1) targetObjCombo->setCurrentIndex(tIdx);
 
+        targetVecWidget->blockSignals(true);
+        targetVecWidget->setValue(sceneManager->stopCondition.targetPos);
+        targetVecWidget->blockSignals(false);
+
+        int prop = sceneManager->stopCondition.property;
+        if (prop == 2) {
+            parameterStack->setCurrentIndex(1);
+            parameterStack->setVisible(true);
+        }
+        else if (prop == 3) {
+            parameterStack->setCurrentIndex(2);
+            parameterStack->setVisible(true);
+        }
+        else {
+            parameterStack->setCurrentIndex(0);
+            parameterStack->setVisible(false);
+        }
+
         bool active = (sceneManager->stopCondition.subjectID != -1);
         propCombo->setEnabled(active);
         opCombo->setEnabled(active);
-        targetStack->setEnabled(active);
+        thresholdWidget->setEnabled(active);
+        parameterStack->setEnabled(active);
     };
 
-    stopConditionUpdater();
+    updateUiState();
 
-    connect(propCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int idx){
-        if (idx == 2) targetStack->setCurrentIndex(1);
-        else if (idx == 3) targetStack->setCurrentIndex(2);
-        else targetStack->setCurrentIndex(0);
+    connect(propCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int){
+        updateUiState();
     });
-
     connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int){
-         bool active = (subjectCombo->currentData().toInt() != -1);
-         propCombo->setEnabled(active);
-         opCombo->setEnabled(active);
-         targetStack->setEnabled(active);
+        updateUiState();
     });
 
-    globalsRows.emplace_back("Stop Condition", logicContainer, stopConditionUpdater);
+    globalsRows.emplace_back("Stop Condition", logicContainer, updateUiState);
 
-    // Solve button
     QWidget* buttonContainer = new QWidget();
     QHBoxLayout* btnLayout = new QHBoxLayout(buttonContainer);
     btnLayout->setContentsMargins(0,0,0,0);
-
     QPushButton* solveBtn = new QPushButton("SOLVE PHYSICS");
     solveBtn->setFixedHeight(30);
-
     connect(solveBtn, &QPushButton::clicked, this, &InspectorWidget::runSolver);
     btnLayout->addWidget(solveBtn);
     globalsRows.emplace_back("", buttonContainer, nullptr);
@@ -345,19 +363,7 @@ void InspectorWidget::runSolver() {
 
     bool isInverse = body->isUnknown("v0") || body->isUnknown("r0");
 
-    if (isInverse) {
-        if (cond.property == 3) {
-            knowns["Constraint_Pos_X"] = cond.targetPos.x;
-            knowns["Constraint_Pos_Y"] = cond.targetPos.y;
-            knowns["Constraint_Pos_Z"] = cond.targetPos.z;
-        }
-        else if (cond.property == 2) {
-            // TODO: if target is a body
-        }
-    }
-
     std::string unknownKey = "Event";
-
     if (body->isUnknown("v0")) {
         unknownKey = "v0";
     }
@@ -366,6 +372,5 @@ void InspectorWidget::runSolver() {
     }
 
     sceneManager->physicsSystem->solveProblem(body, knowns, unknownKey);
-
     refresh();
 }

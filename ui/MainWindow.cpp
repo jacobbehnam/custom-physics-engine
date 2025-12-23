@@ -52,8 +52,8 @@ void MainWindow::setupDockWidgets() {
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
 
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
-    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); });
-    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); });
+    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(true); });
+    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(true); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
     inspector = new InspectorWidget(sceneManager, this);

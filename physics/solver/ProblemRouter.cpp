@@ -137,7 +137,9 @@ void ProblemRouter::registerKinematicsProblems() {
     eventEntry.requiredKeys = {
         "r0_x", "r0_y", "r0_z",
         "v0_x", "v0_y", "v0_z",
-        "Stop_SubjectID", "Stop_Prop", "Stop_Op", "Stop_Val"
+        "Stop_SubjectID", "Stop_Prop", "Stop_Op", "Stop_Val",
+        "Stop_TargetID",
+        "Stop_Val_X", "Stop_Val_Y", "Stop_Val_Z"
     };
 
     eventEntry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string, double>& knowns) {
@@ -149,30 +151,51 @@ void ProblemRouter::registerKinematicsProblems() {
         body->setVelocity(v0, BodyLock::LOCK);
 
         int subjectID = (int)knowns.at("Stop_SubjectID");
-        int prop = (int)knowns.at("Stop_Prop");
-        int op = (int)knowns.at("Stop_Op");
-        float val = (float)knowns.at("Stop_Val");
+        int prop      = (int)knowns.at("Stop_Prop");
+        int op        = (int)knowns.at("Stop_Op");
+        float val     = (float)knowns.at("Stop_Val");
 
         if (subjectID == -1) {
-            std::cout << "Solver Error: No subject selected for Stop Condition." << std::endl;
+            std::cout << "Solver Error: No subject selected." << std::endl;
+            auto dummyMonitor = []() { return -1.0f; };
+            auto dummyTimeout = []() { return true; };
+            return std::make_unique<InterceptSolver>(dummyMonitor, dummyTimeout);
         }
 
         Physics::PhysicsBody* subject = physicsSystem.getBodyById(subjectID);
+        if (!subject) { /* Handle missing subject safely if needed */ }
+
+        int targetID = (int)knowns.at("Stop_TargetID");
+        glm::vec3 targetPoint(knowns.at("Stop_Val_X"), knowns.at("Stop_Val_Y"), knowns.at("Stop_Val_Z"));
 
         auto monitor = [=]() -> float {
             float currentVal = 0.0f;
 
             switch (prop) {
-            case 0:
+            case 0: // Pos Y
                 currentVal = subject->getPosition(BodyLock::LOCK).y;
                 break;
-            case 1:
+
+            case 1: // Vel Y
                 currentVal = subject->getVelocity(BodyLock::LOCK).y;
                 break;
-            case 2:
-                currentVal = 0.0f;
+
+            case 2: // Distance to Object
+            {
+                Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(targetID);
+                if (targetBody) {
+                    currentVal = glm::distance(subject->getPosition(BodyLock::LOCK), targetBody->getPosition(BodyLock::LOCK));
+                } else {
+                    currentVal = 99999.0f;
+                }
                 break;
-            case 3:
+            }
+
+            case 3: // Distance to Point
+                currentVal = glm::distance(subject->getPosition(BodyLock::LOCK), targetPoint);
+                break;
+
+            case 4: // Time
                 currentVal = physicsSystem.simTime;
                 break;
             }
@@ -190,4 +213,78 @@ void ProblemRouter::registerKinematicsProblems() {
         return std::make_unique<InterceptSolver>(monitor, timeout);
     };
     solverMap["Event"].push_back(eventEntry);
+
+    SolverEntry v0Entry;
+    v0Entry.requiredKeys = {
+        "r0_x", "r0_y", "r0_z",
+        "Stop_SubjectID", "Stop_Prop", "Stop_Op", "Stop_Val",
+        "Stop_TargetID",
+        "Stop_Val_X", "Stop_Val_Y", "Stop_Val_Z"
+    };
+
+    v0Entry.factory = [this](Physics::PhysicsBody* body, const std::unordered_map<std::string, double>& knowns) {
+        int subjectID = (int)knowns.at("Stop_SubjectID");
+        int stopTargetID = (int)knowns.at("Stop_TargetID");
+
+        Physics::PhysicsBody* subjectBody = physicsSystem.getBodyById(subjectID);
+        Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(stopTargetID);
+
+        glm::vec3 r0(knowns.at("r0_x"), knowns.at("r0_y"), knowns.at("r0_z"));
+        int prop = (int)knowns.at("Stop_Prop");
+        int op = (int)knowns.at("Stop_Op");
+        float val = (float)knowns.at("Stop_Val");
+        glm::vec3 stopTargetPoint(knowns.at("Stop_Val_X"), knowns.at("Stop_Val_Y"), knowns.at("Stop_Val_Z"));
+
+        glm::vec3 targetPos(0.0f);
+        if (prop == 3) {
+            targetPos = stopTargetPoint;
+        } else if (prop == 2 && targetBody) {
+            targetPos = targetBody->getPosition(BodyLock::LOCK);
+        }
+
+        auto setter = [=](const glm::vec3& guess_v0) {
+            physicsSystem.reset();
+            body->setVelocity(guess_v0, BodyLock::LOCK);
+        };
+
+        auto stopCondition = [=]() -> bool {
+            if (physicsSystem.simTime > 10.0f) return true;
+            if (!subjectBody) return true; // Safety check
+
+            float currentVal = 0.0f;
+            switch (prop) {
+            case 0:
+                currentVal = subjectBody->getPosition(BodyLock::LOCK).y;
+                break;
+            case 1:
+                currentVal = subjectBody->getVelocity(BodyLock::LOCK).y;
+                break;
+            case 2:
+                if (targetBody) {
+                    currentVal = glm::distance(subjectBody->getPosition(BodyLock::LOCK),
+                                               targetBody->getPosition(BodyLock::LOCK));
+                } else {
+                    currentVal = 99999.0f;
+                }
+                break;
+            case 3:
+                currentVal = glm::distance(subjectBody->getPosition(BodyLock::LOCK), stopTargetPoint);
+                break;
+            }
+
+            if (op == 0) return (currentVal <= val);
+            else return (currentVal >= val);
+        };
+
+        auto extractor = [=]() -> glm::vec3 {
+            return body->getPosition(BodyLock::LOCK);
+        };
+
+        return std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
+            setter, stopCondition, extractor, targetPos,
+            1e-3, 30, 0.01, 1.0
+        );
+    };
+
+    solverMap["v0"].push_back(v0Entry);
 }

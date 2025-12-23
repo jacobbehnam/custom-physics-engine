@@ -95,7 +95,6 @@ void Physics::PhysicsSystem::physicsLoop() {
 
     float accumulator = 0.0f;
     auto lastTime = std::chrono::high_resolution_clock::now();
-
     while (threadRunning.load()) {
         auto now = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float>(now - lastTime).count();
@@ -197,7 +196,7 @@ bool Physics::PhysicsSystem::step(float dt) {
     if (solver && solver->stepFrame()) {
         std::cout << "Solver Converged!" << std::endl;
 
-        float finalDuration = this->simTime;
+        float finalDuration = this->simTime - (dt * 0.5f); // ensures no extra step is made due to floating point errors
 
         for (auto body : bodies) {
             const auto& frames = body->getAllFrames(BodyLock::LOCK);

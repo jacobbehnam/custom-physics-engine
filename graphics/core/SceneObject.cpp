@@ -35,6 +35,7 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             scale = o.base.scale;
             rotation = o.base.rotation;
             physicsBody = std::make_unique<Physics::PointMass>(objectID, o.mass, o.base.position, o.isStatic);
+            physicsBody->setUnknown("v0", true); // TODO: temp
             sceneManager->addToPhysicsSystem(physicsBody.get());
         } else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
             position = o.base.position;
