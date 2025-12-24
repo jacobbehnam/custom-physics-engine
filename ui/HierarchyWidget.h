@@ -13,12 +13,14 @@ public:
     void removeObject(SceneObject* obj);
     //SceneObject* getSelectedObject() const;
 
-    signals:
-        void selectionChanged(SceneObject* previous, SceneObject* current);
+signals:
+    void selectionChanged(SceneObject* previous, SceneObject* current);
+    void createObjectRequested(const std::string& type);
 
 public slots:
     void onItemSelectionChanged();
     void selectObject(SceneObject* obj);
+    void showContextMenu(const QPoint& pos);
 
 private:
     QTreeWidget* tree;

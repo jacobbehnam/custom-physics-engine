@@ -1,10 +1,13 @@
 #include "HierarchyWidget.h"
 
 #include <QVBoxLayout>
+#include <QMenu>
+#include <QAction>
 
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     tree = new QTreeWidget(this);
     tree->setHeaderLabels({ "Name", "Type" });
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(tree);
@@ -12,6 +15,19 @@ HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     setLayout(layout);
 
     connect(tree, &QTreeWidget::itemSelectionChanged, this, &HierarchyWidget::onItemSelectionChanged);
+    connect(tree, &QTreeWidget::customContextMenuRequested, this, &HierarchyWidget::showContextMenu);
+}
+
+void HierarchyWidget::showContextMenu(const QPoint& pos) {
+    QMenu contextMenu(this);
+
+    QAction* addPmAction = contextMenu.addAction("Add Point Mass");
+
+    connect(addPmAction, &QAction::triggered, [this]() {
+        emit createObjectRequested("Point Mass");
+    });
+
+    contextMenu.exec(tree->mapToGlobal(pos));
 }
 
 void HierarchyWidget::addObject(SceneObject* obj) {

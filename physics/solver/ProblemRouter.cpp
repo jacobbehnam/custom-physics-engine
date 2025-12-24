@@ -167,6 +167,7 @@ void ProblemRouter::registerKinematicsProblems() {
 
         int targetID = (int)knowns.at("Stop_TargetID");
         glm::vec3 targetPoint(knowns.at("Stop_Val_X"), knowns.at("Stop_Val_Y"), knowns.at("Stop_Val_Z"));
+        Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(targetID);
 
         auto monitor = [=]() -> float {
             float currentVal = 0.0f;
@@ -182,7 +183,6 @@ void ProblemRouter::registerKinematicsProblems() {
 
             case 2: // Distance to Object
             {
-                Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(targetID);
                 if (targetBody) {
                     currentVal = glm::distance(subject->getPosition(BodyLock::LOCK), targetBody->getPosition(BodyLock::LOCK));
                 } else {
