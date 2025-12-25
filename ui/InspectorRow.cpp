@@ -16,9 +16,57 @@ InspectorRow::InspectorRow(const QString &lbl, QWidget* customEditor, std::funct
     }
 }
 
-InspectorRow& InspectorRow::addCheckbox(std::function<bool()> get, std::function<void(bool)> set) {
+InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const std::function<void(glm::vec3)> &set, const std::function<void(Vector3Widget*)> &onInit) {
+    Vector3Widget* vec = new Vector3Widget();
+    vec->setValue(get());
+    layout->addWidget(vec);
+
+    if (onInit) {
+        onInit(vec);
+    }
+
+    QObject::connect(vec, &Vector3Widget::valueChanged, [set](glm::vec3 v){
+        if (set) set(v);
+    });
+
+    updaters.emplace_back([vec, get]() {
+        if (!get) return;
+        vec->setValue(get());
+    });
+
+    return *this;
+}
+
+InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const std::function<void(ScalarWidget*)> &onInit) {
+    ScalarWidget* scalar = new ScalarWidget();
+    scalar->setValue(get());
+    layout->addWidget(scalar);
+
+    if (onInit) {
+        onInit(scalar);
+    }
+
+    QObject::connect(scalar, &ScalarWidget::valueChanged, [set](float f){
+        if (set) set(f);
+    });
+
+    updaters.emplace_back([scalar, get]() {
+        if (!get) return;
+        scalar->setValue(get());
+    });
+
+    return *this;
+}
+
+
+InspectorRow& InspectorRow::addCheckbox(const std::function<bool()> &get, const std::function<void(bool)> &set, const std::function<void(QCheckBox*)> &onInit) {
     QCheckBox* cb = new QCheckBox();
+    cb->setChecked(get());
     layout->addWidget(cb);
+
+    if (onInit) {
+        onInit(cb);
+    }
 
     QObject::connect(cb, &QCheckBox::toggled, [set](bool checked){
         if (set) set(checked);
@@ -35,36 +83,3 @@ InspectorRow& InspectorRow::addCheckbox(std::function<bool()> get, std::function
 
     return *this;
 }
-
-InspectorRow& InspectorRow::addVec3(std::function<glm::vec3()> get, std::function<void(glm::vec3)> set) {
-    Vector3Widget* vec = new Vector3Widget();
-    layout->addWidget(vec);
-
-    QObject::connect(vec, &Vector3Widget::valueChanged, [set](glm::vec3 v){
-        if (set) set(v);
-    });
-
-    updaters.emplace_back([vec, get]() {
-        if (!get) return;
-        vec->setValue(get());
-    });
-
-    return *this;
-}
-
-InspectorRow &InspectorRow::addScalar(std::function<float()> get, std::function<void(float)> set) {
-    ScalarWidget* scalar = new ScalarWidget();
-    layout->addWidget(scalar);
-
-    QObject::connect(scalar, &ScalarWidget::valueChanged, [set](float f){
-        if (set) set(f);
-    });
-
-    updaters.emplace_back([scalar, get]() {
-        if (!get) return;
-        scalar->setValue(get());
-    });
-
-    return *this;
-}
-

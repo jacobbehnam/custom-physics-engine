@@ -1,12 +1,18 @@
 #include "physics/PhysicsBody.h"
 
-bool Physics::PhysicsBody::isUnknown(const std::string &key) const {
-    std::lock_guard<std::mutex> lock(stateMutex);
+bool Physics::PhysicsBody::isUnknown(const std::string &key, BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
     return unknowns.find(key) != unknowns.end();
 }
 
-void Physics::PhysicsBody::setUnknown(const std::string &key, bool active) {
-    std::lock_guard<std::mutex> lock(stateMutex);
+void Physics::PhysicsBody::setUnknown(const std::string &key, bool active, BodyLock lock) {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
     if (active) {
         unknowns.insert(key);
     } else {

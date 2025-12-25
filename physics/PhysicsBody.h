@@ -32,8 +32,8 @@ namespace Physics {
         std::unique_lock<std::mutex> lockState() const { return std::unique_lock(stateMutex); }
 
         uint32_t getID() const { return id; }
-        bool isUnknown(const std::string& key) const;
-        void setUnknown(const std::string& key, bool active);
+        bool isUnknown(const std::string& key, BodyLock lock) const;
+        void setUnknown(const std::string& key, bool active, BodyLock lock);
 
         void applyForce(const glm::vec3& force);
         void setForce(const std::string& name, const glm::vec3& force, BodyLock lock);

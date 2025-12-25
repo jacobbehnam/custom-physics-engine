@@ -43,28 +43,48 @@ void InspectorWidget::loadObject(SceneObject* obj) {
             [obj](glm::vec3 v){ obj->setPosition(v); }
         );
     transformRows.emplace_back("Scale", this)
-            .addVec3(
-                [obj]()->glm::vec3{ return obj->getScale(); },
-                [obj](glm::vec3 v) { obj->setScale(v); }
-            );
+        .addVec3(
+            [obj]()->glm::vec3{ return obj->getScale(); },
+            [obj](glm::vec3 v) { obj->setScale(v); }
+        );
     // TODO: this works good enough for 2D but for 3D the conversion between euler angles and quaternions is wonky
     transformRows.emplace_back("Rotation", this)
-            .addVec3(
-                [obj]()->glm::vec3{ return glm::degrees(obj->getRotation()); },
-                [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); }
-            );
+        .addVec3(
+            [obj]()->glm::vec3{ return glm::degrees(obj->getRotation()); },
+            [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); }
+        );
 
     if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
+        QCheckBox* unknownV0Ck = nullptr;
+        Vector3Widget* velocityVec = nullptr;
         transformRows.emplace_back("Velocity", this)
+            .addCheckbox(
+                [body]()->bool{ return body->isUnknown("v0", BodyLock::NOLOCK); },
+                [body](bool b) { body->setUnknown("v0", b, BodyLock::NOLOCK); },
+                [&unknownV0Ck](QCheckBox* cb) {
+                    unknownV0Ck = cb;
+                    cb->setToolTip("Unknown?");
+                }
+            )
             .addVec3(
                 [body]()->glm::vec3{ return body->getVelocity(BodyLock::NOLOCK); },
-                [body](glm::vec3 v){ body->setVelocity(v, BodyLock::NOLOCK); }
+                [body](glm::vec3 v){ body->setVelocity(v, BodyLock::NOLOCK); },
+                [&velocityVec](Vector3Widget* vec) {
+                    velocityVec = vec;
+                }
             );
+        // Disable velocity input if specified as unknown
+        if (unknownV0Ck && velocityVec) {
+            connect(unknownV0Ck, &QCheckBox::toggled, [velocityVec](bool checked) {
+                velocityVec->setEnabled(!checked);
+            });
+            velocityVec->setEnabled(!unknownV0Ck->isChecked());
+        }
         transformRows.emplace_back("Mass", this)
-                    .addScalar(
-                        [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
-                        [body](float newMass){ body->setMass(newMass, BodyLock::NOLOCK); }
-                    );
+            .addScalar(
+                [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
+                [body](float newMass){ body->setMass(newMass, BodyLock::NOLOCK); }
+            );
     }
     for (InspectorRow row : transformRows) {
         layout->addRow(row.getLabel(), row.getEditor());
@@ -359,14 +379,14 @@ void InspectorWidget::runSolver() {
     auto& cond = sceneManager->stopCondition;
     Physics::PhysicsBody* body = sceneManager->physicsSystem->getBodyById(cond.subjectID);
 
-    if (!body->isUnknown("r0")) {
+    if (!body->isUnknown("r0", BodyLock::LOCK)) {
         glm::vec3 r0 = body->getPosition(BodyLock::LOCK);
         knowns["r0_x"] = r0.x;
         knowns["r0_y"] = r0.y;
         knowns["r0_z"] = r0.z;
     }
 
-    if (!body->isUnknown("v0")) {
+    if (!body->isUnknown("v0", BodyLock::LOCK)) {
         glm::vec3 v0 = body->getVelocity(BodyLock::LOCK);
         knowns["v0_x"] = v0.x;
         knowns["v0_y"] = v0.y;
@@ -383,18 +403,18 @@ void InspectorWidget::runSolver() {
     knowns["Stop_Val_Y"] = cond.targetPos.y;
     knowns["Stop_Val_Z"] = cond.targetPos.z;
 
-    bool isInverse = body->isUnknown("v0") || body->isUnknown("r0");
+    bool isInverse = body->isUnknown("v0", BodyLock::NOLOCK) || body->isUnknown("r0", BodyLock::NOLOCK);
 
     std::string unknownKey = "Event";
-    if (body->isUnknown("v0")) {
+    if (body->isUnknown("v0", BodyLock::LOCK)) {
         unknownKey = "v0";
     }
-    else if (body->isUnknown("r0")) {
+    else if (body->isUnknown("r0", BodyLock::LOCK)) {
         unknownKey = "r0";
     }
 
     double targetTime = -1.0;
-    if (body->isUnknown("v0")) {
+    if (body->isUnknown("v0", BodyLock::LOCK)) {
         targetTime = timeConstraintWidget->getValue();
         if (targetTime <= 0.0001) targetTime = -1.0;
     }
