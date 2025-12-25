@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <qpushbutton.h>
 #include <qslider.h>
+#include <QCheckBox>
 
 #include "InspectorRow.h"
 #include "ScalarWidget.h"
@@ -36,29 +37,34 @@ void InspectorWidget::loadObject(SceneObject* obj) {
     QGroupBox* transformGroup = new QGroupBox("Transform");
     auto* layout = new QFormLayout(transformGroup);
     mainLayout->addWidget(transformGroup);
-    transformRows.emplace_back("Position",
-        [obj]()->glm::vec3{ return obj->getPosition(); },
-        [obj](glm::vec3 v){ obj->setPosition(v); },
-        this);
-    transformRows.emplace_back("Scale",
-        [obj]()->glm::vec3{ return obj->getScale(); },
-        [obj](glm::vec3 v) { obj->setScale(v); },
-        this);
+    transformRows.emplace_back("Position", this)
+        .addVec3(
+            [obj]()->glm::vec3{ return obj->getPosition(); },
+            [obj](glm::vec3 v){ obj->setPosition(v); }
+        );
+    transformRows.emplace_back("Scale", this)
+            .addVec3(
+                [obj]()->glm::vec3{ return obj->getScale(); },
+                [obj](glm::vec3 v) { obj->setScale(v); }
+            );
     // TODO: this works good enough for 2D but for 3D the conversion between euler angles and quaternions is wonky
-    transformRows.emplace_back("Rotation",
-        [obj]()->glm::vec3{ return glm::degrees(obj->getRotation()); },
-        [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); },
-        this);
+    transformRows.emplace_back("Rotation", this)
+            .addVec3(
+                [obj]()->glm::vec3{ return glm::degrees(obj->getRotation()); },
+                [obj](glm::vec3 v) { obj->setRotation(glm::radians(v)); }
+            );
 
     if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
-        transformRows.emplace_back("Velocity",
-            [body]()->glm::vec3{ return body->getVelocity(BodyLock::NOLOCK); },
-            [body](glm::vec3 v){ body->setVelocity(v, BodyLock::NOLOCK); },
-            this);
-        transformRows.emplace_back("Mass",
-            [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
-            [body](float newMass){ body->setMass(newMass, BodyLock::NOLOCK); },
-            this);
+        transformRows.emplace_back("Velocity", this)
+            .addVec3(
+                [body]()->glm::vec3{ return body->getVelocity(BodyLock::NOLOCK); },
+                [body](glm::vec3 v){ body->setVelocity(v, BodyLock::NOLOCK); }
+            );
+        transformRows.emplace_back("Mass", this)
+                    .addScalar(
+                        [body]()->float{ return body->getMass(BodyLock::NOLOCK); },
+                        [body](float newMass){ body->setMass(newMass, BodyLock::NOLOCK); }
+                    );
     }
     for (InspectorRow row : transformRows) {
         layout->addRow(row.getLabel(), row.getEditor());
@@ -102,30 +108,31 @@ void InspectorWidget::populateForces(Physics::PhysicsBody* body, QFormLayout *la
     std::map<std::string, glm::vec3> forcesCopy = body->getAllForces(BodyLock::NOLOCK);
     for (auto const& [name, vec] : forcesCopy) {
         if (name == "Gravity" || name == "Normal") {
-            forceRows.emplace_back(
-              QString::fromStdString(name),
-              [body, name](){ return body->getForce(name, BodyLock::NOLOCK); }
-            );
+            forceRows.emplace_back(QString::fromStdString(name), this)
+                .addVec3(
+                    [body, name](){ return body->getForce(name, BodyLock::NOLOCK); },
+                    nullptr
+                );
         } else {
-            forceRows.emplace_back(
-              QString::fromStdString(name),
-              [body, name](){ return body->getForce(name, BodyLock::NOLOCK); },
-              [body, name](glm::vec3 v){ body->setForce(name, v, BodyLock::NOLOCK); },
-              this
-            );
+            forceRows.emplace_back(QString::fromStdString(name), this)
+                .addVec3(
+                    [body, name](){ return body->getForce(name, BodyLock::NOLOCK); },
+                    [body, name](glm::vec3 v){ body->setForce(name, v, BodyLock::NOLOCK); }
+                );
         }
         auto& row = forceRows.back();
         layout->addRow(row.getLabel(), row.getEditor());
     }
 
-    forceRows.emplace_back(
-      "Net Force",
-      [body](){
-        glm::vec3 sum{0.0f};
-        for (auto const& [n, f] : body->getAllForces(BodyLock::NOLOCK)) sum += f;
-        return sum;
-      }
-    );
+    forceRows.emplace_back("Net Force", this)
+        .addVec3(
+            [body](){
+                glm::vec3 sum{0.0f};
+                for (auto const& [n, f] : body->getAllForces(BodyLock::NOLOCK)) sum += f;
+                return sum;
+            },
+            nullptr
+        );
     auto& row = forceRows.back();
     layout->addRow(row.getLabel(), row.getEditor());
 }
@@ -134,14 +141,16 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
     QGroupBox* globalsGroup = new QGroupBox("Globals");
     auto* formLayout = new QFormLayout(globalsGroup);
     layout->addWidget(globalsGroup);
-    globalsRows.emplace_back("Gravitational\nAcceleration",
-        [this]()->glm::vec3{ return sceneManager->getGlobalAcceleration(); },
-        [this](glm::vec3 a){ sceneManager->setGlobalAcceleration(a); },
-        this);
-    globalsRows.emplace_back("Sim Speed",
-        [this]()->float{ return sceneManager->getSimSpeed(); },
-        [this](float s){ sceneManager->setSimSpeed(s); },
-        this);
+    globalsRows.emplace_back("Gravitational\nAcceleration", this)
+        .addVec3(
+            [this]()->glm::vec3{ return sceneManager->getGlobalAcceleration(); },
+            [this](glm::vec3 a){ sceneManager->setGlobalAcceleration(a); }
+        );
+    globalsRows.emplace_back("Sim Speed", this)
+        .addScalar(
+            [this]()->float{ return sceneManager->getSimSpeed(); },
+            [this](float s){ sceneManager->setSimSpeed(s); }
+        );
 
     // Stop condition
     QWidget* logicContainer = new QWidget();

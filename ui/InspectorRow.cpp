@@ -1,54 +1,70 @@
 #include "InspectorRow.h"
-
-#include <qboxlayout.h>
-
-#include "ScalarWidget.h"
+#include <QCheckBox>
 #include "Vector3Widget.h"
+#include "ScalarWidget.h"
 
-QWidget* InspectorRow::makeVec3Widget(const std::function<glm::vec3()>& get, QWidget *parent, std::function<void(glm::vec3)> set) {
-    Vector3Widget* widget = new Vector3Widget("", parent);
-
-    widget->setValue(get());
-
-    if (set) {
-        QObject::connect(widget, &Vector3Widget::valueChanged, [=](const glm::vec3& val) {
-            set(val);
-        });
-    } else {
-        widget->setEnabled(false);
-    }
-
-    pullFromObject = [=]() {
-        widget->setValue(get());
-    };
-
-    return widget;
+InspectorRow::InspectorRow(const QString &lbl, QWidget* parent) : label(lbl) {
+    container = new QWidget(parent);
+    layout = new QHBoxLayout(container);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(5);
 }
 
-QWidget *InspectorRow::makeScalarWidget(const std::function<float()>& get, QWidget *parent, std::function<void(float)> set) {
-    ScalarWidget* widget = new ScalarWidget("", parent);
-    widget->setValue(get());
-
-    if (set) {
-        QObject::connect(widget, &ScalarWidget::valueChanged, [=](double val) {
-            set(static_cast<float>(val));
-        });
-    } else {
-        widget->setEnabled(false);
+InspectorRow::InspectorRow(const QString &lbl, QWidget* customEditor, std::function<void()> updateLogic) : label(lbl), container(customEditor) {
+    if (updateLogic) {
+        updaters.push_back(updateLogic);
     }
-
-    pullFromObject = [=]() {
-        widget->setValue(get());
-    };
-
-    return widget;
 }
 
-InspectorRow::InspectorRow(const QString &lbl, QWidget *customEditor, std::function<void()> updateLogic) {
-    label = lbl;
-    editor = customEditor;
+InspectorRow& InspectorRow::addCheckbox(std::function<bool()> get, std::function<void(bool)> set) {
+    QCheckBox* cb = new QCheckBox();
+    layout->addWidget(cb);
 
-    if (updateLogic) pullFromObject = updateLogic;
-    else pullFromObject = [](){};
+    QObject::connect(cb, &QCheckBox::toggled, [set](bool checked){
+        if (set) set(checked);
+    });
+
+    updaters.emplace_back([cb, get]() {
+        if (!get) return;
+        bool val = get();
+        if (cb->isChecked() != val) {
+            const QSignalBlocker blocker(cb);
+            cb->setChecked(val);
+        }
+    });
+
+    return *this;
+}
+
+InspectorRow& InspectorRow::addVec3(std::function<glm::vec3()> get, std::function<void(glm::vec3)> set) {
+    Vector3Widget* vec = new Vector3Widget();
+    layout->addWidget(vec);
+
+    QObject::connect(vec, &Vector3Widget::valueChanged, [set](glm::vec3 v){
+        if (set) set(v);
+    });
+
+    updaters.emplace_back([vec, get]() {
+        if (!get) return;
+        vec->setValue(get());
+    });
+
+    return *this;
+}
+
+InspectorRow &InspectorRow::addScalar(std::function<float()> get, std::function<void(float)> set) {
+    ScalarWidget* scalar = new ScalarWidget();
+    layout->addWidget(scalar);
+
+    QObject::connect(scalar, &ScalarWidget::valueChanged, [set](float f){
+        if (set) set(f);
+    });
+
+    updaters.emplace_back([scalar, get]() {
+        if (!get) return;
+        scalar->setValue(get());
+    });
+
+    return *this;
 }
 
