@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/interfaces/IHandle.h"
+#include "IHandle.h"
 #include <graphics/core/SceneObject.h>
 
 class ScaleHandle : public IHandle{

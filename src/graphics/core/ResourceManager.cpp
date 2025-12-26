@@ -113,9 +113,9 @@ bool ResourceManager::loadOBJ(const std::string &path, std::vector<Vertex> &outV
 void ResourceManager::loadPrimitives() {
     loadPrimCube();
     loadPrimSphere();
-    loadMeshFromOBJ("../Arrow.obj", "arrow");
-    loadMeshFromOBJ("../Scale.obj", "scale");
-    loadMeshFromOBJ("../Rotate.obj", "rotate");
+    loadMeshFromOBJ("assets/models/Arrow.obj", "arrow");
+    loadMeshFromOBJ("assets/models/Scale.obj", "scale");
+    loadMeshFromOBJ("assets/models/Rotate.obj", "rotate");
 }
 
 void ResourceManager::loadPrimCube() {

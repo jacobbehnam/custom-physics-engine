@@ -2,11 +2,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <graphics/components/Mesh.h>
-#include <graphics/interfaces/IDrawable.h>
+#include "IDrawable.h"
 #include <graphics/components/Shader.h>
 
 #include "SceneManager.h"
-#include "graphics/interfaces/IPickable.h"
+#include "IPickable.h"
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/SceneObjectOptions.h"
 

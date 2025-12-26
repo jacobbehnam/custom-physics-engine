@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "graphics/interfaces/IPickable.h"
+#include "../core/IPickable.h"
 #include <vector>
 #include <functional>
 #include <algorithm>

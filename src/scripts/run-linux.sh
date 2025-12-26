@@ -3,7 +3,7 @@
 # Run script for the physics engine with error output
 cd "$(dirname "$0")/../build"
 
-if [ ! -f "./OpenGLApp" ]; then
+if [ ! -f "./PhysicsEngine" ]; then
     echo "Error: Application not built yet!"
     echo "Please run scripts/build-linux.sh first"
     exit 1
@@ -14,7 +14,7 @@ echo "If it crashes, check the error output below:"
 echo ""
 
 # Run with full error output
-./OpenGLApp 2>&1 || {
+./PhysicsEngine 2>&1 || {
     EXIT_CODE=$?
     echo ""
     echo "=========================================="
@@ -23,7 +23,7 @@ echo ""
         echo "Segmentation fault detected!"
         echo ""
         echo "To debug, run:"
-        echo "  cd build && gdb ./OpenGLApp"
+        echo "  cd build && gdb ./PhysicsEngine"
         echo "  Then type: run"
         echo "  After crash, type: bt"
     fi

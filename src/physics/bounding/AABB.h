@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-#include "graphics/interfaces/ICollider.h"
+#include "ICollider.h"
 
 namespace Physics::Bounding{
     class AABB : public ICollider{

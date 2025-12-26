@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(OpenGLApp)
+project(PhysicsEngine)
 set(CMAKE_CXX_STANDARD 17)
 
 # Where CLion’s embedded vcpkg installs stuff:
@@ -18,98 +18,125 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_WIN32_EXECUTABLE FALSE)
 
 # === GLM ===
-find_package(glm CONFIG REQUIRED)  # << Added this line
+find_package(glm CONFIG REQUIRED)
 
-# add glad.c to your target
-add_executable(OpenGLApp main.cpp
-        graphics/components/Mesh.cpp
-        graphics/core/SceneObject.cpp
-        graphics/core/SceneObject.h
-        graphics/core/Camera.cpp
-        graphics/core/Camera.h
-        graphics/interfaces/IDrawable.h
-        graphics/components/TranslateHandle.cpp
-        graphics/components/TranslateHandle.h
-        graphics/components/Shader.cpp
-        graphics/components/Shader.h
-        graphics/core/Scene.cpp
-        graphics/core/Scene.h
-        graphics/components/Gizmo.cpp
-        graphics/components/Gizmo.h
-        graphics/utils/MathUtils.cpp
-        graphics/utils/MathUtils.h
-        graphics/interfaces/IPickable.h
-        graphics/core/ResourceManager.cpp
-        graphics/core/ResourceManager.h
-        graphics/components/RotateHandle.cpp
-        graphics/components/RotateHandle.h
-        graphics/interfaces/IHandle.h
-        graphics/components/ScaleHandle.cpp
-        graphics/components/ScaleHandle.h
-        graphics/core/UniformBuffer.cpp
-        graphics/core/UniformBuffer.h
-        physics/RigidBody.cpp
-        physics/RigidBody.h
-        physics/PhysicsSystem.cpp
-        physics/PhysicsSystem.h
-        physics/bounding/AABB.cpp
-        physics/bounding/AABB.h
-        physics/PointMass.cpp
-        physics/PointMass.h
-        ui/OpenGLWindow.cpp
-        ui/OpenGLWindow.h
-        ui/MainWindow.cpp
-        ui/MainWindow.h
-        ui/RawInputFilter.cpp
-        ui/RawInputFilter.h
-        graphics/core/SceneManager.cpp
-        graphics/core/SceneManager.h
-        ui/InspectorWidget.cpp
-        ui/InspectorWidget.h
-        ui/HierarchyWidget.cpp
-        ui/HierarchyWidget.h
-        ui/InspectorRow.cpp
-        ui/InspectorRow.h
-        graphics/interfaces/ICollider.h
-        physics/bounding/BoxCollider.cpp
-        physics/bounding/BoxCollider.h
-        ui/SnapshotTableModel.cpp
-        ui/SnapshotTableModel.h
-        graphics/core/SceneObjectOptions.h
-        physics/solver/OneUnknownSolver.cpp
-        physics/solver/OneUnknownSolver.h
-        physics/PhysicsBody.h
-        physics/PhysicsBody.cpp
-        graphics/components/ComputeShader.cpp
-        graphics/components/ComputeShader.h
-        physics/PhysicsBody.cpp
-        graphics/core/SceneSerializer.cpp
-        graphics/core/SceneSerializer.h
-        physics/solver/ProblemRouter.cpp
-        physics/solver/ProblemRouter.h
-        physics/solver/VectorRootSolver.cpp
-        physics/solver/VectorRootSolver.h
-        ui/SolverDialog.cpp
-        ui/SolverDialog.h
-        ui/Vector3Widget.cpp
-        ui/Vector3Widget.h
-        ui/ScalarWidget.cpp
-        ui/ScalarWidget.h
-        graphics/interfaces/ISolver.h
-        physics/solver/InterceptSolver.cpp
-        physics/solver/InterceptSolver.h)
+add_library(PhysicsCore STATIC
+        # Physics
+        src/physics/PhysicsSystem.h
+        src/physics/PhysicsSystem.cpp
+        src/physics/PhysicsBody.h
+        src/physics/PhysicsBody.cpp
+        src/physics/RigidBody.h
+        src/physics/RigidBody.cpp
+        src/physics/PointMass.h
+        src/physics/PointMass.cpp
+
+        # Bounding Box Logic
+        src/physics/bounding/AABB.h
+        src/physics/bounding/AABB.cpp
+        src/physics/bounding/BoxCollider.h
+        src/physics/bounding/BoxCollider.cpp
+        src/physics/bounding/ICollider.h
+
+        # Solvers
+        src/physics/solver/InterceptSolver.h
+        src/physics/solver/InterceptSolver.cpp
+        src/physics/solver/ProblemRouter.h
+        src/physics/solver/ProblemRouter.cpp
+        src/physics/solver/VectorRootSolver.h
+        src/physics/solver/VectorRootSolver.cpp
+        src/physics/solver/ISolver.h
+
+        # Dependencies
+        src/graphics/utils/MathUtils.h
+        src/graphics/utils/MathUtils.cpp
+)
+
+add_executable(PhysicsEngine src/main.cpp
+        src/graphics/core/SceneObject.cpp
+        src/graphics/core/SceneObject.h
+        src/graphics/core/Camera.cpp
+        src/graphics/core/Camera.h
+        src/graphics/core/Scene.cpp
+        src/graphics/core/Scene.h
+        src/graphics/core/ResourceManager.cpp
+        src/graphics/core/ResourceManager.h
+        src/graphics/core/UniformBuffer.cpp
+        src/graphics/core/UniformBuffer.h
+        src/graphics/core/SceneManager.cpp
+        src/graphics/core/SceneManager.h
+        src/graphics/core/SceneSerializer.cpp
+        src/graphics/core/SceneSerializer.h
+        src/graphics/core/SceneObjectOptions.h
+        src/graphics/components/Mesh.cpp
+        src/graphics/components/Shader.cpp
+        src/graphics/components/Shader.h
+        src/graphics/components/ComputeShader.cpp
+        src/graphics/components/ComputeShader.h
+        src/graphics/components/Gizmo.cpp
+        src/graphics/components/Gizmo.h
+        src/graphics/components/TranslateHandle.cpp
+        src/graphics/components/TranslateHandle.h
+        src/graphics/components/RotateHandle.cpp
+        src/graphics/components/RotateHandle.h
+        src/graphics/components/ScaleHandle.cpp
+        src/graphics/components/ScaleHandle.h
+        src/graphics/core/IDrawable.h
+        src/graphics/core/IPickable.h
+        src/graphics/components/IHandle.h
+        src/ui/OpenGLWindow.cpp
+        src/ui/OpenGLWindow.h
+        src/ui/MainWindow.cpp
+        src/ui/MainWindow.h
+        src/ui/RawInputFilter.cpp
+        src/ui/RawInputFilter.h
+        src/ui/InspectorWidget.cpp
+        src/ui/InspectorWidget.h
+        src/ui/HierarchyWidget.cpp
+        src/ui/HierarchyWidget.h
+        src/ui/InspectorRow.cpp
+        src/ui/InspectorRow.h
+        src/ui/SnapshotTableModel.cpp
+        src/ui/SnapshotTableModel.h
+        src/ui/SolverDialog.cpp
+        src/ui/SolverDialog.h
+        src/ui/Vector3Widget.cpp
+        src/ui/Vector3Widget.h
+        src/ui/ScalarWidget.cpp
+        src/ui/ScalarWidget.h
+)
 
 # Include directories
-target_include_directories(OpenGLApp PRIVATE
-        ${CMAKE_SOURCE_DIR})
+target_include_directories(PhysicsEngine PRIVATE
+        ${CMAKE_SOURCE_DIR}/src)
 
 # Link all the libraries
-target_link_libraries(OpenGLApp PRIVATE
+target_link_libraries(PhysicsEngine PRIVATE
+        PhysicsCore
         OpenGL::GL
         glm::glm
         Qt6::Widgets
         Qt6::Gui
         Qt6::Core
         Qt6::OpenGLWidgets
+        atomic
+)
+
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
+set(ASSETS_DEST "$<TARGET_FILE_DIR:PhysicsEngine>/assets")
+
+add_custom_command(TARGET PhysicsEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE}
+        ${ASSETS_DEST}
+        COMMENT "Copying Assets..."
+)
+
+enable_testing()
+add_subdirectory(tests)
+
+target_include_directories(PhysicsCore PUBLIC src)
+target_link_libraries(PhysicsCore PUBLIC
+        glm::glm
         atomic
 )

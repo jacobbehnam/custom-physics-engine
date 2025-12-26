@@ -108,7 +108,7 @@ bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, fl
 
     const std::vector<unsigned int>& indices = mesh->getIndices();
     auto *glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_4_5_Core>(QOpenGLContext::currentContext());
-    ComputeShader compute("../shaders/meshIntersection.comp", glFuncs);
+    ComputeShader compute("assets/shaders/meshIntersection.comp", glFuncs);
     (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * sizeof(glm::vec3), 0);
     (void) compute.createSSBO(indices.data(), indices.size() * sizeof(unsigned int), 1);
     std::vector<float> initDists(triCount, -1.0f);

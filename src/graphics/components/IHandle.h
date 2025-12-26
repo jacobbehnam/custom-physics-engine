@@ -1,5 +1,5 @@
 #pragma once
-#include "IDrawable.h"
+#include "../core/IDrawable.h"
 
 enum class Axis {
     X, Y, Z

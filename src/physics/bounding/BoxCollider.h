@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/interfaces/ICollider.h"
+#include "ICollider.h"
 #include <glm/gtx/quaternion.hpp>
 
 namespace Physics::Bounding {

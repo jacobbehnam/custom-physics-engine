@@ -1,9 +1,9 @@
 #pragma once
 #include <graphics/components/Shader.h>
 #include <graphics/core/Camera.h>
-#include <graphics/interfaces/IHandle.h>
+#include "IHandle.h"
 
-#include "graphics/interfaces/IPickable.h"
+#include "../core/IPickable.h"
 
 class SceneManager;
 class SceneObject;

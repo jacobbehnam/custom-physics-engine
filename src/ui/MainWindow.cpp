@@ -16,7 +16,7 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
 
-    setWindowTitle("Cool Stuff");
+    setWindowTitle("Physics Engine");
 
     setCentralWidget(glWindow);
     glWindow->setFocus();
@@ -71,7 +71,7 @@ void MainWindow::setupDockWidgets() {
     inspectorDock->setWidget(scrollArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 
-    auto* tableDock = new QDockWidget(tr("Bruh"), this);
+    auto* tableDock = new QDockWidget(tr("Frame History"), this);
     tableDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     auto* tableView = new QTableView(this);
     snapshotModel = new SnapshotTableModel(this);

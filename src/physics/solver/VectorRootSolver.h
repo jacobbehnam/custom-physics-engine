@@ -2,7 +2,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 
-#include "graphics/interfaces/ISolver.h"
+#include "ISolver.h"
 
 /**
  * @brief A vector-valued root solver using Newton's method.

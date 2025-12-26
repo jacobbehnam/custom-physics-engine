@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/interfaces/ISolver.h"
+#include "ISolver.h"
 #include <functional>
 
 /**

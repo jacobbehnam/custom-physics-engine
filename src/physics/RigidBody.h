@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "graphics/interfaces/ICollider.h"
+#include "bounding/ICollider.h"
 #include "physics/PhysicsBody.h"
 
 namespace Physics {

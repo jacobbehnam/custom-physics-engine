@@ -15,7 +15,7 @@ Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject
     sceneManager->addDrawable(this);
     sceneManager->addPickable(this);
 
-    shader = ResourceManager::loadShader("../shaders/gizmo/gizmo.vert", "../shaders/gizmo/gizmo.frag", "gizmo");
+    shader = ResourceManager::loadShader("assets/shaders/gizmo/gizmo.vert", "assets/shaders/gizmo/gizmo.frag", "gizmo");
 
     switch (type) {
         case GizmoType::TRANSLATE:
