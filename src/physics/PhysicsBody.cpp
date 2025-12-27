@@ -1,5 +1,7 @@
 #include "physics/PhysicsBody.h"
 
+#include <iostream>
+
 bool Physics::PhysicsBody::isUnknown(const std::string &key, BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
@@ -20,11 +22,6 @@ void Physics::PhysicsBody::setUnknown(const std::string &key, bool active, BodyL
     }
 }
 
-void Physics::PhysicsBody::applyForce(const glm::vec3 &force) {
-    std::lock_guard<std::mutex> lock(stateMutex);
-    netForce += force;
-}
-
 void Physics::PhysicsBody::setForce(const std::string &name, const glm::vec3 &force, BodyLock lock) {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
@@ -43,6 +40,11 @@ glm::vec3 Physics::PhysicsBody::getForce(const std::string &name, BodyLock lock)
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
+    auto it = forces.find(name);
+    if (it == forces.end()) {
+        return glm::vec3(0.0f); // Return zero vector if key doesn't exist
+    }
 
     return forces.find(name)->second;
 }
@@ -104,6 +106,11 @@ float Physics::PhysicsBody::getMass(BodyLock lock) const {
 }
 
 void Physics::PhysicsBody::setMass(float newMass, BodyLock lock) {
+    if (newMass <= 0.0001f) {
+        std::cerr << "Warning: Invalid mass " << newMass << ". Ignoring." << std::endl;
+        return;
+    }
+
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);

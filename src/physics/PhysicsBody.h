@@ -35,7 +35,6 @@ namespace Physics {
         bool isUnknown(const std::string& key, BodyLock lock) const;
         void setUnknown(const std::string& key, bool active, BodyLock lock);
 
-        void applyForce(const glm::vec3& force);
         void setForce(const std::string& name, const glm::vec3& force, BodyLock lock);
         glm::vec3 getForce(const std::string& name, BodyLock lock) const;
         glm::vec3 getNetForce(BodyLock lock) const;
