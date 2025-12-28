@@ -154,8 +154,7 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
 }
 
 void Physics::PhysicsSystem::advancePhysics(float dt) {
-    stepCount++;
-
+    float targetTime = stepCount.load() * dt + dt; // the time we will be at after this step
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
@@ -166,15 +165,14 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
 
         if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
-            continue;
+
+            if (resetState.find(body) == resetState.end()) {
+                resetState[body] = body->getAllFrames(BodyLock::NOLOCK).front();
+            }
         }
 
         body->step(dt, BodyLock::NOLOCK);
-        body->recordFrame(simTime, BodyLock::NOLOCK);
-
-        if (resetState.find(body) == resetState.end()) {
-            resetState[body] = body->getAllFrames(BodyLock::NOLOCK).front();
-        }
+        body->recordFrame(targetTime, BodyLock::NOLOCK);
     }
 
     for (int i = 0; i < bodies.size(); ++i) {
@@ -189,7 +187,8 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
             }
         }
     }
-    simTime = stepCount.load() * dt;
+    stepCount++;
+    simTime = targetTime;
 }
 
 bool Physics::PhysicsSystem::step(float dt) {

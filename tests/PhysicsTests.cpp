@@ -8,6 +8,11 @@
     EXPECT_FLOAT_EQ((vec).y, (y_val)); \
     EXPECT_FLOAT_EQ((vec).z, (z_val))
 
+// Global Test Constants
+static constexpr float MACHINE_EPSILON = std::numeric_limits<float>::epsilon();
+static constexpr float OPS_SAFETY_FACTOR = 8.0f; // The conservative constant 'C' from TESTING.md
+static constexpr float BASE_FLOAT_TOLERANCE = MACHINE_EPSILON * OPS_SAFETY_FACTOR;
+
 TEST(PointMass, Constructor_Default) {
     auto pm = Physics::PointMass(0, 1.0f);
 
@@ -144,8 +149,51 @@ TEST(PointMass, State_Static_Toggle) {
     EXPECT_FALSE(pm.getIsStatic(BodyLock::LOCK));
 }
 
-TEST(PhysicsCore, CanCreateSystem) {
+TEST(PhysicsSystem, Management_AddGetRemove) {
     Physics::PhysicsSystem system;
-    system.setGlobalAcceleration({0, -9.81, 0});
-    EXPECT_EQ(system.getGlobalAcceleration().y, -9.81f);
+    Physics::PointMass pm(10, 1.0f);
+    EXPECT_EQ(system.getBodyById(10), nullptr);
+
+    system.addBody(&pm);
+    EXPECT_EQ(system.getBodyById(10), &pm);
+
+    system.removeBody(&pm);
+    EXPECT_EQ(system.getBodyById(10), nullptr);
+}
+
+TEST(PhysicsSystem, Parameters_GlobalSettings) {
+    Physics::PhysicsSystem system;
+
+    EXPECT_FLOAT_EQ(system.getGlobalAcceleration().y, -9.81f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 1.0f);
+
+    system.setGlobalAcceleration(glm::vec3(0.0f));
+    EXPECT_VEC3_EQ(system.getGlobalAcceleration(), 0.0f, 0.0f, 0.0f);
+
+    system.setSimSpeed(0.5f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.5f);
+}
+
+// Simulation tests
+TEST(Integration, Freefall_ConstantAcceleration) {
+    float gravity = -9.81f;
+    float time = 1.0f;
+    float dt = 0.01f;
+    float startY = 100.0f;
+
+    Physics::PhysicsSystem system(glm::vec3(0, gravity, 0));
+    Physics::PointMass pm(0, 1.0f);
+    pm.setPosition(glm::vec3(0, startY, 0), BodyLock::LOCK);
+    system.addBody(&pm);
+
+    int steps = static_cast<int>(time / dt);
+    for(int i = 0; i < steps; i++) system.step(dt);
+    EXPECT_NEAR(system.simTime, time, dt/2); // Make sure we are in the right frame
+
+    // Computed analytically
+    constexpr float exactY = 95.095;
+    float maxAbsPos = startY;
+
+    float errorBound = steps * BASE_FLOAT_TOLERANCE * maxAbsPos;
+    EXPECT_NEAR(pm.getPosition(BodyLock::LOCK).y, exactY, errorBound);
 }

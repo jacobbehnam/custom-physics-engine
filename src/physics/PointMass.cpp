@@ -8,7 +8,7 @@ Physics::PointMass::PointMass(uint32_t id, float m, glm::vec3 pos, bool bodyStat
     setPosition(pos, BodyLock::NOLOCK);
     setMass(m, BodyLock::NOLOCK);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
-    setVelocity(glm::vec3(1.0f), BodyLock::NOLOCK);
+    setVelocity(glm::vec3(0.0f), BodyLock::NOLOCK);
 }
 
 Physics::PointMass::PointMass(uint32_t id, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
