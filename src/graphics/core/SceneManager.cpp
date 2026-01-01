@@ -44,7 +44,7 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     return ptr;
 }
 
-SceneObject* SceneManager::createObject(const std::string &meshName, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
+SceneObject* SceneManager::createObject(const std::string &meshName, Shader *shader, const CreationOptions& options) {
     std::unique_ptr<SceneObject> primitive = std::make_unique<SceneObject>(this, meshName, shader, options);
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();

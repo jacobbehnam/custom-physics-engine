@@ -1,5 +1,7 @@
 #pragma once
 #include <QObject>
+
+#include "ResourceManager.h"
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneObjectOptions.h"
 #include "ui/OpenGLWindow.h"
@@ -25,7 +27,7 @@ class SceneManager : public QObject {
 public:
     SceneManager(OpenGLWindow* win, Scene* scene);
     SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
-    SceneObject* createObject(const std::string &meshName, Shader* shader, const CreationOptions& = ObjectOptions{});
+    SceneObject* createObject(const std::string &meshName, Shader* shader = ResourceManager::getShader("basic"), const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
     std::vector<SceneObject*> getObjects() const;

@@ -52,7 +52,10 @@ void MainWindow::setupDockWidgets() {
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
 
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
-    connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [=](const std::string& type) {sceneManager->defaultSetup();}); // TODO: change later
+    connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [=](const CreationOptions& options) {
+        SceneObject* createdObj = sceneManager->createObject("prim_sphere", ResourceManager::getShader("basic"), options);
+        hierarchy->selectObject(createdObj);
+    });
     connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(true); });
     connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(true); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);

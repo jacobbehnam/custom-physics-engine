@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QTreeWidget>
+#include <QToolBar>
 #include "graphics/core/SceneObject.h"
 
 class HierarchyWidget : public QWidget {
@@ -15,7 +16,7 @@ public:
 
 signals:
     void selectionChanged(SceneObject* previous, SceneObject* current);
-    void createObjectRequested(const std::string& type);
+    void createObjectRequested(const CreationOptions& options);
 
 public slots:
     void onItemSelectionChanged();
@@ -24,6 +25,7 @@ public slots:
 
 private:
     QTreeWidget* tree;
+    QToolBar* toolBar;
     QTreeWidgetItem* previousItem = nullptr;
 
     static SceneObject* getObjectFromItem(QTreeWidgetItem* item);

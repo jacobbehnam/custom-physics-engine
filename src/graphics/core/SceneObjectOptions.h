@@ -17,6 +17,8 @@ struct PointMassOptions {
     ObjectOptions base;
     bool isStatic = false;
     float mass = 1.0f;
+
+    PointMassOptions() = default;
 };
 
 struct RigidBodyOptions {

@@ -3,15 +3,39 @@
 #include <QVBoxLayout>
 #include <QMenu>
 #include <QAction>
+#include <QLabel>
+#include <QToolButton>
 
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     tree = new QTreeWidget(this);
     tree->setHeaderLabels({ "Name", "Type" });
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    QToolButton* addButton = new QToolButton(this);
+    addButton->setText("Add");
+    addButton->setAutoRaise(true);
+    addButton->setPopupMode(QToolButton::InstantPopup);
+
+    QMenu* addMenu = new QMenu(addButton);
+    QAction* addPointMass = addMenu->addAction("Point Mass");
+    connect(addPointMass, &QAction::triggered, this, [this]() {
+        emit createObjectRequested({PointMassOptions()});
+    });
+    QAction* addRigidBody = addMenu->addAction("Rigid Body");
+    addButton->setMenu(addMenu);
+
+    QHBoxLayout* headerLayout = new QHBoxLayout();
+    headerLayout->addWidget(addButton);
+    headerLayout->addStretch();
+    headerLayout->setContentsMargins(0, 0, 0, 0);
+    headerLayout->setSpacing(0);
+
     QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addLayout(headerLayout);
     layout->addWidget(tree);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
     setLayout(layout);
 
     connect(tree, &QTreeWidget::itemSelectionChanged, this, &HierarchyWidget::onItemSelectionChanged);
@@ -23,9 +47,9 @@ void HierarchyWidget::showContextMenu(const QPoint& pos) {
 
     QAction* addPmAction = contextMenu.addAction("Add Point Mass");
 
-    connect(addPmAction, &QAction::triggered, [this]() {
-        emit createObjectRequested("Point Mass");
-    });
+    // connect(addPmAction, &QAction::triggered, [this]() {
+    //     emit createObjectRequested("Point Mass");
+    // });
 
     contextMenu.exec(tree->mapToGlobal(pos));
 }
