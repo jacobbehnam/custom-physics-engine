@@ -188,7 +188,7 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
     QComboBox* subjectCombo = new QComboBox();
     subjectCombo->addItem("-- Subject --", -1);
     for (auto* obj : sceneManager->getObjects()) {
-        subjectCombo->addItem(QString::number(obj->getObjectID()), obj->getObjectID());
+        subjectCombo->addItem(obj->getName().data(), obj->getObjectID());
     }
 
     QComboBox* propCombo = new QComboBox();
@@ -257,7 +257,7 @@ void InspectorWidget::populateGlobals(QVBoxLayout *layout) {
 
         targetObjCombo->clear();
         for (auto* obj : sceneManager->getObjects()) {
-            targetObjCombo->addItem(QString::number(obj->getObjectID()), obj->getObjectID());
+            targetObjCombo->addItem(obj->getName().data(), obj->getObjectID());
         }
         int tIdx = targetObjCombo->findData(sceneManager->stopCondition.targetID);
         if (tIdx != -1) targetObjCombo->setCurrentIndex(tIdx);

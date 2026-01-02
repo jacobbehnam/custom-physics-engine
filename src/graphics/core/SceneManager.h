@@ -31,6 +31,9 @@ public:
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
     std::vector<SceneObject*> getObjects() const;
+    bool isNameUnique(const std::string& name, SceneObject* self) const;
+    void setObjectName(SceneObject* obj, const std::string& newName);
+    std::string makeUniqueName(const std::string& baseName) const;
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
@@ -80,6 +83,8 @@ private:
     std::unique_ptr<Gizmo> currentGizmo;
 
     std::string generateDefaultName(const CreationOptions& creationOptions);
+    std::unordered_map<std::string, SceneObject*> usedNames;
+
     MathUtils::Ray getMouseRay();
 
     // To track if a right click was a click or drag

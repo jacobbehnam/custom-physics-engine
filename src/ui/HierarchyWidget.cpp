@@ -12,7 +12,17 @@
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     tree = new QTreeWidget(this);
     tree->setHeaderLabels({ "Name", "Type" });
+    QHeaderView* header = tree->header();
+    header->setSectionResizeMode(0, QHeaderView::Stretch);
+    header->setSectionResizeMode(1, QHeaderView::Stretch);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(tree, &QTreeWidget::itemDoubleClicked, this, [this](QTreeWidgetItem* item, int column) {
+        if (column == 0) {
+            tree->editItem(item, 0);
+        }
+    });
+    connect(tree, &QTreeWidget::itemChanged, this, &HierarchyWidget::onItemNameChanged);
 
     QToolButton* addButton = new QToolButton(this);
     addButton->setText("Add");
@@ -82,6 +92,7 @@ void HierarchyWidget::addObject(SceneObject* obj) {
     item->setText(0, QString::fromStdString(obj->getName()));
     item->setText(1, typeFor(obj));
     item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(obj));
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
 }
 
@@ -111,6 +122,29 @@ void HierarchyWidget::selectObject(SceneObject* obj) {
         if (getObjectFromItem(item) == obj) {
             tree->setCurrentItem(item); // will then call onItemSelectionChanged()
             break;
+        }
+    }
+}
+
+void HierarchyWidget::onItemNameChanged(QTreeWidgetItem* item, int column) {
+    if (column != 0) return;
+
+    void* ptr = item->data(0, Qt::UserRole).value<void*>();
+    auto* obj = static_cast<SceneObject*>(ptr);
+
+    if (!obj) return;
+
+    emit renameObjectRequested(obj, item->text(0));
+}
+
+void HierarchyWidget::setObjectName(SceneObject *obj, const std::string &name) {
+    QSignalBlocker blocker(tree);
+
+    for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+        auto* item = tree->topLevelItem(i);
+        if (getObjectFromItem(item) == obj) {
+            item->setText(0, QString::fromStdString(name));
+            return;
         }
     }
 }

@@ -56,6 +56,21 @@ void MainWindow::setupDockWidgets() {
         SceneObject* createdObj = sceneManager->createObject("prim_sphere", ResourceManager::getShader("basic"), options);
         hierarchy->selectObject(createdObj);
     });
+    connect(hierarchy, &HierarchyWidget::renameObjectRequested, this, [this](SceneObject* obj, const QString& requestedName) {
+        std::string requested = requestedName.toStdString();
+        if (requested.empty()) {
+            hierarchy->setObjectName(obj, obj->getName());
+            return;
+        }
+        std::string finalName = requested;
+
+        if (!sceneManager->isNameUnique(requested, obj)) {
+            finalName = sceneManager->makeUniqueName(requested);
+        }
+
+        sceneManager->setObjectName(obj, finalName);
+        hierarchy->setObjectName(obj, finalName);
+    });
     connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(true); });
     connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(true); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);

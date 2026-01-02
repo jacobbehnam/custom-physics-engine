@@ -46,7 +46,7 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();
 
-    primitive->setName(generateDefaultName(options));
+    setObjectName(primitive.get(), makeUniqueName(generateDefaultName(options)));
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -105,6 +105,50 @@ std::string SceneManager::generateDefaultName(const CreationOptions& options) {
 
         return "Scene Object";
     }, options);
+}
+
+bool SceneManager::isNameUnique(const std::string &name, SceneObject *self) const {
+    auto it = usedNames.find(name);
+
+    if (it == usedNames.end())
+        return true;
+
+    return it->second == self;
+}
+
+void SceneManager::setObjectName(SceneObject *obj, const std::string &newName) {
+    assert(obj);
+
+    const std::string& oldName = obj->getName();
+    if (oldName == newName)
+        return;
+
+    assert(isNameUnique(newName, obj));
+
+    if (!oldName.empty()) {
+        auto it = usedNames.find(oldName);
+        if (it != usedNames.end() && it->second == obj) {
+            usedNames.erase(it);
+        }
+    }
+
+    obj->setName(newName);
+    usedNames[newName] = obj;
+
+    emit objectRenamed(obj, newName.data());
+}
+
+std::string SceneManager::makeUniqueName(const std::string &baseName) const {
+    if (usedNames.find(baseName) == usedNames.end())
+        return baseName;
+
+    int index = 1;
+    while (true) {
+        std::string candidate = baseName + " (" + std::to_string(index) + ")";
+        if (usedNames.find(candidate) == usedNames.end())
+            return candidate;
+        index++;
+    }
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {

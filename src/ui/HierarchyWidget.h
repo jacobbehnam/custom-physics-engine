@@ -17,8 +17,11 @@ public:
 signals:
     void selectionChanged(SceneObject* previous, SceneObject* current);
     void createObjectRequested(const CreationOptions& options);
+    void renameObjectRequested(SceneObject* obj, const QString& newName);
 
 public slots:
+    void onItemNameChanged(QTreeWidgetItem* item, int column);
+    void setObjectName(SceneObject* obj, const std::string& name);
     void onItemSelectionChanged();
     void selectObject(SceneObject* obj);
     void showContextMenu(const QPoint& pos);
