@@ -364,7 +364,8 @@ void InspectorWidget::clearLayout(QFormLayout* layout) {
 void InspectorWidget::refresh() {
     if (!currentObject) return;
 
-    std::unique_lock<std::mutex> guard = currentObject->getPhysicsBody()->lockState();
+    if (currentObject->getPhysicsBody())
+        std::unique_lock<std::mutex> guard = currentObject->getPhysicsBody()->lockState();
 
     for (InspectorRow &row : transformRows) {
         row.update();

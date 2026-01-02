@@ -15,12 +15,12 @@
 #include "physics/bounding/BoxCollider.h"
 
 SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, Shader *sdr, const CreationOptions &options, QObject* objectParent)
-    : meshName(nameOfMesh), shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
+    : shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent) {
     shader->use();
     shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
 
-    assert((mesh = ResourceManager::getMesh(meshName)));
+    assert((mesh = ResourceManager::getMesh(nameOfMesh)));
 
     creationOptions = options;
     std::visit([&](auto&& o) {

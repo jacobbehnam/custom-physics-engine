@@ -47,7 +47,7 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     for (auto* obj : sceneManager->getObjects()) {
         QJsonObject objJson;
         objJson["id"] = static_cast<double>(obj->getObjectID());
-        objJson["meshName"] = obj->getMeshName().c_str();
+        //objJson["meshName"] = obj->getMeshName().c_str();
 
         QJsonObject optionsJson;
         std::visit([&](auto&& opt){

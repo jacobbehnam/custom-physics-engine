@@ -29,4 +29,5 @@ private:
     QTreeWidgetItem* previousItem = nullptr;
 
     static SceneObject* getObjectFromItem(QTreeWidgetItem* item);
+    QString typeFor(SceneObject* obj);
 };

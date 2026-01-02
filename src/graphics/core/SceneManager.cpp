@@ -16,10 +16,7 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 
 void SceneManager::defaultSetup() {
     Shader* basicShader = ResourceManager::getShader("basic");
-    ObjectOptions defaultOptions{};
-    SceneObject *cube = createPrimitive(Primitive::SPHERE, basicShader, CreationOptions(PointMassOptions{defaultOptions, false, 1.0f}));
-    // SceneObject *cube2 = createPrimitive(Primitive::CUBE, basicShader, CreationOptions(RigidBodyOptions::Box(defaultOptions, true)));
-    // SceneObject *thing = createPrimitive(Primitive::SPHERE, basicShader, defaultOptions);
+    createObject("prim_sphere", basicShader, PointMassOptions());
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
@@ -49,6 +46,7 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();
 
+    primitive->setName(generateDefaultName(options));
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -93,6 +91,20 @@ std::vector<SceneObject*> SceneManager::getObjects() const {
     for (const auto& obj : sceneObjects)
         ptrs.push_back(obj.get());
     return ptrs;
+}
+
+std::string SceneManager::generateDefaultName(const CreationOptions& options) {
+    return std::visit([&](auto&& opt) -> std::string {
+        using T = std::decay_t<decltype(opt)>;
+
+        if constexpr (std::is_same_v<T, PointMassOptions>)
+            return "Point Mass";
+
+        if constexpr (std::is_same_v<T, RigidBodyOptions>)
+            return "Rigid Body";
+
+        return "Scene Object";
+    }, options);
 }
 
 MathUtils::Ray SceneManager::getMouseRay() {

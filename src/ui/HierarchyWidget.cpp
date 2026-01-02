@@ -4,7 +4,10 @@
 #include <QMenu>
 #include <QAction>
 #include <QLabel>
+#include <QHeaderView>
 #include <QToolButton>
+
+#include "physics/PointMass.h"
 
 HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     tree = new QTreeWidget(this);
@@ -17,11 +20,18 @@ HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     addButton->setPopupMode(QToolButton::InstantPopup);
 
     QMenu* addMenu = new QMenu(addButton);
+    QAction* addSceneObject = addMenu->addAction("Empty Scene Object");
+    connect(addSceneObject, &QAction::triggered, this, [this]() {
+        emit createObjectRequested({ObjectOptions()});
+    });
     QAction* addPointMass = addMenu->addAction("Point Mass");
     connect(addPointMass, &QAction::triggered, this, [this]() {
         emit createObjectRequested({PointMassOptions()});
     });
     QAction* addRigidBody = addMenu->addAction("Rigid Body");
+    connect(addRigidBody, &QAction::triggered, this, [this]() {
+        emit createObjectRequested({RigidBodyOptions::Box({})}); // TODO: should be a sphere but I haven't implemented a sphere collider yet
+    });
     addButton->setMenu(addMenu);
 
     QHBoxLayout* headerLayout = new QHBoxLayout();
@@ -54,11 +64,23 @@ void HierarchyWidget::showContextMenu(const QPoint& pos) {
     contextMenu.exec(tree->mapToGlobal(pos));
 }
 
+QString HierarchyWidget::typeFor(SceneObject* obj) {
+    if (!obj->getPhysicsBody())
+        return "Scene Object";
+
+    if (dynamic_cast<Physics::PointMass*>(obj->getPhysicsBody()))
+        return "Point Mass";
+
+    if (dynamic_cast<Physics::RigidBody*>(obj->getPhysicsBody()))
+        return "Rigid Body";
+
+    return "Physics Object";
+}
+
 void HierarchyWidget::addObject(SceneObject* obj) {
     auto* item = new QTreeWidgetItem();
-    // TODO: derive name/type from obj
-    item->setText(0, QString::fromStdString("Cube"));
-    item->setText(1, QString::fromStdString("SceneObject"));
+    item->setText(0, QString::fromStdString(obj->getName()));
+    item->setText(1, typeFor(obj));
     item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(obj));
     tree->addTopLevelItem(item);
 }

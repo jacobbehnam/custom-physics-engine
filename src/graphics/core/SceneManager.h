@@ -79,6 +79,7 @@ private:
     GizmoType selectedGizmoType = GizmoType::TRANSLATE;
     std::unique_ptr<Gizmo> currentGizmo;
 
+    std::string generateDefaultName(const CreationOptions& creationOptions);
     MathUtils::Ray getMouseRay();
 
     // To track if a right click was a click or drag

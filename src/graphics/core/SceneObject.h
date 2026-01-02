@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <utility>
 #include <graphics/components/Mesh.h>
 #include "IDrawable.h"
 #include <graphics/components/Shader.h>
@@ -42,8 +43,9 @@ public:
     void setHovered(bool hovered) override;
     bool getHovered() override;
     Mesh* getMesh() const override { return mesh; }
-    std::string getMeshName() const { return meshName; }
     uint32_t getObjectID() const override;
+    const std::string& getName() const { return objectName; }
+    void setName(std::string name) { objectName = std::move(name); }
     CreationOptions getCreationOptions() const { return creationOptions; }
 
     using PosMap = std::unordered_map<Physics::PhysicsBody*, glm::vec3>;
@@ -59,7 +61,6 @@ private:
 
     QObject* parent;
     Mesh* mesh;
-    std::string meshName;
     Shader* shader;
     Scene* ownerScene;
     SceneManager* sceneManager;
@@ -74,6 +75,7 @@ private:
     bool isHovered = false;
 
     uint32_t objectID;
+    std::string objectName;
 
     glm::mat4 getModelMatrix() const;
 
