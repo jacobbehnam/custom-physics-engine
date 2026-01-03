@@ -19,6 +19,10 @@ enum class BodyLock {
     NOLOCK
 };
 
+constexpr BodyLock operator!(BodyLock lock) {
+    return (lock == BodyLock::LOCK) ? BodyLock::NOLOCK : BodyLock::LOCK;
+}
+
 namespace Physics {
     class PhysicsBody {
     public:

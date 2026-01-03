@@ -1,4 +1,3 @@
-// HierarchyWidget.h
 #pragma once
 
 #include <QTreeWidget>

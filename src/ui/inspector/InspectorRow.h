@@ -23,10 +23,15 @@ public:
     QString getLabel() const { return label; }
     QWidget* getEditor() const { return container; }
 
-    void update() {
+    void refresh() {
         for (auto& fn : updaters) {
             fn();
         }
+    }
+
+    void setEnabled(bool enabled) {
+        if (container)
+            container->setEnabled(enabled);
     }
 
 private:

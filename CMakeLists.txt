@@ -90,12 +90,16 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/MainWindow.h
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
-        src/ui/InspectorWidget.cpp
-        src/ui/InspectorWidget.h
+        src/ui/inspector/InspectorWidget.cpp
+        src/ui/inspector/InspectorWidget.h
         src/ui/HierarchyWidget.cpp
         src/ui/HierarchyWidget.h
-        src/ui/InspectorRow.cpp
-        src/ui/InspectorRow.h
+        src/ui/inspector/InspectorRow.h
+        src/ui/inspector/InspectorRow.cpp
+        src/ui/inspector/IInspectorSection.h
+        src/ui/inspector/TransformInspectorWidget.h
+        src/ui/inspector/TransformInspectorWidget.cpp
+        src/ui/inspector/InspectorRow.h
         src/ui/SnapshotTableModel.cpp
         src/ui/SnapshotTableModel.h
         src/ui/SolverDialog.cpp
@@ -104,6 +108,12 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/Vector3Widget.h
         src/ui/ScalarWidget.cpp
         src/ui/ScalarWidget.h
+        src/ui/inspector/PhysicsInspectorWidget.cpp
+        src/ui/inspector/PhysicsInspectorWidget.h
+        src/ui/inspector/ForcesInspectorWidget.cpp
+        src/ui/inspector/ForcesInspectorWidget.h
+        src/ui/inspector/GlobalsInspectorWidget.cpp
+        src/ui/inspector/GlobalsInspectorWidget.h
 )
 
 # Include directories

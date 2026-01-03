@@ -10,7 +10,7 @@
 #include <QMenuBar>
 
 #include "HierarchyWidget.h"
-#include "InspectorWidget.h"
+#include "inspector/InspectorWidget.h"
 #include "SolverDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -71,8 +71,8 @@ void MainWindow::setupDockWidgets() {
         sceneManager->setObjectName(obj, finalName);
         hierarchy->setObjectName(obj, finalName);
     });
-    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(true); });
-    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(true); });
+    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
+    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
     inspector = new InspectorWidget(sceneManager, this);

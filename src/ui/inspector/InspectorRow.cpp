@@ -1,7 +1,7 @@
 #include "InspectorRow.h"
 #include <QCheckBox>
-#include "Vector3Widget.h"
-#include "ScalarWidget.h"
+#include "../Vector3Widget.h"
+#include "../ScalarWidget.h"
 
 InspectorRow::InspectorRow(const QString &lbl, QWidget* parent) : label(lbl) {
     container = new QWidget(parent);

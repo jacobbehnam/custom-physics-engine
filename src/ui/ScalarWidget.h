@@ -17,5 +17,5 @@ signals:
     void valueChanged(double newValue);
 
 private:
-    QDoubleSpinBox* m_spin;
+    QDoubleSpinBox* spin;
 };
