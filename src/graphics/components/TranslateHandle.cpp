@@ -10,7 +10,6 @@
 
 TranslateHandle::TranslateHandle(Mesh *m, Shader* sdr, SceneObject *tgt, Axis ax, uint32_t objID)
     : mesh(ResourceManager::getMesh("arrow")), shader(sdr), target(tgt), axis(ax), objectID(objID) {
-    std::cout << "a" << std::endl;
 }
 
 glm::mat4 TranslateHandle::getModelMatrix() const {

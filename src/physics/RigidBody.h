@@ -19,6 +19,8 @@ namespace Physics {
         void recordFrame(float t, BodyLock lock) override;
         void loadFrame(const ObjectSnapshot &snapshot, BodyLock lock) override;
 
+        ICollider* getCollider() const override { return collider; }
+
         bool collidesWith(const PhysicsBody &other) const override;
         bool collidesWithPointMass(const PointMass &pm) const override;
         bool collidesWithRigidBody(const RigidBody &rb) const override;

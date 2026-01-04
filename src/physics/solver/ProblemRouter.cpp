@@ -184,7 +184,19 @@ void ProblemRouter::registerKinematicsProblems() {
             case 2: // Distance to Object
             {
                 if (targetBody) {
-                    currentVal = glm::distance(subject->getPosition(BodyLock::LOCK), targetBody->getPosition(BodyLock::LOCK));
+                    auto getClosestOnBody = [&](Physics::PhysicsBody* b, const glm::vec3& targetPos) -> glm::vec3 {
+                        if (auto* col = b->getCollider()) {
+                            return col->closestPoint(targetPos).point;
+                        } else {
+                            return b->getPosition(BodyLock::LOCK);
+                        }
+                    };
+
+                    glm::vec3 centerSubject = subject->getPosition(BodyLock::LOCK);
+                    glm::vec3 pTarget = getClosestOnBody(targetBody, centerSubject);
+                    glm::vec3 pSubject = getClosestOnBody(subject, pTarget);
+
+                    currentVal = glm::distance(pSubject, pTarget);
                 } else {
                     currentVal = 99999.0f;
                 }

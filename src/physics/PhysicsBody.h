@@ -7,6 +7,8 @@
 #include <mutex>
 #include <unordered_set>
 
+class ICollider;
+
 namespace Physics {
     class PointMass;
     class RigidBody;
@@ -58,6 +60,8 @@ namespace Physics {
         void setGlobalAccelerationRef(std::atomic<glm::vec3>& globalAccRef) { globalAccelPtr = &globalAccRef; }
         std::vector<ObjectSnapshot> getAllFrames(BodyLock lock) const;
         void clearAllFrames(BodyLock lock);
+
+        virtual ICollider* getCollider() const { return nullptr; }
 
         // Uses double dispatch
         virtual bool collidesWith(const PhysicsBody& other) const = 0;

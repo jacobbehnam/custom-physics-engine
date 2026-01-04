@@ -18,10 +18,11 @@ void SceneManager::defaultSetup() {
     createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
 
     ObjectOptions floorOpts;
-    floorOpts.position = glm::vec3(0.0f, -5.0f, 150000.0f);
+    floorOpts.position = glm::vec3(0.0f, -0.5f, 0.0f);
     floorOpts.scale = glm::vec3(2000.0f, 1.0f, 300000.0f);
 
     SceneObject* floor = createObject("prim_cube", ResourceManager::getShader("checkerboard"), RigidBodyOptions::Box(floorOpts, true));
+    removePickable(floor);
     setObjectName(floor, "Ground");
 }
 
