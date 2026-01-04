@@ -9,9 +9,20 @@
 
 #include "ui/OpenGLWindow.h"
 
+struct BatchKey {
+    Mesh* mesh;
+    Shader* shader;
+
+    bool operator<(const BatchKey& other) const {
+        if (mesh != other.mesh) return mesh < other.mesh;
+        return shader < other.shader;
+    }
+};
+
 Scene::Scene(QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs), camera(Camera(glm::vec3(0.0f, 0.0f, 3.0f))), basicShader(nullptr), cameraUBO(2*sizeof(glm::mat4), 0, funcs), hoverUBO(sizeof(glm::ivec4) * 1024, 1, funcs), selectUBO(sizeof(glm::ivec4) * 1024, 2, funcs) {
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("assets/shaders/primitive/primitive.vert", "assets/shaders/primitive/primitive.frag", "basic");
+    ResourceManager::loadShader("assets/shaders/primitive/checkerboard.vert", "assets/shaders/primitive/checkerboard.frag", "checkerboard");
 }
 
 uint32_t Scene::allocateObjectID() {
@@ -44,6 +55,8 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
             tmpMap[s.body] = s.position;
     }
 
+    camera.update();
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -63,47 +76,50 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
     selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
 
-    // === INSTANCED DRAWING FOR CUBES ===
-    std::vector<InstanceData> cubeInstances;
-    Mesh* cubeMesh = ResourceManager::getMesh("prim_cube");
-    std::vector<InstanceData> sphereInstances;
-    Mesh* sphereMesh = ResourceManager::getMesh("prim_sphere");
+    // === INSTANCED DRAWING ===
+    std::map<BatchKey, std::vector<InstanceData>> batches;
+    std::unordered_set<IDrawable*> processedObjects;
+
     for (IDrawable* obj : drawableObjects) {
-        if (obj->getMesh() == cubeMesh) {
+        Mesh* mesh = obj->getMesh();
+        Shader* shader = obj->getShader();
+
+        // TODO: refactor this dynamic cast, maybe make a virtual supportsInstancing method in IDrawable
+        if (dynamic_cast<Gizmo*>(obj) != nullptr) {
+            continue;
+        }
+
+        if (mesh && shader) {
+            BatchKey key{ mesh, shader };
+
             InstanceData instance;
             instance.model = obj->getModelMatrix();
             instance.objectID = obj->getObjectID();
-            cubeInstances.push_back(instance);
-        } else if (obj->getMesh() == sphereMesh) {
-            InstanceData instance;
-            instance.model = obj->getModelMatrix();
-            instance.objectID = obj->getObjectID();
-            sphereInstances.push_back(instance);
+
+            batches[key].push_back(instance);
+
+            processedObjects.insert(obj);
         }
     }
 
-    if (!cubeInstances.empty()) {
-        basicShader->use();
-        cubeMesh->drawInstanced(cubeInstances);
-    }
-    if (!sphereInstances.empty()) {
-        basicShader->use();
-        sphereMesh->drawInstanced(sphereInstances);
+    // Execute Draw Calls
+    for (auto& [key, instances] : batches) {
+        if (instances.empty() || !key.mesh || !key.shader)
+            continue;
+
+        key.shader->use();
+        key.mesh->drawInstanced(instances);
     }
 
     // === NORMAL DRAWING FOR OTHER OBJECTS ===
     for (IDrawable* obj : drawableObjects) {
-        if (obj->getMesh() == cubeMesh || obj->getMesh() == sphereMesh)
+        if (processedObjects.find(obj) != processedObjects.end()) {
             continue;
+        }
 
         obj->draw();
     }
 }
-
-// void Scene::update(float dt) {
-//     physicsSystem->step(dt);
-//     processInput(dt);
-// }
 
 Camera *Scene::getCamera() {
     return &camera;

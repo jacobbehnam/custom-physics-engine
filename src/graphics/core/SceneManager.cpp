@@ -15,8 +15,14 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 }
 
 void SceneManager::defaultSetup() {
-    Shader* basicShader = ResourceManager::getShader("basic");
-    createObject("prim_sphere", basicShader, PointMassOptions());
+    createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
+
+    ObjectOptions floorOpts;
+    floorOpts.position = glm::vec3(0.0f, -5.0f, 150000.0f);
+    floorOpts.scale = glm::vec3(2000.0f, 1.0f, 300000.0f);
+
+    SceneObject* floor = createObject("prim_cube", ResourceManager::getShader("checkerboard"), RigidBodyOptions::Box(floorOpts, true));
+    setObjectName(floor, "Ground");
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
@@ -148,6 +154,18 @@ std::string SceneManager::makeUniqueName(const std::string &baseName) const {
         if (usedNames.find(candidate) == usedNames.end())
             return candidate;
         index++;
+    }
+}
+
+void SceneManager::setCameraTarget(SceneObject* target) {
+    if (scene && scene->getCamera()) {
+        scene->getCamera()->setTarget(target);
+    }
+}
+
+void SceneManager::clearCameraTarget() {
+    if (scene && scene->getCamera()) {
+        scene->getCamera()->clearTarget();
     }
 }
 

@@ -20,7 +20,7 @@ signals:
 
 public slots:
     void onItemNameChanged(QTreeWidgetItem* item, int column);
-    void setObjectName(SceneObject* obj, const std::string& name);
+    void setObjectName(SceneObject* obj, const QString& name);
     void onItemSelectionChanged();
     void selectObject(SceneObject* obj);
     void showContextMenu(const QPoint& pos);

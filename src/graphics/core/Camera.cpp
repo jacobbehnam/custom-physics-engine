@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include <iostream>
+#include "SceneObject.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 initPosition) {
@@ -20,27 +20,32 @@ glm::mat4 Camera::getProjMatrix() const {
         glm::radians(fov),
         aspectRatio,
         0.1f,
-        100.0f
-);
+        300000.0f
+    );
 }
 
-// void Camera::handleMouseMovement(double xpos, double ypos) {
-//     if (firstMouse) {
-//         lastX = (float)xpos;
-//         lastY = (float)ypos;
-//         firstMouse = false;
-//     }
-//
-//     // Calculate movement offset
-//     float xoffset = (float)xpos - lastX;
-//     float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
-//
-//     lastX = (float)xpos;
-//     lastY = (float)ypos;
-//
-//     processMouseMovement(xoffset, yoffset);
-// }
+void Camera::setTarget(SceneObject* obj) {
+    targetObject = obj;
+}
 
+void Camera::clearTarget() {
+    targetObject = nullptr;
+    yaw = -90.0f;
+    pitch = 0.0f;
+    updateCameraVectors();
+}
+
+void Camera::update() {
+    if (targetObject) {
+        glm::vec3 targetPos = targetObject->getPosition();
+
+        position = targetPos + followOffset;
+
+        front = glm::normalize(targetPos - position);
+        right = glm::normalize(glm::cross(front, worldUp));
+        up    = glm::normalize(glm::cross(right, front));
+    }
+}
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
     yaw += xoffset * mouseSensitivity;
@@ -51,13 +56,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     if (pitch < -90)
         pitch = -90;
 
-    glm::vec3 newDir;
-    newDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    newDir.y = sin(glm::radians(pitch));
-    newDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = glm::normalize(newDir);
-    right = glm::normalize(glm::cross(front, worldUp));
-    up = glm::normalize(glm::cross(right, front));
+    updateCameraVectors();
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
@@ -76,6 +75,16 @@ void Camera::processKeyboard(Movement direction, float deltaTime) {
             position += right * velocity;
             break;
     }
+}
+
+void Camera::updateCameraVectors() {
+    glm::vec3 newDir;
+    newDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    newDir.y = sin(glm::radians(pitch));
+    newDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front = glm::normalize(newDir);
+    right = glm::normalize(glm::cross(front, worldUp));
+    up    = glm::normalize(glm::cross(right, front));
 }
 
 void Camera::resetMouse() {

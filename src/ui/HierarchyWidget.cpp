@@ -137,13 +137,13 @@ void HierarchyWidget::onItemNameChanged(QTreeWidgetItem* item, int column) {
     emit renameObjectRequested(obj, item->text(0));
 }
 
-void HierarchyWidget::setObjectName(SceneObject *obj, const std::string &name) {
+void HierarchyWidget::setObjectName(SceneObject *obj, const QString &name) {
     QSignalBlocker blocker(tree);
 
     for (int i = 0; i < tree->topLevelItemCount(); ++i) {
         auto* item = tree->topLevelItem(i);
         if (getObjectFromItem(item) == obj) {
-            item->setText(0, QString::fromStdString(name));
+            item->setText(0, name);
             return;
         }
     }

@@ -35,6 +35,9 @@ public:
     void setObjectName(SceneObject* obj, const std::string& newName);
     std::string makeUniqueName(const std::string& baseName) const;
 
+    void setCameraTarget(SceneObject* target);
+    void clearCameraTarget();
+
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
@@ -68,7 +71,7 @@ public:
 signals:
     void objectAdded(SceneObject* obj);
     void objectRemoved(SceneObject* obj);
-    void objectRenamed(SceneObject* obj, const QString& oldName);
+    void objectRenamed(SceneObject* obj, const QString& newName);
 
     void selectedItem(SceneObject* object); // Left click on object
     void contextMenuRequested(const QPoint& globalPos, SceneObject* object); // Right Click on object

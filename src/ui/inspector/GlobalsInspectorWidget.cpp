@@ -269,8 +269,20 @@ void GlobalsInspectorWidget::runSolver() {
         if (targetTime <= 0.0001) targetTime = -1.0;
     }
     knowns["Target_Time"] = targetTime;
-    sceneManager->physicsSystem->solveProblem(body, knowns, unknownKey);
 
+    SceneObject* visualSubject = nullptr;
+    for (auto* obj : sceneManager->getObjects()) {
+        if (static_cast<int>(obj->getObjectID()) == cond.subjectID) {
+            visualSubject = obj;
+            break;
+        }
+    }
+
+    if (visualSubject) {
+        sceneManager->setCameraTarget(visualSubject);
+    }
+
+    sceneManager->physicsSystem->solveProblem(body, knowns, unknownKey);
     emit solveRequested();
     refresh();
 }

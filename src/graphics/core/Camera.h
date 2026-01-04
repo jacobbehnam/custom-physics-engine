@@ -8,6 +8,8 @@ enum class Movement {
     RIGHT,
 };
 
+class SceneObject;
+
 class Camera {
 public: // TODO: make these not public
     glm::vec3 position;
@@ -30,6 +32,10 @@ public: // TODO: make these not public
 
     void setAspectRatio(float ratio) { aspectRatio = ratio; }
 
+    void setTarget(SceneObject* obj);
+    void clearTarget();
+    void update();
+
     void resetMouse();
     void processMouseMovement(float xoffset, float yoffset);
 
@@ -37,5 +43,9 @@ public: // TODO: make these not public
 
     bool firstMouse  = true;
 private:
+    void updateCameraVectors();
+
     float aspectRatio;
+    SceneObject* targetObject = nullptr;
+    glm::vec3 followOffset{20.0f, 15.0f, 30.0f};
 };
