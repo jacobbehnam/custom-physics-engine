@@ -8,7 +8,7 @@ class Vector3Widget : public QWidget{
     Q_OBJECT
 
 public:
-    explicit Vector3Widget(const QString& label = "", QWidget* parent = nullptr);
+    explicit Vector3Widget(const QString& suffix = "", QWidget* parent = nullptr);
 
     glm::vec3 getValue() const;
     void setValue(const glm::vec3& v);

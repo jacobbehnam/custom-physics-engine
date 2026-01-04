@@ -16,8 +16,8 @@ InspectorRow::InspectorRow(const QString &lbl, QWidget* customEditor, std::funct
     }
 }
 
-InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const std::function<void(glm::vec3)> &set, const std::function<void(Vector3Widget*)> &onInit) {
-    Vector3Widget* vec = new Vector3Widget();
+InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const std::function<void(glm::vec3)> &set, const QString& unit, const std::function<void(Vector3Widget*)> &onInit) {
+    auto* vec = new Vector3Widget(" " + unit);
     vec->setValue(get());
     layout->addWidget(vec);
 
@@ -37,8 +37,8 @@ InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const
     return *this;
 }
 
-InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const std::function<void(ScalarWidget*)> &onInit) {
-    ScalarWidget* scalar = new ScalarWidget();
+InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit) {
+    auto* scalar = new ScalarWidget(" " + unit);
     scalar->setValue(get());
     layout->addWidget(scalar);
 

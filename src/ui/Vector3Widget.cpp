@@ -1,6 +1,6 @@
 #include "Vector3Widget.h"
 
-Vector3Widget::Vector3Widget(const QString& label, QWidget* parent) : QWidget(parent) {
+Vector3Widget::Vector3Widget(const QString& suffix, QWidget* parent) : QWidget(parent) {
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
 
@@ -10,6 +10,7 @@ Vector3Widget::Vector3Widget(const QString& label, QWidget* parent) : QWidget(pa
         spin->setDecimals(2);
         spin->setButtonSymbols(QAbstractSpinBox::NoButtons); // Clean look
         spin->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        spin->setSuffix(suffix);
         layout->addWidget(spin);
 
         connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this](double) {

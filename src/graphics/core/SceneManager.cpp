@@ -15,7 +15,9 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 }
 
 void SceneManager::defaultSetup() {
-    createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
+    SceneObject* ball = createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
+    setObjectName(ball, "Ball");
+    ball->getPhysicsBody()->setVelocity(glm::vec3(0.0f, 15.0f, 0.0f), BodyLock::LOCK);
 
     ObjectOptions floorOpts;
     floorOpts.position = glm::vec3(0.0f, -0.5f, 0.0f);
@@ -24,6 +26,11 @@ void SceneManager::defaultSetup() {
     SceneObject* floor = createObject("prim_cube", ResourceManager::getShader("checkerboard"), RigidBodyOptions::Box(floorOpts, true));
     removePickable(floor);
     setObjectName(floor, "Ground");
+
+    PointMassOptions keysOptions{};
+    keysOptions.base.position = glm::vec3(0.0f, 20.0f, 0.0f);
+    SceneObject* keys = createObject("prim_sphere", ResourceManager::getShader("basic"), keysOptions);
+    setObjectName(keys, "Keys");
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {

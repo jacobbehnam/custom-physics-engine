@@ -44,6 +44,7 @@ void PhysicsInspectorWidget::createUiComponents() {
             [this](glm::vec3 v) {
                 if (auto* b = getBody()) b->setVelocity(v, BodyLock::NOLOCK);
             },
+            "m/s",
             [&](Vector3Widget* v) { velWidget = v; }
         );
 
@@ -65,7 +66,8 @@ void PhysicsInspectorWidget::createUiComponents() {
             },
             [this](float m) {
                 if (auto* b = getBody()) b->setMass(m, BodyLock::NOLOCK);
-            }
+            },
+            "kg"
         );
 
         layout->addRow(row.getLabel(), row.getEditor());

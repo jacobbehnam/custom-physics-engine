@@ -7,6 +7,10 @@ This project is a custom-built physics simulation and visualization tool designe
 
 While similar tools and engines already exist, this project was built from the ground up as an exercise in understanding computational physics, numerical methods, and modern OpenGL rendering, with a strong emphasis on clean architecture and maintainability. It also explores how visual tooling can help bridge the gap between abstract equations and physical intuition.
 
+## Example Scenario
+![Physics Demo](src/assets/demo.gif)
+A set of keys is dropped from rest from a height of 20 m, while a ball is simultaneously thrown upward from the ground with an initial velocity of 15 m/s. The system numerically determines the height at which the two objects pass each other.
+
 ## Core Features
 ### Physics Simulation
 - 3D physics simulation

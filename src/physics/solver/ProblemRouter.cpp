@@ -220,7 +220,7 @@ void ProblemRouter::registerKinematicsProblems() {
             }
         };
 
-        auto timeout = [=]() { return physicsSystem.simTime > 60.0f; };
+        auto timeout = [=]() { return false; }; // TODO: temporary no timeout
 
         return std::make_unique<InterceptSolver>(monitor, timeout);
     };

@@ -39,7 +39,8 @@ void TransformInspectorWidget::createUiComponents() {
             },
             [this](glm::vec3 v) {
                 if (selectedObject) selectedObject->setPosition(v);
-            }
+            },
+            "m"
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
@@ -53,7 +54,8 @@ void TransformInspectorWidget::createUiComponents() {
             },
             [this](glm::vec3 v) {
                 if (selectedObject) selectedObject->setRotation(v);
-            }
+            },
+            "rad"
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));

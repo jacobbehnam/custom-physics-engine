@@ -45,7 +45,8 @@ void ForcesInspectorWidget::load(SceneObject* object) {
                 auto* b = getBody();
                 return b ? b->getForce(forceName, BodyLock::NOLOCK) : glm::vec3(0.0f);
             },
-            setter
+            setter,
+            "N"
         );
 
         layout->addRow(row.getLabel(), row.getEditor());
@@ -65,7 +66,8 @@ void ForcesInspectorWidget::load(SceneObject* object) {
                 }
                 return sum;
             },
-            nullptr
+            nullptr,
+            "N"
         );
         layout->addRow(net.getLabel(), net.getEditor());
         rows.push_back(std::move(net));

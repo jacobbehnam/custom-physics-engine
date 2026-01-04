@@ -25,7 +25,8 @@ void GlobalsInspectorWidget::createUiComponents() {
         InspectorRow row("Gravity", this);
         row.addVec3(
             [this]() { return sceneManager->getGlobalAcceleration(); },
-            [this](glm::vec3 g) { sceneManager->setGlobalAcceleration(g); }
+            [this](glm::vec3 g) { sceneManager->setGlobalAcceleration(g); },
+            "m/s²"
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
@@ -35,7 +36,8 @@ void GlobalsInspectorWidget::createUiComponents() {
         InspectorRow row("Sim Speed", this);
         row.addScalar(
             [this]() { return sceneManager->getSimSpeed(); },
-            [this](float s) { sceneManager->setSimSpeed(s); }
+            [this](float s) { sceneManager->setSimSpeed(s); },
+            "x"
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
@@ -43,14 +45,14 @@ void GlobalsInspectorWidget::createUiComponents() {
 
     createStopConditionUi();
 
-    {
-        timeConstraint = new ScalarWidget();
-        timeConstraint->setValue(0.0);
-
-        InspectorRow row("Flight Time (s)", timeConstraint, nullptr);
-        layout->addRow(row.getLabel(), row.getEditor());
-        rows.push_back(std::move(row));
-    }
+    // {
+    //     timeConstraint = new ScalarWidget(" s");
+    //     timeConstraint->setValue(0.0);
+    //
+    //     InspectorRow row("Flight Time", timeConstraint, nullptr);
+    //     layout->addRow(row.getLabel(), row.getEditor());
+    //     rows.push_back(std::move(row));
+    // }
 
     {
         QPushButton* solveBtn = new QPushButton("SOLVE PHYSICS");
@@ -78,7 +80,7 @@ void GlobalsInspectorWidget::createStopConditionUi() {
     QComboBox* subjectCombo = new QComboBox();
     QComboBox* propCombo = new QComboBox();
     QComboBox* opCombo = new QComboBox();
-    ScalarWidget* thresholdWidget = new ScalarWidget();
+    ScalarWidget* thresholdWidget = new ScalarWidget(" m");
 
     QStackedWidget* parameterStack = new QStackedWidget();
     parameterStack->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
