@@ -1,3 +1,8 @@
 build/
 build.sh
 .cache/
+
+# Ignore Doxygen output
+html/
+latex/
+*.db

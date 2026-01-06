@@ -55,7 +55,7 @@ A standalone static library containing:
 This layer is designed to be independent of rendering and UI concerns
 
 ### Testing and Validation
-The physics core is designed to be testable in isolation from rendering and UI. Unit tests focus on numerical correctness and regression protection as the system evolves. More information about testing in `tests/TESTING.md`
+The physics core is designed to be testable in isolation from rendering and UI. Unit tests focus on numerical correctness and regression protection as the system evolves. More information about testing in [Testing and Validation](@ref testing).
 
 ### Application layer
 - OpenGL rendering and scene management
