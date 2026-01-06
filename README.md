@@ -18,8 +18,8 @@ A set of keys is dropped from rest from a height of 20 m, while a ball is simult
 - Support for point masses and rigid bodies
 - Gravity and arbitrary constant forces
 - Collision detection and resolution for
-  - Point mass $\leftrightarrow$ point mass
-  - Point mass $\leftrightarrow$ rigid body
+  - Point mass on point mass
+  - Point mass on rigid body
 
 ### Numerical Solvers
 - Solvers are templated and decoupled from physics data structures, operating purely on generic callables, allowing reuse outside of physics
