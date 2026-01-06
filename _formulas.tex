@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage{ifthen}
+\usepackage{epsfig}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+  \makeatletter
+    \def\doxynewunicodechar#1#2{%
+    \@tempswafalse
+    \edef\nuc@tempa{\detokenize{#1}}%
+    \if\relax\nuc@tempa\relax
+      \nuc@emptyargerr
+    \else
+      \edef\@tempb{\expandafter\@car\nuc@tempa\@nil}%
+      \nuc@check
+      \if@tempswa
+        \@namedef{u8:\nuc@tempa}{#2}%
+      \fi
+    \fi
+  }
+  \makeatother
+  \doxynewunicodechar{⁻}{${}^{-}$}% Superscript minus
+  \doxynewunicodechar{²}{${}^{2}$}% Superscript two
+  \doxynewunicodechar{³}{${}^{3}$}% Superscript three
+
+\pagestyle{empty}
+\begin{document}
+$ O(\Delta t^4) $
+\pagebreak
+
+$ O(\Delta t^3) $
+\pagebreak
+
+$ O(\Delta t^2) $
+\pagebreak
+
+\[
+\frac{d\ddot{\vec{r}}}{dt} = 0
+\]
+\pagebreak
+
+\[
+\lVert \vec{r}_{\text{error}} \rVert \le
+C \cdot N \cdot \epsilon \cdot \max\!\left(\lVert \vec{r}(t) \rVert\right)
+\]
+\pagebreak
+
+$ N $
+\pagebreak
+
+\[
+  N = \frac{1}{\Delta t}
+  \]
+\pagebreak
+
+$ \epsilon $
+\pagebreak
+
+\[
+  \epsilon \approx 1.19 \times 10^{-7}
+  \]
+\pagebreak
+
+$ \max(\lVert \vec{r}(t) \rVert) $
+\pagebreak
+
+$ C $
+\pagebreak
+
+\end{document}
