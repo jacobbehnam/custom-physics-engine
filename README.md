@@ -1,4 +1,7 @@
 # Physics Simulation & Visualization Tool
+[![Doxygen Deploy](https://github.com/jacobbehnam/custom-physics-engine/actions/workflows/doxygen.yml/badge.svg)](https://jacobbehnam.github.io/custom-physics-engine/)
+
+**[📚 Read the Full Documentation](https://jacobbehnam.github.io/custom-physics-engine/)**
 
 A C++ physics simulation and visualization tool for modeling and solving classical mechanics problems through real-time 3D interaction and numerical methods.
 
@@ -9,6 +12,7 @@ While similar tools and engines already exist, this project was built from the g
 
 ## Example Scenario
 ![Physics Demo](src/assets/demo.gif)
+
 A set of keys is dropped from rest from a height of 20 m, while a ball is simultaneously thrown upward from the ground with an initial velocity of 15 m/s. The system numerically determines the height at which the two objects pass each other.
 
 ## Core Features
