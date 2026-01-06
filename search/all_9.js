@@ -20,7 +20,7 @@ var searchData=
   ['inspectorwidget_2eh_17',['InspectorWidget.h',['../InspectorWidget_8h.html',1,'']]],
   ['instancedata_18',['InstanceData',['../structInstanceData.html',1,'']]],
   ['integration_20method_19',['Numerical Integration Method',['../testing.html#autotoc_md16',1,'']]],
-  ['interactive_203d_20visualization_20',['Interactive 3D Visualization',['../md_README.html#autotoc_md6',1,'']]],
+  ['interactive_203d_20visualization_20',['Interactive 3D Visualization',['../index.html#autotoc_md6',1,'']]],
   ['interceptsolver_21',['interceptsolver',['../classInterceptSolver.html',1,'InterceptSolver'],['../classInterceptSolver.html#a57c52868f39b60e5fc6c888a5e9ced39',1,'InterceptSolver::InterceptSolver()']]],
   ['interceptsolver_2ecpp_22',['InterceptSolver.cpp',['../InterceptSolver_8cpp.html',1,'']]],
   ['interceptsolver_2eh_23',['InterceptSolver.h',['../InterceptSolver_8h.html',1,'']]],

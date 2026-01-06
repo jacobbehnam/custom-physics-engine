@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: Main Page</title>
+<title>Physics Simulation &amp; Visualization Tool: Physics Simulation &amp; Visualization Tool</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -16,6 +16,13 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX","output/HTML-CSS"],
+});
+</script>
+<script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -89,10 +96,94 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Physics Simulation &amp; Visualization Tool Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title"><a class="el" href="namespacePhysics.html">Physics</a> Simulation &amp; Visualization Tool </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md_README"></a> A C++ physics simulation and visualization tool for modeling and solving classical mechanics problems through real-time 3D interaction and numerical methods.</p>
+<h1><a class="anchor" id="autotoc_md1"></a>
+Overview</h1>
+<p>This project is a custom-built physics simulation and visualization tool designed to model classical mechanics problems in an interactive 3D environment. Users can construct physical scenarios, manipulate objects directly in the scene, and either simulate their behavior over time or numerically solve for unknown quantities.</p>
+<p>While similar tools and engines already exist, this project was built from the ground up as an exercise in understanding computational physics, numerical methods, and modern OpenGL rendering, with a strong emphasis on clean architecture and maintainability. It also explores how visual tooling can help bridge the gap between abstract equations and physical intuition.</p>
+<h1><a class="anchor" id="autotoc_md2"></a>
+Example Scenario</h1>
+<p><img src="demo.gif" alt="" class="inline" title="Physics Demo"/>     A set of keys is dropped from rest from a height of 20 m, while a ball is simultaneously thrown upward from the ground with an initial velocity of 15 m/s. The system numerically determines the height at which the two objects pass each other.</p>
+<h1><a class="anchor" id="autotoc_md3"></a>
+Core Features</h1>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Physics Simulation</h2>
+<ul>
+<li>3D physics simulation</li>
+<li>Velocity Verlet integration for stable, energy-conserving motion</li>
+<li>Support for point masses and rigid bodies</li>
+<li>Gravity and arbitrary constant forces</li>
+<li>Collision detection and resolution for<ul>
+<li>Point mass $\leftrightarrow$ point mass</li>
+<li>Point mass $\leftrightarrow$ rigid body</li>
+</ul>
+</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Numerical Solvers</h2>
+<ul>
+<li>Solvers are templated and decoupled from physics data structures, operating purely on generic callables, allowing reuse outside of physics</li>
+<li><a class="el" href="namespacePhysics.html">Physics</a> problems are routed to solvers via a dedicated problem-routing layer</li>
+<li>Intermediate solver iterations are exposed to the user, allowing visualization of convergence rather than only final results</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Interactive 3D Visualization</h2>
+<ul>
+<li>Real-time OpenGL renderer with free-fly camera controls</li>
+<li>Object selection and manipulation directly in the scene</li>
+<li>Transform gizmos for translation, rotation, and scaling</li>
+<li>Compute shaders (SSBOs) used for GPU-based ray intersection tests</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md7"></a>
+Editor-Style UI</h2>
+<ul>
+<li>Qt-based application interface</li>
+<li><a class="el" href="classScene.html">Scene</a> hierarchy and inspector panels</li>
+<li>Live modification of object properties</li>
+<li>Controls for running, pausing, and solving simulations</li>
+<li>Snapshot system that records full simulation state at each timestep for debugging and analysis</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md8"></a>
+Multithreaded Simulation</h2>
+<ul>
+<li><a class="el" href="namespacePhysics.html">Physics</a> simulation runs on a dedicated thread, decoupled from rendering and UI</li>
+<li>Ensures responsive interaction while simulations or numerical solvers are running</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md9"></a>
+Architecture Overview</h1>
+<p>This project is organized into two major layers and executes across multiple threads to maintain responsiveness during simulation and problem-solving. The physics simulation runs on a dedicated thread, while rendering and UI logic execute independently on the main thread: </p>
+<h2><a class="anchor" id="autotoc_md10"></a>
+PhysicsCore</h2>
+<p>A standalone static library containing:</p><ul>
+<li><a class="el" href="namespacePhysics.html">Physics</a> bodies and simulation logic</li>
+<li>Collision handling</li>
+<li>Numerical solvers</li>
+<li>Math and utility code</li>
+</ul>
+<p>This layer is designed to be independent of rendering and UI concerns</p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Testing and Validation</h2>
+<p>The physics core is designed to be testable in isolation from rendering and UI. Unit tests focus on numerical correctness and regression protection as the system evolves. More information about testing in <a class="el" href="testing.html">Testing and Validation</a>.</p>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Application layer</h2>
+<ul>
+<li>OpenGL rendering and scene management</li>
+<li>Qt-based user interface</li>
+<li>Editor tools and interaction logic</li>
+<li>Visualization of physics state and solver progress</li>
+</ul>
+<p>A key architectural goal is separation of concerns. Numerical solvers are intentionally decoupled from physics-specific code, allowing the same solver infrastructure to be reused for different problem domains.</p>
+<h1><a class="anchor" id="autotoc_md13"></a>
+Project Status</h1>
+<p>This is an ongoing independent project and work in progress. The codebase prioritizes clarity, modularity, and extensibility, even when features are incomplete. The current implementation represents a stable foundation for future experimentation and refinement.</p>
+<h1><a class="anchor" id="autotoc_md14"></a>
+Author</h1>
+<p>Jacob Behnam </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -16,6 +16,13 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX","output/HTML-CSS"],
+});
+</script>
+<script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -100,21 +107,21 @@ Numerical Integration Method</h2>
 <p>The physics engine uses Velocity Verlet integration due to its stability and favorable energy conservation properties.</p>
 <p>For general motion, the method has:</p><ul>
 <li>Local truncation error of<ul>
-<li><picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ O(\Delta t^4) $" src="form_0.png"/></picture> for position</li>
-<li><picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ O(\Delta t^3) $" src="form_1.png"/></picture> for velocity</li>
+<li>\( O(\Delta t^4) \) for position</li>
+<li>\( O(\Delta t^3) \) for velocity</li>
 </ul>
 </li>
 <li>Accumulated global error over a fixed simulation time that scales as <br  />
- <picture><source srcset="form_2_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ O(\Delta t^2) $" src="form_2.png"/></picture> for both position and velocity</li>
+ \( O(\Delta t^2) \) for both position and velocity</li>
 </ul>
 <hr  />
 <h2><a class="anchor" id="autotoc_md18"></a>
 Constant-Force Special Case</h2>
 <p>The current simulation supports only constant forces (e.g., gravity and constant thrust).</p>
 <p>In this case, acceleration satisfies:  </p><p class="formulaDsp">
-<picture><source srcset="form_3_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\[
+\[
 \frac{d\ddot{\vec{r}}}{dt} = 0
-\]" src="form_3.png"/></picture>
+\]
 </p>
 <p>Velocity Verlet integrates constant acceleration exactly, meaning the theoretical truncation error is zero. As a result, any deviation from the analytical solution arises solely from floating-point rounding error.</p>
 <hr  />
@@ -122,29 +129,29 @@ Constant-Force Special Case</h2>
 Floating-Point Error Model</h2>
 <p>For constant-force test cases, the expected bound on position error is:</p>
 <p class="formulaDsp">
-<picture><source srcset="form_4_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\[
+\[
 \lVert \vec{r}_{\text{error}} \rVert \le
 C \cdot N \cdot \epsilon \cdot \max\!\left(\lVert \vec{r}(t) \rVert\right)
-\]" src="form_4.png"/></picture>
+\]
 </p>
 <p>where:</p>
 <ul>
-<li><picture><source srcset="form_5_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ N $" src="form_5.png"/></picture> is the number of integration steps <br  />
+<li>\( N \) is the number of integration steps <br  />
   <p class="formulaDsp">
-<picture><source srcset="form_6_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\[
+\[
   N = \frac{1}{\Delta t}
-  \]" src="form_6.png"/></picture>
+  \]
 </p>
 </li>
-<li><picture><source srcset="form_7_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \epsilon $" src="form_7.png"/></picture> is the machine epsilon for single-precision floating point <br  />
+<li>\( \epsilon \) is the machine epsilon for single-precision floating point <br  />
   <p class="formulaDsp">
-<picture><source srcset="form_8_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\[
+\[
   \epsilon \approx 1.19 \times 10^{-7}
-  \]" src="form_8.png"/></picture>
+  \]
 </p>
 </li>
-<li><picture><source srcset="form_9_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \max(\lVert \vec{r}(t) \rVert) $" src="form_9.png"/></picture> is the maximum magnitude of the position vector reached during the simulation</li>
-<li><picture><source srcset="form_10_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ C $" src="form_10.png"/></picture> is a small conservative constant accounting for the number of floating-point operations per integration step</li>
+<li>\( \max(\lVert \vec{r}(t) \rVert) \) is the maximum magnitude of the position vector reached during the simulation</li>
+<li>\( C \) is a small conservative constant accounting for the number of floating-point operations per integration step</li>
 </ul>
 <hr  />
 <h2><a class="anchor" id="autotoc_md22"></a>

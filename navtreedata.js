@@ -25,24 +25,22 @@
 var NAVTREE =
 [
   [ "Physics Simulation & Visualization Tool", "index.html", [
-    [ "Physics Simulation & Visualization Tool", "md_README.html", [
-      [ "Overview", "md_README.html#autotoc_md1", null ],
-      [ "Example Scenario", "md_README.html#autotoc_md2", null ],
-      [ "Core Features", "md_README.html#autotoc_md3", [
-        [ "Physics Simulation", "md_README.html#autotoc_md4", null ],
-        [ "Numerical Solvers", "md_README.html#autotoc_md5", null ],
-        [ "Interactive 3D Visualization", "md_README.html#autotoc_md6", null ],
-        [ "Editor-Style UI", "md_README.html#autotoc_md7", null ],
-        [ "Multithreaded Simulation", "md_README.html#autotoc_md8", null ]
-      ] ],
-      [ "Architecture Overview", "md_README.html#autotoc_md9", [
-        [ "PhysicsCore", "md_README.html#autotoc_md10", null ],
-        [ "Testing and Validation", "md_README.html#autotoc_md11", null ],
-        [ "Application layer", "md_README.html#autotoc_md12", null ]
-      ] ],
-      [ "Project Status", "md_README.html#autotoc_md13", null ],
-      [ "Author", "md_README.html#autotoc_md14", null ]
+    [ "Overview", "index.html#autotoc_md1", null ],
+    [ "Example Scenario", "index.html#autotoc_md2", null ],
+    [ "Core Features", "index.html#autotoc_md3", [
+      [ "Physics Simulation", "index.html#autotoc_md4", null ],
+      [ "Numerical Solvers", "index.html#autotoc_md5", null ],
+      [ "Interactive 3D Visualization", "index.html#autotoc_md6", null ],
+      [ "Editor-Style UI", "index.html#autotoc_md7", null ],
+      [ "Multithreaded Simulation", "index.html#autotoc_md8", null ]
     ] ],
+    [ "Architecture Overview", "index.html#autotoc_md9", [
+      [ "PhysicsCore", "index.html#autotoc_md10", null ],
+      [ "Testing and Validation", "index.html#autotoc_md11", null ],
+      [ "Application layer", "index.html#autotoc_md12", null ]
+    ] ],
+    [ "Project Status", "index.html#autotoc_md13", null ],
+    [ "Author", "index.html#autotoc_md14", null ],
     [ "Testing and Validation", "testing.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
