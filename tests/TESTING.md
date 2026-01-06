@@ -12,7 +12,7 @@ For general motion, the method has:
 - Local truncation error of
     - \f$ O(\Delta t^4) \f$ for position
     - \f$ O(\Delta t^3) \f$ for velocity
-- Accumulated **global error** over a fixed simulation time that scales as  
+- Accumulated global error over a fixed simulation time that scales as  
   \f$ O(\Delta t^2) \f$ for both position and velocity
 
 ---
