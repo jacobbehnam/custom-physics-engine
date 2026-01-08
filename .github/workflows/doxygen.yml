@@ -22,7 +22,7 @@ jobs:
         run: doxygen Doxyfile
         
       - name: Create .nojekyll
-        run: touch html/.nojekyll
+        run: touch docs/html/.nojekyll
         
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
