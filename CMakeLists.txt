@@ -49,7 +49,6 @@ add_library(PhysicsCore STATIC
 
         # Dependencies
         src/graphics/utils/MathUtils.h
-        src/graphics/utils/MathUtils.cpp
 )
 
 add_executable(PhysicsEngine src/main.cpp

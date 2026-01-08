@@ -193,8 +193,7 @@ MathUtils::Ray SceneManager::getMouseRay() {
 void SceneManager::updateHoverState(const MathUtils::Ray &mouseRay) {
     hoveredIDs.clear();
 
-    float closestT;
-    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, closestT, currentGizmo.get());
+    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, currentGizmo.get())->object;
     if (hovered) {
         hoveredIDs.insert(hovered->getObjectID());
     }
@@ -220,8 +219,7 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
 
             if (glm::distance(camera->front, rightClickStartDir) < 0.05f) {
                 MathUtils::Ray ray = getMouseRay();
-                float dist = 0.0f;
-                IPickable* hit = MathUtils::findFirstHit(pickableObjects, ray, dist, currentGizmo.get());
+                IPickable* hit = MathUtils::findFirstHit(pickableObjects, ray, currentGizmo.get())->object;
 
                 if (auto* sceneObj = dynamic_cast<SceneObject*>(hit)) {
                     emit contextMenuRequested(QCursor::pos(), sceneObj);
@@ -232,21 +230,23 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
 
     if (button == Qt::LeftButton) {
         MathUtils::Ray ray = getMouseRay();
-        float closestDistance = std::numeric_limits<float>::max();
-        IPickable* clickedObject = MathUtils::findFirstHit(pickableObjects, ray, closestDistance, currentGizmo.get());
-        const bool clickedCurrentGizmo = clickedObject && currentGizmo && (clickedObject->getObjectID() == currentGizmo->getObjectID());
+        auto hit = MathUtils::findFirstHit(pickableObjects, ray, currentGizmo.get());
+        IPickable* clickedObject = hit ? hit->object : nullptr;
+        bool clickedCurrentGizmo = clickedObject && currentGizmo && (clickedObject->getObjectID() == currentGizmo->getObjectID());
 
         if (isPress) {
-            if (!(clickedObject && (selectedIDs.empty() || clickedCurrentGizmo))) {
-                // If we select a non gizmo not currently selected, clear the selection list and delete the gizmo
+            // Clear selection if we click something new that isn't the current gizmo
+            if (!clickedObject || (!selectedIDs.empty() && !clickedCurrentGizmo)) {
                 setSelectFor(nullptr);
             }
-            if (clickedObject) {
-                clickedObject->handleClick(ray.origin, ray.dir, closestDistance);
-                selectedIDs.insert(clickedObject->getObjectID());
-                if (!clickedCurrentGizmo)
-                    // Fine with dynamic cast here because this method is not executed often
-                    emit selectedItem(dynamic_cast<SceneObject*>(clickedObject));
+
+            if (!clickedObject)
+                return;
+
+            clickedObject->handleClick(ray.origin, ray.dir, hit->distance);
+            selectedIDs.insert(clickedObject->getObjectID());
+            if (!clickedCurrentGizmo) {
+                emit selectedItem(dynamic_cast<SceneObject*>(clickedObject));
             }
         } else if (isRelease && currentGizmo) {
             currentGizmo->handleRelease();
