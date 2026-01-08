@@ -102,7 +102,7 @@ $(document).ready(function(){initNavTree('testing.html',''); initResizable(); })
 <div class="contents">
 <div class="textblock"><p>Numerical correctness and validation strategy for the physics engine.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md16"></a>
+<h2><a class="anchor" id="autotoc_md20"></a>
 Numerical Integration Method</h2>
 <p>The physics engine uses Velocity Verlet integration due to its stability and favorable energy conservation properties.</p>
 <p>For general motion, the method has:</p><ul>
@@ -115,7 +115,7 @@ Numerical Integration Method</h2>
  \( O(\Delta t^2) \) for both position and velocity</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md22"></a>
 Constant-Force Special Case</h2>
 <p>The current simulation supports only constant forces (e.g., gravity and constant thrust).</p>
 <p>In this case, acceleration satisfies:  </p><p class="formulaDsp">
@@ -125,7 +125,7 @@ Constant-Force Special Case</h2>
 </p>
 <p>Velocity Verlet integrates constant acceleration exactly, meaning the theoretical truncation error is zero. As a result, any deviation from the analytical solution arises solely from floating-point rounding error.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md20"></a>
+<h2><a class="anchor" id="autotoc_md24"></a>
 Floating-Point Error Model</h2>
 <p>For constant-force test cases, the expected bound on position error is:</p>
 <p class="formulaDsp">
@@ -154,7 +154,7 @@ C \cdot N \cdot \epsilon \cdot \max\!\left(\lVert \vec{r}(t) \rVert\right)
 <li>\( C \) is a small conservative constant accounting for the number of floating-point operations per integration step</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md22"></a>
+<h2><a class="anchor" id="autotoc_md26"></a>
 Testing Strategy</h2>
 <p>Unit tests validate the physics core by:</p>
 <ul>

@@ -9,7 +9,7 @@ var classPhysics_1_1PhysicsBody =
     [ "collidesWithRigidBody", "classPhysics_1_1PhysicsBody.html#abd13f91a0aaeaef21e492db3f1507043", null ],
     [ "getAllForces", "classPhysics_1_1PhysicsBody.html#a6fb25efd74ad88f01f5c481bd516bad8", null ],
     [ "getAllFrames", "classPhysics_1_1PhysicsBody.html#a956983b2c01b34a508ffe85d1a133396", null ],
-    [ "getCollider", "classPhysics_1_1PhysicsBody.html#aae084fdfd865a82b19de4d7756ae8466", null ],
+    [ "getCollider", "classPhysics_1_1PhysicsBody.html#ad67776bca8ab8dda937bdb1dc50855e6", null ],
     [ "getForce", "classPhysics_1_1PhysicsBody.html#a1669edd42a9c728fa053fb56a2b2ad9f", null ],
     [ "getID", "classPhysics_1_1PhysicsBody.html#a548a65cb04a05bb13dba6a32b8212afb", null ],
     [ "getIsStatic", "classPhysics_1_1PhysicsBody.html#a9b4cbc6f8c2f9834cfd5b251c9b27062", null ],

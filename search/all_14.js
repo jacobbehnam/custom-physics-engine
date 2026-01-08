@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['ui_0',['Editor-Style UI',['../index.html#autotoc_md7',1,'']]],
+  ['ui_0',['Editor-Style UI',['../index.html#autotoc_md11',1,'']]],
   ['uniformbuffer_1',['uniformbuffer',['../classUniformBuffer.html',1,'UniformBuffer'],['../classUniformBuffer.html#a3262da40fc1214ed6d8f803139f2cc25',1,'UniformBuffer::UniformBuffer()']]],
   ['uniformbuffer_2ecpp_2',['UniformBuffer.cpp',['../UniformBuffer_8cpp.html',1,'']]],
   ['uniformbuffer_2eh_3',['UniformBuffer.h',['../UniformBuffer_8h.html',1,'']]],
@@ -9,6 +9,7 @@ var searchData=
   ['up_6',['up',['../classCamera.html#a3fe5f351380fb118ffc600591769f049',1,'Camera']]],
   ['update_7',['update',['../classCamera.html#a42cda7239981a5618660d04bd5893556',1,'Camera']]],
   ['updatedata_8',['updateData',['../classUniformBuffer.html#ab8c80840cb69d51f92ef35365deb47ef',1,'UniformBuffer']]],
-  ['updatehoverstate_9',['updateHoverState',['../classSceneManager.html#a775fe39369fd044954f75256378d30d3',1,'SceneManager']]],
-  ['use_10',['use',['../classComputeShader.html#af8aa81e2e9571dbd88c8abe95fa15cf3',1,'ComputeShader::use()'],['../classShader.html#a3c7896754f0e1fca8bde860cfef63832',1,'Shader::use()']]]
+  ['updatehoverstate_9',['updateHoverState',['../classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9',1,'SceneManager']]],
+  ['usage_20pattern_10',['Usage Pattern',['../classISolver.html#autotoc_md1',1,'']]],
+  ['use_11',['use',['../classComputeShader.html#af8aa81e2e9571dbd88c8abe95fa15cf3',1,'ComputeShader::use()'],['../classShader.html#a3c7896754f0e1fca8bde860cfef63832',1,'Shader::use()']]]
 ];

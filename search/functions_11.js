@@ -8,7 +8,7 @@ var searchData=
   ['scenemanager_5',['SceneManager',['../classSceneManager.html#aac0c52b9be10e597bacacb46b2887877',1,'SceneManager']]],
   ['sceneobject_6',['SceneObject',['../classSceneObject.html#a71b5ba2106108265edb221540f4ec1ae',1,'SceneObject']]],
   ['sceneserializer_7',['SceneSerializer',['../classSceneSerializer.html#a23f0a19fed68616f2b144e0124627cbd',1,'SceneSerializer']]],
-  ['screentoworldraydirection_8',['screenToWorldRayDirection',['../namespaceMathUtils.html#a260bdcd94f0f6098411a39cff0577662',1,'MathUtils']]],
+  ['screentoworldraydirection_8',['screenToWorldRayDirection',['../namespaceMath.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7',1,'Math']]],
   ['selecteditem_9',['selectedItem',['../classSceneManager.html#a25bec2896954b4f0c3bed8ef736993d3',1,'SceneManager']]],
   ['selectionchanged_10',['selectionChanged',['../classHierarchyWidget.html#abd2eefa0f824d84eb87ef74aff7a5db0',1,'HierarchyWidget']]],
   ['selectobject_11',['selectObject',['../classHierarchyWidget.html#a2ca7bc222a0e5e414bcf5687dec8503f',1,'HierarchyWidget']]],

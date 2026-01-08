@@ -1,13 +1,15 @@
 var annotated_dup =
 [
-    [ "MathUtils", "namespaceMathUtils.html", [
-      [ "HitResult", "namespaceMathUtils.html#structMathUtils_1_1HitResult", "namespaceMathUtils_structMathUtils_1_1HitResult_dup" ],
-      [ "Ray", "namespaceMathUtils.html#structMathUtils_1_1Ray", "namespaceMathUtils_structMathUtils_1_1Ray_dup" ]
+    [ "Math", "namespaceMath.html", [
+      [ "HitResult", "namespaceMath.html#structMath_1_1HitResult", "namespaceMath_structMath_1_1HitResult_dup" ],
+      [ "Ray", "namespaceMath.html#structMath_1_1Ray", "namespaceMath_structMath_1_1Ray_dup" ]
     ] ],
     [ "Physics", "namespacePhysics.html", [
       [ "Bounding", "namespacePhysics_1_1Bounding.html", [
         [ "AABB", "classPhysics_1_1Bounding_1_1AABB.html", "classPhysics_1_1Bounding_1_1AABB" ],
-        [ "BoxCollider", "classPhysics_1_1Bounding_1_1BoxCollider.html", "classPhysics_1_1Bounding_1_1BoxCollider" ]
+        [ "BoxCollider", "classPhysics_1_1Bounding_1_1BoxCollider.html", "classPhysics_1_1Bounding_1_1BoxCollider" ],
+        [ "ContactInfo", "namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo", "namespacePhysics_1_1Bounding_structPhysics_1_1Bounding_1_1ContactInfo_dup" ],
+        [ "ICollider", "classPhysics_1_1Bounding_1_1ICollider.html", "classPhysics_1_1Bounding_1_1ICollider" ]
       ] ],
       [ "PhysicsBody", "classPhysics_1_1PhysicsBody.html", "classPhysics_1_1PhysicsBody" ],
       [ "PhysicsSystem", "classPhysics_1_1PhysicsSystem.html", "classPhysics_1_1PhysicsSystem" ],
@@ -20,12 +22,10 @@ var annotated_dup =
     [ "BatchKey", "structBatchKey.html", "structBatchKey" ],
     [ "Camera", "classCamera.html", "classCamera" ],
     [ "ComputeShader", "classComputeShader.html", "classComputeShader" ],
-    [ "ContactInfo", "ICollider_8h.html#structContactInfo", "ICollider_8h_structContactInfo" ],
     [ "ForcesInspectorWidget", "classForcesInspectorWidget.html", "classForcesInspectorWidget" ],
     [ "Gizmo", "classGizmo.html", "classGizmo" ],
     [ "GlobalsInspectorWidget", "classGlobalsInspectorWidget.html", "classGlobalsInspectorWidget" ],
     [ "HierarchyWidget", "classHierarchyWidget.html", "classHierarchyWidget" ],
-    [ "ICollider", "classICollider.html", "classICollider" ],
     [ "IDrawable", "classIDrawable.html", "classIDrawable" ],
     [ "IHandle", "classIHandle.html", "classIHandle" ],
     [ "IInspectorSection", "classIInspectorSection.html", "classIInspectorSection" ],

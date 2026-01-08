@@ -1,23 +1,19 @@
 <map id="Physics::PointMass::resolveCollisionWithRigidBody" name="Physics::PointMass::resolveCollisionWithRigidBody">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,248,236,288"/>
-<area shape="rect" id="Node000002" href="$classPhysics_1_1RigidBody.html#ab4b4ea01aa74880550e9e1d91e6ed10d" title=" " alt="" coords="284,248,515,288"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,265,270,265,270,271,236,271"/>
-<area shape="rect" id="Node000003" href="$classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3" title=" " alt="" coords="583,5,729,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="409,246,432,206,466,155,509,102,561,55,570,49,573,54,564,59,513,105,470,158,436,209,413,249"/>
-<area shape="rect" id="Node000004" href="$classICollider.html#a764e71a6134a33f339affd6eea363841" title=" " alt="" coords="575,70,737,95"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="414,246,473,177,515,139,561,106,578,98,580,102,564,110,518,143,477,181,418,249"/>
-<area shape="rect" id="Node000005" href="$classPhysics_1_1PhysicsBody.html#a6fb25efd74ad88f01f5c481bd516bad8" title=" " alt="" coords="575,120,737,160"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="429,245,489,208,562,170,578,162,580,167,564,174,492,213,432,250"/>
-<area shape="rect" id="Node000006" href="$classPhysics_1_1PhysicsBody.html#a0c44730bee1088e28f85b4579f506c7d" title=" " alt="" coords="575,184,737,224"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="480,245,562,225,563,230,481,251"/>
-<area shape="rect" id="Node000007" href="$classPhysics_1_1PhysicsBody.html#ac4112265c85a99f20fb69008db8e8754" title=" " alt="" coords="575,248,737,288"/>
-<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="515,265,561,265,561,271,515,271"/>
-<area shape="rect" id="Node000008" href="$classICollider.html#ab469b9bbe9a4c245a59b4bc1539095dd" title=" " alt="" coords="563,313,749,338"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="490,285,586,307,585,312,489,291"/>
-<area shape="rect" id="Node000009" href="$classPhysics_1_1PhysicsBody.html#a4bbf491e193cf2e29954c38a92865e29" title=" " alt="" coords="575,363,737,403"/>
-<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="439,286,564,347,584,355,582,360,562,352,437,291"/>
-<area shape="rect" id="Node000010" href="$classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d" title=" " alt="" coords="575,427,737,467"/>
-<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="420,286,480,348,520,382,564,412,576,419,573,423,561,417,517,386,477,352,416,290"/>
-<area shape="rect" id="Node000011" href="$classPhysics_1_1PhysicsBody.html#a1aedc823891235ff429c55e0740ab423" title=" " alt="" coords="575,491,737,531"/>
-<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="413,287,436,327,470,378,513,431,564,477,573,482,570,487,561,481,509,434,466,381,432,330,409,290"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,197,236,237"/>
+<area shape="rect" id="Node000002" href="$classPhysics_1_1RigidBody.html#ab4b4ea01aa74880550e9e1d91e6ed10d" title=" " alt="" coords="284,197,515,237"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,215,270,215,270,220,236,220"/>
+<area shape="rect" id="Node000003" href="$classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3" title=" " alt="" coords="570,5,717,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="415,195,475,128,516,89,561,55,571,49,574,54,564,60,519,94,479,132,419,199"/>
+<area shape="rect" id="Node000004" href="$classPhysics_1_1PhysicsBody.html#a6fb25efd74ad88f01f5c481bd516bad8" title=" " alt="" coords="563,69,724,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="430,195,490,158,561,119,575,112,578,117,564,124,493,163,433,199"/>
+<area shape="rect" id="Node000005" href="$classPhysics_1_1PhysicsBody.html#a0c44730bee1088e28f85b4579f506c7d" title=" " alt="" coords="563,133,724,173"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="476,195,553,174,554,179,477,200"/>
+<area shape="rect" id="Node000006" href="$classPhysics_1_1PhysicsBody.html#ac4112265c85a99f20fb69008db8e8754" title=" " alt="" coords="563,197,724,237"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="515,215,549,215,549,220,515,220"/>
+<area shape="rect" id="Node000007" href="$classPhysics_1_1PhysicsBody.html#a4bbf491e193cf2e29954c38a92865e29" title=" " alt="" coords="563,261,724,301"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="477,235,554,255,553,260,476,240"/>
+<area shape="rect" id="Node000008" href="$classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d" title=" " alt="" coords="563,325,724,365"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="433,235,493,272,564,311,578,317,575,322,561,316,490,277,430,240"/>
+<area shape="rect" id="Node000009" href="$classPhysics_1_1PhysicsBody.html#a1aedc823891235ff429c55e0740ab423" title=" " alt="" coords="563,389,724,429"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="419,236,479,303,519,341,564,375,574,381,571,385,561,380,516,345,475,307,415,239"/>
 </map>

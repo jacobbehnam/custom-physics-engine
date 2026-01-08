@@ -25,22 +25,22 @@
 var NAVTREE =
 [
   [ "Physics Simulation & Visualization Tool", "index.html", [
-    [ "Overview", "index.html#autotoc_md1", null ],
-    [ "Example Scenario", "index.html#autotoc_md2", null ],
-    [ "Core Features", "index.html#autotoc_md3", [
-      [ "Physics Simulation", "index.html#autotoc_md4", null ],
-      [ "Numerical Solvers", "index.html#autotoc_md5", null ],
-      [ "Interactive 3D Visualization", "index.html#autotoc_md6", null ],
-      [ "Editor-Style UI", "index.html#autotoc_md7", null ],
-      [ "Multithreaded Simulation", "index.html#autotoc_md8", null ]
+    [ "Overview", "index.html#autotoc_md5", null ],
+    [ "Example Scenario", "index.html#autotoc_md6", null ],
+    [ "Core Features", "index.html#autotoc_md7", [
+      [ "Physics Simulation", "index.html#autotoc_md8", null ],
+      [ "Numerical Solvers", "index.html#autotoc_md9", null ],
+      [ "Interactive 3D Visualization", "index.html#autotoc_md10", null ],
+      [ "Editor-Style UI", "index.html#autotoc_md11", null ],
+      [ "Multithreaded Simulation", "index.html#autotoc_md12", null ]
     ] ],
-    [ "Architecture Overview", "index.html#autotoc_md9", [
-      [ "PhysicsCore", "index.html#autotoc_md10", null ],
-      [ "Testing and Validation", "index.html#autotoc_md11", null ],
-      [ "Application layer", "index.html#autotoc_md12", null ]
+    [ "Architecture Overview", "index.html#autotoc_md13", [
+      [ "PhysicsCore", "index.html#autotoc_md14", null ],
+      [ "Testing and Validation", "index.html#autotoc_md15", null ],
+      [ "Application layer", "index.html#autotoc_md16", null ]
     ] ],
-    [ "Project Status", "index.html#autotoc_md13", null ],
-    [ "Author", "index.html#autotoc_md14", null ],
+    [ "Project Status", "index.html#autotoc_md17", null ],
+    [ "Author", "index.html#autotoc_md18", null ],
     [ "Testing and Validation", "testing.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -77,9 +77,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"VectorRootSolver_8h.html",
-"classPhysics_1_1PhysicsBody.html#a6fb25efd74ad88f01f5c481bd516bad8",
-"classSceneObject.html#af36a3463b19299b7d7cca2b476c36870"
+"annotated.html",
+"classPhysics_1_1PhysicsBody.html#a6b26da3841b94d4da37a631b87ba84b3",
+"classSceneObject.html#ad8ac9406b35bee3cd4fad75db013d9c4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

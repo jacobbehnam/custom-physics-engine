@@ -107,12 +107,12 @@ $(document).ready(function(){initNavTree('classPhysics_1_1Bounding_1_1BoxCollide
 <div class="dynheader">
 Inheritance diagram for Physics::Bounding::BoxCollider:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1Bounding_1_1BoxCollider__inherit__graph.svg" width="159" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1Bounding_1_1BoxCollider__inherit__graph.svg" width="159" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for Physics::Bounding::BoxCollider:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1Bounding_1_1BoxCollider__coll__graph.svg" width="159" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1Bounding_1_1BoxCollider__coll__graph.svg" width="159" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -121,17 +121,22 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3917a2a259443fa045bc8de31cec95ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bf5c17099b952e44f928ae8bf8f66eb" id="r_a4bf5c17099b952e44f928ae8bf8f66eb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#a4bf5c17099b952e44f928ae8bf8f66eb">BoxCollider</a> (const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents, const glm::quat &amp;rotation)</td></tr>
 <tr class="separator:a4bf5c17099b952e44f928ae8bf8f66eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75455b03bad0db72f3e2efe308d3f5f3" id="r_a75455b03bad0db72f3e2efe308d3f5f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html">BoxCollider</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#a75455b03bad0db72f3e2efe308d3f5f3">getTransformed</a> (const glm::mat4 &amp;modelMatrix) const override</td></tr>
-<tr class="separator:a75455b03bad0db72f3e2efe308d3f5f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ba2312a68039c545c2fb383cc5673c4" id="r_a4ba2312a68039c545c2fb383cc5673c4"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">ICollider</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#a4ba2312a68039c545c2fb383cc5673c4">getTransformed</a> (const glm::mat4 &amp;modelMatrix) const override</td></tr>
+<tr class="memdesc:a4ba2312a68039c545c2fb383cc5673c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a transformed copy of this collider in world space.  <br /></td></tr>
+<tr class="separator:a4ba2312a68039c545c2fb383cc5673c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa740fbf38f472a4d440fc4bc427535af" id="r_aa740fbf38f472a4d440fc4bc427535af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#aa740fbf38f472a4d440fc4bc427535af">contains</a> (const glm::vec3 &amp;p) const override</td></tr>
+<tr class="memdesc:aa740fbf38f472a4d440fc4bc427535af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if a point is inside the collider volume.  <br /></td></tr>
 <tr class="separator:aa740fbf38f472a4d440fc4bc427535af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed40a4051855920276985e9bcdd5a196" id="r_aed40a4051855920276985e9bcdd5a196"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ICollider_8h.html#structContactInfo">ContactInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#aed40a4051855920276985e9bcdd5a196">closestPoint</a> (const glm::vec3 &amp;p) const override</td></tr>
-<tr class="separator:aed40a4051855920276985e9bcdd5a196"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae205f1979432c63b033035023fb12529" id="r_ae205f1979432c63b033035023fb12529"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#ae205f1979432c63b033035023fb12529">intersectRay</a> (const glm::vec3 &amp;rayOrig, const glm::vec3 &amp;rayDir, float &amp;outT) const override</td></tr>
-<tr class="separator:ae205f1979432c63b033035023fb12529"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classICollider"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classICollider')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classICollider.html">ICollider</a></td></tr>
-<tr class="memitem:a191014770e41ce2fa80bcf3fcca54ea1 inherit pub_methods_classICollider" id="r_a191014770e41ce2fa80bcf3fcca54ea1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICollider.html#a191014770e41ce2fa80bcf3fcca54ea1">~ICollider</a> ()=default</td></tr>
-<tr class="separator:a191014770e41ce2fa80bcf3fcca54ea1 inherit pub_methods_classICollider"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb31a4a19c2ef115386f83d825d1f7c5" id="r_aeb31a4a19c2ef115386f83d825d1f7c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">ContactInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#aeb31a4a19c2ef115386f83d825d1f7c5">closestPoint</a> (const glm::vec3 &amp;p) const override</td></tr>
+<tr class="memdesc:aeb31a4a19c2ef115386f83d825d1f7c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the closest point on the collider surface to a given point.  <br /></td></tr>
+<tr class="separator:aeb31a4a19c2ef115386f83d825d1f7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bcefb37027b137b5ef9b4a953161f53" id="r_a1bcefb37027b137b5ef9b4a953161f53"><td class="memItemLeft" align="right" valign="top">std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#a1bcefb37027b137b5ef9b4a953161f53">intersectRay</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray) const override</td></tr>
+<tr class="memdesc:a1bcefb37027b137b5ef9b4a953161f53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests ray-collider intersection.  <br /></td></tr>
+<tr class="separator:a1bcefb37027b137b5ef9b4a953161f53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classPhysics_1_1Bounding_1_1ICollider"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysics_1_1Bounding_1_1ICollider')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Physics::Bounding::ICollider</a></td></tr>
+<tr class="memitem:a13cb2543890d11eaa885e7adaef50782 inherit pub_methods_classPhysics_1_1Bounding_1_1ICollider" id="r_a13cb2543890d11eaa885e7adaef50782"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#a13cb2543890d11eaa885e7adaef50782">~ICollider</a> ()=default</td></tr>
+<tr class="memdesc:a13cb2543890d11eaa885e7adaef50782 inherit pub_methods_classPhysics_1_1Bounding_1_1ICollider"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
+<tr class="separator:a13cb2543890d11eaa885e7adaef50782 inherit pub_methods_classPhysics_1_1Bounding_1_1ICollider"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -199,8 +204,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aed40a4051855920276985e9bcdd5a196" name="aed40a4051855920276985e9bcdd5a196"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed40a4051855920276985e9bcdd5a196">&#9670;&#160;</a></span>closestPoint()</h2>
+<a id="aeb31a4a19c2ef115386f83d825d1f7c5" name="aeb31a4a19c2ef115386f83d825d1f7c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb31a4a19c2ef115386f83d825d1f7c5">&#9670;&#160;</a></span>closestPoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,7 +214,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="ICollider_8h.html#structContactInfo">ContactInfo</a> Physics::Bounding::BoxCollider::closestPoint </td>
+          <td class="memname"><a class="el" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">Physics::Bounding::ContactInfo</a> Physics::Bounding::BoxCollider::closestPoint </td>
           <td>(</td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
@@ -223,7 +228,26 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classICollider.html#a764e71a6134a33f339affd6eea363841">ICollider</a>.</p>
+<p>Finds the closest point on the collider surface to a given point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Query point in the same space as the collider </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo" title="Contact point information from collision queries.">ContactInfo</a> containing closest point, normal, and penetration depth</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If p is inside the collider, penetration will be positive </dd>
+<dd>
+The normal always points away from the collider surface</dd></dl>
+<dl class="section user"><dt>Use Cases</dt><dd><ul>
+<li>Collision resolution (finding separation vector)</li>
+<li>Distance queries</li>
+<li>Computing contact manifolds</li>
+</ul>
+</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo" title="Contact point information from collision queries.">ContactInfo</a> </dd></dl>
+
+<p>Implements <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#ad6cc0e2426a7b86b211063cedfc3bc7d">Physics::Bounding::ICollider</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="BoxCollider_8cpp_source.html#l00014">14</a> of file <a class="el" href="BoxCollider_8cpp_source.html">BoxCollider.cpp</a>.</p>
 
@@ -253,14 +277,26 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classICollider.html#a864228002a8268710ef06efb779831a2">ICollider</a>.</p>
+<p>Tests if a point is inside the collider volume. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Point to test, in the same coordinate space as this collider</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if point is inside or on the surface, <code>false</code> otherwise</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For box colliders, "inside" includes the surface (closed volume) </dd>
+<dd>
+This test is typically performed in world space after transformation </dd></dl>
+
+<p>Implements <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#aca61da60d5fd2e5f348921a8a841b1fe">Physics::Bounding::ICollider</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="BoxCollider_8cpp_source.html#l00009">9</a> of file <a class="el" href="BoxCollider_8cpp_source.html">BoxCollider.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a75455b03bad0db72f3e2efe308d3f5f3" name="a75455b03bad0db72f3e2efe308d3f5f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75455b03bad0db72f3e2efe308d3f5f3">&#9670;&#160;</a></span>getTransformed()</h2>
+<a id="a4ba2312a68039c545c2fb383cc5673c4" name="a4ba2312a68039c545c2fb383cc5673c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ba2312a68039c545c2fb383cc5673c4">&#9670;&#160;</a></span>getTransformed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -269,7 +305,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html">Physics::Bounding::BoxCollider</a> * Physics::Bounding::BoxCollider::getTransformed </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Physics::Bounding::ICollider</a> &gt; Physics::Bounding::BoxCollider::getTransformed </td>
           <td>(</td>
           <td class="paramtype">const glm::mat4 &amp;&#160;</td>
           <td class="paramname"><em>modelMatrix</em></td><td>)</td>
@@ -283,14 +319,34 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classICollider.html#ab469b9bbe9a4c245a59b4bc1539095dd">ICollider</a>.</p>
+<p>Creates a transformed copy of this collider in world space. </p>
+<p>Applies a 4x4 transformation matrix to create a new collider instance representing this shape in world coordinates. This is used to transform local-space colliders to world space for collision testing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">modelMatrix</td><td>Transformation matrix (typically from <a class="el" href="classSceneObject.html">SceneObject</a>) Encodes translation, rotation, and scale</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Unique pointer to transformed collider (ownership transferred)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The transformation extracts:<ul>
+<li>Translation: modelMatrix[3].xyz</li>
+<li>Rotation: Extracted via glm::decompose</li>
+<li>Scale: Applied to half-extents/radius </li>
+</ul>
+</dd>
+<dd>
+Caller receives ownership via std::unique_ptr </dd>
+<dd>
+Returns nullptr only if transformation fails (rare) </dd></dl>
+
+<p>Implements <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#a7573bd2a51014f9265adec8b7fc5b28a">Physics::Bounding::ICollider</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="BoxCollider_8cpp_source.html#l00064">64</a> of file <a class="el" href="BoxCollider_8cpp_source.html">BoxCollider.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ae205f1979432c63b033035023fb12529" name="ae205f1979432c63b033035023fb12529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae205f1979432c63b033035023fb12529">&#9670;&#160;</a></span>intersectRay()</h2>
+<a id="a1bcefb37027b137b5ef9b4a953161f53" name="a1bcefb37027b137b5ef9b4a953161f53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bcefb37027b137b5ef9b4a953161f53">&#9670;&#160;</a></span>intersectRay()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,27 +355,11 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Physics::Bounding::BoxCollider::intersectRay </td>
+          <td class="memname">std::optional&lt; float &gt; Physics::Bounding::BoxCollider::intersectRay </td>
           <td>(</td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayOrig</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayDir</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float &amp;&#160;</td>
-          <td class="paramname"><em>outT</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
+          <td class="paramtype">const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;&#160;</td>
+          <td class="paramname"><em>ray</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -329,7 +369,18 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classICollider.html#a61f4f286472418d281006e868f1edfe1">ICollider</a>.</p>
+<p>Tests ray-collider intersection. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>The ray to test against this collider </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Distance along ray if intersection occurs, <code>std::nullopt</code> otherwise</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Negative distances may be rejected depending on implementation</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>Ray </dd></dl>
+
+<p>Implements <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#a977fe4612b17e7fffbb0cbd561d09b4b">Physics::Bounding::ICollider</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="BoxCollider_8cpp_source.html#l00046">46</a> of file <a class="el" href="BoxCollider_8cpp_source.html">BoxCollider.cpp</a>.</p>
 

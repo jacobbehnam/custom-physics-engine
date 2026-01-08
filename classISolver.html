@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('classISolver.html',''); initResizable(
 </div><!--header-->
 <div class="contents">
 
-<p>Abstract interface for any physics solver step logic.  
+<p>Abstract base class for all numerical solvers.  
  <a href="classISolver.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ISolver_8h_source.html">ISolver.h</a>&gt;</code></p>
@@ -116,15 +116,49 @@ Inheritance diagram for ISolver:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a28004b941809734fa051efa273ecb149" id="r_a28004b941809734fa051efa273ecb149"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISolver.html#a28004b941809734fa051efa273ecb149">~ISolver</a> ()=default</td></tr>
+<tr class="memdesc:a28004b941809734fa051efa273ecb149"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
 <tr class="separator:a28004b941809734fa051efa273ecb149"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6abd79f3c17e960895639a8cef132986" id="r_a6abd79f3c17e960895639a8cef132986"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISolver.html#a6abd79f3c17e960895639a8cef132986">stepFrame</a> ()=0</td></tr>
-<tr class="memdesc:a6abd79f3c17e960895639a8cef132986"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances the solver logic by one step/frame.  <br /></td></tr>
+<tr class="memdesc:a6abd79f3c17e960895639a8cef132986"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances the solver by one step.  <br /></td></tr>
 <tr class="separator:a6abd79f3c17e960895639a8cef132986"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract interface for any physics solver step logic. </p>
-
-<p class="definition">Definition at line <a class="el" href="ISolver_8h_source.html#l00006">6</a> of file <a class="el" href="ISolver_8h_source.html">ISolver.h</a>.</p>
+<div class="textblock"><p>Abstract base class for all numerical solvers. </p>
+<p><a class="el" href="classISolver.html" title="Abstract base class for all numerical solvers.">ISolver</a> provides a minimal interface for solvers that operate on physics simulations or other iterative processes. The solver is called repeatedly by the physics system until it signals completion.</p>
+<h2><a class="anchor" id="autotoc_md0"></a>
+Design Philosophy</h2>
+<p>Solvers are intentionally decoupled from physics-specific code. They operate on generic callables (std::function) rather than physics objects directly. This allows the same solver infrastructure to be reused for different problem domains.</p>
+<h2><a class="anchor" id="autotoc_md1"></a>
+Usage Pattern</h2>
+<ol type="1">
+<li>Construct solver with problem-specific functions</li>
+<li><a class="el" href="namespacePhysics.html">Physics</a> system calls <a class="el" href="classISolver.html#a6abd79f3c17e960895639a8cef132986" title="Advances the solver by one step.">stepFrame()</a> each simulation step</li>
+<li>Solver returns false until convergence/completion</li>
+<li>Solver returns true when done (success or failure)</li>
+</ol>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Implementations</h2>
+<ul>
+<li><a class="el" href="classInterceptSolver.html" title="A linear &quot;monitor&quot; solver that stops simulation when a condition is met.">InterceptSolver</a>: Forward problems (monitors until condition met)</li>
+<li><a class="el" href="classVectorRootSolver.html" title="A vector-valued root solver using Newton&#39;s method.">VectorRootSolver</a>: Inverse problems (Newton's method for vector unknowns)</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classInterceptSolver.html" title="A linear &quot;monitor&quot; solver that stops simulation when a condition is met.">InterceptSolver</a>, <a class="el" href="classVectorRootSolver.html" title="A vector-valued root solver using Newton&#39;s method.">VectorRootSolver</a> </dd>
+<dd>
+<a class="el" href="classProblemRouter.html">ProblemRouter</a> for automatic solver selection</dd></dl>
+<p>Example usage: </p><div class="fragment"><div class="line"><span class="comment">// Create a solver</span></div>
+<div class="line"><span class="keyword">auto</span> solver = std::make_unique&lt;InterceptSolver&gt;(</div>
+<div class="line">    []() { <span class="keywordflow">return</span> currentHeight - targetHeight; },  <span class="comment">// monitor function</span></div>
+<div class="line">    []() { <span class="keywordflow">return</span> simTime &gt; 60.0f; }                <span class="comment">// timeout</span></div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// In physics loop</span></div>
+<div class="line"><span class="keywordflow">while</span> (!solver-&gt;stepFrame()) {</div>
+<div class="line">    <span class="comment">// Continue simulation</span></div>
+<div class="line">    physicsSystem-&gt;step(dt);</div>
+<div class="line">}</div>
+<div class="line"><span class="comment">// Solver has finished</span></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="ISolver_8h_source.html#l00059">59</a> of file <a class="el" href="ISolver_8h_source.html">ISolver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a28004b941809734fa051efa273ecb149" name="a28004b941809734fa051efa273ecb149"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a28004b941809734fa051efa273ecb149">&#9670;&#160;</a></span>~ISolver()</h2>
@@ -148,6 +182,8 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Virtual destructor for proper cleanup of derived classes. </p>
 
 </div>
 </div>
@@ -175,10 +211,26 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Advances the solver logic by one step/frame. </p>
-<dl class="section return"><dt>Returns</dt><dd>true if the solver has finished (successfully converged, intercepted, or failed). </dd>
+<p>Advances the solver by one step. </p>
+<p>This method is called by the physics system after each simulation step. The solver examines the current state and decides whether to continue or declare completion.</p>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Typical Implementation Pattern</h2>
+<p>Forward solvers (<a class="el" href="classInterceptSolver.html" title="A linear &quot;monitor&quot; solver that stops simulation when a condition is met.">InterceptSolver</a>):</p><ul>
+<li>Check if stop condition is met</li>
+<li>Return true if condition satisfied or timeout</li>
+</ul>
+<p>Inverse solvers (<a class="el" href="classVectorRootSolver.html" title="A vector-valued root solver using Newton&#39;s method.">VectorRootSolver</a>):</p><ul>
+<li>Extract current output from simulation</li>
+<li>Compute error vs target</li>
+<li>Adjust input guess</li>
+<li>Reset simulation with new guess</li>
+<li>Return true if converged</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if solver has finished (converged, intercepted, or failed) </dd>
 <dd>
-false if the solver needs to keep running. </dd></dl>
+false if solver needs to continue</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This method should NOT advance the physics simulation itself. The physics system handles that externally.</dd></dl>
+<p>@thread Called from physics thread; must be thread-safe if solver accesses shared state </p>
 
 <p>Implemented in <a class="el" href="classInterceptSolver.html#ab669421109bed1b69e25c29020a7a3fd">InterceptSolver</a>, and <a class="el" href="classVectorRootSolver.html#a963e54bce3de9f6e0a5ca2701ba4daa1">VectorRootSolver&lt; InputT, OutputT &gt;</a>.</p>
 

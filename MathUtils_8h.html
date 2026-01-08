@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: src/graphics/utils/MathUtils.h File Reference</title>
+<title>Physics Simulation &amp; Visualization Tool: src/math/MathUtils.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -108,13 +108,13 @@ $(document).ready(function(){initNavTree('MathUtils_8h.html',''); initResizable(
 <p>Mathematical utility functions for 3D graphics and physics.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;glm/glm.hpp&gt;</code><br />
-<code>#include &quot;<a class="el" href="IPickable_8h_source.html">../core/IPickable.h</a>&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
+<code>#include &quot;<a class="el" href="IPickable_8h_source.html">graphics/core/IPickable.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for MathUtils.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="MathUtils_8h__incl.svg" width="371" height="198"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="MathUtils_8h__incl.svg" width="398" height="183"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -126,30 +126,27 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:structMathUtils_1_1Ray" id="r_structMathUtils_1_1Ray"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html#structMathUtils_1_1Ray">MathUtils::Ray</a></td></tr>
-<tr class="memdesc:structMathUtils_1_1Ray"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a ray in 3D space.  <a href="namespaceMathUtils.html#structMathUtils_1_1Ray">More...</a><br /></td></tr>
-<tr class="separator:structMathUtils_1_1Ray"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:structMathUtils_1_1HitResult" id="r_structMathUtils_1_1HitResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html#structMathUtils_1_1HitResult">MathUtils::HitResult</a></td></tr>
-<tr class="memdesc:structMathUtils_1_1HitResult"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the result of a ray-object intersection test.  <a href="namespaceMathUtils.html#structMathUtils_1_1HitResult">More...</a><br /></td></tr>
-<tr class="separator:structMathUtils_1_1HitResult"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structMath_1_1HitResult" id="r_structMath_1_1HitResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMath.html#structMath_1_1HitResult">Math::HitResult</a></td></tr>
+<tr class="memdesc:structMath_1_1HitResult"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the result of a ray-object intersection test.  <a href="namespaceMath.html#structMath_1_1HitResult">More...</a><br /></td></tr>
+<tr class="separator:structMath_1_1HitResult"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceMathUtils" id="r_namespaceMathUtils"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html">MathUtils</a></td></tr>
-<tr class="memdesc:namespaceMathUtils"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mathematical and geometric utility functions. <br /></td></tr>
+<tr class="memitem:namespaceMath" id="r_namespaceMath"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMath.html">Math</a></td></tr>
+<tr class="memdesc:namespaceMath"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mathematical and geometric utility functions. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6bef2b1971256ff0e71cdc0f14ee1326" id="r_a6bef2b1971256ff0e71cdc0f14ee1326"><td class="memItemLeft" align="right" valign="top">std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html#a6bef2b1971256ff0e71cdc0f14ee1326">MathUtils::intersectTriangle</a> (const <a class="el" href="namespaceMathUtils.html#structMathUtils_1_1Ray">Ray</a> &amp;ray, const glm::vec3 &amp;v0, const glm::vec3 &amp;v1, const glm::vec3 &amp;v2)</td></tr>
-<tr class="memdesc:a6bef2b1971256ff0e71cdc0f14ee1326"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests ray-triangle intersection using Möller-Trumbore algorithm.  <br /></td></tr>
-<tr class="separator:a6bef2b1971256ff0e71cdc0f14ee1326"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a260bdcd94f0f6098411a39cff0577662" id="r_a260bdcd94f0f6098411a39cff0577662"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html#a260bdcd94f0f6098411a39cff0577662">MathUtils::screenToWorldRayDirection</a> (double mouseX, double mouseY, int fbWidth, int fbHeight, const glm::mat4 &amp;view, const glm::mat4 &amp;projection)</td></tr>
-<tr class="memdesc:a260bdcd94f0f6098411a39cff0577662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts screen coordinates to a world-space ray direction.  <br /></td></tr>
-<tr class="separator:a260bdcd94f0f6098411a39cff0577662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d6217935b41ba3779f018f833a0c119" id="r_a7d6217935b41ba3779f018f833a0c119"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespaceMathUtils.html#structMathUtils_1_1HitResult">HitResult</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMathUtils.html#a7d6217935b41ba3779f018f833a0c119">MathUtils::findFirstHit</a> (const std::vector&lt; <a class="el" href="classIPickable.html">IPickable</a> * &gt; &amp;objects, const <a class="el" href="namespaceMathUtils.html#structMathUtils_1_1Ray">Ray</a> &amp;ray, <a class="el" href="classIPickable.html">IPickable</a> *priority=nullptr)</td></tr>
-<tr class="memdesc:a7d6217935b41ba3779f018f833a0c119"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the first object intersected by a ray.  <br /></td></tr>
-<tr class="separator:a7d6217935b41ba3779f018f833a0c119"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92a3fd90b031f3c40f9797b59e15d54b" id="r_a92a3fd90b031f3c40f9797b59e15d54b"><td class="memItemLeft" align="right" valign="top">std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMath.html#a92a3fd90b031f3c40f9797b59e15d54b">Math::intersectTriangle</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Ray</a> &amp;ray, const glm::vec3 &amp;v0, const glm::vec3 &amp;v1, const glm::vec3 &amp;v2)</td></tr>
+<tr class="memdesc:a92a3fd90b031f3c40f9797b59e15d54b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests ray-triangle intersection using Möller-Trumbore algorithm.  <br /></td></tr>
+<tr class="separator:a92a3fd90b031f3c40f9797b59e15d54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2a4127e5d2510ff22c7ee9a07a2c9b7" id="r_ab2a4127e5d2510ff22c7ee9a07a2c9b7"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMath.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7">Math::screenToWorldRayDirection</a> (double mouseX, double mouseY, int fbWidth, int fbHeight, const glm::mat4 &amp;view, const glm::mat4 &amp;projection)</td></tr>
+<tr class="memdesc:ab2a4127e5d2510ff22c7ee9a07a2c9b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts screen coordinates to a world-space ray direction.  <br /></td></tr>
+<tr class="separator:ab2a4127e5d2510ff22c7ee9a07a2c9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec8403064a88272999c2c143ef03a9fd" id="r_aec8403064a88272999c2c143ef03a9fd"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespaceMath.html#structMath_1_1HitResult">HitResult</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceMath.html#aec8403064a88272999c2c143ef03a9fd">Math::findFirstHit</a> (const std::vector&lt; <a class="el" href="classIPickable.html">IPickable</a> * &gt; &amp;objects, const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Ray</a> &amp;ray, <a class="el" href="classIPickable.html">IPickable</a> *priority=nullptr)</td></tr>
+<tr class="memdesc:aec8403064a88272999c2c143ef03a9fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the first object intersected by a ray.  <br /></td></tr>
+<tr class="separator:aec8403064a88272999c2c143ef03a9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Mathematical utility functions for 3D graphics and physics. </p>
@@ -157,69 +154,36 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="MathUtils_8h_source.html">MathUtils.h</a>.</p>
 </div><hr/><h2 class="groupheader">Data Structure Documentation</h2>
-<a name="structMathUtils_1_1Ray" id="structMathUtils_1_1Ray"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#structMathUtils_1_1Ray">&#9670;&#160;</a></span>MathUtils::Ray</h2>
+<a name="structMath_1_1HitResult" id="structMath_1_1HitResult"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structMath_1_1HitResult">&#9670;&#160;</a></span>Math::HitResult</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct MathUtils::Ray</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<div class="textblock"><p>Represents a ray in 3D space. </p>
-<p>Used for mouse picking, collision detection, and line-of-sight tests. The ray is defined parametrically as: \(P(t) = \texttt{origin} + t \cdot \texttt{dir}\) </p>
-
-<p class="definition">Definition at line <a class="el" href="MathUtils_8h_source.html#l00034">34</a> of file <a class="el" href="MathUtils_8h_source.html">MathUtils.h</a>.</p>
-</div><table class="fieldtable">
-<tr><th colspan="3">Data Fields</th></tr>
-<tr><td class="fieldtype">
-<a id="a65af0e54e0b6d17d387cb76abebbf218" name="a65af0e54e0b6d17d387cb76abebbf218"></a>vec3</td>
-<td class="fieldname">
-dir</td>
-<td class="fielddoc">
-Direction vector (should be normalized) </td></tr>
-<tr><td class="fieldtype">
-<a id="a5c77bed62b0127f05a7ea9f1a22bbcd8" name="a5c77bed62b0127f05a7ea9f1a22bbcd8"></a>vec3</td>
-<td class="fieldname">
-origin</td>
-<td class="fielddoc">
-Starting point of the ray in world space. </td></tr>
-</table>
-
-</div>
-</div>
-<a name="structMathUtils_1_1HitResult" id="structMathUtils_1_1HitResult"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#structMathUtils_1_1HitResult">&#9670;&#160;</a></span>MathUtils::HitResult</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">struct MathUtils::HitResult</td>
+          <td class="memname">struct Math::HitResult</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <div class="textblock"><p>Represents the result of a ray-object intersection test. </p>
 <p>Contains information about which object was hit by a ray and the distance from the ray origin to the intersection point. </p>
 
-<p class="definition">Definition at line <a class="el" href="MathUtils_8h_source.html#l00157">157</a> of file <a class="el" href="MathUtils_8h_source.html">MathUtils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MathUtils_8h_source.html#l00146">146</a> of file <a class="el" href="MathUtils_8h_source.html">MathUtils.h</a>.</p>
 </div><div class="dynheader">
-Collaboration diagram for MathUtils::HitResult:</div>
+Collaboration diagram for Math::HitResult:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structMathUtils_1_1HitResult__coll__graph.svg" width="164" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structMath_1_1HitResult__coll__graph.svg" width="134" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="fieldtable">
 <tr><th colspan="3">Data Fields</th></tr>
 <tr><td class="fieldtype">
-<a id="a643bd862e75e2b1d6448ae39933f12ae" name="a643bd862e75e2b1d6448ae39933f12ae"></a>float</td>
+<a id="aa2daa5da70f50eaf5b451b8092e98608" name="aa2daa5da70f50eaf5b451b8092e98608"></a>float</td>
 <td class="fieldname">
 distance</td>
 <td class="fielddoc">
 Distance from the ray origin to the intersection point. Infinity if no hit. </td></tr>
 <tr><td class="fieldtype">
-<a id="af4ae7bd3df09a04adfcb319c7892e0df" name="af4ae7bd3df09a04adfcb319c7892e0df"></a><a class="el" href="classIPickable.html">IPickable</a> *</td>
+<a id="ae074dc114c951958d41509172adaefd0" name="ae074dc114c951958d41509172adaefd0"></a><a class="el" href="classIPickable.html">IPickable</a> *</td>
 <td class="fieldname">
 object</td>
 <td class="fielddoc">
@@ -233,7 +197,7 @@ Pointer to the hit object, or nullptr if no intersection. </td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_560415a5d2bc4999842279f4fc1debef.html">graphics</a></li><li class="navelem"><a class="el" href="dir_bba79e88fb3a3133e9c0e0849fa1ffee.html">utils</a></li><li class="navelem"><a class="el" href="MathUtils_8h.html">MathUtils.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_ae9a93452e2a84339148a16bcf2eb561.html">math</a></li><li class="navelem"><a class="el" href="MathUtils_8h.html">MathUtils.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

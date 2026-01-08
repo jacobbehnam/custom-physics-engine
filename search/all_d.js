@@ -9,14 +9,14 @@ var searchData=
   ['makesolver_6',['makeSolver',['../classProblemRouter.html#ad2daff44da45791ff678714a4b8a10a6',1,'ProblemRouter']]],
   ['makeuniquename_7',['makeUniqueName',['../classSceneManager.html#ab6a7ecbff438f2dbee8a0f31795456f9',1,'SceneManager']]],
   ['mass_8',['mass',['../structPointMassOptions.html#a54546394dcd0da585ba46c3413bfdea4',1,'PointMassOptions::mass'],['../structRigidBodyOptions.html#a1879b6ce3726a5ebb1ebc99140ee531b',1,'RigidBodyOptions::mass']]],
-  ['mathutils_9',['MathUtils',['../namespaceMathUtils.html',1,'']]],
+  ['math_9',['Math',['../namespaceMath.html',1,'']]],
   ['mathutils_2eh_10',['MathUtils.h',['../MathUtils_8h.html',1,'']]],
   ['mesh_11',['mesh',['../classMesh.html',1,'Mesh'],['../structBatchKey.html#a69568258d6a4a2aee03edbfaa8a60462',1,'BatchKey::mesh'],['../classMesh.html#a8d474ebd2de6747d4d68c2c25622c4a5',1,'Mesh::Mesh()']]],
   ['mesh_2ecpp_12',['Mesh.cpp',['../Mesh_8cpp.html',1,'']]],
   ['mesh_2eh_13',['Mesh.h',['../Mesh_8h.html',1,'']]],
-  ['method_14',['Numerical Integration Method',['../testing.html#autotoc_md16',1,'']]],
+  ['method_14',['Numerical Integration Method',['../testing.html#autotoc_md20',1,'']]],
   ['mode_15',['mode',['../ProblemRouter_8h.html#a46a1d85db6e9d8c75b33e8a352bad7a3',1,'SolverDecision']]],
-  ['model_16',['model',['../testing.html#autotoc_md20',1,'Floating-Point Error Model'],['../Mesh_8h.html#ac212f0d8e381b56fec9265ed559ddf39',1,'InstanceData::model']]],
+  ['model_16',['model',['../testing.html#autotoc_md24',1,'Floating-Point Error Model'],['../Mesh_8h.html#ac212f0d8e381b56fec9265ed559ddf39',1,'InstanceData::model']]],
   ['monitorfunction_17',['MonitorFunction',['../classInterceptSolver.html#a5dc3abecbc8f57ade8a5615153ef4e4d',1,'InterceptSolver']]],
   ['mousecallback_18',['MouseCallback',['../classRawInputFilter.html#ac6966c5811be5b0efb27c546a0d1fbb7',1,'RawInputFilter']]],
   ['mousepressevent_19',['mousePressEvent',['../classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a',1,'OpenGLWindow']]],
@@ -24,5 +24,5 @@ var searchData=
   ['mousesensitivity_21',['mouseSensitivity',['../classCamera.html#a374b33e654bf21d19230a82672bd3aac',1,'Camera']]],
   ['movement_22',['Movement',['../Camera_8h.html#a2fc3593b03b2993ef34f3900f6be985e',1,'Camera.h']]],
   ['movementspeed_23',['movementSpeed',['../classCamera.html#a03987cf3bbf312be16bb881939382d83',1,'Camera']]],
-  ['multithreaded_20simulation_24',['Multithreaded Simulation',['../index.html#autotoc_md8',1,'']]]
+  ['multithreaded_20simulation_24',['Multithreaded Simulation',['../index.html#autotoc_md12',1,'']]]
 ];

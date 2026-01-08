@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['icollider_0',['ICollider',['../classICollider.html',1,'']]],
+  ['icollider_0',['ICollider',['../classPhysics_1_1Bounding_1_1ICollider.html',1,'Physics::Bounding']]],
   ['idrawable_1',['IDrawable',['../classIDrawable.html',1,'']]],
   ['ihandle_2',['IHandle',['../classIHandle.html',1,'']]],
   ['iinspectorsection_3',['IInspectorSection',['../classIInspectorSection.html',1,'']]],

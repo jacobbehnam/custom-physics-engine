@@ -102,6 +102,9 @@ $(document).ready(function(){initNavTree('ISolver_8h.html',''); initResizable();
   <div class="headertitle"><div class="title">ISolver.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract interface for numerical solvers.  
+<a href="#details">More...</a></p>
 <div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
@@ -113,10 +116,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISolver.html">ISolver</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract interface for any physics solver step logic.  <a href="classISolver.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class for all numerical solvers.  <a href="classISolver.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract interface for numerical solvers. </p>
+<p>Defines the common interface for all numerical solvers in the system. Solvers are designed to work asynchronously with the physics simulation, advancing one step at a time and signaling when they've converged or failed. </p>
+
+<p class="definition">Definition in file <a class="el" href="ISolver_8h_source.html">ISolver.h</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

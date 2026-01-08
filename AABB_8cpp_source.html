@@ -108,30 +108,30 @@ $(document).ready(function(){initNavTree('AABB_8cpp_source.html',''); initResiza
 <a href="AABB_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="AABB_8h.html">AABB.h</a>&quot;</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;glm/gtx/matrix_decompose.hpp&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="foldopen" id="foldopen00007" data-start="{" data-end="}">
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#a5c5ef80b8ea4309c2ed24aed8dc530c7">    7</a></span><a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a28a0a97fa3e0efb670b44bd87e33c3d9">Physics::Bounding::AABB::AABB</a>(<span class="keyword">const</span> glm::vec3 &amp;ctr, <span class="keyword">const</span> glm::vec3 &amp;halfExt)</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;glm/gtx/matrix_decompose.hpp&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="foldopen" id="foldopen00008" data-start="{" data-end="}">
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#a5c5ef80b8ea4309c2ed24aed8dc530c7">    8</a></span><a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a28a0a97fa3e0efb670b44bd87e33c3d9">Physics::Bounding::AABB::AABB</a>(<span class="keyword">const</span> glm::vec3 &amp;ctr, <span class="keyword">const</span> glm::vec3 &amp;halfExt)</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}</div>
 </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="foldopen" id="foldopen00010" data-start="{" data-end="}">
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#ac5683636e700d34754fd07d4d5bda297">   10</a></span><a class="code hl_class" href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a>* <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#ac5683636e700d34754fd07d4d5bda297">Physics::Bounding::AABB::getTransformed</a>(<span class="keyword">const</span> glm::mat4 &amp;modelMatrix)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    <span class="keyword">auto</span> L = glm::mat3(modelMatrix);</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">auto</span> T = glm::vec3(modelMatrix[3]);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    glm::mat3 absL = glm::mat3(</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        glm::abs(L[0]),</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        glm::abs(L[1]),</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        glm::abs(L[2])</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    );</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    glm::vec3 newHalfExtents = absL * halfExtents;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    glm::vec3 newCenter = L * center + T;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="comment">// TODO: change to smart pointers</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code hl_class" href="classPhysics_1_1Bounding_1_1AABB.html">AABB</a>(newCenter, newHalfExtents);</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="foldopen" id="foldopen00011" data-start="{" data-end="}">
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#a6692e58afb69ad9343d88ebc9642be2b">   11</a></span>std::unique_ptr&lt;Physics::Bounding::ICollider&gt; <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a6692e58afb69ad9343d88ebc9642be2b">Physics::Bounding::AABB::getTransformed</a>(<span class="keyword">const</span> glm::mat4 &amp;modelMatrix)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">auto</span> L = glm::mat3(modelMatrix);</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">auto</span> T = glm::vec3(modelMatrix[3]);</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    glm::mat3 absL = glm::mat3(</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        glm::abs(L[0]),</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        glm::abs(L[1]),</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        glm::abs(L[2])</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    );</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    glm::vec3 newHalfExtents = absL * halfExtents;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    glm::vec3 newCenter = L * center + T;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> std::make_unique&lt;AABB&gt;(newCenter, newHalfExtents);</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
 </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
@@ -145,11 +145,11 @@ $(document).ready(function(){initNavTree('AABB_8cpp_source.html',''); initResiza
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">// Tavian Barnes’ branchless slab method</span></div>
 <div class="foldopen" id="foldopen00034" data-start="{" data-end="}">
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#afed969477344f038c64a5683857a63c0">   34</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#afed969477344f038c64a5683857a63c0">Physics::Bounding::AABB::intersectRay</a>(<span class="keyword">const</span> glm::vec3 &amp;orig, <span class="keyword">const</span> glm::vec3 &amp;dir, <span class="keywordtype">float</span> &amp;outT)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    glm::vec3 invDir = 1.0f / dir;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#a38cfc26e7038da53e471ef834527cb45">   34</a></span>std::optional&lt;float&gt; <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a38cfc26e7038da53e471ef834527cb45">Physics::Bounding::AABB::intersectRay</a>(<span class="keyword">const</span> <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>&amp; ray)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    glm::vec3 invDir = 1.0f / ray.<a class="code hl_variable" href="namespaceMath.html#a7630900e35ae5014377ebcc66b933b40">dir</a>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    glm::vec3 t0s = (minCorner - orig) * invDir;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    glm::vec3 t1s = (maxCorner - orig) * invDir;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    glm::vec3 t0s = (minCorner - ray.<a class="code hl_variable" href="namespaceMath.html#a160ffc1720e156cec91d4117e717573a">origin</a>) * invDir;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    glm::vec3 t1s = (maxCorner - ray.<a class="code hl_variable" href="namespaceMath.html#a160ffc1720e156cec91d4117e717573a">origin</a>) * invDir;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    glm::vec3 tsmaller = glm::min(t0s, t1s);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    glm::vec3 tbigger  = glm::max(t0s, t1s);</div>
@@ -157,8 +157,8 @@ $(document).ready(function(){initNavTree('AABB_8cpp_source.html',''); initResiza
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">float</span> tmin = std::max(std::max(tsmaller.x, tsmaller.y), tsmaller.z);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">float</span> tmax = std::min(std::min(tbigger.x, tbigger.y), tbigger.z);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    outT = tmin;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">return</span> tmax &gt;= std::max(tmin, 0.0f);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">bool</span> hit = tmax &gt;= std::max(tmin, 0.0f);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">return</span> hit ? std::optional{ tmin } : std::nullopt;</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>}</div>
 </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
@@ -169,19 +169,22 @@ $(document).ready(function(){initNavTree('AABB_8cpp_source.html',''); initResiza
 </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#a59530315c9f037a00c4a9e56594550f0">   54</a></span><a class="code hl_struct" href="ICollider_8h.html#structContactInfo">ContactInfo</a> <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a59530315c9f037a00c4a9e56594550f0">Physics::Bounding::AABB::closestPoint</a>(<span class="keyword">const</span> glm::vec3 &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classPhysics_1_1Bounding_1_1AABB.html#ab05d546ed9e9592f6160ab964bd465bb">   54</a></span><a class="code hl_struct" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">Physics::Bounding::ContactInfo</a> <a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#ab05d546ed9e9592f6160ab964bd465bb">Physics::Bounding::AABB::closestPoint</a>(<span class="keyword">const</span> glm::vec3 &amp;p)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">//TODO</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}</div>
 </div>
 <div class="ttc" id="aAABB_8h_html"><div class="ttname"><a href="AABB_8h.html">AABB.h</a></div></div>
-<div class="ttc" id="aICollider_8h_html_structContactInfo"><div class="ttname"><a href="ICollider_8h.html#structContactInfo">ContactInfo</a></div><div class="ttdef"><b>Definition</b> <a href="ICollider_8h_source.html#l00005">ICollider.h:5</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a></div><div class="ttdef"><b>Definition</b> <a href="AABB_8h_source.html#l00007">AABB.h:7</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a></div><div class="ttdef"><b>Definition</b> <a href="AABB_8h_source.html#l00006">AABB.h:6</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a28a0a97fa3e0efb670b44bd87e33c3d9"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a28a0a97fa3e0efb670b44bd87e33c3d9">Physics::Bounding::AABB::AABB</a></div><div class="ttdeci">AABB()=default</div></div>
-<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a3a01e51b334ce41496ce11c0f8e336f9"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a3a01e51b334ce41496ce11c0f8e336f9">Physics::Bounding::AABB::contains</a></div><div class="ttdeci">bool contains(const glm::vec3 &amp;p) const override</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00050">AABB.cpp:50</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a38cfc26e7038da53e471ef834527cb45"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a38cfc26e7038da53e471ef834527cb45">Physics::Bounding::AABB::intersectRay</a></div><div class="ttdeci">std::optional&lt; float &gt; intersectRay(const Math::Ray &amp;ray) const override</div><div class="ttdoc">Tests ray-collider intersection.</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00034">AABB.cpp:34</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a3a01e51b334ce41496ce11c0f8e336f9"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a3a01e51b334ce41496ce11c0f8e336f9">Physics::Bounding::AABB::contains</a></div><div class="ttdeci">bool contains(const glm::vec3 &amp;p) const override</div><div class="ttdoc">Tests if a point is inside the collider volume.</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00050">AABB.cpp:50</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a51b0e814771f583fb4fd86a30bc53b99"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a51b0e814771f583fb4fd86a30bc53b99">Physics::Bounding::AABB::intersectsAABB</a></div><div class="ttdeci">bool intersectsAABB(const AABB &amp;other) const</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00027">AABB.cpp:27</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a59530315c9f037a00c4a9e56594550f0"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a59530315c9f037a00c4a9e56594550f0">Physics::Bounding::AABB::closestPoint</a></div><div class="ttdeci">ContactInfo closestPoint(const glm::vec3 &amp;p) const override</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00054">AABB.cpp:54</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_ac5683636e700d34754fd07d4d5bda297"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#ac5683636e700d34754fd07d4d5bda297">Physics::Bounding::AABB::getTransformed</a></div><div class="ttdeci">AABB * getTransformed(const glm::mat4 &amp;modelMatrix) const override</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00010">AABB.cpp:10</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_afed969477344f038c64a5683857a63c0"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#afed969477344f038c64a5683857a63c0">Physics::Bounding::AABB::intersectRay</a></div><div class="ttdeci">bool intersectRay(const glm::vec3 &amp;orig, const glm::vec3 &amp;dir, float &amp;outT) const override</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00034">AABB.cpp:34</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_a6692e58afb69ad9343d88ebc9642be2b"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#a6692e58afb69ad9343d88ebc9642be2b">Physics::Bounding::AABB::getTransformed</a></div><div class="ttdeci">std::unique_ptr&lt; ICollider &gt; getTransformed(const glm::mat4 &amp;modelMatrix) const override</div><div class="ttdoc">Creates a transformed copy of this collider in world space.</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00011">AABB.cpp:11</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html_ab05d546ed9e9592f6160ab964bd465bb"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html#ab05d546ed9e9592f6160ab964bd465bb">Physics::Bounding::AABB::closestPoint</a></div><div class="ttdeci">ContactInfo closestPoint(const glm::vec3 &amp;p) const override</div><div class="ttdoc">Finds the closest point on the collider surface to a given point.</div><div class="ttdef"><b>Definition</b> <a href="AABB_8cpp_source.html#l00054">AABB.cpp:54</a></div></div>
+<div class="ttc" id="anamespaceMath_html_a160ffc1720e156cec91d4117e717573a"><div class="ttname"><a href="namespaceMath.html#a160ffc1720e156cec91d4117e717573a">Math::Ray::origin</a></div><div class="ttdeci">glm::vec3 origin</div><div class="ttdoc">Starting point of the ray in world space.</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00012">Ray.h:12</a></div></div>
+<div class="ttc" id="anamespaceMath_html_a7630900e35ae5014377ebcc66b933b40"><div class="ttname"><a href="namespaceMath.html#a7630900e35ae5014377ebcc66b933b40">Math::Ray::dir</a></div><div class="ttdeci">glm::vec3 dir</div><div class="ttdoc">Direction vector (should be normalized)</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00013">Ray.h:13</a></div></div>
+<div class="ttc" id="anamespaceMath_html_structMath_1_1Ray"><div class="ttname"><a href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a></div><div class="ttdoc">Represents a ray in 3D space.</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00011">Ray.h:11</a></div></div>
+<div class="ttc" id="anamespacePhysics_1_1Bounding_html_structPhysics_1_1Bounding_1_1ContactInfo"><div class="ttname"><a href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">Physics::Bounding::ContactInfo</a></div><div class="ttdoc">Contact point information from collision queries.</div><div class="ttdef"><b>Definition</b> <a href="ICollider_8h_source.html#l00035">ICollider.h:35</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

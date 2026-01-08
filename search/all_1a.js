@@ -2,7 +2,7 @@ var searchData=
 [
   ['_7ecomputeshader_0',['~ComputeShader',['../classComputeShader.html#a6ed5c0cf02fdb926cd25acaf313f3bd1',1,'ComputeShader']]],
   ['_7egizmo_1',['~Gizmo',['../classGizmo.html#a308e8302907f2e51e05528f3473943a0',1,'Gizmo']]],
-  ['_7eicollider_2',['~ICollider',['../classICollider.html#a191014770e41ce2fa80bcf3fcca54ea1',1,'ICollider']]],
+  ['_7eicollider_2',['~ICollider',['../classPhysics_1_1Bounding_1_1ICollider.html#a13cb2543890d11eaa885e7adaef50782',1,'Physics::Bounding::ICollider']]],
   ['_7eidrawable_3',['~IDrawable',['../classIDrawable.html#ae8ef74d2e7a2a75669b3096049c61973',1,'IDrawable']]],
   ['_7eiinspectorsection_4',['~IInspectorSection',['../classIInspectorSection.html#a27715f59901c929ca1f12fabf881e567',1,'IInspectorSection']]],
   ['_7eipickable_5',['~IPickable',['../classIPickable.html#abecadcd90cd4a313c0afe71901a3976c',1,'IPickable']]],

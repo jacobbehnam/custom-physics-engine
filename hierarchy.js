@@ -3,10 +3,10 @@ var hierarchy =
     [ "BatchKey", "structBatchKey.html", null ],
     [ "Camera", "classCamera.html", null ],
     [ "ComputeShader", "classComputeShader.html", null ],
-    [ "ContactInfo", "ICollider_8h.html#structContactInfo", null ],
+    [ "Physics::Bounding::ContactInfo", "namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo", null ],
     [ "std::hash< Vertex >", "structstd_1_1hash_3_01Vertex_01_4.html", null ],
-    [ "MathUtils::HitResult", "namespaceMathUtils.html#structMathUtils_1_1HitResult", null ],
-    [ "ICollider", "classICollider.html", [
+    [ "Math::HitResult", "namespaceMath.html#structMath_1_1HitResult", null ],
+    [ "Physics::Bounding::ICollider", "classPhysics_1_1Bounding_1_1ICollider.html", [
       [ "Physics::Bounding::AABB", "classPhysics_1_1Bounding_1_1AABB.html", null ],
       [ "Physics::Bounding::BoxCollider", "classPhysics_1_1Bounding_1_1BoxCollider.html", null ]
     ] ],
@@ -74,7 +74,7 @@ var hierarchy =
       [ "ScalarWidget", "classScalarWidget.html", null ],
       [ "Vector3Widget", "classVector3Widget.html", null ]
     ] ],
-    [ "MathUtils::Ray", "namespaceMathUtils.html#structMathUtils_1_1Ray", null ],
+    [ "Math::Ray", "namespaceMath.html#structMath_1_1Ray", null ],
     [ "ResourceManager", "classResourceManager.html", null ],
     [ "RigidBodyOptions", "structRigidBodyOptions.html", null ],
     [ "Scene", "classScene.html", null ],

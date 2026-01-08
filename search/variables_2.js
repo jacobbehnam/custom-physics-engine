@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dir_0',['dir',['../namespaceMathUtils.html#a65af0e54e0b6d17d387cb76abebbf218',1,'MathUtils::Ray']]],
-  ['distance_1',['distance',['../namespaceMathUtils.html#a643bd862e75e2b1d6448ae39933f12ae',1,'MathUtils::HitResult']]]
+  ['dir_0',['dir',['../namespaceMath.html#a7630900e35ae5014377ebcc66b933b40',1,'Math::Ray']]],
+  ['distance_1',['distance',['../namespaceMath.html#aa2daa5da70f50eaf5b451b8092e98608',1,'Math::HitResult']]]
 ];

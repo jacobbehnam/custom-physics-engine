@@ -1,14 +1,10 @@
 var MathUtils_8h =
 [
-    [ "MathUtils::Ray", "namespaceMathUtils.html#structMathUtils_1_1Ray", [
-      [ "dir", "namespaceMathUtils.html#a65af0e54e0b6d17d387cb76abebbf218", null ],
-      [ "origin", "namespaceMathUtils.html#a5c77bed62b0127f05a7ea9f1a22bbcd8", null ]
+    [ "Math::HitResult", "namespaceMath.html#structMath_1_1HitResult", [
+      [ "distance", "namespaceMath.html#aa2daa5da70f50eaf5b451b8092e98608", null ],
+      [ "object", "namespaceMath.html#ae074dc114c951958d41509172adaefd0", null ]
     ] ],
-    [ "MathUtils::HitResult", "namespaceMathUtils.html#structMathUtils_1_1HitResult", [
-      [ "distance", "namespaceMathUtils.html#a643bd862e75e2b1d6448ae39933f12ae", null ],
-      [ "object", "namespaceMathUtils.html#af4ae7bd3df09a04adfcb319c7892e0df", null ]
-    ] ],
-    [ "findFirstHit", "MathUtils_8h.html#a7d6217935b41ba3779f018f833a0c119", null ],
-    [ "intersectTriangle", "MathUtils_8h.html#a6bef2b1971256ff0e71cdc0f14ee1326", null ],
-    [ "screenToWorldRayDirection", "MathUtils_8h.html#a260bdcd94f0f6098411a39cff0577662", null ]
+    [ "findFirstHit", "MathUtils_8h.html#aec8403064a88272999c2c143ef03a9fd", null ],
+    [ "intersectTriangle", "MathUtils_8h.html#a92a3fd90b031f3c40f9797b59e15d54b", null ],
+    [ "screenToWorldRayDirection", "MathUtils_8h.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7", null ]
 ];

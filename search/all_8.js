@@ -11,6 +11,6 @@ var searchData=
   ['hierarchywidget_8',['hierarchywidget',['../classHierarchyWidget.html',1,'HierarchyWidget'],['../classHierarchyWidget.html#aafc71a3e28240b106dc550909901dd61',1,'HierarchyWidget::HierarchyWidget()']]],
   ['hierarchywidget_2ecpp_9',['HierarchyWidget.cpp',['../HierarchyWidget_8cpp.html',1,'']]],
   ['hierarchywidget_2eh_10',['HierarchyWidget.h',['../HierarchyWidget_8h.html',1,'']]],
-  ['hitresult_11',['HitResult',['../namespaceMathUtils.html#structMathUtils_1_1HitResult',1,'MathUtils']]],
+  ['hitresult_11',['HitResult',['../namespaceMath.html#structMath_1_1HitResult',1,'Math']]],
   ['hoveredids_12',['hoveredIDs',['../classSceneManager.html#ad543933ed9afc042da4ec660664a1876',1,'SceneManager']]]
 ];

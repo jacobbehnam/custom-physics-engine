@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['object_0',['object',['../namespaceMathUtils.html#af4ae7bd3df09a04adfcb319c7892e0df',1,'MathUtils::HitResult']]],
+  ['object_0',['object',['../namespaceMath.html#ae074dc114c951958d41509172adaefd0',1,'Math::HitResult']]],
   ['objectadded_1',['objectAdded',['../classSceneManager.html#a76592c383a85fda664a79fa155ead19e',1,'SceneManager']]],
   ['objectid_2',['objectID',['../Mesh_8h.html#abcb0b0554e32bf242e05e7733baa5454',1,'InstanceData']]],
   ['objectoptions_3',['ObjectOptions',['../SceneObjectOptions_8h.html#structObjectOptions',1,'']]],
@@ -22,6 +22,6 @@ var searchData=
   ['operator_3c_19',['operator&lt;',['../structBatchKey.html#a1efcffba99af8027b8cf734b46af0571',1,'BatchKey']]],
   ['operator_3d_3d_20',['operator==',['../structVertex.html#a80a54a84866d511b63bcc6f38899bed9',1,'Vertex']]],
   ['ops_5fsafety_5ffactor_21',['OPS_SAFETY_FACTOR',['../PhysicsTests_8cpp.html#aab290d1208f06ecd4528bf2cbf416fd5',1,'PhysicsTests.cpp']]],
-  ['origin_22',['origin',['../namespaceMathUtils.html#a5c77bed62b0127f05a7ea9f1a22bbcd8',1,'MathUtils::Ray']]],
-  ['overview_23',['overview',['../index.html#autotoc_md9',1,'Architecture Overview'],['../index.html#autotoc_md1',1,'Overview']]]
+  ['origin_22',['origin',['../namespaceMath.html#a160ffc1720e156cec91d4117e717573a',1,'Math::Ray']]],
+  ['overview_23',['overview',['../index.html#autotoc_md13',1,'Architecture Overview'],['../index.html#autotoc_md5',1,'Overview']]]
 ];

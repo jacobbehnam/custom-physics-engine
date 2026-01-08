@@ -102,6 +102,9 @@ $(document).ready(function(){initNavTree('namespacePhysics_1_1Bounding.html','')
   <div class="headertitle"><div class="title">Physics::Bounding Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="namespacePhysics_1_1Bounding.html" title="Bounding volume and collision shape definitions.">Bounding</a> volume and collision shape definitions.  
+<a href="namespacePhysics_1_1Bounding.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -109,7 +112,57 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html">BoxCollider</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structPhysics_1_1Bounding_1_1ContactInfo" id="r_structPhysics_1_1Bounding_1_1ContactInfo"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">ContactInfo</a></td></tr>
+<tr class="memdesc:structPhysics_1_1Bounding_1_1ContactInfo"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contact point information from collision queries.  <a href="namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo">More...</a><br /></td></tr>
+<tr class="separator:structPhysics_1_1Bounding_1_1ContactInfo"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">ICollider</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class for collision volumes in the physics engine.  <a href="classPhysics_1_1Bounding_1_1ICollider.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="namespacePhysics_1_1Bounding.html" title="Bounding volume and collision shape definitions.">Bounding</a> volume and collision shape definitions. </p>
+<p>Contains interfaces and data structures for geometric collision primitives used by the physics engine. These bounding volumes are responsible for spatial queries such as point containment, closest point queries, and ray intersections.</p>
+<p>All colliders are defined in local space and are typically transformed to world space before collision tests are performed. </p>
+</div><hr/><h2 class="groupheader">Data Structure Documentation</h2>
+<a name="structPhysics_1_1Bounding_1_1ContactInfo" id="structPhysics_1_1Bounding_1_1ContactInfo"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structPhysics_1_1Bounding_1_1ContactInfo">&#9670;&#160;</a></span>Physics::Bounding::ContactInfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct Physics::Bounding::ContactInfo</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"><p>Contact point information from collision queries. </p>
+<p>Represents the geometric details of a collision or proximity query. Used for both collision resolution and visualization. </p>
+
+<p class="definition">Definition at line <a class="el" href="ICollider_8h_source.html#l00035">35</a> of file <a class="el" href="ICollider_8h_source.html">ICollider.h</a>.</p>
+</div><table class="fieldtable">
+<tr><th colspan="3">Data Fields</th></tr>
+<tr><td class="fieldtype">
+<a id="a813679bcfd7e0a1db954881cead46c2f" name="a813679bcfd7e0a1db954881cead46c2f"></a>vec3</td>
+<td class="fieldname">
+normal</td>
+<td class="fielddoc">
+Surface normal at contact point (points outward from surface) </td></tr>
+<tr><td class="fieldtype">
+<a id="a6fb687a07eefb0d5e4f87d9faed72055" name="a6fb687a07eefb0d5e4f87d9faed72055"></a>float</td>
+<td class="fieldname">
+penetration</td>
+<td class="fielddoc">
+Penetration depth (positive = overlapping, negative = separated) </td></tr>
+<tr><td class="fieldtype">
+<a id="aee4409b5910e59097471fa8f5a69c5eb" name="aee4409b5910e59097471fa8f5a69c5eb"></a>vec3</td>
+<td class="fieldname">
+point</td>
+<td class="fielddoc">
+Contact point in world space (closest point on surface) </td></tr>
+</table>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
