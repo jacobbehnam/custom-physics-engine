@@ -1,0 +1,68 @@
+var annotated_dup =
+[
+    [ "MathUtils", "namespaceMathUtils.html", [
+      [ "HitResult", "namespaceMathUtils.html#structMathUtils_1_1HitResult", "namespaceMathUtils_structMathUtils_1_1HitResult_dup" ],
+      [ "Ray", "namespaceMathUtils.html#structMathUtils_1_1Ray", "namespaceMathUtils_structMathUtils_1_1Ray_dup" ]
+    ] ],
+    [ "Physics", "namespacePhysics.html", [
+      [ "Bounding", "namespacePhysics_1_1Bounding.html", [
+        [ "AABB", "classPhysics_1_1Bounding_1_1AABB.html", "classPhysics_1_1Bounding_1_1AABB" ],
+        [ "BoxCollider", "classPhysics_1_1Bounding_1_1BoxCollider.html", "classPhysics_1_1Bounding_1_1BoxCollider" ]
+      ] ],
+      [ "PhysicsBody", "classPhysics_1_1PhysicsBody.html", "classPhysics_1_1PhysicsBody" ],
+      [ "PhysicsSystem", "classPhysics_1_1PhysicsSystem.html", "classPhysics_1_1PhysicsSystem" ],
+      [ "PointMass", "classPhysics_1_1PointMass.html", "classPhysics_1_1PointMass" ],
+      [ "RigidBody", "classPhysics_1_1RigidBody.html", "classPhysics_1_1RigidBody" ]
+    ] ],
+    [ "std", "namespacestd.html", [
+      [ "hash< Vertex >", "structstd_1_1hash_3_01Vertex_01_4.html", "structstd_1_1hash_3_01Vertex_01_4" ]
+    ] ],
+    [ "BatchKey", "structBatchKey.html", "structBatchKey" ],
+    [ "Camera", "classCamera.html", "classCamera" ],
+    [ "ComputeShader", "classComputeShader.html", "classComputeShader" ],
+    [ "ContactInfo", "ICollider_8h.html#structContactInfo", "ICollider_8h_structContactInfo" ],
+    [ "ForcesInspectorWidget", "classForcesInspectorWidget.html", "classForcesInspectorWidget" ],
+    [ "Gizmo", "classGizmo.html", "classGizmo" ],
+    [ "GlobalsInspectorWidget", "classGlobalsInspectorWidget.html", "classGlobalsInspectorWidget" ],
+    [ "HierarchyWidget", "classHierarchyWidget.html", "classHierarchyWidget" ],
+    [ "ICollider", "classICollider.html", "classICollider" ],
+    [ "IDrawable", "classIDrawable.html", "classIDrawable" ],
+    [ "IHandle", "classIHandle.html", "classIHandle" ],
+    [ "IInspectorSection", "classIInspectorSection.html", "classIInspectorSection" ],
+    [ "InspectorRow", "classInspectorRow.html", "classInspectorRow" ],
+    [ "InspectorWidget", "classInspectorWidget.html", "classInspectorWidget" ],
+    [ "InstanceData", "Mesh_8h.html#structInstanceData", "Mesh_8h_structInstanceData" ],
+    [ "InterceptSolver", "classInterceptSolver.html", "classInterceptSolver" ],
+    [ "IPickable", "classIPickable.html", "classIPickable" ],
+    [ "ISolver", "classISolver.html", "classISolver" ],
+    [ "MainWindow", "classMainWindow.html", "classMainWindow" ],
+    [ "Mesh", "classMesh.html", "classMesh" ],
+    [ "ObjectOptions", "SceneObjectOptions_8h.html#structObjectOptions", "SceneObjectOptions_8h_structObjectOptions" ],
+    [ "ObjectSnapshot", "PhysicsBody_8h.html#structObjectSnapshot", "PhysicsBody_8h_structObjectSnapshot" ],
+    [ "OneUnknownSolver", "classOneUnknownSolver.html", "classOneUnknownSolver" ],
+    [ "OpenGLWindow", "classOpenGLWindow.html", "classOpenGLWindow" ],
+    [ "PhysicsInspectorWidget", "classPhysicsInspectorWidget.html", "classPhysicsInspectorWidget" ],
+    [ "PointMassOptions", "structPointMassOptions.html", "structPointMassOptions" ],
+    [ "ProblemRouter", "classProblemRouter.html", "classProblemRouter" ],
+    [ "RawInputFilter", "classRawInputFilter.html", "classRawInputFilter" ],
+    [ "ResourceManager", "classResourceManager.html", "classResourceManager" ],
+    [ "RigidBodyOptions", "structRigidBodyOptions.html", "structRigidBodyOptions" ],
+    [ "RotateHandle", "classRotateHandle.html", "classRotateHandle" ],
+    [ "ScalarWidget", "classScalarWidget.html", "classScalarWidget" ],
+    [ "ScaleHandle", "classScaleHandle.html", "classScaleHandle" ],
+    [ "Scene", "classScene.html", "classScene" ],
+    [ "SceneManager", "classSceneManager.html", "classSceneManager" ],
+    [ "SceneObject", "classSceneObject.html", "classSceneObject" ],
+    [ "SceneSerializer", "classSceneSerializer.html", "classSceneSerializer" ],
+    [ "Shader", "classShader.html", "classShader" ],
+    [ "SimulationStopCondition", "SceneManager_8h.html#structSimulationStopCondition", "SceneManager_8h_structSimulationStopCondition" ],
+    [ "SnapshotTableModel", "classSnapshotTableModel.html", "classSnapshotTableModel" ],
+    [ "SolverDecision", "ProblemRouter_8h.html#structSolverDecision", "ProblemRouter_8h_structSolverDecision" ],
+    [ "SolverDialog", "classSolverDialog.html", "classSolverDialog" ],
+    [ "TransformInspectorWidget", "classTransformInspectorWidget.html", "classTransformInspectorWidget" ],
+    [ "TranslateHandle", "classTranslateHandle.html", "classTranslateHandle" ],
+    [ "UniformBuffer", "classUniformBuffer.html", "classUniformBuffer" ],
+    [ "Vector3Widget", "classVector3Widget.html", "classVector3Widget" ],
+    [ "VectorRootSolver", "classVectorRootSolver.html", "classVectorRootSolver" ],
+    [ "Vertex", "structVertex.html", "structVertex" ]
+];
