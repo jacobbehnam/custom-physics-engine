@@ -7,7 +7,7 @@
 #include <QSet>
 #include <QCursor>
 #include <chrono>
-#include <graphics/utils/MathUtils.h>
+#include "math/Ray.h"
 
 #include "physics/PhysicsSystem.h"
 
@@ -75,5 +75,5 @@ private:
     SceneManager* sceneManager;
 
     void calculateFPS();
-    MathUtils::Ray getMouseRay();
+    Math::Ray getMouseRay();
 };

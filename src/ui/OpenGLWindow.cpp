@@ -54,7 +54,7 @@ void OpenGLWindow::paintGL() {
 
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
 
-    MathUtils::Ray ray = getMouseRay();
+    Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
     scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
 
@@ -63,13 +63,13 @@ void OpenGLWindow::paintGL() {
     update();
 }
 
-MathUtils::Ray OpenGLWindow::getMouseRay() {
+Math::Ray OpenGLWindow::getMouseRay() {
     QPointF mousePos = getMousePos();
     QSize fbSize = getFramebufferSize();
 
     return {
         scene->getCamera()->position,
-        MathUtils::screenToWorldRayDirection(
+        Math::screenToWorldRayDirection(
             mousePos.x(), mousePos.y(),
             fbSize.width(), fbSize.height(),
             scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())

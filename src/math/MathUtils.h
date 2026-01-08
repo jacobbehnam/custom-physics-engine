@@ -10,32 +10,21 @@
 
 #pragma once
 #include <glm/glm.hpp>
-#include "../core/IPickable.h"
 #include <vector>
 #include <optional>
+#include "graphics/core/IPickable.h"
 
 struct ObjectSnapshot;
 
 /**
- * @namespace MathUtils
+ * @namespace Math
  * @brief Mathematical and geometric utility functions
  *
  * Provides ray intersection tests, coordinate transformations,
  * and interpolation utilities used throughout the rendering and
  * physics systems.
  */
-namespace MathUtils {
-    /**
-    * @brief Represents a ray in 3D space
-    *
-    * Used for mouse picking, collision detection, and line-of-sight tests.
-    * The ray is defined parametrically as: \f$P(t) = \texttt{origin} + t \cdot \texttt{dir}\f$
-    */
-    struct Ray {
-        glm::vec3 origin; ///< Starting point of the ray in world space
-        glm::vec3 dir; ///< Direction vector (should be normalized)
-    };
-
+namespace Math {
     /**
     * @brief Tests ray-triangle intersection using Möller-Trumbore algorithm
     *
@@ -178,6 +167,8 @@ namespace MathUtils {
      * @note Objects are tested in list order; consider spatial acceleration structures for large scenes.
      * @note The function is O(n) in the number of objects.
      * @note Not thread-safe if the `objects` list is modified concurrently.
+     *
+     * @see HitResult
      */
     inline std::optional<HitResult> findFirstHit(
         const std::vector<IPickable*>& objects,

@@ -10,6 +10,10 @@
 class ICollider;
 
 namespace Physics {
+    namespace Bounding {
+        class ICollider;
+    }
+
     class PointMass;
     class RigidBody;
 }
@@ -61,7 +65,7 @@ namespace Physics {
         std::vector<ObjectSnapshot> getAllFrames(BodyLock lock) const;
         void clearAllFrames(BodyLock lock);
 
-        virtual ICollider* getCollider() const { return nullptr; }
+        virtual Bounding::ICollider *getCollider() const { return nullptr; }
 
         // Uses double dispatch
         virtual bool collidesWith(const PhysicsBody& other) const = 0;

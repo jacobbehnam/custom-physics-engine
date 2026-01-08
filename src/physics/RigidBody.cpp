@@ -5,17 +5,17 @@
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
 
-Physics::RigidBody::RigidBody(uint32_t id, float m, ICollider* col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
+Physics::RigidBody::RigidBody(uint32_t id, float m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setMass(m, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
-    collider = col;
+    collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
 }
 
-Physics::RigidBody::RigidBody(uint32_t id, ICollider* col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
+Physics::RigidBody::RigidBody(uint32_t id, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
-    collider = col;
+    collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
     setMass(1.0f, BodyLock::NOLOCK);
@@ -57,7 +57,7 @@ bool Physics::RigidBody::collidesWith(const PhysicsBody &other) const {
 
 bool Physics::RigidBody::collidesWithPointMass(const PointMass &pm) const {
     glm::mat4 M = getWorldTransform(BodyLock::LOCK);
-    ICollider* worldCollider = collider->getTransformed(M);
+    auto worldCollider = collider->getTransformed(M);
     return worldCollider->contains(pm.getPosition(BodyLock::LOCK));
 }
 
@@ -71,8 +71,8 @@ bool Physics::RigidBody::resolveCollisionWith(PhysicsBody &other) {
 
 bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     std::lock_guard<std::mutex> lock(stateMutex);
-    ICollider* worldCollider = collider->getTransformed(getWorldTransform(BodyLock::NOLOCK));
-    ContactInfo ci = worldCollider->closestPoint(pm.getPosition(BodyLock::NOLOCK));
+    auto worldCollider = collider->getTransformed(getWorldTransform(BodyLock::NOLOCK));
+    Bounding::ContactInfo ci = worldCollider->closestPoint(pm.getPosition(BodyLock::NOLOCK));
     if (ci.penetration < 0.0f) return false; // no overlap
 
     float vRel = glm::dot(pm.getVelocity(BodyLock::NOLOCK), ci.normal);

@@ -1,7 +1,7 @@
 #include "Gizmo.h"
 
 #include <iostream>
-#include <graphics/utils/MathUtils.h>
+#include <math/MathUtils.h>
 #include <graphics/components/TranslateHandle.h>
 #include <graphics/components/RotateHandle.h>
 
@@ -66,10 +66,10 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
     IHandle* hitHandle = nullptr;
     float closestT = std::numeric_limits<float>::infinity();
     for (IHandle* handle : handles) {
-        float outT;
-        if (localAABB.getTransformed(handle->getModelMatrix())->intersectRay(rayOrigin, rayDir, outT)) {
-            if (outT < closestT) {
-                closestT = outT;
+        auto worldAABB = localAABB.getTransformed(handle->getModelMatrix());
+        if (auto outT = worldAABB->intersectRay(Math::Ray{rayOrigin, rayDir})) {
+            if (*outT < closestT) {
+                closestT = *outT;
                 hitHandle = handle;
             }
         }
@@ -78,6 +78,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
     }
     if (!activeHandle || !isDragging)
         activeHandle = hitHandle;
+
     return (bool) hitHandle;
 }
 

@@ -23,7 +23,7 @@ struct PointMassOptions {
 
 struct RigidBodyOptions {
     ObjectOptions base;
-    std::function<ICollider*(const ObjectOptions&)> createCollider;
+    std::function<std::unique_ptr<Physics::Bounding::ICollider>(const ObjectOptions&)> createCollider;
     bool isStatic = false;
     float mass = 1.0f;
 
@@ -33,8 +33,12 @@ struct RigidBodyOptions {
         o.base = base;
         o.mass = mass;
         o.isStatic = isStatic;
-        o.createCollider = [](auto const& b){
-            return new Physics::Bounding::BoxCollider(b.position, b.scale/2.0f, b.rotation);
+        o.createCollider = [](auto const& b) -> std::unique_ptr<Physics::Bounding::ICollider>{
+            return std::make_unique<Physics::Bounding::BoxCollider>(
+                b.position,
+                b.scale / 2.0f,
+                b.rotation
+            );
         };
         return o;
     }

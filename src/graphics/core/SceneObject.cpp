@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <graphics/core/Scene.h>
-#include <graphics/utils/MathUtils.h>
+#include <math/Ray.h>
 #include "physics/PointMass.h"
 #include <graphics/core/SceneManager.h>
 #include <graphics/components/ComputeShader.h>
@@ -82,19 +82,14 @@ void SceneObject::draw() const {
 
 bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
-    bool hitSomething = false;
-    float closestT = std::numeric_limits<float>::infinity();
-    float outDistance = -std::numeric_limits<float>::max();
-    if (localAABB.getTransformed(getModelMatrix())->intersectRay(orig, dir, outT)) {
-        if (outDistance < closestT) {
-            closestT = outDistance;
-            hitSomething = true;
-        }
-    }
-    if (hitSomething)
-        outT = closestT;
+    auto worldAABB = localAABB.getTransformed(getModelMatrix());
 
-    return hitSomething;
+    if (auto t = worldAABB->intersectRay(Math::Ray{orig, dir})) {
+        outT = *t;
+        return true;
+    }
+
+    return false;
 }
 
 bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {

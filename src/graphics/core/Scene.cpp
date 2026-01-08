@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "graphics/utils/MathUtils.h"
+#include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <graphics/core/SceneObject.h>

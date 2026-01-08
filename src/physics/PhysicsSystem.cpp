@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "PointMass.h"
-#include "graphics/utils/MathUtils.h"
+#include "math/MathUtils.h"
 #include "solver/OneUnknownSolver.h"
 
 namespace Physics {

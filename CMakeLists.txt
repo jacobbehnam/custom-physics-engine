@@ -48,7 +48,8 @@ add_library(PhysicsCore STATIC
         src/physics/solver/ISolver.h
 
         # Dependencies
-        src/graphics/utils/MathUtils.h
+        src/math/MathUtils.h
+        src/math/Ray.h
 )
 
 add_executable(PhysicsEngine src/main.cpp

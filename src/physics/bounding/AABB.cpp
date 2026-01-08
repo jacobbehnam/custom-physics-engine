@@ -1,13 +1,14 @@
 #include "AABB.h"
 #include <algorithm>
 #include <iostream>
+#include <memory>
 
 #include <glm/gtx/matrix_decompose.hpp>
 
 Physics::Bounding::AABB::AABB(const glm::vec3 &ctr, const glm::vec3 &halfExt)
     : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}
 
-Physics::Bounding::AABB* Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
+std::unique_ptr<Physics::Bounding::ICollider> Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
     auto L = glm::mat3(modelMatrix);
     auto T = glm::vec3(modelMatrix[3]);
 
@@ -20,8 +21,7 @@ Physics::Bounding::AABB* Physics::Bounding::AABB::getTransformed(const glm::mat4
     glm::vec3 newHalfExtents = absL * halfExtents;
     glm::vec3 newCenter = L * center + T;
 
-    // TODO: change to smart pointers
-    return new AABB(newCenter, newHalfExtents);
+    return std::make_unique<AABB>(newCenter, newHalfExtents);
 }
 
 bool Physics::Bounding::AABB::intersectsAABB(const AABB &other) const {
@@ -31,11 +31,11 @@ bool Physics::Bounding::AABB::intersectsAABB(const AABB &other) const {
 }
 
 // Tavian Barnes’ branchless slab method
-bool Physics::Bounding::AABB::intersectRay(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
-    glm::vec3 invDir = 1.0f / dir;
+std::optional<float> Physics::Bounding::AABB::intersectRay(const Math::Ray& ray) const {
+    glm::vec3 invDir = 1.0f / ray.dir;
 
-    glm::vec3 t0s = (minCorner - orig) * invDir;
-    glm::vec3 t1s = (maxCorner - orig) * invDir;
+    glm::vec3 t0s = (minCorner - ray.origin) * invDir;
+    glm::vec3 t1s = (maxCorner - ray.origin) * invDir;
 
     glm::vec3 tsmaller = glm::min(t0s, t1s);
     glm::vec3 tbigger  = glm::max(t0s, t1s);
@@ -43,14 +43,14 @@ bool Physics::Bounding::AABB::intersectRay(const glm::vec3 &orig, const glm::vec
     float tmin = std::max(std::max(tsmaller.x, tsmaller.y), tsmaller.z);
     float tmax = std::min(std::min(tbigger.x, tbigger.y), tbigger.z);
 
-    outT = tmin;
-    return tmax >= std::max(tmin, 0.0f);
+    bool hit = tmax >= std::max(tmin, 0.0f);
+    return hit ? std::optional{ tmin } : std::nullopt;
 }
 
 bool Physics::Bounding::AABB::contains(const glm::vec3 &p) const {
     //TODO
 }
 
-ContactInfo Physics::Bounding::AABB::closestPoint(const glm::vec3 &p) const {
+Physics::Bounding::ContactInfo Physics::Bounding::AABB::closestPoint(const glm::vec3 &p) const {
     //TODO
 }

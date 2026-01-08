@@ -4,7 +4,6 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "graphics/core/SceneObject.h"
-#include <graphics/utils/MathUtils.h>
 #include <graphics/core/ResourceManager.h>
 
 

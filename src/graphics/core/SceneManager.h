@@ -50,7 +50,7 @@ public:
     void addDrawable(IDrawable* obj) const { scene->addDrawable(obj); }
     void removePickable(IPickable* obj);
     void removeDrawable(IDrawable* obj) const { scene->removeDrawable(obj); }
-    void updateHoverState(const MathUtils::Ray& mouseRay);
+    void updateHoverState(const Math::Ray& mouseRay);
     void setSelectFor(SceneObject *obj, bool flag = true);
 
     void processHeldKeys(const QSet<int> &heldKeys, float dt);
@@ -88,7 +88,7 @@ private:
     std::string generateDefaultName(const CreationOptions& creationOptions);
     std::unordered_map<std::string, SceneObject*> usedNames;
 
-    MathUtils::Ray getMouseRay();
+    Math::Ray getMouseRay();
 
     // To track if a right click was a click or drag
     glm::vec3 rightClickStartDir;

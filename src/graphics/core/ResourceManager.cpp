@@ -1,5 +1,5 @@
 #include "ResourceManager.h"
-#include <graphics/utils/MathUtils.h>
+#include <math/MathUtils.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>

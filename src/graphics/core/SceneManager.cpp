@@ -177,23 +177,23 @@ void SceneManager::clearCameraTarget() {
     }
 }
 
-MathUtils::Ray SceneManager::getMouseRay() {
+Math::Ray SceneManager::getMouseRay() {
     QPointF mousePos = window->getMousePos();
     QSize fbSize = window->getFramebufferSize();
 
     return {
         scene->getCamera()->position,
-        MathUtils::screenToWorldRayDirection(
+        Math::screenToWorldRayDirection(
             mousePos.x(), mousePos.y(),
             fbSize.width(), fbSize.height(),
             scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
     };
 }
 
-void SceneManager::updateHoverState(const MathUtils::Ray &mouseRay) {
+void SceneManager::updateHoverState(const Math::Ray &mouseRay) {
     hoveredIDs.clear();
 
-    IPickable* hovered = MathUtils::findFirstHit(pickableObjects, mouseRay, currentGizmo.get())->object;
+    IPickable* hovered = Math::findFirstHit(pickableObjects, mouseRay, currentGizmo.get())->object;
     if (hovered) {
         hoveredIDs.insert(hovered->getObjectID());
     }
@@ -218,8 +218,8 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
             camera->resetMouse();
 
             if (glm::distance(camera->front, rightClickStartDir) < 0.05f) {
-                MathUtils::Ray ray = getMouseRay();
-                IPickable* hit = MathUtils::findFirstHit(pickableObjects, ray, currentGizmo.get())->object;
+                Math::Ray ray = getMouseRay();
+                IPickable* hit = Math::findFirstHit(pickableObjects, ray, currentGizmo.get())->object;
 
                 if (auto* sceneObj = dynamic_cast<SceneObject*>(hit)) {
                     emit contextMenuRequested(QCursor::pos(), sceneObj);
@@ -229,8 +229,8 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
     }
 
     if (button == Qt::LeftButton) {
-        MathUtils::Ray ray = getMouseRay();
-        auto hit = MathUtils::findFirstHit(pickableObjects, ray, currentGizmo.get());
+        Math::Ray ray = getMouseRay();
+        auto hit = Math::findFirstHit(pickableObjects, ray, currentGizmo.get());
         IPickable* clickedObject = hit ? hit->object : nullptr;
         bool clickedCurrentGizmo = clickedObject && currentGizmo && (clickedObject->getObjectID() == currentGizmo->getObjectID());
 
@@ -279,7 +279,7 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
 
     if (currentGizmo && currentGizmo->getIsDragging()) {
         hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
-        MathUtils::Ray ray = getMouseRay();
+        Math::Ray ray = getMouseRay();
         currentGizmo->handleDrag(ray.origin, ray.dir);
     }
 

@@ -11,7 +11,7 @@ bool Physics::Bounding::BoxCollider::contains(const glm::vec3 &p) const {
     return glm::all(glm::lessThanEqual(glm::abs(local), halfExtents));
 }
 
-ContactInfo Physics::Bounding::BoxCollider::closestPoint(const glm::vec3 &p) const {
+Physics::Bounding::ContactInfo Physics::Bounding::BoxCollider::closestPoint(const glm::vec3 &p) const {
     glm::vec3 local = glm::inverse(rotation) * (p - center);
     glm::vec3 clamped = glm::clamp(local, -halfExtents, halfExtents);
     glm::vec3 worldPoint = rotation * clamped + center;
@@ -43,9 +43,9 @@ ContactInfo Physics::Bounding::BoxCollider::closestPoint(const glm::vec3 &p) con
     return { worldPoint, worldNormal, penetration };
 }
 
-bool Physics::Bounding::BoxCollider::intersectRay(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float &outT) const {
-    glm::vec3 localOrig = glm::inverse(rotation) * (rayOrig - center);
-    glm::vec3 localDir  = glm::inverse(rotation) * rayDir;
+std::optional<float> Physics::Bounding::BoxCollider::intersectRay(const Math::Ray& ray) const {
+    glm::vec3 localOrig = glm::inverse(rotation) * (ray.origin - center);
+    glm::vec3 localDir  = glm::inverse(rotation) * ray.dir;
 
     glm::vec3 invDir = 1.0f / localDir;
     glm::vec3 tMinVec = (-halfExtents - localOrig) * invDir;
@@ -57,16 +57,15 @@ bool Physics::Bounding::BoxCollider::intersectRay(const glm::vec3 &rayOrig, cons
     float tmin = std::max(std::max(tsmaller.x, tsmaller.y), tsmaller.z);
     float tmax = std::min(std::min(tbigger.x, tbigger.y), tbigger.z);
 
-    outT = tmin;
-    return tmax >= std::max(tmin, 0.0f);
+    bool hit = tmax >= std::max(tmin, 0.0f);
+    return hit ? std::optional{ tmin } : std::nullopt;
 }
 
-Physics::Bounding::BoxCollider* Physics::Bounding::BoxCollider::getTransformed(const glm::mat4 &modelMatrix) const {
+std::unique_ptr<Physics::Bounding::ICollider> Physics::Bounding::BoxCollider::getTransformed(const glm::mat4 &modelMatrix) const {
     glm::vec3 skew, translation, scale;
     glm::vec4 persp;
     glm::quat rot;
     glm::decompose(modelMatrix, scale, rot, translation, skew, persp);
 
-    // TODO: change to smart pointer
-    return new BoxCollider(scale * center + translation, halfExtents*scale, rot);
+    return std::make_unique<BoxCollider>(scale * center + translation, halfExtents*scale, rot);
 }
