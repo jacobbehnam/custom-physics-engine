@@ -13,7 +13,7 @@ var searchData=
   ['transforminspectorwidget_2ecpp_10',['TransformInspectorWidget.cpp',['../TransformInspectorWidget_8cpp.html',1,'']]],
   ['transforminspectorwidget_2eh_11',['TransformInspectorWidget.h',['../TransformInspectorWidget_8h.html',1,'']]],
   ['translate_12',['TRANSLATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa6ba95f0374a24124cc1632dc38333c82',1,'Gizmo.h']]],
-  ['translatehandle_13',['translatehandle',['../classTranslateHandle.html#a394c39e6a86a0c735402818b7c579798',1,'TranslateHandle::TranslateHandle()'],['../classTranslateHandle.html',1,'TranslateHandle']]],
+  ['translatehandle_13',['translatehandle',['../classTranslateHandle.html#a24833149b943049d2c63148053fd7f0d',1,'TranslateHandle::TranslateHandle()'],['../classTranslateHandle.html',1,'TranslateHandle']]],
   ['translatehandle_2ecpp_14',['TranslateHandle.cpp',['../TranslateHandle_8cpp.html',1,'']]],
   ['translatehandle_2eh_15',['TranslateHandle.h',['../TranslateHandle_8h.html',1,'']]],
   ['typical_20implementation_20pattern_16',['Typical Implementation Pattern',['../classISolver.html#autotoc_md3',1,'']]]

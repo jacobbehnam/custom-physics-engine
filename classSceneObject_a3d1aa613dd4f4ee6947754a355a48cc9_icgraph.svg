@@ -66,7 +66,7 @@ var sectionId = 'dynsection-7';
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classRotateHandle.html#a24a91d11a8e31dbdcae31b9d6fd29317" target="_top" xlink:title=" ">
+<g id="a_Node000002"><a xlink:href="classRotateHandle.html#a24a91d11a8e31dbdcae31b9d6fd29317" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="451,-228 284,-228 284,-209 451,-209 451,-228"/>
 <text text-anchor="middle" x="367.5" y="-216" font-family="Helvetica,sans-Serif" font-size="10.00">RotateHandle::getModelMatrix</text>
 </a>
@@ -84,7 +84,7 @@ var sectionId = 'dynsection-7';
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classScaleHandle.html#ae2d8a999110797881a5f7d00cb1bc4e2" target="_top" xlink:title=" ">
+<g id="a_Node000003"><a xlink:href="classScaleHandle.html#ae2d8a999110797881a5f7d00cb1bc4e2" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="448,-191 287,-191 287,-172 448,-172 448,-191"/>
 <text text-anchor="middle" x="367.5" y="-179" font-family="Helvetica,sans-Serif" font-size="10.00">ScaleHandle::getModelMatrix</text>
 </a>
@@ -102,7 +102,7 @@ var sectionId = 'dynsection-7';
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="classTranslateHandle.html#ac8493751122288436b9d557609582ca5" target="_top" xlink:title=" ">
+<g id="a_Node000004"><a xlink:href="classTranslateHandle.html#ac8493751122288436b9d557609582ca5" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="441,-153.5 294,-153.5 294,-123.5 441,-123.5 441,-153.5"/>
 <text text-anchor="start" x="302" y="-141.5" font-family="Helvetica,sans-Serif" font-size="10.00">TranslateHandle::getModel</text>
 <text text-anchor="middle" x="367.5" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00">Matrix</text>
@@ -121,7 +121,7 @@ var sectionId = 'dynsection-7';
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
-<g id="a_Node000005"><a xlink:href="classRotateHandle.html#a815a3c0245a0a3df6f34f967813c5440" target="_top" xlink:title=" ">
+<g id="a_Node000005"><a xlink:href="classRotateHandle.html#a251dde0c3864638e4f73351a76d6d6a3" target="_top" xlink:title="Handles continuous dragging motion.">
 <polygon fill="white" stroke="#666666" points="430,-105 305,-105 305,-86 430,-86 430,-105"/>
 <text text-anchor="middle" x="367.5" y="-93" font-family="Helvetica,sans-Serif" font-size="10.00">RotateHandle::onDrag</text>
 </a>
@@ -139,7 +139,7 @@ var sectionId = 'dynsection-7';
 <!-- Node6 -->
 <g id="Node000006" class="node">
 <title>Node6</title>
-<g id="a_Node000006"><a xlink:href="classTranslateHandle.html#aa3852bb3b391559231be88952a48e030" target="_top" xlink:title=" ">
+<g id="a_Node000006"><a xlink:href="classTranslateHandle.html#aa3852bb3b391559231be88952a48e030" target="_top" xlink:title="Initializes the drag operation state.">
 <polygon fill="white" stroke="#666666" points="437.5,-67.5 297.5,-67.5 297.5,-37.5 437.5,-37.5 437.5,-67.5"/>
 <text text-anchor="start" x="305.5" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">TranslateHandle::setDrag</text>
 <text text-anchor="middle" x="367.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">State</text>

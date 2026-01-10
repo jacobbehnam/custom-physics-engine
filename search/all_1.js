@@ -18,5 +18,5 @@ var searchData=
   ['architecture_20overview_15',['Architecture Overview',['../index.html#autotoc_md13',1,'']]],
   ['author_16',['Author',['../index.html#autotoc_md18',1,'']]],
   ['axis_17',['Axis',['../IHandle_8h.html#ae3996976d8ffb3e58d88f58227473f8e',1,'IHandle.h']]],
-  ['axisdir_18',['axisDir',['../IHandle_8h.html#a964bf79581c06e837f1d55438f924d2e',1,'IHandle.h']]]
+  ['axisdir_18',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
 ];

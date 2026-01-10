@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: IPickable Class Reference</title>
+<title>Physics Simulation &amp; Visualization Tool: IPickable Interface Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -99,9 +99,12 @@ $(document).ready(function(){initNavTree('classIPickable.html',''); initResizabl
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a>  </div>
-  <div class="headertitle"><div class="title">IPickable Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">IPickable Interface Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract interface for objects that can be selected and interacted with using the mouse.  
+ <a href="classIPickable.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="IPickable_8h_source.html">IPickable.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -113,21 +116,36 @@ Inheritance diagram for IPickable:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abecadcd90cd4a313c0afe71901a3976c" id="r_abecadcd90cd4a313c0afe71901a3976c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#abecadcd90cd4a313c0afe71901a3976c">~IPickable</a> ()=default</td></tr>
+<tr class="memdesc:abecadcd90cd4a313c0afe71901a3976c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
 <tr class="separator:abecadcd90cd4a313c0afe71901a3976c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f2a257ef46eaea87aed52300ee15d0e" id="r_a5f2a257ef46eaea87aed52300ee15d0e"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#a5f2a257ef46eaea87aed52300ee15d0e">rayIntersection</a> (glm::vec3 rayOrigin, glm::vec3 rayDir, float &amp;outDistance)=0</td></tr>
-<tr class="separator:a5f2a257ef46eaea87aed52300ee15d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c0aa273e2f597a766c999219338a865" id="r_a3c0aa273e2f597a766c999219338a865"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#a3c0aa273e2f597a766c999219338a865">handleClick</a> (const glm::vec3 &amp;rayOrig, const glm::vec3 &amp;rayDir, float distance)=0</td></tr>
-<tr class="separator:a3c0aa273e2f597a766c999219338a865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69ded211af3ca1009ddbafd14aef8bb7" id="r_a69ded211af3ca1009ddbafd14aef8bb7"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#a69ded211af3ca1009ddbafd14aef8bb7">intersectsRay</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray) const =0</td></tr>
+<tr class="memdesc:a69ded211af3ca1009ddbafd14aef8bb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if a ray intersects this object's geometry.  <br /></td></tr>
+<tr class="separator:a69ded211af3ca1009ddbafd14aef8bb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabf11fe38a2332ac844b5b51093c7cd2" id="r_aabf11fe38a2332ac844b5b51093c7cd2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#aabf11fe38a2332ac844b5b51093c7cd2">handleClick</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray, float distance)=0</td></tr>
+<tr class="memdesc:aabf11fe38a2332ac844b5b51093c7cd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a mouse click on this object.  <br /></td></tr>
+<tr class="separator:aabf11fe38a2332ac844b5b51093c7cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5db23e2e774abaacdb00344866708a6" id="r_aa5db23e2e774abaacdb00344866708a6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#aa5db23e2e774abaacdb00344866708a6">setHovered</a> (bool hovered)=0</td></tr>
+<tr class="memdesc:aa5db23e2e774abaacdb00344866708a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the hover state of this object.  <br /></td></tr>
 <tr class="separator:aa5db23e2e774abaacdb00344866708a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e0b367e9e0f3e42eedfecd03154bc28" id="r_a6e0b367e9e0f3e42eedfecd03154bc28"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#a6e0b367e9e0f3e42eedfecd03154bc28">getHovered</a> ()=0</td></tr>
-<tr class="separator:a6e0b367e9e0f3e42eedfecd03154bc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc124ead38fd7422afacfe619a078834" id="r_acc124ead38fd7422afacfe619a078834"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#acc124ead38fd7422afacfe619a078834">getHovered</a> () const =0</td></tr>
+<tr class="memdesc:acc124ead38fd7422afacfe619a078834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current hover state of this object.  <br /></td></tr>
+<tr class="separator:acc124ead38fd7422afacfe619a078834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a633ac40ae443d7a7935a34d145514bea" id="r_a633ac40ae443d7a7935a34d145514bea"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#a633ac40ae443d7a7935a34d145514bea">getObjectID</a> () const =0</td></tr>
+<tr class="memdesc:a633ac40ae443d7a7935a34d145514bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the unique identifier for this object.  <br /></td></tr>
 <tr class="separator:a633ac40ae443d7a7935a34d145514bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="IPickable_8h_source.html#l00004">4</a> of file <a class="el" href="IPickable_8h_source.html">IPickable.h</a>.</p>
+<div class="textblock"><p>Abstract interface for objects that can be selected and interacted with using the mouse. </p>
+<p>This interface defines the contract for objects that support ray-based picking, hover states, and click handling. It is used by the scene manager to implement interactive object manipulation and selection.</p>
+<p>The picking system uses CPU-based ray-object intersection tests, with some implementations delegating to GPU compute shaders for complex geometry.</p>
+<dl class="section note"><dt>Note</dt><dd>Implementations must maintain their own hover state and respond to state changes appropriately (e.g., visual feedback).</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">SceneManager::updateHoverState()</a> </dd>
+<dd>
+<a class="el" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">SceneManager::handleMouseButton()</a> </dd>
+<dd>
+MathUtils::findFirstHit() </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="IPickable_8h_source.html#l00028">28</a> of file <a class="el" href="IPickable_8h_source.html">IPickable.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="abecadcd90cd4a313c0afe71901a3976c" name="abecadcd90cd4a313c0afe71901a3976c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abecadcd90cd4a313c0afe71901a3976c">&#9670;&#160;</a></span>~IPickable()</h2>
@@ -152,11 +170,13 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Virtual destructor for proper cleanup of derived classes. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6e0b367e9e0f3e42eedfecd03154bc28" name="a6e0b367e9e0f3e42eedfecd03154bc28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e0b367e9e0f3e42eedfecd03154bc28">&#9670;&#160;</a></span>getHovered()</h2>
+<a id="acc124ead38fd7422afacfe619a078834" name="acc124ead38fd7422afacfe619a078834"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc124ead38fd7422afacfe619a078834">&#9670;&#160;</a></span>getHovered()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +188,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname">virtual bool IPickable::getHovered </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -178,7 +198,10 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classGizmo.html#a807b4c61e64da80e567ecef3f9ba4d1c">Gizmo</a>, and <a class="el" href="classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2">SceneObject</a>.</p>
+<p>Gets the current hover state of this object. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the object is currently being hovered over, false otherwise. </dd></dl>
+
+<p>Implemented in <a class="el" href="classGizmo.html#a318d69a1c29b2af4fd2f261e44046f22">Gizmo</a>, and <a class="el" href="classSceneObject.html#afa640b48a9b4dfa9078d632506bab308">SceneObject</a>.</p>
 
 </div>
 </div>
@@ -205,6 +228,18 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the unique identifier for this object. </p>
+<p>This ID is used to:</p><ul>
+<li>Correlate pick results with specific objects</li>
+<li>Drive hover/selection highlighting through shader uniforms</li>
+<li>Identify objects in the scene hierarchy</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>The object's unique identifier.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This should return the same ID as <a class="el" href="classIDrawable.html#acfe3e5ebe14667831238c8e23266b3f5">IDrawable::getObjectID()</a> for objects implementing a derived <a class="el" href="classIDrawable.html">IDrawable</a> interface and this interface.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1">Scene::allocateObjectID()</a> </dd>
+<dd>
+<a class="el" href="classIDrawable.html#acfe3e5ebe14667831238c8e23266b3f5">IDrawable::getObjectID()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classGizmo.html#a43f749b11ead975d2755746082fcaa72">Gizmo</a>, and <a class="el" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -214,8 +249,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a3c0aa273e2f597a766c999219338a865" name="a3c0aa273e2f597a766c999219338a865"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c0aa273e2f597a766c999219338a865">&#9670;&#160;</a></span>handleClick()</h2>
+<a id="aabf11fe38a2332ac844b5b51093c7cd2" name="aabf11fe38a2332ac844b5b51093c7cd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabf11fe38a2332ac844b5b51093c7cd2">&#9670;&#160;</a></span>handleClick()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,14 +261,8 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">virtual void IPickable::handleClick </td>
           <td>(</td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayOrig</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayDir</em>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;&#160;</td>
+          <td class="paramname"><em>ray</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -254,17 +283,38 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classGizmo.html#a6aa9928257fb8cc62e7d6880327cc8d4">Gizmo</a>, and <a class="el" href="classSceneObject.html#aadeb8322098fb37c845f73d2073994c6">SceneObject</a>.</p>
+<p>Handles a mouse click on this object. </p>
+<p>Called by the scene manager when the user clicks on this object. Implementations can respond by:</p><ul>
+<li>Changing selection state</li>
+<li>Spawning interaction gizmos</li>
+<li>Triggering object-specific behaviors</li>
+<li>Emitting signals for UI updates</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>The picking ray that intersected this object. </td></tr>
+    <tr><td class="paramname">distance</td><td>The distance along the ray to the intersection point.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This is only called if rayIntersection() returned a valid distance.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">SceneManager::handleMouseButton()</a> </dd>
+<dd>
+<a class="el" href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554" title="Handles a mouse click on this object.">SceneObject::handleClick()</a> </dd>
+<dd>
+<a class="el" href="classGizmo.html#a07150fb2f962b018c8937774dfb5eb77" title="Handles mouse click on a gizmo handle.">Gizmo::handleClick()</a> </dd></dl>
+
+<p>Implemented in <a class="el" href="classGizmo.html#a07150fb2f962b018c8937774dfb5eb77">Gizmo</a>, and <a class="el" href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554">SceneObject</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classIPickable_a3c0aa273e2f597a766c999219338a865_icgraph.svg" width="100%" height="386"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classIPickable_aabf11fe38a2332ac844b5b51093c7cd2_icgraph.svg" width="100%" height="386"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
 </div>
-<a id="a5f2a257ef46eaea87aed52300ee15d0e" name="a5f2a257ef46eaea87aed52300ee15d0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f2a257ef46eaea87aed52300ee15d0e">&#9670;&#160;</a></span>rayIntersection()</h2>
+<a id="a69ded211af3ca1009ddbafd14aef8bb7" name="a69ded211af3ca1009ddbafd14aef8bb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69ded211af3ca1009ddbafd14aef8bb7">&#9670;&#160;</a></span>intersectsRay()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,27 +323,11 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool IPickable::rayIntersection </td>
+          <td class="memname">virtual std::optional&lt; float &gt; IPickable::intersectsRay </td>
           <td>(</td>
-          <td class="paramtype">glm::vec3&#160;</td>
-          <td class="paramname"><em>rayOrigin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">glm::vec3&#160;</td>
-          <td class="paramname"><em>rayDir</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float &amp;&#160;</td>
-          <td class="paramname"><em>outDistance</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="paramtype">const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;&#160;</td>
+          <td class="paramname"><em>ray</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -303,7 +337,42 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classGizmo.html#ab78a02e47a17239b1fc4ab81e55faaac">Gizmo</a>, and <a class="el" href="classSceneObject.html#a2a0354ab6907b612c23b80d93d5b80cf">SceneObject</a>.</p>
+<p>Tests if a ray intersects this object's geometry. </p>
+<p>Implementations should test the ray against the object's bounding volume or exact geometry and return the distance to the intersection point if hit.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>The picking ray in world space coordinates.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::optional&lt;float&gt; containing the distance along the ray to the intersection point if hit, or std::nullopt if no intersection.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For performance, implementations should first test against an AABB before performing exact mesh intersection tests.</dd></dl>
+<p>Example implementation: </p><div class="fragment"><div class="line">std::optional&lt;float&gt; <a class="code hl_function" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a>(<span class="keyword">const</span> MathUtils::Ray&amp; ray)<span class="keyword"> const </span>{</div>
+<div class="line">    <span class="keywordtype">float</span> aabbDist;</div>
+<div class="line">    <span class="keywordflow">if</span> (!intersectsAABB(ray, aabbDist)) {</div>
+<div class="line">        <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordtype">float</span> meshDist;</div>
+<div class="line">    <span class="keywordflow">if</span> (intersectsMesh(ray, meshDist)) {</div>
+<div class="line">        <span class="keywordflow">return</span> meshDist;</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassSceneObject_html_af7482555ee9fdb5c369fac511d5cf537"><div class="ttname"><a href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a></div><div class="ttdeci">std::optional&lt; float &gt; intersectsRay(const Math::Ray &amp;ray) const override</div><div class="ttdoc">Tests if a ray intersects this object's geometry.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00120">SceneObject.cpp:120</a></div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537" title="Tests if a ray intersects this object&#39;s geometry.">SceneObject::intersectsRay()</a> </dd>
+<dd>
+<a class="el" href="classGizmo.html#a4dddd2e66342acf412161da2ac567b7e" title="Tests if a ray intersects any of the gizmo&#39;s handles.">Gizmo::intersectsRay()</a> </dd>
+<dd>
+MathUtils::intersectsRay() </dd></dl>
+
+<p>Implemented in <a class="el" href="classGizmo.html#a4dddd2e66342acf412161da2ac567b7e">Gizmo</a>, and <a class="el" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classIPickable_a69ded211af3ca1009ddbafd14aef8bb7_icgraph.svg" width="100%" height="431"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -331,11 +400,24 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the hover state of this object. </p>
+<p>Called by the scene manager when the mouse cursor enters or leaves this object. Implementations should update their internal state and may trigger visual feedback (e.g., highlighting).</p>
+<p>The actual visual feedback is typically handled through the rendering system via uniform buffers (isHovered[objectID]).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hovered</td><td>true if the mouse is hovering over this object, false otherwise.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">SceneManager::updateHoverState()</a> </dd>
+<dd>
+<a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classGizmo.html#a84ec663babfbb55365a537593e9fd0c9">Gizmo</a>, and <a class="el" href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">SceneObject</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>src/graphics/core/<a class="el" href="IPickable_8h_source.html">IPickable.h</a></li>
 </ul>
 </div><!-- contents -->

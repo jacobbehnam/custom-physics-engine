@@ -3,7 +3,7 @@ var searchData=
   ['savescene_0',['saveScene',['../classSceneManager.html#a1a46a8c9e99b6b27404a2f870f38749c',1,'SceneManager']]],
   ['savetojson_1',['saveToJson',['../classSceneSerializer.html#a56e278bcdda1f03f192797122dd6d0c0',1,'SceneSerializer']]],
   ['scalarwidget_2',['ScalarWidget',['../classScalarWidget.html#a489333cb6ecc52b3e3304c0921305203',1,'ScalarWidget']]],
-  ['scalehandle_3',['ScaleHandle',['../classScaleHandle.html#a8a01dc24b1e42753b3ba0eb4839f1752',1,'ScaleHandle']]],
+  ['scalehandle_3',['ScaleHandle',['../classScaleHandle.html#aa3460ac92fd30b14c14ea502e2e276c0',1,'ScaleHandle']]],
   ['scene_4',['Scene',['../classScene.html#af3a4cc13e6e2daf3cd135b88d60639fa',1,'Scene']]],
   ['scenemanager_5',['SceneManager',['../classSceneManager.html#aac0c52b9be10e597bacacb46b2887877',1,'SceneManager']]],
   ['sceneobject_6',['SceneObject',['../classSceneObject.html#a71b5ba2106108265edb221540f4ec1ae',1,'SceneObject']]],

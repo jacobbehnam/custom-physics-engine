@@ -21,7 +21,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Computes rotation matrix to align mesh from +Y to target axis.">
 <polygon fill="#999999" stroke="#666666" points="355,-67.5 203,-67.5 203,-48.5 355,-48.5 355,-67.5"/>
 <text text-anchor="middle" x="279" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">IHandle::rotateFromYToAxis</text>
 </a>
@@ -30,7 +30,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classRotateHandle.html#a24a91d11a8e31dbdcae31b9d6fd29317" target="_top" xlink:title=" ">
+<g id="a_Node000002"><a xlink:href="classRotateHandle.html#a24a91d11a8e31dbdcae31b9d6fd29317" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="167,-104.5 0,-104.5 0,-85.5 167,-85.5 167,-104.5"/>
 <text text-anchor="middle" x="83.5" y="-92.5" font-family="Helvetica,sans-Serif" font-size="10.00">RotateHandle::getModelMatrix</text>
 </a>
@@ -48,7 +48,7 @@
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classScaleHandle.html#ae2d8a999110797881a5f7d00cb1bc4e2" target="_top" xlink:title=" ">
+<g id="a_Node000003"><a xlink:href="classScaleHandle.html#ae2d8a999110797881a5f7d00cb1bc4e2" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="164,-67.5 3,-67.5 3,-48.5 164,-48.5 164,-67.5"/>
 <text text-anchor="middle" x="83.5" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">ScaleHandle::getModelMatrix</text>
 </a>
@@ -66,7 +66,7 @@
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="classTranslateHandle.html#ac8493751122288436b9d557609582ca5" target="_top" xlink:title=" ">
+<g id="a_Node000004"><a xlink:href="classTranslateHandle.html#ac8493751122288436b9d557609582ca5" target="_top" xlink:title="Gets the model transformation matrix for rendering this handle.">
 <polygon fill="white" stroke="#666666" points="157,-30 10,-30 10,0 157,0 157,-30"/>
 <text text-anchor="start" x="18" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">TranslateHandle::getModel</text>
 <text text-anchor="middle" x="83.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Matrix</text>

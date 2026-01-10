@@ -120,30 +120,12 @@ var sectionId = 'dynsection-8';
 </a>
 </g>
 </g>
-<!-- Node5 -->
-<g id="Node000005" class="node">
-<title>Node5</title>
-<g id="a_Node000005"><a xlink:href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="538,-315 432,-315 432,-296 538,-296 538,-315"/>
-<text text-anchor="middle" x="485" y="-303" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::getCamera</text>
-</a>
-</g>
-</g>
-<!-- Node2&#45;&gt;Node5 -->
-<g id="edge4_Node000002_Node000005" class="edge">
-<title>Node2&#45;&gt;Node5</title>
-<g id="a_edge4_Node000002_Node000005"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M293.26,-227.68C314.94,-244.9 352.87,-272.51 390,-287.5 400.03,-291.55 411.03,-294.7 421.87,-297.15"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="421.23,-300.59 431.74,-299.21 422.66,-293.74 421.23,-300.59"/>
-</a>
-</g>
-</g>
 <!-- Node6 -->
 <g id="Node000006" class="node">
 <title>Node6</title>
-<g id="a_Node000006"><a xlink:href="classIPickable.html#a633ac40ae443d7a7935a34d145514bea" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="547,-278 423,-278 423,-259 547,-259 547,-278"/>
-<text text-anchor="middle" x="485" y="-266" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::getObjectID</text>
+<g id="a_Node000006"><a xlink:href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="538,-315 432,-315 432,-296 538,-296 538,-315"/>
+<text text-anchor="middle" x="485" y="-303" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::getCamera</text>
 </a>
 </g>
 </g>
@@ -151,17 +133,17 @@ var sectionId = 'dynsection-8';
 <g id="edge5_Node000002_Node000006" class="edge">
 <title>Node2&#45;&gt;Node6</title>
 <g id="a_edge5_Node000002_Node000006"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M316.13,-227.53C337.89,-235.12 365.17,-244.05 390,-250.5 398.86,-252.8 408.26,-254.95 417.55,-256.89"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="417.07,-260.37 427.57,-258.93 418.46,-253.51 417.07,-260.37"/>
+<path fill="none" stroke="#63b8ff" d="M293.26,-227.68C314.94,-244.9 352.87,-272.51 390,-287.5 400.03,-291.55 411.03,-294.7 421.87,-297.15"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="421.23,-300.59 431.74,-299.21 422.66,-293.74 421.23,-300.59"/>
 </a>
 </g>
 </g>
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
-<g id="a_Node000007"><a xlink:href="classIPickable.html#a3c0aa273e2f597a766c999219338a865" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="546.5,-241 423.5,-241 423.5,-222 546.5,-222 546.5,-241"/>
-<text text-anchor="middle" x="485" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::handleClick</text>
+<g id="a_Node000007"><a xlink:href="classIPickable.html#a633ac40ae443d7a7935a34d145514bea" target="_top" xlink:title="Gets the unique identifier for this object.">
+<polygon fill="white" stroke="#666666" points="547,-278 423,-278 423,-259 547,-259 547,-278"/>
+<text text-anchor="middle" x="485" y="-266" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::getObjectID</text>
 </a>
 </g>
 </g>
@@ -169,17 +151,17 @@ var sectionId = 'dynsection-8';
 <g id="edge6_Node000002_Node000007" class="edge">
 <title>Node2&#45;&gt;Node7</title>
 <g id="a_edge6_Node000002_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M354.01,-219.68C373.51,-221.46 394.27,-223.34 413.35,-225.08"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="413.17,-228.58 423.45,-226 413.81,-221.6 413.17,-228.58"/>
+<path fill="none" stroke="#63b8ff" d="M316.13,-227.53C337.89,-235.12 365.17,-244.05 390,-250.5 398.86,-252.8 408.26,-254.95 417.55,-256.89"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="417.07,-260.37 427.57,-258.93 418.46,-253.51 417.07,-260.37"/>
 </a>
 </g>
 </g>
 <!-- Node8 -->
 <g id="Node000008" class="node">
 <title>Node8</title>
-<g id="a_Node000008"><a xlink:href="classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="576.5,-204 393.5,-204 393.5,-185 576.5,-185 576.5,-204"/>
-<text text-anchor="middle" x="485" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::isMouseCaptured</text>
+<g id="a_Node000008"><a xlink:href="classIPickable.html#aabf11fe38a2332ac844b5b51093c7cd2" target="_top" xlink:title="Handles a mouse click on this object.">
+<polygon fill="white" stroke="#666666" points="546.5,-241 423.5,-241 423.5,-222 546.5,-222 546.5,-241"/>
+<text text-anchor="middle" x="485" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::handleClick</text>
 </a>
 </g>
 </g>
@@ -187,17 +169,17 @@ var sectionId = 'dynsection-8';
 <g id="edge7_Node000002_Node000008" class="edge">
 <title>Node2&#45;&gt;Node8</title>
 <g id="a_edge7_Node000002_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M354.01,-205.69C363.54,-204.87 373.36,-204.03 383.14,-203.19"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="383.64,-206.66 393.31,-202.31 383.04,-199.68 383.64,-206.66"/>
+<path fill="none" stroke="#63b8ff" d="M354.01,-219.68C373.51,-221.46 394.27,-223.34 413.35,-225.08"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="413.17,-228.58 423.45,-226 413.81,-221.6 413.17,-228.58"/>
 </a>
 </g>
 </g>
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
-<g id="a_Node000009"><a xlink:href="classCamera.html#af99955c976c3bbeec08714d7724bab89" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="544,-167 426,-167 426,-148 544,-148 544,-167"/>
-<text text-anchor="middle" x="485" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">Camera::resetMouse</text>
+<g id="a_Node000009"><a xlink:href="classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="576.5,-204 393.5,-204 393.5,-185 576.5,-185 576.5,-204"/>
+<text text-anchor="middle" x="485" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::isMouseCaptured</text>
 </a>
 </g>
 </g>
@@ -205,17 +187,17 @@ var sectionId = 'dynsection-8';
 <g id="edge8_Node000002_Node000009" class="edge">
 <title>Node2&#45;&gt;Node9</title>
 <g id="a_edge8_Node000002_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M319.2,-197.48C340.46,-190.56 366.39,-182.56 390,-176.5 400.14,-173.89 410.98,-171.42 421.55,-169.18"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="422.49,-172.55 431.57,-167.09 421.07,-165.7 422.49,-172.55"/>
+<path fill="none" stroke="#63b8ff" d="M354.01,-205.69C363.54,-204.87 373.36,-204.03 383.14,-203.19"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="383.64,-206.66 393.31,-202.31 383.04,-199.68 383.64,-206.66"/>
 </a>
 </g>
 </g>
 <!-- Node10 -->
 <g id="Node000010" class="node">
 <title>Node10</title>
-<g id="a_Node000010"><a xlink:href="classSceneManager.html#a25bec2896954b4f0c3bed8ef736993d3" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="775.5,-121 617.5,-121 617.5,-102 775.5,-102 775.5,-121"/>
-<text text-anchor="middle" x="696.5" y="-109" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::selectedItem</text>
+<g id="a_Node000010"><a xlink:href="classCamera.html#af99955c976c3bbeec08714d7724bab89" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="544,-167 426,-167 426,-148 544,-148 544,-167"/>
+<text text-anchor="middle" x="485" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">Camera::resetMouse</text>
 </a>
 </g>
 </g>
@@ -223,17 +205,17 @@ var sectionId = 'dynsection-8';
 <g id="edge9_Node000002_Node000010" class="edge">
 <title>Node2&#45;&gt;Node10</title>
 <g id="a_edge9_Node000002_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M292.71,-197.4C314.17,-180.08 352.17,-152.39 390,-139.5 460.44,-115.49 544.99,-109.35 607.27,-108.72"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="607.48,-112.22 617.46,-108.67 607.44,-105.22 607.48,-112.22"/>
+<path fill="none" stroke="#63b8ff" d="M319.2,-197.48C340.46,-190.56 366.39,-182.56 390,-176.5 400.14,-173.89 410.98,-171.42 421.55,-169.18"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="422.49,-172.55 431.57,-167.09 421.07,-165.7 422.49,-172.55"/>
 </a>
 </g>
 </g>
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="580,-91 390,-91 390,-72 580,-72 580,-91"/>
-<text text-anchor="middle" x="485" y="-79" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::setMouseCaptured</text>
+<g id="a_Node000011"><a xlink:href="classSceneManager.html#a25bec2896954b4f0c3bed8ef736993d3" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="775.5,-121 617.5,-121 617.5,-102 775.5,-102 775.5,-121"/>
+<text text-anchor="middle" x="696.5" y="-109" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::selectedItem</text>
 </a>
 </g>
 </g>
@@ -241,17 +223,17 @@ var sectionId = 'dynsection-8';
 <g id="edge10_Node000002_Node000011" class="edge">
 <title>Node2&#45;&gt;Node11</title>
 <g id="a_edge10_Node000002_Node000011"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M287.03,-197.19C306.25,-173.81 346.2,-129.41 390,-105.5 398.65,-100.78 408.25,-96.96 417.92,-93.88"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="418.98,-97.22 427.59,-91.04 417.01,-90.51 418.98,-97.22"/>
+<path fill="none" stroke="#63b8ff" d="M292.71,-197.4C314.17,-180.08 352.17,-152.39 390,-139.5 460.44,-115.49 544.99,-109.35 607.27,-108.72"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="607.48,-112.22 617.46,-108.67 607.44,-105.22 607.48,-112.22"/>
 </a>
 </g>
 </g>
 <!-- Node12 -->
 <g id="Node000012" class="node">
 <title>Node12</title>
-<g id="a_Node000012"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="562.5,-54 407.5,-54 407.5,-35 562.5,-35 562.5,-54"/>
-<text text-anchor="middle" x="485" y="-42" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
+<g id="a_Node000012"><a xlink:href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="580,-91 390,-91 390,-72 580,-72 580,-91"/>
+<text text-anchor="middle" x="485" y="-79" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::setMouseCaptured</text>
 </a>
 </g>
 </g>
@@ -259,63 +241,63 @@ var sectionId = 'dynsection-8';
 <g id="edge11_Node000002_Node000012" class="edge">
 <title>Node2&#45;&gt;Node12</title>
 <g id="a_edge11_Node000002_Node000012"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M281.97,-197.21C296.93,-166.26 335.27,-96.28 390,-62.5 392.67,-60.85 395.46,-59.35 398.33,-57.98"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="399.89,-61.12 407.77,-54.04 397.19,-54.66 399.89,-61.12"/>
-</a>
-</g>
-</g>
-<!-- Node12&#45;&gt;Node10 -->
-<g id="edge17_Node000012_Node000010" class="edge">
-<title>Node12&#45;&gt;Node10</title>
-<g id="a_edge17_Node000012_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M546.14,-54.05C557.49,-56.4 569.19,-59.21 580,-62.5 588.52,-65.09 633.31,-84.38 664.54,-97.97"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="663.18,-101.19 673.74,-101.97 665.97,-94.77 663.18,-101.19"/>
+<path fill="none" stroke="#63b8ff" d="M287.03,-197.19C306.25,-173.81 346.2,-129.41 390,-105.5 398.65,-100.78 408.25,-96.96 417.92,-93.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="418.98,-97.22 427.59,-91.04 417.01,-90.51 418.98,-97.22"/>
 </a>
 </g>
 </g>
 <!-- Node13 -->
 <g id="Node000013" class="node">
 <title>Node13</title>
-<g id="a_Node000013"><a xlink:href="classSceneManager.html#a99992b526976863d1dab7dc88cc6ec2a" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="777,-67.5 616,-67.5 616,-37.5 777,-37.5 777,-67.5"/>
-<text text-anchor="start" x="624" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::deleteCurrent</text>
-<text text-anchor="middle" x="696.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Gizmo</text>
+<g id="a_Node000013"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="562.5,-54 407.5,-54 407.5,-35 562.5,-35 562.5,-54"/>
+<text text-anchor="middle" x="485" y="-42" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
 </a>
 </g>
 </g>
-<!-- Node12&#45;&gt;Node13 -->
-<g id="edge12_Node000012_Node000013" class="edge">
-<title>Node12&#45;&gt;Node13</title>
-<g id="a_edge12_Node000012_Node000013"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M562.52,-47.42C576.44,-47.95 591.08,-48.51 605.35,-49.06"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="605.54,-52.57 615.66,-49.45 605.81,-45.57 605.54,-52.57"/>
+<!-- Node2&#45;&gt;Node13 -->
+<g id="edge12_Node000002_Node000013" class="edge">
+<title>Node2&#45;&gt;Node13</title>
+<g id="a_edge12_Node000002_Node000013"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M281.97,-197.21C296.93,-166.26 335.27,-96.28 390,-62.5 392.67,-60.85 395.46,-59.35 398.33,-57.98"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="399.89,-61.12 407.77,-54.04 397.19,-54.66 399.89,-61.12"/>
 </a>
 </g>
 </g>
-<!-- Node17 -->
-<g id="Node000017" class="node">
-<title>Node17</title>
-<g id="a_Node000017"><a xlink:href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="767,-19 626,-19 626,0 767,0 767,-19"/>
-<text text-anchor="middle" x="696.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
+<!-- Node5 -->
+<g id="Node000005" class="node">
+<title>Node5</title>
+<g id="a_Node000005"><a xlink:href="classIPickable.html#a69ded211af3ca1009ddbafd14aef8bb7" target="_top" xlink:title="Tests if a ray intersects this object&#39;s geometry.">
+<polygon fill="white" stroke="#666666" points="763,-352 630,-352 630,-333 763,-333 763,-352"/>
+<text text-anchor="middle" x="696.5" y="-340" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::intersectsRay</text>
 </a>
 </g>
 </g>
-<!-- Node12&#45;&gt;Node17 -->
-<g id="edge16_Node000012_Node000017" class="edge">
-<title>Node12&#45;&gt;Node17</title>
-<g id="a_edge16_Node000012_Node000017"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M542.97,-34.98C569.41,-30.57 601.02,-25.28 628.58,-20.68"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="629.25,-24.12 638.54,-19.02 628.1,-17.21 629.25,-24.12"/>
+<!-- Node4&#45;&gt;Node5 -->
+<g id="edge4_Node000004_Node000005" class="edge">
+<title>Node4&#45;&gt;Node5</title>
+<g id="a_edge4_Node000004_Node000005"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M535.65,-342.5C560.76,-342.5 591.77,-342.5 619.78,-342.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="619.95,-346 629.95,-342.5 619.95,-339 619.95,-346"/>
+</a>
+</g>
+</g>
+<!-- Node13&#45;&gt;Node11 -->
+<g id="edge18_Node000013_Node000011" class="edge">
+<title>Node13&#45;&gt;Node11</title>
+<g id="a_edge18_Node000013_Node000011"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M546.14,-54.05C557.49,-56.4 569.19,-59.21 580,-62.5 588.52,-65.09 633.31,-84.38 664.54,-97.97"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="663.18,-101.19 673.74,-101.97 665.97,-94.77 663.18,-101.19"/>
 </a>
 </g>
 </g>
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="992,-80 813,-80 813,-61 992,-61 992,-80"/>
-<text text-anchor="middle" x="902.5" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removeDrawable</text>
+<g id="a_Node000014"><a xlink:href="classSceneManager.html#a99992b526976863d1dab7dc88cc6ec2a" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="777,-67.5 616,-67.5 616,-37.5 777,-37.5 777,-67.5"/>
+<text text-anchor="start" x="624" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::deleteCurrent</text>
+<text text-anchor="middle" x="696.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Gizmo</text>
 </a>
 </g>
 </g>
@@ -323,35 +305,35 @@ var sectionId = 'dynsection-8';
 <g id="edge13_Node000013_Node000014" class="edge">
 <title>Node13&#45;&gt;Node14</title>
 <g id="a_edge13_Node000013_Node000014"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M777.25,-59.54C785.6,-60.27 794.16,-61.03 802.7,-61.78"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="802.42,-65.27 812.69,-62.66 803.03,-58.3 802.42,-65.27"/>
+<path fill="none" stroke="#63b8ff" d="M562.52,-47.42C576.44,-47.95 591.08,-48.51 605.35,-49.06"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="605.54,-52.57 615.66,-49.45 605.81,-45.57 605.54,-52.57"/>
 </a>
 </g>
 </g>
-<!-- Node16 -->
-<g id="Node000016" class="node">
-<title>Node16</title>
-<g id="a_Node000016"><a xlink:href="classSceneManager.html#a1c647e38474ee02d5dd8510bc2313c38" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="989,-43 816,-43 816,-24 989,-24 989,-43"/>
-<text text-anchor="middle" x="902.5" y="-31" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removePickable</text>
+<!-- Node18 -->
+<g id="Node000018" class="node">
+<title>Node18</title>
+<g id="a_Node000018"><a xlink:href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="767,-19 626,-19 626,0 767,0 767,-19"/>
+<text text-anchor="middle" x="696.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
 </a>
 </g>
 </g>
-<!-- Node13&#45;&gt;Node16 -->
-<g id="edge15_Node000013_Node000016" class="edge">
-<title>Node13&#45;&gt;Node16</title>
-<g id="a_edge15_Node000013_Node000016"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M777.25,-45.07C786.52,-44.21 796.05,-43.32 805.52,-42.44"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="806.11,-45.9 815.74,-41.49 805.46,-38.93 806.11,-45.9"/>
+<!-- Node13&#45;&gt;Node18 -->
+<g id="edge17_Node000013_Node000018" class="edge">
+<title>Node13&#45;&gt;Node18</title>
+<g id="a_edge17_Node000013_Node000018"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M542.97,-34.98C569.41,-30.57 601.02,-25.28 628.58,-20.68"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="629.25,-24.12 638.54,-19.02 628.1,-17.21 629.25,-24.12"/>
 </a>
 </g>
 </g>
 <!-- Node15 -->
 <g id="Node000015" class="node">
 <title>Node15</title>
-<g id="a_Node000015"><a xlink:href="classScene.html#a398bf0981ca0b3f5ade648b1d95513cc" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1164,-80 1028,-80 1028,-61 1164,-61 1164,-80"/>
-<text text-anchor="middle" x="1096" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::removeDrawable</text>
+<g id="a_Node000015"><a xlink:href="classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="992,-80 813,-80 813,-61 992,-61 992,-80"/>
+<text text-anchor="middle" x="902.5" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removeDrawable</text>
 </a>
 </g>
 </g>
@@ -359,6 +341,42 @@ var sectionId = 'dynsection-8';
 <g id="edge14_Node000014_Node000015" class="edge">
 <title>Node14&#45;&gt;Node15</title>
 <g id="a_edge14_Node000014_Node000015"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M777.25,-59.54C785.6,-60.27 794.16,-61.03 802.7,-61.78"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="802.42,-65.27 812.69,-62.66 803.03,-58.3 802.42,-65.27"/>
+</a>
+</g>
+</g>
+<!-- Node17 -->
+<g id="Node000017" class="node">
+<title>Node17</title>
+<g id="a_Node000017"><a xlink:href="classSceneManager.html#a1c647e38474ee02d5dd8510bc2313c38" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="989,-43 816,-43 816,-24 989,-24 989,-43"/>
+<text text-anchor="middle" x="902.5" y="-31" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removePickable</text>
+</a>
+</g>
+</g>
+<!-- Node14&#45;&gt;Node17 -->
+<g id="edge16_Node000014_Node000017" class="edge">
+<title>Node14&#45;&gt;Node17</title>
+<g id="a_edge16_Node000014_Node000017"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M777.25,-45.07C786.52,-44.21 796.05,-43.32 805.52,-42.44"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="806.11,-45.9 815.74,-41.49 805.46,-38.93 806.11,-45.9"/>
+</a>
+</g>
+</g>
+<!-- Node16 -->
+<g id="Node000016" class="node">
+<title>Node16</title>
+<g id="a_Node000016"><a xlink:href="classScene.html#a398bf0981ca0b3f5ade648b1d95513cc" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="1164,-80 1028,-80 1028,-61 1164,-61 1164,-80"/>
+<text text-anchor="middle" x="1096" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::removeDrawable</text>
+</a>
+</g>
+</g>
+<!-- Node15&#45;&gt;Node16 -->
+<g id="edge15_Node000015_Node000016" class="edge">
+<title>Node15&#45;&gt;Node16</title>
+<g id="a_edge15_Node000015_Node000016"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M992.24,-70.5C1000.73,-70.5 1009.29,-70.5 1017.65,-70.5"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1017.74,-74 1027.74,-70.5 1017.74,-67 1017.74,-74"/>
 </a>

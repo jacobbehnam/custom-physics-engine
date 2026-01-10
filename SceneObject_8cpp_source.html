@@ -182,165 +182,162 @@ $(document).ready(function(){initNavTree('SceneObject_8cpp_source.html',''); ini
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">return</span> model;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keywordtype">bool</span> SceneObject::intersectsAABB(<span class="keyword">const</span> glm::vec3 &amp;orig, <span class="keyword">const</span> glm::vec3 &amp;dir, <span class="keywordtype">float</span> &amp;outT)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>std::optional&lt;float&gt; SceneObject::intersectsAABB(<span class="keyword">const</span> <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>&amp; ray)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <a class="code hl_class" href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a> localAABB = <a class="code hl_function" href="classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e">getMesh</a>()-&gt;<a class="code hl_function" href="classMesh.html#ac43fb0ac6de4d28096bba83517801882">getLocalAABB</a>();</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keyword">auto</span> worldAABB = localAABB.<a class="code hl_function" href="classPhysics_1_1Bounding_1_1AABB.html#a6692e58afb69ad9343d88ebc9642be2b">getTransformed</a>(getModelMatrix());</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">if</span> (<span class="keyword">auto</span> t = worldAABB-&gt;intersectRay(<a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>{orig, dir})) {</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        outT = *t;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    }</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keywordtype">bool</span> SceneObject::intersectsMesh(<span class="keyword">const</span> glm::vec3 &amp;orig, <span class="keyword">const</span> glm::vec3 &amp;dir, <span class="keywordtype">float</span> &amp;outT)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">const</span> std::vector&lt;Vertex&gt;&amp; verts = mesh-&gt;<a class="code hl_function" href="classMesh.html#ae498c212f82d8562a48e847e9f976ed8">getVertices</a>();</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    std::vector&lt;glm::vec3&gt; vertPositions;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    vertPositions.reserve(verts.size());</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> vert : verts) {</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        vertPositions.push_back({vert.pos});</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    }</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> triCount = verts.size() / 3;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">const</span> std::vector&lt;unsigned int&gt;&amp; indices = mesh-&gt;<a class="code hl_function" href="classMesh.html#a6e8ee7c54cfb8c089eb1254ab0c06635">getIndices</a>();</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keyword">auto</span> *glFuncs = QOpenGLVersionFunctionsFactory::get&lt;QOpenGLFunctions_4_5_Core&gt;(QOpenGLContext::currentContext());</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <a class="code hl_class" href="classComputeShader.html">ComputeShader</a> compute(<span class="stringliteral">&quot;assets/shaders/meshIntersection.comp&quot;</span>, glFuncs);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * <span class="keyword">sizeof</span>(glm::vec3), 0);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    (void) compute.createSSBO(indices.data(), indices.size() * <span class="keyword">sizeof</span>(<span class="keywordtype">unsigned</span> int), 1);</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    std::vector&lt;float&gt; initDists(triCount, -1.0f);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> distancesSSBO = compute.createSSBO(initDists.data(), initDists.size() * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>), 2);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    compute.use();</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    compute.setVec3(<span class="stringliteral">&quot;rayOrig&quot;</span>, orig);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    compute.setVec3(<span class="stringliteral">&quot;rayDir&quot;</span>, dir);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    compute.setMat4(<span class="stringliteral">&quot;modelMatrix&quot;</span>, getModelMatrix());</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keyword">constexpr</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> groupSize = 64;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> groups = (triCount + groupSize - 1) / groupSize;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    compute.dispatch(groups);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">auto</span> distances = compute.readSSBO&lt;<span class="keywordtype">float</span>&gt;(distancesSSBO, triCount);</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">auto</span> minIt = std::min_element(distances.begin(), distances.end());</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keywordflow">if</span> (minIt == distances.end()) {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    outT = *minIt;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">if</span> (<span class="keyword">auto</span> t = worldAABB-&gt;intersectRay(ray)) {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keywordflow">return</span> t;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>}</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>std::optional&lt;float&gt; SceneObject::intersectsMesh(<span class="keyword">const</span> <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>&amp; ray)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keyword">const</span> std::vector&lt;Vertex&gt;&amp; verts = mesh-&gt;<a class="code hl_function" href="classMesh.html#ae498c212f82d8562a48e847e9f976ed8">getVertices</a>();</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    std::vector&lt;glm::vec3&gt; vertPositions;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    vertPositions.reserve(verts.size());</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> vert : verts) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        vertPositions.push_back({vert.pos});</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> triCount = verts.size() / 3;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">const</span> std::vector&lt;unsigned int&gt;&amp; indices = mesh-&gt;<a class="code hl_function" href="classMesh.html#a6e8ee7c54cfb8c089eb1254ab0c06635">getIndices</a>();</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">auto</span> *glFuncs = QOpenGLVersionFunctionsFactory::get&lt;QOpenGLFunctions_4_5_Core&gt;(QOpenGLContext::currentContext());</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <a class="code hl_class" href="classComputeShader.html">ComputeShader</a> compute(<span class="stringliteral">&quot;assets/shaders/meshIntersection.comp&quot;</span>, glFuncs);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * <span class="keyword">sizeof</span>(glm::vec3), 0);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    (void) compute.createSSBO(indices.data(), indices.size() * <span class="keyword">sizeof</span>(<span class="keywordtype">unsigned</span> int), 1);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    std::vector&lt;float&gt; initDists(triCount, -1.0f);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> distancesSSBO = compute.createSSBO(initDists.data(), initDists.size() * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>), 2);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    compute.use();</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    compute.setVec3(<span class="stringliteral">&quot;rayOrig&quot;</span>, ray.<a class="code hl_variable" href="namespaceMath.html#a160ffc1720e156cec91d4117e717573a">origin</a>);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    compute.setVec3(<span class="stringliteral">&quot;rayDir&quot;</span>, ray.<a class="code hl_variable" href="namespaceMath.html#a7630900e35ae5014377ebcc66b933b40">dir</a>);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    compute.setMat4(<span class="stringliteral">&quot;modelMatrix&quot;</span>, getModelMatrix());</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <span class="keyword">constexpr</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> groupSize = 64;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> groups = (triCount + groupSize - 1) / groupSize;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    compute.dispatch(groups);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">auto</span> distances = compute.readSSBO&lt;<span class="keywordtype">float</span>&gt;(distancesSSBO, triCount);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">auto</span> minIt = std::min_element(distances.begin(), distances.end());</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keywordflow">if</span> (minIt == distances.end()) {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    }</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keywordflow">return</span> *minIt;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
-<div class="foldopen" id="foldopen00122" data-start="{" data-end="}">
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno"><a class="line" href="classSceneObject.html#a2a0354ab6907b612c23b80d93d5b80cf">  122</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classSceneObject.html#a2a0354ab6907b612c23b80d93d5b80cf">SceneObject::rayIntersection</a>(glm::vec3 orig, glm::vec3 dir, <span class="keywordtype">float</span> &amp;outT) {</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordtype">float</span> tAABB;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="keywordflow">if</span> (!intersectsAABB(orig, dir, tAABB))</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keywordtype">float</span> tTri;</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="keywordflow">if</span> (intersectsMesh(orig, dir, tTri)) {</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        outT = tTri;</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    }</div>
+<div class="foldopen" id="foldopen00120" data-start="{" data-end="}">
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">  120</a></span>std::optional&lt;float&gt; <a class="code hl_function" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a>(<span class="keyword">const</span> <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>&amp; ray)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keyword">auto</span> tAABB = intersectsAABB(ray);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keywordflow">if</span> (!tAABB)</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <span class="keyword">auto</span> tTri = intersectsMesh(ray);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <span class="keywordflow">if</span> (tTri) {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        <span class="keywordflow">return</span> *tTri;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    }</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>}</div>
+</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>}</div>
+<div class="foldopen" id="foldopen00133" data-start="{" data-end="}">
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno"><a class="line" href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554">  133</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554">SceneObject::handleClick</a>(<span class="keyword">const</span> <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a>&amp; ray, <span class="keywordtype">float</span> distance) {</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a490d6eddd6ef23ffd8f283582a2d7d88">setGizmoFor</a>(<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>}</div>
 </div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="foldopen" id="foldopen00136" data-start="{" data-end="}">
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classSceneObject.html#aadeb8322098fb37c845f73d2073994c6">  136</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#aadeb8322098fb37c845f73d2073994c6">SceneObject::handleClick</a>(<span class="keyword">const</span> glm::vec3 &amp;rayOrig, <span class="keyword">const</span> glm::vec3 &amp;rayDir, <span class="keywordtype">float</span> distance) {</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a490d6eddd6ef23ffd8f283582a2d7d88">setGizmoFor</a>(<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>}</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="foldopen" id="foldopen00137" data-start="{" data-end="}">
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno"><a class="line" href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">  137</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">SceneObject::setPosition</a>(<span class="keyword">const</span> glm::vec3 &amp;pos) {</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keywordflow">if</span> (physicsBody) {</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        physicsBody-&gt;setPosition(pos, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        {</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>            std::lock_guard&lt;std::mutex&gt; lk(posMapMutex);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            posMap[physicsBody.get()] = pos;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        }</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        position = pos;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    }</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>}</div>
 </div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
-<div class="foldopen" id="foldopen00140" data-start="{" data-end="}">
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno"><a class="line" href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">  140</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">SceneObject::setPosition</a>(<span class="keyword">const</span> glm::vec3 &amp;pos) {</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <span class="keywordflow">if</span> (physicsBody) {</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        physicsBody-&gt;setPosition(pos, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        {</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>            std::lock_guard&lt;std::mutex&gt; lk(posMapMutex);</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>            posMap[physicsBody.get()] = pos;</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        }</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        position = pos;</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    }</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>}</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="foldopen" id="foldopen00150" data-start="{" data-end="}">
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno"><a class="line" href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">  150</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">SceneObject::setRotation</a>(<span class="keyword">const</span> glm::vec3 &amp;euler) {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    orientation = glm::quat(euler);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    <span class="keywordflow">if</span> (physicsBody)</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>}</div>
 </div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
-<div class="foldopen" id="foldopen00153" data-start="{" data-end="}">
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">  153</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">SceneObject::setRotation</a>(<span class="keyword">const</span> glm::vec3 &amp;euler) {</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    orientation = glm::quat(euler);</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="keywordflow">if</span> (physicsBody)</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>}</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
+<div class="foldopen" id="foldopen00156" data-start="{" data-end="}">
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">  156</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">SceneObject::setScale</a>(<span class="keyword">const</span> glm::vec3 &amp;scl) {</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    scale = scl;</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="keywordflow">if</span> (physicsBody)</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>}</div>
 </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
-<div class="foldopen" id="foldopen00159" data-start="{" data-end="}">
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">  159</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">SceneObject::setScale</a>(<span class="keyword">const</span> glm::vec3 &amp;scl) {</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    scale = scl;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordflow">if</span> (physicsBody)</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span> </div>
+<div class="foldopen" id="foldopen00162" data-start="{" data-end="}">
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">  162</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">SceneObject::getPosition</a>()<span class="keyword"> const</span>{</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordflow">if</span> (physicsBody)</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        <span class="keywordflow">return</span> physicsBody-&gt;getPosition(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keywordflow">return</span> position;</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>}</div>
 </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="foldopen" id="foldopen00165" data-start="{" data-end="}">
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">  165</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">SceneObject::getPosition</a>()<span class="keyword"> const</span>{</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordflow">if</span> (physicsBody)</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">return</span> physicsBody-&gt;getPosition(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordflow">return</span> position;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>}</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="foldopen" id="foldopen00168" data-start="{" data-end="}">
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">  168</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">SceneObject::getRotation</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordflow">return</span> glm::eulerAngles(orientation);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>}</div>
 </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
-<div class="foldopen" id="foldopen00171" data-start="{" data-end="}">
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno"><a class="line" href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">  171</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">SceneObject::getRotation</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    <span class="keywordflow">return</span> glm::eulerAngles(orientation);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>}</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="foldopen" id="foldopen00172" data-start="{" data-end="}">
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">  172</a></span><a class="code hl_class" href="classShader.html">Shader</a>* <a class="code hl_function" href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">SceneObject::getShader</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="keywordflow">return</span> shader;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>}</div>
 </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
-<div class="foldopen" id="foldopen00175" data-start="{" data-end="}">
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno"><a class="line" href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">  175</a></span><a class="code hl_class" href="classShader.html">Shader</a>* <a class="code hl_function" href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">SceneObject::getShader</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="keywordflow">return</span> shader;</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>}</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
+<div class="foldopen" id="foldopen00176" data-start="{" data-end="}">
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno"><a class="line" href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">  176</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">SceneObject::setRotationQuat</a>(<span class="keyword">const</span> glm::quat &amp;q) {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    orientation = q;</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="keywordflow">if</span> (physicsBody)</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>}</div>
 </div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="foldopen" id="foldopen00179" data-start="{" data-end="}">
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">  179</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">SceneObject::setRotationQuat</a>(<span class="keyword">const</span> glm::quat &amp;q) {</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    orientation = q;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    <span class="keywordflow">if</span> (physicsBody)</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        physicsBody-&gt;setWorldTransform(getModelMatrix(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="foldopen" id="foldopen00181" data-start="{" data-end="}">
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">  181</a></span>glm::quat <a class="code hl_function" href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">SceneObject::getRotationQuat</a>()<span class="keyword">   const </span>{</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <span class="keywordflow">return</span> orientation;</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>}</div>
 </div>
-<div class="foldopen" id="foldopen00184" data-start="{" data-end="}">
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">  184</a></span>glm::quat <a class="code hl_function" href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">SceneObject::getRotationQuat</a>()<span class="keyword">   const </span>{</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">return</span> orientation;</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>}</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="foldopen" id="foldopen00185" data-start="{" data-end="}">
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno"><a class="line" href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">  185</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">SceneObject::getScale</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    <span class="keywordflow">return</span> scale;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>}</div>
 </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
-<div class="foldopen" id="foldopen00188" data-start="{" data-end="}">
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno"><a class="line" href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">  188</a></span>glm::vec3 <a class="code hl_function" href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">SceneObject::getScale</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keywordflow">return</span> scale;</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>}</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="foldopen" id="foldopen00189" data-start="{" data-end="}">
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno"><a class="line" href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">  189</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">SceneObject::setHovered</a>(<span class="keywordtype">bool</span> hovered) {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    isHovered = hovered;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>}</div>
 </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
-<div class="foldopen" id="foldopen00192" data-start="{" data-end="}">
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno"><a class="line" href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">  192</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">SceneObject::setHovered</a>(<span class="keywordtype">bool</span> hovered) {</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    isHovered = hovered;</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>}</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="foldopen" id="foldopen00193" data-start="{" data-end="}">
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno"><a class="line" href="classSceneObject.html#afa640b48a9b4dfa9078d632506bab308">  193</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classSceneObject.html#afa640b48a9b4dfa9078d632506bab308">SceneObject::getHovered</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    <span class="keywordflow">return</span> isHovered;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>}</div>
 </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
-<div class="foldopen" id="foldopen00196" data-start="{" data-end="}">
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno"><a class="line" href="classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2">  196</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2">SceneObject::getHovered</a>() {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="keywordflow">return</span> isHovered;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>}</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
+<div class="foldopen" id="foldopen00197" data-start="{" data-end="}">
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno"><a class="line" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">  197</a></span>uint32_t <a class="code hl_function" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject::getObjectID</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keywordflow">return</span> objectID;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>}</div>
 </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="foldopen" id="foldopen00200" data-start="{" data-end="}">
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">  200</a></span>uint32_t <a class="code hl_function" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject::getObjectID</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keywordflow">return</span> objectID;</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>}</div>
-</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
 <div class="ttc" id="aBoxCollider_8h_html"><div class="ttname"><a href="BoxCollider_8h.html">BoxCollider.h</a></div></div>
 <div class="ttc" id="aComputeShader_8h_html"><div class="ttname"><a href="ComputeShader_8h.html">ComputeShader.h</a></div></div>
 <div class="ttc" id="aPhysicsBody_8h_html_a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241"><div class="ttname"><a href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a></div><div class="ttdeci">@ NOLOCK</div></div>
@@ -363,28 +360,30 @@ $(document).ready(function(){initNavTree('SceneObject_8cpp_source.html',''); ini
 <div class="ttc" id="aclassSceneManager_html_a490d6eddd6ef23ffd8f283582a2d7d88"><div class="ttname"><a href="classSceneManager.html#a490d6eddd6ef23ffd8f283582a2d7d88">SceneManager::setGizmoFor</a></div><div class="ttdeci">void setGizmoFor(SceneObject *newTarget, bool redraw=false)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00316">SceneManager.cpp:316</a></div></div>
 <div class="ttc" id="aclassSceneManager_html_a950d9257e6d737616480fb2b3c00ce62"><div class="ttname"><a href="classSceneManager.html#a950d9257e6d737616480fb2b3c00ce62">SceneManager::removeFromPhysicsSystem</a></div><div class="ttdeci">void removeFromPhysicsSystem(Physics::PhysicsBody *body) const</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00042">SceneManager.h:42</a></div></div>
 <div class="ttc" id="aclassSceneManager_html_ab4c384d4f3ae448f6ddc3140aa9766be"><div class="ttname"><a href="classSceneManager.html#ab4c384d4f3ae448f6ddc3140aa9766be">SceneManager::addToPhysicsSystem</a></div><div class="ttdeci">void addToPhysicsSystem(Physics::PhysicsBody *body) const</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00041">SceneManager.h:41</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a2147bb1112cd8711a654c826ce815c4d"><div class="ttname"><a href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">SceneObject::setHovered</a></div><div class="ttdeci">void setHovered(bool hovered) override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00192">SceneObject.cpp:192</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a2a0354ab6907b612c23b80d93d5b80cf"><div class="ttname"><a href="classSceneObject.html#a2a0354ab6907b612c23b80d93d5b80cf">SceneObject::rayIntersection</a></div><div class="ttdeci">bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &amp;outDistance) override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00122">SceneObject.cpp:122</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a3783915337e9b271e66b49ce82abe8f4"><div class="ttname"><a href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">SceneObject::getRotation</a></div><div class="ttdeci">glm::vec3 getRotation() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00171">SceneObject.cpp:171</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a3809528676d1cfc238e37b76056dbbe0"><div class="ttname"><a href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">SceneObject::setScale</a></div><div class="ttdeci">void setScale(const glm::vec3 &amp;scl)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00159">SceneObject.cpp:159</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a3d1aa613dd4f4ee6947754a355a48cc9"><div class="ttname"><a href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">SceneObject::getPosition</a></div><div class="ttdeci">glm::vec3 getPosition() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00165">SceneObject.cpp:165</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a43bf76c6717d9210f576852aee2297c7"><div class="ttname"><a href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">SceneObject::getScale</a></div><div class="ttdeci">glm::vec3 getScale() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00188">SceneObject.cpp:188</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a625f2fbee7601ca70c627bc48b5aae09"><div class="ttname"><a href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">SceneObject::setRotation</a></div><div class="ttdeci">void setRotation(const glm::vec3 &amp;rot)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00153">SceneObject.cpp:153</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a65d990f152f55417e054550d05fd54dc"><div class="ttname"><a href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">SceneObject::setRotationQuat</a></div><div class="ttdeci">void setRotationQuat(const glm::quat &amp;q)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00179">SceneObject.cpp:179</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a2147bb1112cd8711a654c826ce815c4d"><div class="ttname"><a href="classSceneObject.html#a2147bb1112cd8711a654c826ce815c4d">SceneObject::setHovered</a></div><div class="ttdeci">void setHovered(bool hovered) override</div><div class="ttdoc">Sets the hover state of this object.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00189">SceneObject.cpp:189</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a3783915337e9b271e66b49ce82abe8f4"><div class="ttname"><a href="classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4">SceneObject::getRotation</a></div><div class="ttdeci">glm::vec3 getRotation() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00168">SceneObject.cpp:168</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a3809528676d1cfc238e37b76056dbbe0"><div class="ttname"><a href="classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0">SceneObject::setScale</a></div><div class="ttdeci">void setScale(const glm::vec3 &amp;scl)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00156">SceneObject.cpp:156</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a3d1aa613dd4f4ee6947754a355a48cc9"><div class="ttname"><a href="classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9">SceneObject::getPosition</a></div><div class="ttdeci">glm::vec3 getPosition() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00162">SceneObject.cpp:162</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a43bf76c6717d9210f576852aee2297c7"><div class="ttname"><a href="classSceneObject.html#a43bf76c6717d9210f576852aee2297c7">SceneObject::getScale</a></div><div class="ttdeci">glm::vec3 getScale() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00185">SceneObject.cpp:185</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a51694b249daac83a466e6acdb08c5554"><div class="ttname"><a href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554">SceneObject::handleClick</a></div><div class="ttdeci">void handleClick(const Math::Ray &amp;ray, float distance) override</div><div class="ttdoc">Handles a mouse click on this object.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00133">SceneObject.cpp:133</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a625f2fbee7601ca70c627bc48b5aae09"><div class="ttname"><a href="classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09">SceneObject::setRotation</a></div><div class="ttdeci">void setRotation(const glm::vec3 &amp;rot)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00150">SceneObject.cpp:150</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a65d990f152f55417e054550d05fd54dc"><div class="ttname"><a href="classSceneObject.html#a65d990f152f55417e054550d05fd54dc">SceneObject::setRotationQuat</a></div><div class="ttdeci">void setRotationQuat(const glm::quat &amp;q)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00176">SceneObject.cpp:176</a></div></div>
 <div class="ttc" id="aclassSceneObject_html_a71b5ba2106108265edb221540f4ec1ae"><div class="ttname"><a href="classSceneObject.html#a71b5ba2106108265edb221540f4ec1ae">SceneObject::SceneObject</a></div><div class="ttdeci">SceneObject(SceneManager *sceneManager, const std::string &amp;meshName, Shader *sdr, const CreationOptions &amp;options, QObject *parent=nullptr)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00017">SceneObject.cpp:17</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a7ba00c8012e21f9833880b89e311aedf"><div class="ttname"><a href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">SceneObject::getRotationQuat</a></div><div class="ttdeci">glm::quat getRotationQuat() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00184">SceneObject.cpp:184</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_a80f6133afc5bdf8f4d5d560995c9718a"><div class="ttname"><a href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">SceneObject::getShader</a></div><div class="ttdeci">Shader * getShader() const override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00175">SceneObject.cpp:175</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_aadeb8322098fb37c845f73d2073994c6"><div class="ttname"><a href="classSceneObject.html#aadeb8322098fb37c845f73d2073994c6">SceneObject::handleClick</a></div><div class="ttdeci">void handleClick(const glm::vec3 &amp;rayOrig, const glm::vec3 &amp;rayDir, float distance) override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00136">SceneObject.cpp:136</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a7ba00c8012e21f9833880b89e311aedf"><div class="ttname"><a href="classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf">SceneObject::getRotationQuat</a></div><div class="ttdeci">glm::quat getRotationQuat() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00181">SceneObject.cpp:181</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a80f6133afc5bdf8f4d5d560995c9718a"><div class="ttname"><a href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">SceneObject::getShader</a></div><div class="ttdeci">Shader * getShader() const override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00172">SceneObject.cpp:172</a></div></div>
 <div class="ttc" id="aclassSceneObject_html_ab258d6b94e982d5ae71ad4d7652381f4"><div class="ttname"><a href="classSceneObject.html#ab258d6b94e982d5ae71ad4d7652381f4">SceneObject::~SceneObject</a></div><div class="ttdeci">~SceneObject()</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00052">SceneObject.cpp:52</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_ad77f12eb793b32da2ef40f0042cb1de8"><div class="ttname"><a href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject::getObjectID</a></div><div class="ttdeci">uint32_t getObjectID() const override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00200">SceneObject.cpp:200</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_ad77f12eb793b32da2ef40f0042cb1de8"><div class="ttname"><a href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject::getObjectID</a></div><div class="ttdeci">uint32_t getObjectID() const override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00197">SceneObject.cpp:197</a></div></div>
 <div class="ttc" id="aclassSceneObject_html_ae86730acbd0a398e2a4d2473a2f52b8e"><div class="ttname"><a href="classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e">SceneObject::getMesh</a></div><div class="ttdeci">Mesh * getMesh() const override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00043">SceneObject.h:43</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_af36a3463b19299b7d7cca2b476c36870"><div class="ttname"><a href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">SceneObject::setPosition</a></div><div class="ttdeci">void setPosition(const glm::vec3 &amp;pos)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00140">SceneObject.cpp:140</a></div></div>
-<div class="ttc" id="aclassSceneObject_html_afee93d4a7e8238bba39a3e5d19b2dbb2"><div class="ttname"><a href="classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2">SceneObject::getHovered</a></div><div class="ttdeci">bool getHovered() override</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00196">SceneObject.cpp:196</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_af36a3463b19299b7d7cca2b476c36870"><div class="ttname"><a href="classSceneObject.html#af36a3463b19299b7d7cca2b476c36870">SceneObject::setPosition</a></div><div class="ttdeci">void setPosition(const glm::vec3 &amp;pos)</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00137">SceneObject.cpp:137</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_af7482555ee9fdb5c369fac511d5cf537"><div class="ttname"><a href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a></div><div class="ttdeci">std::optional&lt; float &gt; intersectsRay(const Math::Ray &amp;ray) const override</div><div class="ttdoc">Tests if a ray intersects this object's geometry.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00120">SceneObject.cpp:120</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_afa640b48a9b4dfa9078d632506bab308"><div class="ttname"><a href="classSceneObject.html#afa640b48a9b4dfa9078d632506bab308">SceneObject::getHovered</a></div><div class="ttdeci">bool getHovered() const override</div><div class="ttdoc">Gets the current hover state of this object.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00193">SceneObject.cpp:193</a></div></div>
 <div class="ttc" id="aclassScene_html_a2b640bddd22a97b60dd24d4ceecea885"><div class="ttname"><a href="classScene.html#a2b640bddd22a97b60dd24d4ceecea885">Scene::freeObjectID</a></div><div class="ttdeci">void freeObjectID(uint32_t objID)</div><div class="ttdef"><b>Definition</b> <a href="Scene_8cpp_source.html#l00037">Scene.cpp:37</a></div></div>
 <div class="ttc" id="aclassShader_html"><div class="ttname"><a href="classShader.html">Shader</a></div><div class="ttdef"><b>Definition</b> <a href="Shader_8h_source.html#l00006">Shader.h:6</a></div></div>
 <div class="ttc" id="aclassShader_html_a1c29287af95cfaf9ae141d542013016d"><div class="ttname"><a href="classShader.html#a1c29287af95cfaf9ae141d542013016d">Shader::setVec3</a></div><div class="ttdeci">void setVec3(const std::string &amp;name, const glm::vec3 &amp;vec) const</div><div class="ttdef"><b>Definition</b> <a href="Shader_8cpp_source.html#l00071">Shader.cpp:71</a></div></div>
 <div class="ttc" id="aclassShader_html_a3c7896754f0e1fca8bde860cfef63832"><div class="ttname"><a href="classShader.html#a3c7896754f0e1fca8bde860cfef63832">Shader::use</a></div><div class="ttdeci">void use() const</div><div class="ttdef"><b>Definition</b> <a href="Shader_8cpp_source.html#l00055">Shader.cpp:55</a></div></div>
 <div class="ttc" id="aclassShader_html_ab1a56d6c299bd7eaa18c2e142ef7bd9f"><div class="ttname"><a href="classShader.html#ab1a56d6c299bd7eaa18c2e142ef7bd9f">Shader::setBool</a></div><div class="ttdeci">void setBool(const std::string &amp;name, bool value) const</div><div class="ttdef"><b>Definition</b> <a href="Shader_8cpp_source.html#l00059">Shader.cpp:59</a></div></div>
+<div class="ttc" id="anamespaceMath_html_a160ffc1720e156cec91d4117e717573a"><div class="ttname"><a href="namespaceMath.html#a160ffc1720e156cec91d4117e717573a">Math::Ray::origin</a></div><div class="ttdeci">glm::vec3 origin</div><div class="ttdoc">Starting point of the ray in world space.</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00012">Ray.h:12</a></div></div>
+<div class="ttc" id="anamespaceMath_html_a7630900e35ae5014377ebcc66b933b40"><div class="ttname"><a href="namespaceMath.html#a7630900e35ae5014377ebcc66b933b40">Math::Ray::dir</a></div><div class="ttdeci">glm::vec3 dir</div><div class="ttdoc">Direction vector (should be normalized)</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00013">Ray.h:13</a></div></div>
 <div class="ttc" id="anamespaceMath_html_structMath_1_1Ray"><div class="ttname"><a href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a></div><div class="ttdoc">Represents a ray in 3D space.</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00011">Ray.h:11</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

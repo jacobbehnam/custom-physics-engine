@@ -74,30 +74,12 @@
 </a>
 </g>
 </g>
-<!-- Node5 -->
-<g id="Node000005" class="node">
-<title>Node5</title>
-<g id="a_Node000005"><a xlink:href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="550,-315 444,-315 444,-296 550,-296 550,-315"/>
-<text text-anchor="middle" x="497" y="-303" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::getCamera</text>
-</a>
-</g>
-</g>
-<!-- Node2&#45;&gt;Node5 -->
-<g id="edge4_Node000002_Node000005" class="edge">
-<title>Node2&#45;&gt;Node5</title>
-<g id="a_edge4_Node000002_Node000005"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M305.26,-227.68C326.94,-244.9 364.87,-272.51 402,-287.5 412.03,-291.55 423.03,-294.7 433.87,-297.15"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="433.23,-300.59 443.74,-299.21 434.66,-293.74 433.23,-300.59"/>
-</a>
-</g>
-</g>
 <!-- Node6 -->
 <g id="Node000006" class="node">
 <title>Node6</title>
-<g id="a_Node000006"><a xlink:href="classIPickable.html#a633ac40ae443d7a7935a34d145514bea" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="559,-278 435,-278 435,-259 559,-259 559,-278"/>
-<text text-anchor="middle" x="497" y="-266" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::getObjectID</text>
+<g id="a_Node000006"><a xlink:href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="550,-315 444,-315 444,-296 550,-296 550,-315"/>
+<text text-anchor="middle" x="497" y="-303" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::getCamera</text>
 </a>
 </g>
 </g>
@@ -105,17 +87,17 @@
 <g id="edge5_Node000002_Node000006" class="edge">
 <title>Node2&#45;&gt;Node6</title>
 <g id="a_edge5_Node000002_Node000006"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M328.13,-227.53C349.89,-235.12 377.17,-244.05 402,-250.5 410.86,-252.8 420.26,-254.95 429.55,-256.89"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="429.07,-260.37 439.57,-258.93 430.46,-253.51 429.07,-260.37"/>
+<path fill="none" stroke="#63b8ff" d="M305.26,-227.68C326.94,-244.9 364.87,-272.51 402,-287.5 412.03,-291.55 423.03,-294.7 433.87,-297.15"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="433.23,-300.59 443.74,-299.21 434.66,-293.74 433.23,-300.59"/>
 </a>
 </g>
 </g>
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
-<g id="a_Node000007"><a xlink:href="classIPickable.html#a3c0aa273e2f597a766c999219338a865" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="558.5,-241 435.5,-241 435.5,-222 558.5,-222 558.5,-241"/>
-<text text-anchor="middle" x="497" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::handleClick</text>
+<g id="a_Node000007"><a xlink:href="classIPickable.html#a633ac40ae443d7a7935a34d145514bea" target="_top" xlink:title="Gets the unique identifier for this object.">
+<polygon fill="white" stroke="#666666" points="559,-278 435,-278 435,-259 559,-259 559,-278"/>
+<text text-anchor="middle" x="497" y="-266" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::getObjectID</text>
 </a>
 </g>
 </g>
@@ -123,17 +105,17 @@
 <g id="edge6_Node000002_Node000007" class="edge">
 <title>Node2&#45;&gt;Node7</title>
 <g id="a_edge6_Node000002_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M366.01,-219.68C385.51,-221.46 406.27,-223.34 425.35,-225.08"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="425.17,-228.58 435.45,-226 425.81,-221.6 425.17,-228.58"/>
+<path fill="none" stroke="#63b8ff" d="M328.13,-227.53C349.89,-235.12 377.17,-244.05 402,-250.5 410.86,-252.8 420.26,-254.95 429.55,-256.89"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="429.07,-260.37 439.57,-258.93 430.46,-253.51 429.07,-260.37"/>
 </a>
 </g>
 </g>
 <!-- Node8 -->
 <g id="Node000008" class="node">
 <title>Node8</title>
-<g id="a_Node000008"><a xlink:href="classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="588.5,-204 405.5,-204 405.5,-185 588.5,-185 588.5,-204"/>
-<text text-anchor="middle" x="497" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::isMouseCaptured</text>
+<g id="a_Node000008"><a xlink:href="classIPickable.html#aabf11fe38a2332ac844b5b51093c7cd2" target="_top" xlink:title="Handles a mouse click on this object.">
+<polygon fill="white" stroke="#666666" points="558.5,-241 435.5,-241 435.5,-222 558.5,-222 558.5,-241"/>
+<text text-anchor="middle" x="497" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::handleClick</text>
 </a>
 </g>
 </g>
@@ -141,17 +123,17 @@
 <g id="edge7_Node000002_Node000008" class="edge">
 <title>Node2&#45;&gt;Node8</title>
 <g id="a_edge7_Node000002_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M366.01,-205.69C375.54,-204.87 385.36,-204.03 395.14,-203.19"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="395.64,-206.66 405.31,-202.31 395.04,-199.68 395.64,-206.66"/>
+<path fill="none" stroke="#63b8ff" d="M366.01,-219.68C385.51,-221.46 406.27,-223.34 425.35,-225.08"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="425.17,-228.58 435.45,-226 425.81,-221.6 425.17,-228.58"/>
 </a>
 </g>
 </g>
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
-<g id="a_Node000009"><a xlink:href="classCamera.html#af99955c976c3bbeec08714d7724bab89" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="556,-167 438,-167 438,-148 556,-148 556,-167"/>
-<text text-anchor="middle" x="497" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">Camera::resetMouse</text>
+<g id="a_Node000009"><a xlink:href="classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="588.5,-204 405.5,-204 405.5,-185 588.5,-185 588.5,-204"/>
+<text text-anchor="middle" x="497" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::isMouseCaptured</text>
 </a>
 </g>
 </g>
@@ -159,17 +141,17 @@
 <g id="edge8_Node000002_Node000009" class="edge">
 <title>Node2&#45;&gt;Node9</title>
 <g id="a_edge8_Node000002_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M331.2,-197.48C352.46,-190.56 378.39,-182.56 402,-176.5 412.14,-173.89 422.98,-171.42 433.55,-169.18"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="434.49,-172.55 443.57,-167.09 433.07,-165.7 434.49,-172.55"/>
+<path fill="none" stroke="#63b8ff" d="M366.01,-205.69C375.54,-204.87 385.36,-204.03 395.14,-203.19"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="395.64,-206.66 405.31,-202.31 395.04,-199.68 395.64,-206.66"/>
 </a>
 </g>
 </g>
 <!-- Node10 -->
 <g id="Node000010" class="node">
 <title>Node10</title>
-<g id="a_Node000010"><a xlink:href="classSceneManager.html#a25bec2896954b4f0c3bed8ef736993d3" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="787.5,-121 629.5,-121 629.5,-102 787.5,-102 787.5,-121"/>
-<text text-anchor="middle" x="708.5" y="-109" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::selectedItem</text>
+<g id="a_Node000010"><a xlink:href="classCamera.html#af99955c976c3bbeec08714d7724bab89" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="556,-167 438,-167 438,-148 556,-148 556,-167"/>
+<text text-anchor="middle" x="497" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">Camera::resetMouse</text>
 </a>
 </g>
 </g>
@@ -177,17 +159,17 @@
 <g id="edge9_Node000002_Node000010" class="edge">
 <title>Node2&#45;&gt;Node10</title>
 <g id="a_edge9_Node000002_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M304.71,-197.4C326.17,-180.08 364.17,-152.39 402,-139.5 472.44,-115.49 556.99,-109.35 619.27,-108.72"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="619.48,-112.22 629.46,-108.67 619.44,-105.22 619.48,-112.22"/>
+<path fill="none" stroke="#63b8ff" d="M331.2,-197.48C352.46,-190.56 378.39,-182.56 402,-176.5 412.14,-173.89 422.98,-171.42 433.55,-169.18"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="434.49,-172.55 443.57,-167.09 433.07,-165.7 434.49,-172.55"/>
 </a>
 </g>
 </g>
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="592,-91 402,-91 402,-72 592,-72 592,-91"/>
-<text text-anchor="middle" x="497" y="-79" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::setMouseCaptured</text>
+<g id="a_Node000011"><a xlink:href="classSceneManager.html#a25bec2896954b4f0c3bed8ef736993d3" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="787.5,-121 629.5,-121 629.5,-102 787.5,-102 787.5,-121"/>
+<text text-anchor="middle" x="708.5" y="-109" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::selectedItem</text>
 </a>
 </g>
 </g>
@@ -195,17 +177,17 @@
 <g id="edge10_Node000002_Node000011" class="edge">
 <title>Node2&#45;&gt;Node11</title>
 <g id="a_edge10_Node000002_Node000011"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M299.03,-197.19C318.25,-173.81 358.2,-129.41 402,-105.5 410.65,-100.78 420.25,-96.96 429.92,-93.88"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="430.98,-97.22 439.59,-91.04 429.01,-90.51 430.98,-97.22"/>
+<path fill="none" stroke="#63b8ff" d="M304.71,-197.4C326.17,-180.08 364.17,-152.39 402,-139.5 472.44,-115.49 556.99,-109.35 619.27,-108.72"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="619.48,-112.22 629.46,-108.67 619.44,-105.22 619.48,-112.22"/>
 </a>
 </g>
 </g>
 <!-- Node12 -->
 <g id="Node000012" class="node">
 <title>Node12</title>
-<g id="a_Node000012"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="574.5,-54 419.5,-54 419.5,-35 574.5,-35 574.5,-54"/>
-<text text-anchor="middle" x="497" y="-42" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
+<g id="a_Node000012"><a xlink:href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="592,-91 402,-91 402,-72 592,-72 592,-91"/>
+<text text-anchor="middle" x="497" y="-79" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::setMouseCaptured</text>
 </a>
 </g>
 </g>
@@ -213,63 +195,63 @@
 <g id="edge11_Node000002_Node000012" class="edge">
 <title>Node2&#45;&gt;Node12</title>
 <g id="a_edge11_Node000002_Node000012"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M293.97,-197.21C308.93,-166.26 347.27,-96.28 402,-62.5 404.67,-60.85 407.46,-59.35 410.33,-57.98"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="411.89,-61.12 419.77,-54.04 409.19,-54.66 411.89,-61.12"/>
-</a>
-</g>
-</g>
-<!-- Node12&#45;&gt;Node10 -->
-<g id="edge17_Node000012_Node000010" class="edge">
-<title>Node12&#45;&gt;Node10</title>
-<g id="a_edge17_Node000012_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M558.14,-54.05C569.49,-56.4 581.19,-59.21 592,-62.5 600.52,-65.09 645.31,-84.38 676.54,-97.97"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="675.18,-101.19 685.74,-101.97 677.97,-94.77 675.18,-101.19"/>
+<path fill="none" stroke="#63b8ff" d="M299.03,-197.19C318.25,-173.81 358.2,-129.41 402,-105.5 410.65,-100.78 420.25,-96.96 429.92,-93.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="430.98,-97.22 439.59,-91.04 429.01,-90.51 430.98,-97.22"/>
 </a>
 </g>
 </g>
 <!-- Node13 -->
 <g id="Node000013" class="node">
 <title>Node13</title>
-<g id="a_Node000013"><a xlink:href="classSceneManager.html#a99992b526976863d1dab7dc88cc6ec2a" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="789,-67.5 628,-67.5 628,-37.5 789,-37.5 789,-67.5"/>
-<text text-anchor="start" x="636" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::deleteCurrent</text>
-<text text-anchor="middle" x="708.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Gizmo</text>
+<g id="a_Node000013"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="574.5,-54 419.5,-54 419.5,-35 574.5,-35 574.5,-54"/>
+<text text-anchor="middle" x="497" y="-42" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
 </a>
 </g>
 </g>
-<!-- Node12&#45;&gt;Node13 -->
-<g id="edge12_Node000012_Node000013" class="edge">
-<title>Node12&#45;&gt;Node13</title>
-<g id="a_edge12_Node000012_Node000013"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M574.52,-47.42C588.44,-47.95 603.08,-48.51 617.35,-49.06"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="617.54,-52.57 627.66,-49.45 617.81,-45.57 617.54,-52.57"/>
+<!-- Node2&#45;&gt;Node13 -->
+<g id="edge12_Node000002_Node000013" class="edge">
+<title>Node2&#45;&gt;Node13</title>
+<g id="a_edge12_Node000002_Node000013"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M293.97,-197.21C308.93,-166.26 347.27,-96.28 402,-62.5 404.67,-60.85 407.46,-59.35 410.33,-57.98"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="411.89,-61.12 419.77,-54.04 409.19,-54.66 411.89,-61.12"/>
 </a>
 </g>
 </g>
-<!-- Node17 -->
-<g id="Node000017" class="node">
-<title>Node17</title>
-<g id="a_Node000017"><a xlink:href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="779,-19 638,-19 638,0 779,0 779,-19"/>
-<text text-anchor="middle" x="708.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
+<!-- Node5 -->
+<g id="Node000005" class="node">
+<title>Node5</title>
+<g id="a_Node000005"><a xlink:href="classIPickable.html#a69ded211af3ca1009ddbafd14aef8bb7" target="_top" xlink:title="Tests if a ray intersects this object&#39;s geometry.">
+<polygon fill="white" stroke="#666666" points="775,-352 642,-352 642,-333 775,-333 775,-352"/>
+<text text-anchor="middle" x="708.5" y="-340" font-family="Helvetica,sans-Serif" font-size="10.00">IPickable::intersectsRay</text>
 </a>
 </g>
 </g>
-<!-- Node12&#45;&gt;Node17 -->
-<g id="edge16_Node000012_Node000017" class="edge">
-<title>Node12&#45;&gt;Node17</title>
-<g id="a_edge16_Node000012_Node000017"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M554.97,-34.98C581.41,-30.57 613.02,-25.28 640.58,-20.68"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="641.25,-24.12 650.54,-19.02 640.1,-17.21 641.25,-24.12"/>
+<!-- Node4&#45;&gt;Node5 -->
+<g id="edge4_Node000004_Node000005" class="edge">
+<title>Node4&#45;&gt;Node5</title>
+<g id="a_edge4_Node000004_Node000005"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M547.65,-342.5C572.76,-342.5 603.77,-342.5 631.78,-342.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="631.95,-346 641.95,-342.5 631.95,-339 631.95,-346"/>
+</a>
+</g>
+</g>
+<!-- Node13&#45;&gt;Node11 -->
+<g id="edge18_Node000013_Node000011" class="edge">
+<title>Node13&#45;&gt;Node11</title>
+<g id="a_edge18_Node000013_Node000011"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M558.14,-54.05C569.49,-56.4 581.19,-59.21 592,-62.5 600.52,-65.09 645.31,-84.38 676.54,-97.97"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="675.18,-101.19 685.74,-101.97 677.97,-94.77 675.18,-101.19"/>
 </a>
 </g>
 </g>
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1004,-80 825,-80 825,-61 1004,-61 1004,-80"/>
-<text text-anchor="middle" x="914.5" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removeDrawable</text>
+<g id="a_Node000014"><a xlink:href="classSceneManager.html#a99992b526976863d1dab7dc88cc6ec2a" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="789,-67.5 628,-67.5 628,-37.5 789,-37.5 789,-67.5"/>
+<text text-anchor="start" x="636" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::deleteCurrent</text>
+<text text-anchor="middle" x="708.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Gizmo</text>
 </a>
 </g>
 </g>
@@ -277,35 +259,35 @@
 <g id="edge13_Node000013_Node000014" class="edge">
 <title>Node13&#45;&gt;Node14</title>
 <g id="a_edge13_Node000013_Node000014"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M789.25,-59.54C797.6,-60.27 806.16,-61.03 814.7,-61.78"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="814.42,-65.27 824.69,-62.66 815.03,-58.3 814.42,-65.27"/>
+<path fill="none" stroke="#63b8ff" d="M574.52,-47.42C588.44,-47.95 603.08,-48.51 617.35,-49.06"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="617.54,-52.57 627.66,-49.45 617.81,-45.57 617.54,-52.57"/>
 </a>
 </g>
 </g>
-<!-- Node16 -->
-<g id="Node000016" class="node">
-<title>Node16</title>
-<g id="a_Node000016"><a xlink:href="classSceneManager.html#a1c647e38474ee02d5dd8510bc2313c38" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1001,-43 828,-43 828,-24 1001,-24 1001,-43"/>
-<text text-anchor="middle" x="914.5" y="-31" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removePickable</text>
+<!-- Node18 -->
+<g id="Node000018" class="node">
+<title>Node18</title>
+<g id="a_Node000018"><a xlink:href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="779,-19 638,-19 638,0 779,0 779,-19"/>
+<text text-anchor="middle" x="708.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
 </a>
 </g>
 </g>
-<!-- Node13&#45;&gt;Node16 -->
-<g id="edge15_Node000013_Node000016" class="edge">
-<title>Node13&#45;&gt;Node16</title>
-<g id="a_edge15_Node000013_Node000016"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M789.25,-45.07C798.52,-44.21 808.05,-43.32 817.52,-42.44"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="818.11,-45.9 827.74,-41.49 817.46,-38.93 818.11,-45.9"/>
+<!-- Node13&#45;&gt;Node18 -->
+<g id="edge17_Node000013_Node000018" class="edge">
+<title>Node13&#45;&gt;Node18</title>
+<g id="a_edge17_Node000013_Node000018"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M554.97,-34.98C581.41,-30.57 613.02,-25.28 640.58,-20.68"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="641.25,-24.12 650.54,-19.02 640.1,-17.21 641.25,-24.12"/>
 </a>
 </g>
 </g>
 <!-- Node15 -->
 <g id="Node000015" class="node">
 <title>Node15</title>
-<g id="a_Node000015"><a xlink:href="classScene.html#a398bf0981ca0b3f5ade648b1d95513cc" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1176,-80 1040,-80 1040,-61 1176,-61 1176,-80"/>
-<text text-anchor="middle" x="1108" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::removeDrawable</text>
+<g id="a_Node000015"><a xlink:href="classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="1004,-80 825,-80 825,-61 1004,-61 1004,-80"/>
+<text text-anchor="middle" x="914.5" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removeDrawable</text>
 </a>
 </g>
 </g>
@@ -313,6 +295,42 @@
 <g id="edge14_Node000014_Node000015" class="edge">
 <title>Node14&#45;&gt;Node15</title>
 <g id="a_edge14_Node000014_Node000015"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M789.25,-59.54C797.6,-60.27 806.16,-61.03 814.7,-61.78"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="814.42,-65.27 824.69,-62.66 815.03,-58.3 814.42,-65.27"/>
+</a>
+</g>
+</g>
+<!-- Node17 -->
+<g id="Node000017" class="node">
+<title>Node17</title>
+<g id="a_Node000017"><a xlink:href="classSceneManager.html#a1c647e38474ee02d5dd8510bc2313c38" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="1001,-43 828,-43 828,-24 1001,-24 1001,-43"/>
+<text text-anchor="middle" x="914.5" y="-31" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::removePickable</text>
+</a>
+</g>
+</g>
+<!-- Node14&#45;&gt;Node17 -->
+<g id="edge16_Node000014_Node000017" class="edge">
+<title>Node14&#45;&gt;Node17</title>
+<g id="a_edge16_Node000014_Node000017"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M789.25,-45.07C798.52,-44.21 808.05,-43.32 817.52,-42.44"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="818.11,-45.9 827.74,-41.49 817.46,-38.93 818.11,-45.9"/>
+</a>
+</g>
+</g>
+<!-- Node16 -->
+<g id="Node000016" class="node">
+<title>Node16</title>
+<g id="a_Node000016"><a xlink:href="classScene.html#a398bf0981ca0b3f5ade648b1d95513cc" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="1176,-80 1040,-80 1040,-61 1176,-61 1176,-80"/>
+<text text-anchor="middle" x="1108" y="-68" font-family="Helvetica,sans-Serif" font-size="10.00">Scene::removeDrawable</text>
+</a>
+</g>
+</g>
+<!-- Node15&#45;&gt;Node16 -->
+<g id="edge15_Node000015_Node000016" class="edge">
+<title>Node15&#45;&gt;Node16</title>
+<g id="a_edge15_Node000015_Node000016"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1004.24,-70.5C1012.73,-70.5 1021.29,-70.5 1029.65,-70.5"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1029.74,-74 1039.74,-70.5 1029.74,-67 1029.74,-74"/>
 </a>

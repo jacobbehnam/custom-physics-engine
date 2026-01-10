@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: IHandle Class Reference</title>
+<title>Physics Simulation &amp; Visualization Tool: IHandle Interface Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -101,9 +101,12 @@ $(document).ready(function(){initNavTree('classIHandle.html',''); initResizable(
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-static-methods">Static Protected Member Functions</a>  </div>
-  <div class="headertitle"><div class="title">IHandle Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">IHandle Interface Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract interface for gizmo manipulation handles.  
+ <a href="classIHandle.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="IHandle_8h_source.html">IHandle.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -115,31 +118,50 @@ Inheritance diagram for IHandle:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a58e4acb3eafebd7bd9e3179ce4f4081f" id="r_a58e4acb3eafebd7bd9e3179ce4f4081f"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#a58e4acb3eafebd7bd9e3179ce4f4081f">~IHandle</a> ()=default</td></tr>
+<tr class="memdesc:a58e4acb3eafebd7bd9e3179ce4f4081f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
 <tr class="separator:a58e4acb3eafebd7bd9e3179ce4f4081f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12a729f951f176a3c9dc5069a7dc01f9" id="r_a12a729f951f176a3c9dc5069a7dc01f9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#a12a729f951f176a3c9dc5069a7dc01f9">onDrag</a> (const glm::vec3 &amp;rayOrig, const glm::vec3 &amp;rayDir)=0</td></tr>
-<tr class="separator:a12a729f951f176a3c9dc5069a7dc01f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09f767531c50de476e395349d6c57438" id="r_a09f767531c50de476e395349d6c57438"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#a09f767531c50de476e395349d6c57438">onDrag</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray)=0</td></tr>
+<tr class="memdesc:a09f767531c50de476e395349d6c57438"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles continuous dragging motion.  <br /></td></tr>
+<tr class="separator:a09f767531c50de476e395349d6c57438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5b335cda14aa6aaa0723d4fd237a1ab" id="r_ae5b335cda14aa6aaa0723d4fd237a1ab"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#ae5b335cda14aa6aaa0723d4fd237a1ab">setDragState</a> (glm::vec3 initHitPos)=0</td></tr>
+<tr class="memdesc:ae5b335cda14aa6aaa0723d4fd237a1ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the drag operation state.  <br /></td></tr>
 <tr class="separator:ae5b335cda14aa6aaa0723d4fd237a1ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ee4691e6fbaff785ec57259b735091e" id="r_a2ee4691e6fbaff785ec57259b735091e"><td class="memItemLeft" align="right" valign="top">virtual glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#a2ee4691e6fbaff785ec57259b735091e">getAxisDir</a> () const =0</td></tr>
+<tr class="memdesc:a2ee4691e6fbaff785ec57259b735091e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the axis direction this handle operates along/around.  <br /></td></tr>
 <tr class="separator:a2ee4691e6fbaff785ec57259b735091e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b0d170737dfb572de05c78169548276" id="r_a3b0d170737dfb572de05c78169548276"><td class="memItemLeft" align="right" valign="top">virtual glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#a3b0d170737dfb572de05c78169548276">getModelMatrix</a> () const =0</td></tr>
+<tr class="memdesc:a3b0d170737dfb572de05c78169548276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the model transformation matrix for rendering this handle.  <br /></td></tr>
 <tr class="separator:a3b0d170737dfb572de05c78169548276"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcb48630e6afdf0bd4a0627476ca5bad" id="r_afcb48630e6afdf0bd4a0627476ca5bad"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#afcb48630e6afdf0bd4a0627476ca5bad">getObjectID</a> () const =0</td></tr>
-<tr class="separator:afcb48630e6afdf0bd4a0627476ca5bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:ada610b59e76edea3487f68e122ce2cad" id="r_ada610b59e76edea3487f68e122ce2cad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#ada610b59e76edea3487f68e122ce2cad">IHandle</a> ()=default</td></tr>
+<tr class="memdesc:ada610b59e76edea3487f68e122ce2cad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected constructor to enforce interface-only usage.  <br /></td></tr>
 <tr class="separator:ada610b59e76edea3487f68e122ce2cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
 <tr class="memitem:ac190d421b2f8652e91c342a2d19e5efb" id="r_ac190d421b2f8652e91c342a2d19e5efb"><td class="memItemLeft" align="right" valign="top">static glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIHandle.html#ac190d421b2f8652e91c342a2d19e5efb">rotateFromYToAxis</a> (<a class="el" href="IHandle_8h.html#ae3996976d8ffb3e58d88f58227473f8e">Axis</a> axis)</td></tr>
+<tr class="memdesc:ac190d421b2f8652e91c342a2d19e5efb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes rotation matrix to align mesh from +Y to target axis.  <br /></td></tr>
 <tr class="separator:ac190d421b2f8652e91c342a2d19e5efb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="IHandle_8h_source.html#l00022">22</a> of file <a class="el" href="IHandle_8h_source.html">IHandle.h</a>.</p>
+<div class="textblock"><p>Abstract interface for gizmo manipulation handles. </p>
+<p><a class="el" href="classIHandle.html" title="Abstract interface for gizmo manipulation handles.">IHandle</a> defines the behavior contract for interactive manipulation tools (translation, rotation, scale handles) without dictating how they are rendered.</p>
+<p>Key design decisions:</p><ul>
+<li>Does NOT inherit from <a class="el" href="classIDrawable.html">IDrawable</a> - rendering is managed by the owning <a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a></li>
+<li>Handles are purely behavioral - they respond to drag operations</li>
+<li>Each handle operates along/around a specific axis</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a> </dd>
+<dd>
+<a class="el" href="classTranslateHandle.html">TranslateHandle</a> </dd>
+<dd>
+<a class="el" href="classRotateHandle.html">RotateHandle</a> </dd>
+<dd>
+<a class="el" href="classScaleHandle.html">ScaleHandle</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="IHandle_8h_source.html#l00054">54</a> of file <a class="el" href="IHandle_8h_source.html">IHandle.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a58e4acb3eafebd7bd9e3179ce4f4081f" name="a58e4acb3eafebd7bd9e3179ce4f4081f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a58e4acb3eafebd7bd9e3179ce4f4081f">&#9670;&#160;</a></span>~IHandle()</h2>
@@ -163,6 +185,8 @@ Static Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Virtual destructor for proper cleanup of derived classes. </p>
 
 </div>
 </div>
@@ -189,6 +213,8 @@ Static Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Protected constructor to enforce interface-only usage. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -214,6 +240,10 @@ Static Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Gets the axis direction this handle operates along/around. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unit vector representing the handle's axis direction.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is used for rendering (color coding) and for identifying which handle the user is interacting with. </dd></dl>
 
 <p>Implemented in <a class="el" href="classRotateHandle.html#ae20a4a52e2dcaccdc32ae32722ba7ccd">RotateHandle</a>, <a class="el" href="classScaleHandle.html#a181ba31d6906c9945868029693672ff1">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#a2eb96456c77a15f4ea4ec3bcdb351916">TranslateHandle</a>.</p>
 
@@ -242,39 +272,21 @@ Static Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the model transformation matrix for rendering this handle. </p>
+<p>The model matrix encodes:</p><ul>
+<li>Position: Target object's position</li>
+<li>Rotation: Aligned to the handle's axis</li>
+<li>Scale: Handle's visual size</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>The 4x4 model transformation matrix.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is used by <a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a> for instanced rendering of all handles. </dd></dl>
+
 <p>Implemented in <a class="el" href="classRotateHandle.html#a24a91d11a8e31dbdcae31b9d6fd29317">RotateHandle</a>, <a class="el" href="classScaleHandle.html#ae2d8a999110797881a5f7d00cb1bc4e2">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#ac8493751122288436b9d557609582ca5">TranslateHandle</a>.</p>
 
 </div>
 </div>
-<a id="afcb48630e6afdf0bd4a0627476ca5bad" name="afcb48630e6afdf0bd4a0627476ca5bad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcb48630e6afdf0bd4a0627476ca5bad">&#9670;&#160;</a></span>getObjectID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual uint32_t IHandle::getObjectID </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classRotateHandle.html#a706c8739ca010235bab90775d59ef017">RotateHandle</a>, <a class="el" href="classScaleHandle.html#a94842dbef498916f8f85f1b77f448a01">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#a6ca00ccf396bf1654255418f33fdca14">TranslateHandle</a>.</p>
-
-</div>
-</div>
-<a id="a12a729f951f176a3c9dc5069a7dc01f9" name="a12a729f951f176a3c9dc5069a7dc01f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12a729f951f176a3c9dc5069a7dc01f9">&#9670;&#160;</a></span>onDrag()</h2>
+<a id="a09f767531c50de476e395349d6c57438" name="a09f767531c50de476e395349d6c57438"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09f767531c50de476e395349d6c57438">&#9670;&#160;</a></span>onDrag()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,19 +297,9 @@ Static Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void IHandle::onDrag </td>
           <td>(</td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayOrig</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;&#160;</td>
+          <td class="paramname"><em>ray</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>rayDir</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -307,11 +309,26 @@ Static Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classRotateHandle.html#a815a3c0245a0a3df6f34f967813c5440">RotateHandle</a>, <a class="el" href="classScaleHandle.html#a2a4525153790045bfa5fcae08d793dda">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#a0a1f6052e5c9ee9b6fc694158a49431a">TranslateHandle</a>.</p>
+<p>Handles continuous dragging motion. </p>
+<p>Called every frame while the handle is being dragged. Implementations should:</p><ul>
+<li>Project the ray onto the handle's constraint space (axis/plane)</li>
+<li>Compute the transformation delta since drag started</li>
+<li>Apply the transformation to the target object</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td>The current mouse ray in world space.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This is called after <a class="el" href="classIHandle.html#ae5b335cda14aa6aaa0723d4fd237a1ab" title="Initializes the drag operation state.">setDragState()</a> has initialized the drag.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classIHandle.html#ae5b335cda14aa6aaa0723d4fd237a1ab" title="Initializes the drag operation state.">setDragState()</a> </dd></dl>
+
+<p>Implemented in <a class="el" href="classRotateHandle.html#a251dde0c3864638e4f73351a76d6d6a3">RotateHandle</a>, <a class="el" href="classScaleHandle.html#a7474da914d58b6eb2f3aaa9d5c548983">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#ac67106b1bdc0342f0ab9428c382cf3ea">TranslateHandle</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classIHandle_a12a729f951f176a3c9dc5069a7dc01f9_icgraph.svg" width="332" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classIHandle_a09f767531c50de476e395349d6c57438_icgraph.svg" width="332" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -340,7 +357,18 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="IHandle_8h_source.html#l00037">37</a> of file <a class="el" href="IHandle_8h_source.html">IHandle.h</a>.</p>
+<p>Computes rotation matrix to align mesh from +Y to target axis. </p>
+<p>Handle meshes are authored pointing along +Y. This helper rotates them to point along X, Y, or Z as needed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">axis</td><td>The target axis to align to. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Rotation matrix transforming +Y to the specified axis.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns identity if axis is already +Y (within tolerance). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="IHandle_8h_source.html#l00134">134</a> of file <a class="el" href="IHandle_8h_source.html">IHandle.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -378,6 +406,20 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
+<p>Initializes the drag operation state. </p>
+<p>Called once when the user begins dragging this handle. Implementations should capture:</p><ul>
+<li>The initial hit position on the handle</li>
+<li>The target object's current transformation</li>
+<li>Any other state needed to compute relative deltas during <a class="el" href="classIHandle.html#a09f767531c50de476e395349d6c57438" title="Handles continuous dragging motion.">onDrag()</a></li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">initHitPos</td><td>The world-space position where the ray first hit the handle.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classIHandle.html#a09f767531c50de476e395349d6c57438" title="Handles continuous dragging motion.">onDrag()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classRotateHandle.html#a4aabaa2e05ebb7938e4ebd7f18cad242">RotateHandle</a>, <a class="el" href="classScaleHandle.html#a4e5ae8c81a76b9cb0c63f27d0f3df563">ScaleHandle</a>, and <a class="el" href="classTranslateHandle.html#aa3852bb3b391559231be88952a48e030">TranslateHandle</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -387,7 +429,7 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>src/graphics/components/<a class="el" href="IHandle_8h_source.html">IHandle.h</a></li>
 </ul>
 </div><!-- contents -->

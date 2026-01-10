@@ -1,8 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"classSceneObject.html#af36a3463b19299b7d7cca2b476c36870":[8,0,38,19],
-"classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2":[8,0,38,4],
-"classSceneSerializer.html":[8,0,39],
 "classSceneSerializer.html#a23f0a19fed68616f2b144e0124627cbd":[8,0,39,0],
 "classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433":[8,0,39,1],
 "classSceneSerializer.html#a56e278bcdda1f03f192797122dd6d0c0":[8,0,39,2],
@@ -32,11 +29,10 @@ var NAVTREEINDEX3 =
 "classTransformInspectorWidget.html#aba6cad0a241aa38ab6a5c540f34826c0":[8,0,45,1],
 "classTransformInspectorWidget.html#af9d4e5dee36207ae9477fd1106b23937":[8,0,45,0],
 "classTranslateHandle.html":[8,0,46],
-"classTranslateHandle.html#a0a1f6052e5c9ee9b6fc694158a49431a":[8,0,46,4],
+"classTranslateHandle.html#a24833149b943049d2c63148053fd7f0d":[8,0,46,0],
 "classTranslateHandle.html#a2eb96456c77a15f4ea4ec3bcdb351916":[8,0,46,1],
-"classTranslateHandle.html#a394c39e6a86a0c735402818b7c579798":[8,0,46,0],
-"classTranslateHandle.html#a6ca00ccf396bf1654255418f33fdca14":[8,0,46,3],
-"classTranslateHandle.html#aa3852bb3b391559231be88952a48e030":[8,0,46,5],
+"classTranslateHandle.html#aa3852bb3b391559231be88952a48e030":[8,0,46,4],
+"classTranslateHandle.html#ac67106b1bdc0342f0ab9428c382cf3ea":[8,0,46,3],
 "classTranslateHandle.html#ac8493751122288436b9d557609582ca5":[8,0,46,2],
 "classUniformBuffer.html":[8,0,47],
 "classUniformBuffer.html#a3262da40fc1214ed6d8f803139f2cc25":[8,0,47,0],

@@ -11,5 +11,5 @@ var searchData=
   ['addvec3_8',['addVec3',['../classInspectorRow.html#a93bc288f51b9f390abd3ceb6f3b2d2c7',1,'InspectorRow']]],
   ['allocateobjectid_9',['allocateObjectID',['../classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1',1,'Scene']]],
   ['applyimpulse_10',['applyImpulse',['../classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3',1,'Physics::PointMass']]],
-  ['axisdir_11',['axisDir',['../IHandle_8h.html#a964bf79581c06e837f1d55438f924d2e',1,'IHandle.h']]]
+  ['axisdir_11',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
 ];
