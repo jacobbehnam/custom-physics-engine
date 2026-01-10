@@ -11,13 +11,17 @@ var hierarchy =
       [ "Physics::Bounding::BoxCollider", "classPhysics_1_1Bounding_1_1BoxCollider.html", null ]
     ] ],
     [ "IDrawable", "classIDrawable.html", [
-      [ "Gizmo", "classGizmo.html", null ],
-      [ "IHandle", "classIHandle.html", [
-        [ "RotateHandle", "classRotateHandle.html", null ],
-        [ "ScaleHandle", "classScaleHandle.html", null ],
-        [ "TranslateHandle", "classTranslateHandle.html", null ]
+      [ "ICustomDrawable", "classICustomDrawable.html", [
+        [ "Gizmo", "classGizmo.html", null ]
       ] ],
-      [ "SceneObject", "classSceneObject.html", null ]
+      [ "IInstancedDrawable", "classIInstancedDrawable.html", [
+        [ "SceneObject", "classSceneObject.html", null ]
+      ] ]
+    ] ],
+    [ "IHandle", "classIHandle.html", [
+      [ "RotateHandle", "classRotateHandle.html", null ],
+      [ "ScaleHandle", "classScaleHandle.html", null ],
+      [ "TranslateHandle", "classTranslateHandle.html", null ]
     ] ],
     [ "InspectorRow", "classInspectorRow.html", null ],
     [ "InstanceData", "Mesh_8h.html#structInstanceData", null ],

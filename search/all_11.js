@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['rawinputfilter_0',['rawinputfilter',['../classRawInputFilter.html',1,'RawInputFilter'],['../classRawInputFilter.html#a62bcb041d61780904098ef98797efc36',1,'RawInputFilter::RawInputFilter()']]],
+  ['rawinputfilter_0',['rawinputfilter',['../classRawInputFilter.html#a62bcb041d61780904098ef98797efc36',1,'RawInputFilter::RawInputFilter()'],['../classRawInputFilter.html',1,'RawInputFilter']]],
   ['rawinputfilter_2ecpp_1',['RawInputFilter.cpp',['../RawInputFilter_8cpp.html',1,'']]],
   ['rawinputfilter_2eh_2',['RawInputFilter.h',['../RawInputFilter_8h.html',1,'']]],
   ['ray_3',['Ray',['../namespaceMath.html#structMath_1_1Ray',1,'Math']]],
@@ -8,10 +8,10 @@ var searchData=
   ['rayintersection_5',['rayintersection',['../classSceneObject.html#a2a0354ab6907b612c23b80d93d5b80cf',1,'SceneObject::rayIntersection()'],['../classIPickable.html#a5f2a257ef46eaea87aed52300ee15d0e',1,'IPickable::rayIntersection()'],['../classGizmo.html#ab78a02e47a17239b1fc4ab81e55faaac',1,'Gizmo::rayIntersection()']]],
   ['readme_2emd_6',['README.md',['../README_8md.html',1,'']]],
   ['readssbo_7',['readSSBO',['../classComputeShader.html#af1513f86e2eb81ee32ef7faa0e05dcaf',1,'ComputeShader']]],
-  ['recordframe_8',['recordframe',['../classPhysics_1_1RigidBody.html#a9a8b7d70904ae9ec19718c84113dc55d',1,'Physics::RigidBody::recordFrame()'],['../classPhysics_1_1PointMass.html#a09228858c965d7aadbbb4e80f6259837',1,'Physics::PointMass::recordFrame()'],['../classPhysics_1_1PhysicsBody.html#a0bd6cc4c18c4b89063eb4a83a2694793',1,'Physics::PhysicsBody::recordFrame()']]],
-  ['refresh_9',['refresh',['../classForcesInspectorWidget.html#ad8f7af82878c7e74266509fb7e0f10ba',1,'ForcesInspectorWidget::refresh()'],['../classGlobalsInspectorWidget.html#a6c9a926236b7362b7949e6d923fb67ba',1,'GlobalsInspectorWidget::refresh()'],['../classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d',1,'IInspectorSection::refresh()'],['../classInspectorRow.html#ac8d0315a73cb5f57e4ab400479ee8986',1,'InspectorRow::refresh()'],['../classPhysicsInspectorWidget.html#a85e7a14e7e2b443855840cf8943556a8',1,'PhysicsInspectorWidget::refresh()'],['../classTransformInspectorWidget.html#a29fbac2c12ad359a6448797aa6cc38e7',1,'TransformInspectorWidget::refresh()']]],
+  ['recordframe_8',['recordframe',['../classPhysics_1_1PointMass.html#a09228858c965d7aadbbb4e80f6259837',1,'Physics::PointMass::recordFrame()'],['../classPhysics_1_1PhysicsBody.html#a0bd6cc4c18c4b89063eb4a83a2694793',1,'Physics::PhysicsBody::recordFrame()'],['../classPhysics_1_1RigidBody.html#a9a8b7d70904ae9ec19718c84113dc55d',1,'Physics::RigidBody::recordFrame()']]],
+  ['refresh_9',['refresh',['../classTransformInspectorWidget.html#a29fbac2c12ad359a6448797aa6cc38e7',1,'TransformInspectorWidget::refresh()'],['../classForcesInspectorWidget.html#ad8f7af82878c7e74266509fb7e0f10ba',1,'ForcesInspectorWidget::refresh()'],['../classGlobalsInspectorWidget.html#a6c9a926236b7362b7949e6d923fb67ba',1,'GlobalsInspectorWidget::refresh()'],['../classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d',1,'IInspectorSection::refresh()'],['../classInspectorRow.html#ac8d0315a73cb5f57e4ab400479ee8986',1,'InspectorRow::refresh()'],['../classPhysicsInspectorWidget.html#a85e7a14e7e2b443855840cf8943556a8',1,'PhysicsInspectorWidget::refresh()']]],
   ['removebody_10',['removeBody',['../classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646',1,'Physics::PhysicsSystem']]],
-  ['removedrawable_11',['removedrawable',['../classScene.html#a63e2ea26e06305a24d92ed004809197b',1,'Scene::removeDrawable()'],['../classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8',1,'SceneManager::removeDrawable(IDrawable *obj) const']]],
+  ['removedrawable_11',['removedrawable',['../classSceneManager.html#ab7c34393bb10361069b0ea73ec2797f8',1,'SceneManager::removeDrawable()'],['../classScene.html#a398bf0981ca0b3f5ade648b1d95513cc',1,'Scene::removeDrawable()']]],
   ['removefromphysicssystem_12',['removeFromPhysicsSystem',['../classSceneManager.html#a950d9257e6d737616480fb2b3c00ce62',1,'SceneManager']]],
   ['removeobject_13',['removeObject',['../classHierarchyWidget.html#a56157115783fc357041c0f0254368885',1,'HierarchyWidget']]],
   ['removepickable_14',['removePickable',['../classSceneManager.html#a1c647e38474ee02d5dd8510bc2313c38',1,'SceneManager']]],
@@ -32,11 +32,12 @@ var searchData=
   ['rigidbody_2eh_29',['RigidBody.h',['../RigidBody_8h.html',1,'']]],
   ['rigidbodyoptions_30',['RigidBodyOptions',['../structRigidBodyOptions.html',1,'']]],
   ['rotate_31',['ROTATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa9faf4e337734315fde20af1922cc6f9d',1,'Gizmo.h']]],
-  ['rotatehandle_32',['rotatehandle',['../classRotateHandle.html',1,'RotateHandle'],['../classRotateHandle.html#abbeca12af4908009d86912de5032ba91',1,'RotateHandle::RotateHandle()']]],
-  ['rotatehandle_2ecpp_33',['RotateHandle.cpp',['../RotateHandle_8cpp.html',1,'']]],
-  ['rotatehandle_2eh_34',['RotateHandle.h',['../RotateHandle_8h.html',1,'']]],
-  ['rotation_35',['rotation',['../SceneObjectOptions_8h.html#a5f5e8366e95b96c2ce8b81420da51166',1,'ObjectOptions']]],
-  ['routeproblem_36',['routeProblem',['../classProblemRouter.html#af832077eb416c64e3f4f693a72877b70',1,'ProblemRouter']]],
-  ['rowcount_37',['rowCount',['../classSnapshotTableModel.html#a8459a77086102a851e84bf7a2ec1a2fa',1,'SnapshotTableModel']]],
-  ['runsolver_38',['runSolver',['../classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072',1,'GlobalsInspectorWidget']]]
+  ['rotatefromytoaxis_32',['rotateFromYToAxis',['../classIHandle.html#ac190d421b2f8652e91c342a2d19e5efb',1,'IHandle']]],
+  ['rotatehandle_33',['rotatehandle',['../classRotateHandle.html',1,'RotateHandle'],['../classRotateHandle.html#aad85080b7fc3a36c7ff0e723c56ebe76',1,'RotateHandle::RotateHandle()']]],
+  ['rotatehandle_2ecpp_34',['RotateHandle.cpp',['../RotateHandle_8cpp.html',1,'']]],
+  ['rotatehandle_2eh_35',['RotateHandle.h',['../RotateHandle_8h.html',1,'']]],
+  ['rotation_36',['rotation',['../SceneObjectOptions_8h.html#a5f5e8366e95b96c2ce8b81420da51166',1,'ObjectOptions']]],
+  ['routeproblem_37',['routeProblem',['../classProblemRouter.html#af832077eb416c64e3f4f693a72877b70',1,'ProblemRouter']]],
+  ['rowcount_38',['rowCount',['../classSnapshotTableModel.html#a8459a77086102a851e84bf7a2ec1a2fa',1,'SnapshotTableModel']]],
+  ['runsolver_39',['runSolver',['../classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072',1,'GlobalsInspectorWidget']]]
 ];

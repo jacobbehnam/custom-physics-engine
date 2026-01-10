@@ -113,10 +113,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a631eef7493cafce5d74739a2cad12a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5512c90d05801f27028975d6a898e6b" id="r_af5512c90d05801f27028975d6a898e6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">draw</a> (const std::optional&lt; std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; &gt; &amp;snapshots, const std::unordered_set&lt; uint32_t &gt; &amp;hoverIDs, const std::unordered_set&lt; uint32_t &gt; &amp;selectIDs)</td></tr>
 <tr class="separator:af5512c90d05801f27028975d6a898e6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a178d4cac84f5cc922f6224356e27bc25" id="r_a178d4cac84f5cc922f6224356e27bc25"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#a178d4cac84f5cc922f6224356e27bc25">addDrawable</a> (<a class="el" href="classIDrawable.html">IDrawable</a> *obj)</td></tr>
-<tr class="separator:a178d4cac84f5cc922f6224356e27bc25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63e2ea26e06305a24d92ed004809197b" id="r_a63e2ea26e06305a24d92ed004809197b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#a63e2ea26e06305a24d92ed004809197b">removeDrawable</a> (<a class="el" href="classIDrawable.html">IDrawable</a> *obj)</td></tr>
-<tr class="separator:a63e2ea26e06305a24d92ed004809197b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2773ce73d9158e1e3a9c97d26a7e727" id="r_aa2773ce73d9158e1e3a9c97d26a7e727"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#aa2773ce73d9158e1e3a9c97d26a7e727">addDrawable</a> (<a class="el" href="classIDrawable.html">IDrawable</a> *drawable)</td></tr>
+<tr class="separator:aa2773ce73d9158e1e3a9c97d26a7e727"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a398bf0981ca0b3f5ade648b1d95513cc" id="r_a398bf0981ca0b3f5ade648b1d95513cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#a398bf0981ca0b3f5ade648b1d95513cc">removeDrawable</a> (<a class="el" href="classIDrawable.html">IDrawable</a> *drawable)</td></tr>
+<tr class="separator:a398bf0981ca0b3f5ade648b1d95513cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d266d10bd4db4e9881ad23f1bd338d1" id="r_a5d266d10bd4db4e9881ad23f1bd338d1"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1">allocateObjectID</a> ()</td></tr>
 <tr class="separator:a5d266d10bd4db4e9881ad23f1bd338d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b640bddd22a97b60dd24d4ceecea885" id="r_a2b640bddd22a97b60dd24d4ceecea885"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classScene.html#a2b640bddd22a97b60dd24d4ceecea885">freeObjectID</a> (uint32_t objID)</td></tr>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00011">11</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00010">10</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af3a4cc13e6e2daf3cd135b88d60639fa" name="af3a4cc13e6e2daf3cd135b88d60639fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af3a4cc13e6e2daf3cd135b88d60639fa">&#9670;&#160;</a></span>Scene()</h2>
@@ -179,35 +179,27 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a178d4cac84f5cc922f6224356e27bc25" name="a178d4cac84f5cc922f6224356e27bc25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a178d4cac84f5cc922f6224356e27bc25">&#9670;&#160;</a></span>addDrawable()</h2>
+<a id="aa2773ce73d9158e1e3a9c97d26a7e727" name="aa2773ce73d9158e1e3a9c97d26a7e727"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2773ce73d9158e1e3a9c97d26a7e727">&#9670;&#160;</a></span>addDrawable()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Scene::addDrawable </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classIDrawable.html">IDrawable</a> *&#160;</td>
-          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td class="paramname"><em>drawable</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00017">17</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00102">102</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classScene_a178d4cac84f5cc922f6224356e27bc25_icgraph.svg" width="100%" height="419"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classScene_aa2773ce73d9158e1e3a9c97d26a7e727_icgraph.svg" width="100%" height="419"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -272,7 +264,7 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classScene_af5512c90d05801f27028975d6a898e6b_cgraph.svg" width="623" height="234"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classScene_af5512c90d05801f27028975d6a898e6b_cgraph.svg" width="623" height="283"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -322,7 +314,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00124">124</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00098">98</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -331,8 +323,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a63e2ea26e06305a24d92ed004809197b" name="a63e2ea26e06305a24d92ed004809197b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63e2ea26e06305a24d92ed004809197b">&#9670;&#160;</a></span>removeDrawable()</h2>
+<a id="a398bf0981ca0b3f5ade648b1d95513cc" name="a398bf0981ca0b3f5ade648b1d95513cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a398bf0981ca0b3f5ade648b1d95513cc">&#9670;&#160;</a></span>removeDrawable()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -341,17 +333,17 @@ Here is the caller graph for this function:</div>
           <td class="memname">void Scene::removeDrawable </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classIDrawable.html">IDrawable</a> *&#160;</td>
-          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td class="paramname"><em>drawable</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00128">128</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00112">112</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classScene_a63e2ea26e06305a24d92ed004809197b_icgraph.svg" width="100%" height="446"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classScene_a398bf0981ca0b3f5ade648b1d95513cc_icgraph.svg" width="100%" height="446"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>

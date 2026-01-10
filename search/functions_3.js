@@ -7,6 +7,6 @@ var searchData=
   ['deleteobject_4',['deleteObject',['../classSceneManager.html#a4543114007c5bb40ddab62cd9f2ac613',1,'SceneManager']]],
   ['disablephysics_5',['disablePhysics',['../classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949',1,'Physics::PhysicsSystem']]],
   ['dispatch_6',['dispatch',['../classComputeShader.html#aa214ddffbf78792a137c7fef29fc49f3',1,'ComputeShader']]],
-  ['draw_7',['draw',['../classGizmo.html#a7ad5d20c87367234c6a220dfd840c06e',1,'Gizmo::draw()'],['../classMesh.html#a79b998580025a501675a517e9fc1283f',1,'Mesh::draw()'],['../classRotateHandle.html#a7bfbb1db24b606d863fb9fc11819fc0d',1,'RotateHandle::draw()'],['../classScaleHandle.html#a98b28d2f8f7b2ad87d4d8a6ce412b888',1,'ScaleHandle::draw()'],['../classTranslateHandle.html#a8f0a581aaebf3055c43d8834e8fdc750',1,'TranslateHandle::draw()'],['../classIDrawable.html#a202c0ad6c248efe17b8d924faa869ee5',1,'IDrawable::draw()'],['../classScene.html#af5512c90d05801f27028975d6a898e6b',1,'Scene::draw()'],['../classSceneObject.html#aa90d1b00df6c34bb573c159017eab844',1,'SceneObject::draw()']]],
+  ['draw_7',['draw',['../classGizmo.html#a7ad5d20c87367234c6a220dfd840c06e',1,'Gizmo::draw()'],['../classMesh.html#a79b998580025a501675a517e9fc1283f',1,'Mesh::draw()'],['../classICustomDrawable.html#a38a37a3decc4ebf71262ea12f8af560b',1,'ICustomDrawable::draw()'],['../classScene.html#af5512c90d05801f27028975d6a898e6b',1,'Scene::draw()']]],
   ['drawinstanced_8',['drawInstanced',['../classMesh.html#a194205a979361c68cef87f323eb145b4',1,'Mesh']]]
 ];

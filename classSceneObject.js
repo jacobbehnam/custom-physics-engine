@@ -3,7 +3,6 @@ var classSceneObject =
     [ "PosMap", "classSceneObject.html#a773d247b2a976a6684aca6c4df235ec3", null ],
     [ "SceneObject", "classSceneObject.html#a71b5ba2106108265edb221540f4ec1ae", null ],
     [ "~SceneObject", "classSceneObject.html#ab258d6b94e982d5ae71ad4d7652381f4", null ],
-    [ "draw", "classSceneObject.html#aa90d1b00df6c34bb573c159017eab844", null ],
     [ "getCreationOptions", "classSceneObject.html#a2ed12216f0ee45423035ddfdb0c9044b", null ],
     [ "getHovered", "classSceneObject.html#afee93d4a7e8238bba39a3e5d19b2dbb2", null ],
     [ "getMesh", "classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e", null ],
