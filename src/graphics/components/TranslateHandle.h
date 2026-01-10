@@ -6,13 +6,12 @@ class SceneObject;
 
 class TranslateHandle : public IHandle{
 public:
-    TranslateHandle(SceneObject* tgt, Axis ax, uint32_t objID);
+    TranslateHandle(SceneObject* tgt, Axis ax);
 
-    void onDrag(const glm::vec3& rayOrig, const glm::vec3& rayDir) override;
+    void onDrag(const Math::Ray& ray) override;
     void setDragState(glm::vec3 initHitPos) override;
     glm::vec3 getAxisDir() const override { return axisDir(axis); }
     glm::mat4 getModelMatrix() const override;
-    uint32_t getObjectID() const override { return objectID; }
 private:
     SceneObject* target;
     Axis axis;
@@ -22,6 +21,4 @@ private:
 
     glm::vec3 initialHitPoint;
     glm::vec3 originalPosition;
-
-    uint32_t objectID;
 };

@@ -179,18 +179,18 @@ namespace Math {
         IPickable* best = nullptr;
 
         for (IPickable* obj : objects) {
-            float t;
-            if (!obj->rayIntersection(ray.origin, ray.dir, t))
+            auto t = obj->intersectsRay(ray);
+            if (!t)
                 continue;
 
             // If this is the priority object, take it immediately
             if (obj == priority) {
-                distance = t;
+                distance = *t;
                 return HitResult{obj, distance};
             }
 
-            if (t < distance) {
-                distance = t;
+            if (*t < distance) {
+                distance = *t;
                 best = obj;
             }
         }

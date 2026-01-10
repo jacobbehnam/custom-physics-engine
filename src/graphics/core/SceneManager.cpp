@@ -243,7 +243,7 @@ void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, 
             if (!clickedObject)
                 return;
 
-            clickedObject->handleClick(ray.origin, ray.dir, hit->distance);
+            clickedObject->handleClick(ray, hit->distance);
             selectedIDs.insert(clickedObject->getObjectID());
             if (!clickedCurrentGizmo) {
                 emit selectedItem(dynamic_cast<SceneObject*>(clickedObject));
@@ -280,7 +280,7 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     if (currentGizmo && currentGizmo->getIsDragging()) {
         hoveredIDs.insert(currentGizmo->getObjectID());
         Math::Ray ray = getMouseRay();
-        currentGizmo->handleDrag(ray.origin, ray.dir);
+        currentGizmo->handleDrag(ray);
     }
 
     if (heldKeys.contains(Qt::Key_A))

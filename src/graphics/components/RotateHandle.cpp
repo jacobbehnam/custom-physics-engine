@@ -7,19 +7,19 @@
 #include <graphics/core/ResourceManager.h>
 
 
-RotateHandle::RotateHandle(SceneObject *tgt, Axis ax, uint32_t objID) : target(tgt), axis(ax), objectID(objID) {}
+RotateHandle::RotateHandle(SceneObject *tgt, Axis ax) : target(tgt), axis(ax) {}
 
-void RotateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
+void RotateHandle::onDrag(const Math::Ray& ray) {
     glm::vec3 axisDirection = axisDir(axis);
     glm::vec3& planeNormal = axisDirection;
     glm::vec3 center = target->getPosition();
 
     // Ray-plane intersection
-    float denom = glm::dot(rayDir, planeNormal);
+    float denom = glm::dot(ray.dir, planeNormal);
     if (glm::abs(denom) < 1e-6f) return; // ray is parallel to plane
 
-    float t = glm::dot(center - rayOrig, planeNormal) / denom;
-    glm::vec3 currentHitPoint = rayOrig + t * rayDir;
+    float t = glm::dot(center - ray.origin, planeNormal) / denom;
+    glm::vec3 currentHitPoint = ray.origin + t * ray.dir;
 
     glm::vec3 from = glm::normalize(initialHitPoint - center);
     glm::vec3 to   = glm::normalize(currentHitPoint - center);

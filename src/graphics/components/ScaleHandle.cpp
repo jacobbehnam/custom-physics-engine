@@ -2,15 +2,15 @@
 #include <graphics/core/ResourceManager.h>
 #include <iostream>
 
-ScaleHandle::ScaleHandle(SceneObject *tgt, Axis ax, uint32_t objID) : target(tgt), axis(ax), objectID(objID) {}
+ScaleHandle::ScaleHandle(SceneObject *tgt, Axis ax) : target(tgt), axis(ax) {}
 
-void ScaleHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
+void ScaleHandle::onDrag(const Math::Ray& ray) {
     glm::vec3 axisDirection = axisDir(axis);
     glm::vec3 localAxisDirection = target->getRotationQuat() * axisDirection;
     // To solve for t, minimize the quantity || (rayOrig + rayDir * t) - initialHitPoint ||
-    float t = glm::dot(-(rayOrig - initialHitPoint), rayDir);
+    float t = glm::dot(-(ray.origin - initialHitPoint), ray.dir);
 
-    glm::vec3 delta = (rayOrig + rayDir * t) - initialHitPoint;
+    glm::vec3 delta = (ray.origin + ray.dir * t) - initialHitPoint;
 
     float scaleAmount = glm::dot(delta, localAxisDirection);
     target->setScale(originalScale + axisDirection * scaleAmount);

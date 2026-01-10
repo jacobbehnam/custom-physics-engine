@@ -35,11 +35,11 @@ public:
 
     Shader* getShader() const override;
     Physics::PhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
-    bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
+    std::optional<float> intersectsRay(const Math::Ray& ray) const override;
 
-    void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
+    void handleClick(const Math::Ray& ray, float distance) override;
     void setHovered(bool hovered) override;
-    bool getHovered() override;
+    bool getHovered() const override;
     Mesh* getMesh() const override { return mesh; }
     uint32_t getObjectID() const override;
     const std::string& getName() const { return objectName; }
@@ -77,6 +77,6 @@ private:
 
     glm::mat4 getModelMatrix() const;
 
-    bool intersectsAABB(const glm::vec3& orig, const glm::vec3& dir, float& outT) const;
-    bool intersectsMesh(const glm::vec3& orig, const glm::vec3& dir, float& outT) const;
+    std::optional<float> intersectsAABB(const Math::Ray& ray) const;
+    std::optional<float> intersectsMesh(const Math::Ray& ray) const;
 };

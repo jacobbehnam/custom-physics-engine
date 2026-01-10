@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "graphics/core/SceneObject.h"
 
-TranslateHandle::TranslateHandle(SceneObject *tgt, Axis ax, uint32_t objID) : target(tgt), axis(ax), objectID(objID) {}
+TranslateHandle::TranslateHandle(SceneObject *tgt, Axis ax) : target(tgt), axis(ax) {}
 
 glm::mat4 TranslateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
@@ -15,12 +15,12 @@ glm::mat4 TranslateHandle::getModelMatrix() const {
     return model;
 }
 
-void TranslateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
+void TranslateHandle::onDrag(const Math::Ray& ray) {
     glm::vec3 axisDirection = axisDir(axis);
     // To solve for t, minimize the quantity || (rayOrig + rayDir * t) - initialHitPoint ||
-    float t = glm::dot(-(rayOrig - initialHitPoint), rayDir);
+    float t = glm::dot(-(ray.origin - initialHitPoint), ray.dir);
 
-    glm::vec3 delta = (rayOrig + rayDir * t) - initialHitPoint;
+    glm::vec3 delta = (ray.origin + ray.dir * t) - initialHitPoint;
     // apply translation only along the axis direction component:
     float moveAmount = glm::dot(delta, axisDirection);
     target->setPosition(originalPosition + axisDirection * moveAmount);

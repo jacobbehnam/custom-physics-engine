@@ -11,40 +11,34 @@
 #include "graphics/core/SceneObject.h"
 
 Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
-    Scene* scene = sceneManager->scene;
     sceneManager->addDrawable(this);
     sceneManager->addPickable(this);
 
     shader = ResourceManager::loadShader("assets/shaders/gizmo/gizmo.vert", "assets/shaders/gizmo/gizmo.frag", "gizmo");
-    auto allocID = [&]() { return scene->allocateObjectID(); };
 
     switch (type) {
         case GizmoType::TRANSLATE:
             handleMesh = ResourceManager::getMesh("gizmo_translate");
-            handles.emplace_back(new TranslateHandle(target, Axis::X, allocID()));
-            handles.emplace_back(new TranslateHandle(target, Axis::Y, allocID()));
-            handles.emplace_back(new TranslateHandle(target, Axis::Z, allocID()));
+            handles.emplace_back(new TranslateHandle(target, Axis::X));
+            handles.emplace_back(new TranslateHandle(target, Axis::Y));
+            handles.emplace_back(new TranslateHandle(target, Axis::Z));
             break;
         case GizmoType::ROTATE:
             handleMesh = ResourceManager::getMesh("gizmo_rotate");
-            handles.emplace_back(new RotateHandle(target, Axis::X, allocID()));
-            handles.emplace_back(new RotateHandle(target, Axis::Y, allocID()));
-            handles.emplace_back(new RotateHandle(target, Axis::Z, allocID()));
+            handles.emplace_back(new RotateHandle(target, Axis::X));
+            handles.emplace_back(new RotateHandle(target, Axis::Y));
+            handles.emplace_back(new RotateHandle(target, Axis::Z));
             break;
         case GizmoType::SCALE:
             handleMesh = ResourceManager::getMesh("gizmo_scale");
-            handles.emplace_back(new ScaleHandle(target, Axis::X, allocID()));
-            handles.emplace_back(new ScaleHandle(target, Axis::Y, allocID()));
-            handles.emplace_back(new ScaleHandle(target, Axis::Z, allocID()));
+            handles.emplace_back(new ScaleHandle(target, Axis::X));
+            handles.emplace_back(new ScaleHandle(target, Axis::Y));
+            handles.emplace_back(new ScaleHandle(target, Axis::Z));
             break;
     }
 }
 
 Gizmo::~Gizmo() {
-    for (auto handle : handles) {
-        ownerScene->freeObjectID(handle->getObjectID());
-        delete handle;
-    }
     ownerScene->freeObjectID(objectID);
 }
 
@@ -52,48 +46,53 @@ Gizmo::~Gizmo() {
 void Gizmo::draw() const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
+
     std::vector<InstanceData> drawData;
-    for (IHandle* handle : handles) {
-        uint32_t passedObjectID;
-        if (activeHandle && isDragging)
-            passedObjectID = handle->getObjectID();
-        else
-            passedObjectID = objectID;
-        InstanceData handleData = {handle->getModelMatrix(), passedObjectID, handle->getAxisDir()};
-        drawData.push_back(handleData);
+    for (const auto& handle : handles) {
+        glm::vec3 color = handle->getAxisDir(); // base RGB per axis
+
+        // highlight hovered or active handle
+        if (handle.get() == hoveredHandle || handle.get() == activeHandle) {
+            color = glm::mix(color, glm::vec3(1.0f), 0.7f); // lighten
+        }
+
+        drawData.push_back({ handle->getModelMatrix(), objectID, color });
     }
+
     getMesh()->drawInstanced(drawData);
     glEnable(GL_DEPTH_TEST);
 }
 
-bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance){
+std::optional<float> Gizmo::intersectsRay(const Math::Ray& ray) const{
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
-    IHandle* hitHandle = nullptr;
+
+    IHandle* bestHandle = nullptr;
     float closestT = std::numeric_limits<float>::infinity();
 
-    for (IHandle* handle : handles) {
+    for (const auto& handle: handles) {
         auto worldAABB = localAABB.getTransformed(handle->getModelMatrix());
-        if (auto outT = worldAABB->intersectRay(Math::Ray{rayOrigin, rayDir})) {
-            if (*outT < closestT) {
-                closestT = *outT;
-                hitHandle = handle;
+        if (auto t = worldAABB->intersectRay(ray)) {
+            if (*t < closestT) {
+                closestT = *t;
+                bestHandle = handle.get();
             }
         }
     }
 
-    if (hitHandle) {
-        outDistance = closestT;
-        if (!activeHandle || !isDragging) {
-            activeHandle = hitHandle;
-        }
-    }
+    hoveredHandle = bestHandle;
 
-    return hitHandle != nullptr;
+    if (bestHandle)
+        return closestT;
+
+    return std::nullopt;
 }
 
-void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
-    // Only fires if a handle was clicked
-    activeHandle->setDragState(rayOrig + rayDir*distance);
+void Gizmo::handleClick(const Math::Ray& ray, float distance) {
+    if (!hoveredHandle)
+        return;
+
+    activeHandle = hoveredHandle;
+    activeHandle->setDragState(ray.origin + ray.dir * distance);
     isDragging = true;
 }
 
@@ -102,9 +101,11 @@ void Gizmo::handleRelease() {
     activeHandle = nullptr;
 }
 
+void Gizmo::handleDrag(const Math::Ray& ray) {
+    if (!isDragging || !activeHandle)
+        return;
 
-void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
-    activeHandle->onDrag(rayOrig, rayDir);
+    activeHandle->onDrag(ray);
 }
 
 
@@ -116,7 +117,7 @@ void Gizmo::setHovered(bool hovered) {
     isHovered = hovered;
 }
 
-bool Gizmo::getHovered() {
+bool Gizmo::getHovered() const {
     return isHovered;
 }
 

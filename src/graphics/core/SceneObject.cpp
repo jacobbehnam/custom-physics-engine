@@ -71,19 +71,18 @@ glm::mat4 SceneObject::getModelMatrix() const{
     return model;
 }
 
-bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
+std::optional<float> SceneObject::intersectsAABB(const Math::Ray& ray) const {
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
     auto worldAABB = localAABB.getTransformed(getModelMatrix());
 
-    if (auto t = worldAABB->intersectRay(Math::Ray{orig, dir})) {
-        outT = *t;
-        return true;
+    if (auto t = worldAABB->intersectRay(ray)) {
+        return t;
     }
 
-    return false;
+    return std::nullopt;
 }
 
-bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
+std::optional<float> SceneObject::intersectsMesh(const Math::Ray& ray) const {
     const std::vector<Vertex>& verts = mesh->getVertices();
     std::vector<glm::vec3> vertPositions;
     vertPositions.reserve(verts.size());
@@ -100,8 +99,8 @@ bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, fl
     std::vector<float> initDists(triCount, -1.0f);
     unsigned int distancesSSBO = compute.createSSBO(initDists.data(), initDists.size() * sizeof(float), 2);
     compute.use();
-    compute.setVec3("rayOrig", orig);
-    compute.setVec3("rayDir", dir);
+    compute.setVec3("rayOrig", ray.origin);
+    compute.setVec3("rayDir", ray.dir);
     compute.setMat4("modelMatrix", getModelMatrix());
 
     constexpr unsigned int groupSize = 64;
@@ -111,29 +110,27 @@ bool SceneObject::intersectsMesh(const glm::vec3 &orig, const glm::vec3 &dir, fl
     auto distances = compute.readSSBO<float>(distancesSSBO, triCount);
     auto minIt = std::min_element(distances.begin(), distances.end());
     if (minIt == distances.end()) {
-        return false;
+        return std::nullopt;
     }
-    outT = *minIt;
-    return true;
+    return *minIt;
 }
 
 
 
-bool SceneObject::rayIntersection(glm::vec3 orig, glm::vec3 dir, float &outT) {
-    float tAABB;
-    if (!intersectsAABB(orig, dir, tAABB))
-        return false;
+std::optional<float> SceneObject::intersectsRay(const Math::Ray& ray) const {
+    auto tAABB = intersectsAABB(ray);
+    if (!tAABB)
+        return std::nullopt;
 
-    float tTri;
-    if (intersectsMesh(orig, dir, tTri)) {
-        outT = tTri;
-        return true;
+    auto tTri = intersectsMesh(ray);
+    if (tTri) {
+        return *tTri;
     }
 
-    return false;
+    return std::nullopt;
 }
 
-void SceneObject::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
+void SceneObject::handleClick(const Math::Ray& ray, float distance) {
     sceneManager->setGizmoFor(this);
 }
 
@@ -193,7 +190,7 @@ void SceneObject::setHovered(bool hovered) {
     isHovered = hovered;
 }
 
-bool SceneObject::getHovered() {
+bool SceneObject::getHovered() const {
     return isHovered;
 }
 
