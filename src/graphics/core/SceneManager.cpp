@@ -278,7 +278,7 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     }
 
     if (currentGizmo && currentGizmo->getIsDragging()) {
-        hoveredIDs.insert(currentGizmo->getActiveHandle()->getObjectID());
+        hoveredIDs.insert(currentGizmo->getObjectID());
         Math::Ray ray = getMouseRay();
         currentGizmo->handleDrag(ray.origin, ray.dir);
     }
@@ -319,10 +319,10 @@ void SceneManager::setGizmoFor(SceneObject *newTarget, bool redraw) {
             deleteCurrentGizmo();
         } else {
             deleteCurrentGizmo();
-            currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
+            currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, newTarget);
         }
     } else {
-        currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, ResourceManager::getMesh("prim_cube"), newTarget);
+        currentGizmo = std::make_unique<Gizmo>(selectedGizmoType, this, newTarget);
     }
 }
 

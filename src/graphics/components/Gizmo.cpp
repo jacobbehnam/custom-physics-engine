@@ -10,28 +10,32 @@
 #include "graphics/core/SceneManager.h"
 #include "graphics/core/SceneObject.h"
 
-Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
+Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
     Scene* scene = sceneManager->scene;
     sceneManager->addDrawable(this);
     sceneManager->addPickable(this);
 
     shader = ResourceManager::loadShader("assets/shaders/gizmo/gizmo.vert", "assets/shaders/gizmo/gizmo.frag", "gizmo");
+    auto allocID = [&]() { return scene->allocateObjectID(); };
 
     switch (type) {
         case GizmoType::TRANSLATE:
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
-            handles.emplace_back(new TranslateHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
+            handleMesh = ResourceManager::getMesh("gizmo_translate");
+            handles.emplace_back(new TranslateHandle(target, Axis::X, allocID()));
+            handles.emplace_back(new TranslateHandle(target, Axis::Y, allocID()));
+            handles.emplace_back(new TranslateHandle(target, Axis::Z, allocID()));
             break;
         case GizmoType::ROTATE:
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
-            handles.emplace_back(new RotateHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
+            handleMesh = ResourceManager::getMesh("gizmo_rotate");
+            handles.emplace_back(new RotateHandle(target, Axis::X, allocID()));
+            handles.emplace_back(new RotateHandle(target, Axis::Y, allocID()));
+            handles.emplace_back(new RotateHandle(target, Axis::Z, allocID()));
             break;
         case GizmoType::SCALE:
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::X, scene->allocateObjectID()));
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Y, scene->allocateObjectID()));
-            handles.emplace_back(new ScaleHandle(mesh, shader, target, Axis::Z, scene->allocateObjectID()));
+            handleMesh = ResourceManager::getMesh("gizmo_scale");
+            handles.emplace_back(new ScaleHandle(target, Axis::X, allocID()));
+            handles.emplace_back(new ScaleHandle(target, Axis::Y, allocID()));
+            handles.emplace_back(new ScaleHandle(target, Axis::Z, allocID()));
             break;
     }
 }
@@ -39,6 +43,7 @@ Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject
 Gizmo::~Gizmo() {
     for (auto handle : handles) {
         ownerScene->freeObjectID(handle->getObjectID());
+        delete handle;
     }
     ownerScene->freeObjectID(objectID);
 }
@@ -65,6 +70,7 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
     IHandle* hitHandle = nullptr;
     float closestT = std::numeric_limits<float>::infinity();
+
     for (IHandle* handle : handles) {
         auto worldAABB = localAABB.getTransformed(handle->getModelMatrix());
         if (auto outT = worldAABB->intersectRay(Math::Ray{rayOrigin, rayDir})) {
@@ -73,13 +79,16 @@ bool Gizmo::rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDis
                 hitHandle = handle;
             }
         }
-        if (hitHandle)
-            outDistance = closestT;
     }
-    if (!activeHandle || !isDragging)
-        activeHandle = hitHandle;
 
-    return (bool) hitHandle;
+    if (hitHandle) {
+        outDistance = closestT;
+        if (!activeHandle || !isDragging) {
+            activeHandle = hitHandle;
+        }
+    }
+
+    return hitHandle != nullptr;
 }
 
 void Gizmo::handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) {
@@ -101,10 +110,6 @@ void Gizmo::handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
 
 Shader* Gizmo::getShader() const {
     return shader;
-}
-
-SceneObject* Gizmo::getTarget() {
-    return target;
 }
 
 void Gizmo::setHovered(bool hovered) {

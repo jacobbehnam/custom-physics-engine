@@ -6,7 +6,6 @@
 #include <vector>
 #include <deque>
 #include <unordered_set>
-#include <QEvent>
 
 class Scene {
 public:
@@ -14,8 +13,8 @@ public:
     ~Scene() = default;
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
 
-    void addDrawable(IDrawable* obj) { drawableObjects.push_back(obj); }
-    void removeDrawable(IDrawable* obj);
+    void addDrawable(IDrawable* drawable);
+    void removeDrawable(IDrawable* drawable);
 
     uint32_t allocateObjectID();
     void freeObjectID(uint32_t objID);
@@ -25,7 +24,8 @@ private:
     QOpenGLFunctions_4_5_Core* funcs;
 
     Camera camera;
-    std::vector<IDrawable*> drawableObjects;
+    std::vector<IInstancedDrawable*> instancedDrawables;
+    std::vector<ICustomDrawable*> customDrawables;
 
     Shader* basicShader;
 

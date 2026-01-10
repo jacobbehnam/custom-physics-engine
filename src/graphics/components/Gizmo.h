@@ -15,37 +15,38 @@ enum class GizmoType {
     SCALE
 };
 
-class Gizmo : public IDrawable, public IPickable{
+class Gizmo : public ICustomDrawable, public IPickable{
 public:
-    Gizmo(GizmoType type, SceneManager* sceneManager, Mesh* mesh, SceneObject* tgt);
+    Gizmo(GizmoType type, SceneManager* sceneManager, SceneObject* tgt);
     ~Gizmo();
 
+    // ICustomDrawable
     void draw() const override;
+    uint32_t getObjectID() const override;
+    Mesh* getMesh() const override { return handleMesh; }
     Shader* getShader() const override;
+
     bool rayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, float &outDistance) override;
     void handleClick(const glm::vec3 &rayOrig, const glm::vec3 &rayDir, float distance) override;
     void setHovered(bool hovered) override;
     bool getHovered() override;
-    uint32_t getObjectID() const override;
     void handleRelease();
     void handleDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir);
-    Mesh* getMesh() const override { return handles[0]->getMesh(); }
-    glm::mat4 getModelMatrix() const override { return glm::mat4(1.0f); }
-    bool getIsDragging() { return isDragging; }
 
-    SceneObject* getTarget();
-    IHandle* getActiveHandle() {return activeHandle;}
+    SceneObject* getTarget() { return target; }
+    IHandle* getActiveHandle() { return activeHandle; }
+    bool getIsDragging() { return isDragging; }
 
 private:
     Scene* ownerScene;
     SceneObject* target;
-    IHandle* activeHandle = nullptr;
-    Shader* shader;
-
     std::vector<IHandle*> handles;
-    bool isDragging = false;
+    IHandle* activeHandle = nullptr;
 
-    bool isHovered = false;
+    Shader* shader;
+    Mesh* handleMesh = nullptr;
 
     uint32_t objectID;
+    bool isDragging = false;
+    bool isHovered = false;
 };

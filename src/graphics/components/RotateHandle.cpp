@@ -7,22 +7,7 @@
 #include <graphics/core/ResourceManager.h>
 
 
-RotateHandle::RotateHandle(Mesh *m, Shader *sdr, SceneObject *tgt, Axis ax, uint32_t objID)
-    : mesh(ResourceManager::getMesh("rotate")), shader(sdr), target(tgt), axis(ax), objectID(objID) {
-}
-
-void RotateHandle::draw() const {
-    shader->use();
-
-    glm::mat4 model = getModelMatrix();
-    shader->setMat4("model", model);
-
-    mesh->draw();
-}
-
-Shader * RotateHandle::getShader() const {
-    return shader;
-}
+RotateHandle::RotateHandle(SceneObject *tgt, Axis ax, uint32_t objID) : target(tgt), axis(ax), objectID(objID) {}
 
 void RotateHandle::onDrag(const glm::vec3 &rayOrig, const glm::vec3 &rayDir) {
     glm::vec3 axisDirection = axisDir(axis);
@@ -55,27 +40,8 @@ void RotateHandle::setDragState(glm::vec3 initHitPos) {
 
 glm::mat4 RotateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
-    glm::vec3 pos = target->getPosition();
-    model = glm::translate(model, pos);
-
-    glm::vec3 dir = axisDir(axis);
-    glm::vec3 from = {0,1,0}, to = dir;
-    float cosA = glm::dot(from, to);
-    glm::vec3 crossA = glm::cross(from, to);
-    if (glm::length(crossA) > 1e-3f) {
-        float angle = acos(glm::clamp(cosA, -1.0f, 1.0f));
-        model = glm::rotate(model, angle, glm::normalize(crossA));
-    }
-
+    model = glm::translate(model, target->getPosition());
+    model = model * rotateFromYToAxis(axis);
     model = glm::scale(model, glm::vec3(scale, scale, scale));
     return model;
 }
-
-Mesh * RotateHandle::getMesh() const {
-    return mesh;
-}
-
-uint32_t RotateHandle::getObjectID() const {
-    return objectID;
-}
-

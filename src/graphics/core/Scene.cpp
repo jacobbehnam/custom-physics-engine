@@ -76,47 +76,21 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
     selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
 
-    // === INSTANCED DRAWING ===
+    // --- instanced ---
     std::map<BatchKey, std::vector<InstanceData>> batches;
-    std::unordered_set<IDrawable*> processedObjects;
 
-    for (IDrawable* obj : drawableObjects) {
-        Mesh* mesh = obj->getMesh();
-        Shader* shader = obj->getShader();
-
-        // TODO: refactor this dynamic cast, maybe make a virtual supportsInstancing method in IDrawable
-        if (dynamic_cast<Gizmo*>(obj) != nullptr) {
-            continue;
-        }
-
-        if (mesh && shader) {
-            BatchKey key{ mesh, shader };
-
-            InstanceData instance;
-            instance.model = obj->getModelMatrix();
-            instance.objectID = obj->getObjectID();
-
-            batches[key].push_back(instance);
-
-            processedObjects.insert(obj);
-        }
+    for (auto* obj : instancedDrawables) {
+        BatchKey key{ obj->getMesh(), obj->getShader() };
+        batches[key].push_back(obj->getInstanceData());
     }
 
-    // Execute Draw Calls
     for (auto& [key, instances] : batches) {
-        if (instances.empty() || !key.mesh || !key.shader)
-            continue;
-
         key.shader->use();
         key.mesh->drawInstanced(instances);
     }
 
-    // === NORMAL DRAWING FOR OTHER OBJECTS ===
-    for (IDrawable* obj : drawableObjects) {
-        if (processedObjects.find(obj) != processedObjects.end()) {
-            continue;
-        }
-
+    // --- custom ---
+    for (auto* obj : customDrawables) {
         obj->draw();
     }
 }
@@ -125,8 +99,29 @@ Camera *Scene::getCamera() {
     return &camera;
 }
 
-void Scene::removeDrawable(IDrawable *obj) {
-    drawableObjects.erase(
-        std::remove(drawableObjects.begin(), drawableObjects.end(), obj),
-        drawableObjects.end());
+void Scene::addDrawable(IDrawable* drawable) {
+    assert(drawable != nullptr);
+
+    if (auto instanced = dynamic_cast<IInstancedDrawable*>(drawable)) {
+        instancedDrawables.push_back(instanced);
+    } else if (auto custom = dynamic_cast<ICustomDrawable*>(drawable)) {
+        customDrawables.push_back(custom);
+    }
+}
+
+void Scene::removeDrawable(IDrawable* drawable) {
+    assert(drawable != nullptr);
+
+    if (auto instanced = dynamic_cast<IInstancedDrawable*>(drawable)) {
+        instancedDrawables.erase(
+            std::remove(instancedDrawables.begin(), instancedDrawables.end(), instanced),
+            instancedDrawables.end()
+        );
+    }
+    else if (auto custom = dynamic_cast<ICustomDrawable*>(drawable)) {
+        customDrawables.erase(
+            std::remove(customDrawables.begin(), customDrawables.end(), custom),
+            customDrawables.end()
+        );
+    }
 }

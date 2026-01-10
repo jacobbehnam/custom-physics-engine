@@ -71,15 +71,6 @@ glm::mat4 SceneObject::getModelMatrix() const{
     return model;
 }
 
-void SceneObject::draw() const {
-    shader->use();
-
-    glm::mat4 model = getModelMatrix();
-    shader->setMat4("model", model);
-
-    mesh->draw();
-}
-
 bool SceneObject::intersectsAABB(const glm::vec3 &orig, const glm::vec3 &dir, float &outT) const {
     Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
     auto worldAABB = localAABB.getTransformed(getModelMatrix());

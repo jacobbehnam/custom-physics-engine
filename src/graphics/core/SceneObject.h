@@ -18,13 +18,11 @@ namespace Physics {
 }
 
 // TODO: put setters and getter definitions in the header files
-class SceneObject : public QObject, public IDrawable, public IPickable{
+class SceneObject : public QObject, public IInstancedDrawable, public IPickable{
     Q_OBJECT
 public:
     SceneObject(SceneManager* sceneManager, const std::string &meshName, Shader *sdr, const CreationOptions &options, QObject* parent = nullptr);
     ~SceneObject();
-
-    void draw() const override;
 
     void setPosition(const glm::vec3& pos);
     void setRotation(const glm::vec3& rot);
