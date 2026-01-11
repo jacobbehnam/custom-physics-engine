@@ -22,7 +22,7 @@ void TransformInspectorWidget::load(SceneObject* object) {
 
 void TransformInspectorWidget::unload() {
     selectedObject = nullptr;
-    this->setEnabled(false);
+    this->setVisible(false);
 }
 
 void TransformInspectorWidget::refresh() {

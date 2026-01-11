@@ -88,9 +88,8 @@ public:
      *
      * @note This method should NOT advance the physics simulation itself.
      *       The physics system handles that externally.
-     *
-     * @thread Called from physics thread; must be thread-safe if solver
-     *         accesses shared state
+     * @note Called from physics thread; must be thread-safe if solver
+     *       accesses shared state
      */
     virtual bool stepFrame() = 0;
 };
