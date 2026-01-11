@@ -149,7 +149,7 @@ Static Protected Member Functions</h2></td></tr>
 <div class="textblock"><p>Abstract interface for gizmo manipulation handles. </p>
 <p><a class="el" href="classIHandle.html" title="Abstract interface for gizmo manipulation handles.">IHandle</a> defines the behavior contract for interactive manipulation tools (translation, rotation, scale handles) without dictating how they are rendered.</p>
 <p>Key design decisions:</p><ul>
-<li>Does NOT inherit from <a class="el" href="classIDrawable.html">IDrawable</a> - rendering is managed by the owning <a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a></li>
+<li>Does NOT inherit from <a class="el" href="classIDrawable.html" title="Base interface for all renderable objects in the scene.">IDrawable</a> - rendering is managed by the owning <a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a></li>
 <li>Handles are purely behavioral - they respond to drag operations</li>
 <li>Each handle operates along/around a specific axis</li>
 </ul>

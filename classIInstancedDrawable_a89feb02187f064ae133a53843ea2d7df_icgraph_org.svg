@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Gets the model matrix for this instance.">
+<g id="a_Node000001"><a xlink:title="Gets the model transformation matrix for this instance.">
 <polygon fill="#999999" stroke="#666666" points="262,-30 149,-30 149,0 262,0 262,-30"/>
 <text text-anchor="start" x="157" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">IInstancedDrawable</text>
 <text text-anchor="middle" x="205.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::getModelMatrix</text>
@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classIInstancedDrawable.html#a494972a2cd2cfa6319825fed4e21978d" target="_top" xlink:title="Gets additional per&#45;instance data (color, etc.)">
+<g id="a_Node000002"><a xlink:href="classIInstancedDrawable.html#a494972a2cd2cfa6319825fed4e21978d" target="_top" xlink:title="Gets the complete per&#45;instance data for GPU upload.">
 <polygon fill="white" stroke="#666666" points="113,-30 0,-30 0,0 113,0 113,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">IInstancedDrawable</text>
 <text text-anchor="middle" x="56.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::getInstanceData</text>

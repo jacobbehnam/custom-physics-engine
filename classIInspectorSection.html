@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: IInspectorSection Class Reference</title>
+<title>Physics Simulation &amp; Visualization Tool: IInspectorSection Interface Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -98,10 +98,14 @@ $(document).ready(function(){initNavTree('classIInspectorSection.html',''); init
 
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
-  <div class="headertitle"><div class="title">IInspectorSection Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
+  <div class="headertitle"><div class="title">IInspectorSection Interface Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract base class for inspector panel sections.  
+ <a href="classIInspectorSection.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -117,51 +121,53 @@ Collaboration diagram for IInspectorSection:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abef8d84ceeb8c4f5862ad72bcafeb649" id="r_abef8d84ceeb8c4f5862ad72bcafeb649"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#abef8d84ceeb8c4f5862ad72bcafeb649">IInspectorSection</a> (QWidget *parent=nullptr)</td></tr>
-<tr class="separator:abef8d84ceeb8c4f5862ad72bcafeb649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27715f59901c929ca1f12fabf881e567" id="r_a27715f59901c929ca1f12fabf881e567"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#a27715f59901c929ca1f12fabf881e567">~IInspectorSection</a> ()=default</td></tr>
+<tr class="memdesc:a27715f59901c929ca1f12fabf881e567"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
+<tr class="separator:a27715f59901c929ca1f12fabf881e567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb08ed3cffc053b7beb3a7c22ce25298" id="r_adb08ed3cffc053b7beb3a7c22ce25298"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#adb08ed3cffc053b7beb3a7c22ce25298">load</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *object)=0</td></tr>
+<tr class="memdesc:adb08ed3cffc053b7beb3a7c22ce25298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads and binds this section to a scene object.  <br /></td></tr>
 <tr class="separator:adb08ed3cffc053b7beb3a7c22ce25298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc9dd39095715397f9777b8840954b1b" id="r_abc9dd39095715397f9777b8840954b1b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#abc9dd39095715397f9777b8840954b1b">unload</a> ()=0</td></tr>
+<tr class="memdesc:abc9dd39095715397f9777b8840954b1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unloads the current object and clears section state.  <br /></td></tr>
 <tr class="separator:abc9dd39095715397f9777b8840954b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03b110c12b36a836fa15a9566cafaf6d" id="r_a03b110c12b36a836fa15a9566cafaf6d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d">refresh</a> ()=0</td></tr>
+<tr class="memdesc:a03b110c12b36a836fa15a9566cafaf6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates UI widgets from the current object's state.  <br /></td></tr>
 <tr class="separator:a03b110c12b36a836fa15a9566cafaf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27715f59901c929ca1f12fabf881e567" id="r_a27715f59901c929ca1f12fabf881e567"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#a27715f59901c929ca1f12fabf881e567">~IInspectorSection</a> ()=default</td></tr>
-<tr class="separator:a27715f59901c929ca1f12fabf881e567"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a915b0e913160d149962c42ade7c65516" id="r_a915b0e913160d149962c42ade7c65516"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#a915b0e913160d149962c42ade7c65516">IInspectorSection</a> ()=default</td></tr>
-<tr class="separator:a915b0e913160d149962c42ade7c65516"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:abef8d84ceeb8c4f5862ad72bcafeb649" id="r_abef8d84ceeb8c4f5862ad72bcafeb649"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInspectorSection.html#abef8d84ceeb8c4f5862ad72bcafeb649">IInspectorSection</a> (QWidget *parent=nullptr)</td></tr>
+<tr class="memdesc:abef8d84ceeb8c4f5862ad72bcafeb649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected constructor enforces use as base class only.  <br /></td></tr>
+<tr class="separator:abef8d84ceeb8c4f5862ad72bcafeb649"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="IInspectorSection_8h_source.html#l00006">6</a> of file <a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a>.</p>
+<div class="textblock"><p>Abstract base class for inspector panel sections. </p>
+<p><a class="el" href="classIInspectorSection.html" title="Abstract base class for inspector panel sections.">IInspectorSection</a> defines the contract for UI panels that display and edit properties of selected scene objects. Each section is responsible for a specific aspect of an object (transform, physics, forces, etc.).</p>
+<p>Architecture:</p><ul>
+<li>Inherits from QWidget to integrate with Qt's UI system</li>
+<li>Manages its own UI components (labels, spinboxes, checkboxes, etc.)</li>
+<li>Binds to a scene object's properties via getter/setter lambdas</li>
+<li>Updates automatically via periodic <a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d" title="Updates UI widgets from the current object&#39;s state.">refresh()</a> calls</li>
+</ul>
+<p>Special Cases:</p><ul>
+<li><b>Object-specific sections</b> (Transform, <a class="el" href="namespacePhysics.html">Physics</a>, Forces): Show/hide based on object selection and applicability</li>
+<li><b>Global sections</b> (Globals): May display settings independent of selection, implementing inverse visibility (visible when no object selected). These sections may ignore the object parameter in <a class="el" href="classIInspectorSection.html#adb08ed3cffc053b7beb3a7c22ce25298" title="Loads and binds this section to a scene object.">load()</a> and remain visible during <a class="el" href="classIInspectorSection.html#abc9dd39095715397f9777b8840954b1b" title="Unloads the current object and clears section state.">unload()</a>.</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Sections should handle nullptr gracefully in <a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d" title="Updates UI widgets from the current object&#39;s state.">refresh()</a> in case the object is deleted while loaded.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classInspectorWidget.html">InspectorWidget</a> </dd>
+<dd>
+<a class="el" href="classTransformInspectorWidget.html">TransformInspectorWidget</a> </dd>
+<dd>
+<a class="el" href="classPhysicsInspectorWidget.html">PhysicsInspectorWidget</a> </dd>
+<dd>
+<a class="el" href="classGlobalsInspectorWidget.html">GlobalsInspectorWidget</a> </dd>
+<dd>
+<a class="el" href="classForcesInspectorWidget.html">ForcesInspectorWidget</a> </dd>
+<dd>
+<a class="el" href="classInspectorRow.html">InspectorRow</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="IInspectorSection_8h_source.html#l00043">43</a> of file <a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="abef8d84ceeb8c4f5862ad72bcafeb649" name="abef8d84ceeb8c4f5862ad72bcafeb649"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abef8d84ceeb8c4f5862ad72bcafeb649">&#9670;&#160;</a></span>IInspectorSection() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">IInspectorSection::IInspectorSection </td>
-          <td>(</td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em> = <code>nullptr</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="IInspectorSection_8h_source.html#l00009">9</a> of file <a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a>.</p>
-
-</div>
-</div>
 <a id="a27715f59901c929ca1f12fabf881e567" name="a27715f59901c929ca1f12fabf881e567"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a27715f59901c929ca1f12fabf881e567">&#9670;&#160;</a></span>~IInspectorSection()</h2>
 
@@ -185,10 +191,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Virtual destructor for proper cleanup of derived classes. </p>
+
 </div>
 </div>
-<a id="a915b0e913160d149962c42ade7c65516" name="a915b0e913160d149962c42ade7c65516"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a915b0e913160d149962c42ade7c65516">&#9670;&#160;</a></span>IInspectorSection() <span class="overload">[2/2]</span></h2>
+<a id="abef8d84ceeb8c4f5862ad72bcafeb649" name="abef8d84ceeb8c4f5862ad72bcafeb649"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abef8d84ceeb8c4f5862ad72bcafeb649">&#9670;&#160;</a></span>IInspectorSection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,16 +207,27 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">IInspectorSection::IInspectorSection </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramname"><em>parent</em> = <code>nullptr</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Protected constructor enforces use as base class only. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent</td><td>Parent widget for Qt's object tree and memory management. Typically the <a class="el" href="classInspectorWidget.html">InspectorWidget</a> that owns this section. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="IInspectorSection_8h_source.html#l00141">141</a> of file <a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a>.</p>
 
 </div>
 </div>
@@ -237,6 +256,26 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads and binds this section to a scene object. </p>
+<p>Called when an object is selected in the scene. Implementations should:</p><ul>
+<li>Store the object pointer for property access</li>
+<li>Show the section if applicable to this object type</li>
+<li>Initialize UI widgets with current object values via <a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d" title="Updates UI widgets from the current object&#39;s state.">refresh()</a></li>
+</ul>
+<p>The object pointer is guaranteed to be non-null. For clearing the selection, use <a class="el" href="classIInspectorSection.html#abc9dd39095715397f9777b8840954b1b" title="Unloads the current object and clears section state.">unload()</a> instead.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">object</td><td>The scene object to inspect. Must not be nullptr.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>If the section doesn't apply to this object type (e.g., physics section for non-physics objects), the implementation should hide itself via setVisible(false).</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classIInspectorSection.html#abc9dd39095715397f9777b8840954b1b" title="Unloads the current object and clears section state.">unload()</a> </dd>
+<dd>
+<a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d" title="Updates UI widgets from the current object&#39;s state.">refresh()</a> </dd>
+<dd>
+<a class="el" href="classInspectorWidget.html#a9791f86cbaeff68987f3d5c5c7e58703">InspectorWidget::loadObject()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classForcesInspectorWidget.html#a53fa955afe8e7b974db6ab843fba9eb3">ForcesInspectorWidget</a>, <a class="el" href="classGlobalsInspectorWidget.html#a43f79292558363601be9df3b12874666">GlobalsInspectorWidget</a>, <a class="el" href="classPhysicsInspectorWidget.html#a8775c8ed29f6127daa30ff6a6a91dc57">PhysicsInspectorWidget</a>, and <a class="el" href="classTransformInspectorWidget.html#aba6cad0a241aa38ab6a5c540f34826c0">TransformInspectorWidget</a>.</p>
 
 </div>
@@ -263,6 +302,35 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Updates UI widgets from the current object's state. </p>
+<p>Called periodically (typically every 100ms via QTimer) to keep the UI synchronized with the object's properties, which may change due to:</p><ul>
+<li><a class="el" href="namespacePhysics.html">Physics</a> simulation updates</li>
+<li>Interactive gizmo manipulation</li>
+<li>Numerical solver operations</li>
+<li>Direct property modifications from code</li>
+</ul>
+<p>Implementations should:</p><ul>
+<li>Check if an object is loaded (guard against nullptr)</li>
+<li>Read current property values from the object</li>
+<li>Update UI widgets using QSignalBlocker to prevent feedback loops</li>
+</ul>
+<p>This is a read-only operation - it should not modify the object, only reflect its current state in the UI.</p>
+<dl class="section note"><dt>Note</dt><dd>Must be safe to call even if no object is loaded (should no-op). </dd>
+<dd>
+Must use QSignalBlocker when updating widgets to prevent triggering change handlers that would write back to the object.</dd></dl>
+<p>Example: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> MySection::refresh() {</div>
+<div class="line">    <span class="keywordflow">if</span> (!selectedObject) <span class="keywordflow">return</span>; <span class="comment">// Safe no-op when unloaded</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; row : rows) {</div>
+<div class="line">        row.refresh(); <span class="comment">// InspectorRow handles signal blocking</span></div>
+<div class="line">    }</div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classIInspectorSection.html#adb08ed3cffc053b7beb3a7c22ce25298" title="Loads and binds this section to a scene object.">load()</a> </dd>
+<dd>
+<a class="el" href="classInspectorRow.html#ac8d0315a73cb5f57e4ab400479ee8986">InspectorRow::refresh()</a> </dd>
+<dd>
+InspectorWidget::refresh() </dd></dl>
 
 <p>Implemented in <a class="el" href="classForcesInspectorWidget.html#ad8f7af82878c7e74266509fb7e0f10ba">ForcesInspectorWidget</a>, <a class="el" href="classGlobalsInspectorWidget.html#a6c9a926236b7362b7949e6d923fb67ba">GlobalsInspectorWidget</a>, <a class="el" href="classPhysicsInspectorWidget.html#a85e7a14e7e2b443855840cf8943556a8">PhysicsInspectorWidget</a>, and <a class="el" href="classTransformInspectorWidget.html#a29fbac2c12ad359a6448797aa6cc38e7">TransformInspectorWidget</a>.</p>
 
@@ -291,11 +359,27 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Unloads the current object and clears section state. </p>
+<p>Called when:</p><ul>
+<li>Selection is cleared (no object selected)</li>
+<li>Before loading a new object</li>
+<li>The inspected object is about to be deleted</li>
+</ul>
+<p>Implementations should:</p><ul>
+<li>Clear the stored object pointer (set to nullptr)</li>
+<li>Hide the section via setVisible(false)</li>
+<li>Clean up any object-specific state</li>
+</ul>
+<p>After <a class="el" href="classIInspectorSection.html#abc9dd39095715397f9777b8840954b1b" title="Unloads the current object and clears section state.">unload()</a>, the section should be in a safe state where <a class="el" href="classIInspectorSection.html#a03b110c12b36a836fa15a9566cafaf6d" title="Updates UI widgets from the current object&#39;s state.">refresh()</a> can be called without side effects (though it typically does nothing).</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classIInspectorSection.html#adb08ed3cffc053b7beb3a7c22ce25298" title="Loads and binds this section to a scene object.">load()</a> </dd>
+<dd>
+<a class="el" href="classInspectorWidget.html#a60d8f6bb53f54ec1d1ed6302225d37d7">InspectorWidget::unloadObject()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classForcesInspectorWidget.html#afd2b8ecce7fbadc0ce142673c84bacef">ForcesInspectorWidget</a>, <a class="el" href="classGlobalsInspectorWidget.html#aea574e1e7ec6cce998cb0d01bac8fabc">GlobalsInspectorWidget</a>, <a class="el" href="classPhysicsInspectorWidget.html#a8ebf43727a4990146b5ecc042932b7d2">PhysicsInspectorWidget</a>, and <a class="el" href="classTransformInspectorWidget.html#a614c03aefcee9f1e4ecb08bf83f0d836">TransformInspectorWidget</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>src/ui/inspector/<a class="el" href="IInspectorSection_8h_source.html">IInspectorSection.h</a></li>
 </ul>
 </div><!-- contents -->

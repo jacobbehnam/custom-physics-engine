@@ -79,7 +79,7 @@ var NAVTREEINDEX =
 "AABB_8cpp.html",
 "annotated.html",
 "classPhysics_1_1PhysicsBody.html#a548a65cb04a05bb13dba6a32b8212afb",
-"classSceneSerializer.html#a23f0a19fed68616f2b144e0124627cbd"
+"classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

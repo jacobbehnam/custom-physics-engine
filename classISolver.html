@@ -229,8 +229,9 @@ Typical Implementation Pattern</h2>
 <dl class="section return"><dt>Returns</dt><dd>true if solver has finished (converged, intercepted, or failed) </dd>
 <dd>
 false if solver needs to continue</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This method should NOT advance the physics simulation itself. The physics system handles that externally.</dd></dl>
-<p>@thread Called from physics thread; must be thread-safe if solver accesses shared state </p>
+<dl class="section note"><dt>Note</dt><dd>This method should NOT advance the physics simulation itself. The physics system handles that externally. </dd>
+<dd>
+Called from physics thread; must be thread-safe if solver accesses shared state </dd></dl>
 
 <p>Implemented in <a class="el" href="classInterceptSolver.html#ab669421109bed1b69e25c29020a7a3fd">InterceptSolver</a>, and <a class="el" href="classVectorRootSolver.html#a963e54bce3de9f6e0a5ca2701ba4daa1">VectorRootSolver&lt; InputT, OutputT &gt;</a>.</p>
 

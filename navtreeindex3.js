@@ -1,6 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"classSceneSerializer.html#a23f0a19fed68616f2b144e0124627cbd":[8,0,39,0],
 "classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433":[8,0,39,1],
 "classSceneSerializer.html#a56e278bcdda1f03f192797122dd6d0c0":[8,0,39,2],
 "classShader.html":[8,0,40],

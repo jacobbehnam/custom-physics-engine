@@ -167,6 +167,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aafb18f55cbfff83c9005b39fe052116c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classIDrawable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIDrawable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIDrawable.html">IDrawable</a></td></tr>
 <tr class="memitem:ae8ef74d2e7a2a75669b3096049c61973 inherit pub_methods_classIDrawable" id="r_ae8ef74d2e7a2a75669b3096049c61973"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#ae8ef74d2e7a2a75669b3096049c61973">~IDrawable</a> ()=default</td></tr>
+<tr class="memdesc:ae8ef74d2e7a2a75669b3096049c61973 inherit pub_methods_classIDrawable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
 <tr class="separator:ae8ef74d2e7a2a75669b3096049c61973 inherit pub_methods_classIDrawable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classIPickable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIPickable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIPickable.html">IPickable</a></td></tr>
 <tr class="memitem:abecadcd90cd4a313c0afe71901a3976c inherit pub_methods_classIPickable" id="r_abecadcd90cd4a313c0afe71901a3976c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPickable.html#abecadcd90cd4a313c0afe71901a3976c">~IPickable</a> ()=default</td></tr>
@@ -178,7 +179,7 @@ Public Member Functions</h2></td></tr>
 <p>A <a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a> is a visual overlay that appears on selected objects, providing intuitive handles for translation, rotation, or scaling. It manages multiple <a class="el" href="classIHandle.html" title="Abstract interface for gizmo manipulation handles.">IHandle</a> instances (one per axis) and coordinates their rendering and interaction.</p>
 <p>Architecture:</p><ul>
 <li><a class="el" href="classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects.">Gizmo</a> owns and renders all handles as a batch</li>
-<li>Implements <a class="el" href="classICustomDrawable.html" title="Drawable with custom rendering logic.">ICustomDrawable</a> for special rendering (depth-test disabled)</li>
+<li>Implements <a class="el" href="classICustomDrawable.html" title="Interface for objects with specialized rendering requirements.">ICustomDrawable</a> for special rendering (depth-test disabled)</li>
 <li>Implements <a class="el" href="classIPickable.html" title="Abstract interface for objects that can be selected and interacted with using the mouse.">IPickable</a> for ray-based handle selection</li>
 <li>Handles perform the actual transformation math</li>
 </ul>

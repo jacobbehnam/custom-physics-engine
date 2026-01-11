@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Physics Simulation &amp; Visualization Tool: IDrawable Class Reference</title>
+<title>Physics Simulation &amp; Visualization Tool: IDrawable Interface Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -99,9 +99,12 @@ $(document).ready(function(){initNavTree('classIDrawable.html',''); initResizabl
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a>  </div>
-  <div class="headertitle"><div class="title">IDrawable Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">IDrawable Interface Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Base interface for all renderable objects in the scene.  
+ <a href="classIDrawable.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="IDrawable_8h_source.html">IDrawable.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -113,17 +116,34 @@ Inheritance diagram for IDrawable:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae8ef74d2e7a2a75669b3096049c61973" id="r_ae8ef74d2e7a2a75669b3096049c61973"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#ae8ef74d2e7a2a75669b3096049c61973">~IDrawable</a> ()=default</td></tr>
+<tr class="memdesc:ae8ef74d2e7a2a75669b3096049c61973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
 <tr class="separator:ae8ef74d2e7a2a75669b3096049c61973"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a150ad941a699e1bee766d968bae86a9d" id="r_a150ad941a699e1bee766d968bae86a9d"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classShader.html">Shader</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#a150ad941a699e1bee766d968bae86a9d">getShader</a> () const =0</td></tr>
+<tr class="memdesc:a150ad941a699e1bee766d968bae86a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the shader used to render this object.  <br /></td></tr>
 <tr class="separator:a150ad941a699e1bee766d968bae86a9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2ae858023ba63c9cee032662984b139" id="r_af2ae858023ba63c9cee032662984b139"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classMesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#af2ae858023ba63c9cee032662984b139">getMesh</a> () const =0</td></tr>
+<tr class="memdesc:af2ae858023ba63c9cee032662984b139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the mesh geometry for this object.  <br /></td></tr>
 <tr class="separator:af2ae858023ba63c9cee032662984b139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfe3e5ebe14667831238c8e23266b3f5" id="r_acfe3e5ebe14667831238c8e23266b3f5"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#acfe3e5ebe14667831238c8e23266b3f5">getObjectID</a> () const =0</td></tr>
+<tr class="memdesc:acfe3e5ebe14667831238c8e23266b3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the unique identifier for this object.  <br /></td></tr>
 <tr class="separator:acfe3e5ebe14667831238c8e23266b3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="IDrawable_8h_source.html#l00005">5</a> of file <a class="el" href="IDrawable_8h_source.html">IDrawable.h</a>.</p>
+<div class="textblock"><p>Base interface for all renderable objects in the scene. </p>
+<p><a class="el" href="classIDrawable.html" title="Base interface for all renderable objects in the scene.">IDrawable</a> defines the minimal contract for objects that can be rendered. It provides access to the core rendering resources (shader, mesh, object ID) without specifying how rendering is performed.</p>
+<p>Derived interfaces (<a class="el" href="classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering.">IInstancedDrawable</a>, <a class="el" href="classICustomDrawable.html" title="Interface for objects with specialized rendering requirements.">ICustomDrawable</a>) define specific rendering strategies:</p><ul>
+<li><a class="el" href="classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering.">IInstancedDrawable</a>: Objects rendered via GPU instancing (batched)</li>
+<li><a class="el" href="classICustomDrawable.html" title="Interface for objects with specialized rendering requirements.">ICustomDrawable</a>: Objects with specialized rendering logic</li>
+</ul>
+<p>This design allows <a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> to efficiently batch compatible objects while supporting specialized rendering when needed.</p>
+<dl class="section note"><dt>Note</dt><dd>Objects must implement either <a class="el" href="classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering.">IInstancedDrawable</a> or <a class="el" href="classICustomDrawable.html" title="Interface for objects with specialized rendering requirements.">ICustomDrawable</a>, not <a class="el" href="classIDrawable.html" title="Base interface for all renderable objects in the scene.">IDrawable</a> directly.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering.">IInstancedDrawable</a> </dd>
+<dd>
+<a class="el" href="classICustomDrawable.html" title="Interface for objects with specialized rendering requirements.">ICustomDrawable</a> </dd>
+<dd>
+<a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="IDrawable_8h_source.html#l00033">33</a> of file <a class="el" href="IDrawable_8h_source.html">IDrawable.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae8ef74d2e7a2a75669b3096049c61973" name="ae8ef74d2e7a2a75669b3096049c61973"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae8ef74d2e7a2a75669b3096049c61973">&#9670;&#160;</a></span>~IDrawable()</h2>
@@ -147,6 +167,8 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Virtual destructor for proper cleanup of derived classes. </p>
 
 </div>
 </div>
@@ -174,6 +196,13 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the mesh geometry for this object. </p>
+<p>The mesh is used as part of the batch key for instanced rendering, grouping objects that share the same shader and mesh.</p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="classMesh.html">Mesh</a> object. Must not be null.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classResourceManager.html#a9b2c679ed1e80b8e4e4d318b3d8da426">ResourceManager::getMesh()</a> </dd>
+<dd>
+<a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classGizmo.html#a63eeba073594314973e400bcf2c74e81">Gizmo</a>, and <a class="el" href="classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e">SceneObject</a>.</p>
 
 </div>
@@ -200,6 +229,17 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Gets the unique identifier for this object. </p>
+<p>This ID is used for:</p><ul>
+<li>Object picking and selection</li>
+<li>Hover state highlighting via shader uniforms</li>
+<li>Per-instance identification in the rendering pipeline</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>The object's unique identifier.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1">Scene::allocateObjectID()</a> </dd>
+<dd>
+<a class="el" href="classScene.html#a2b640bddd22a97b60dd24d4ceecea885">Scene::freeObjectID()</a> </dd></dl>
 
 <p>Implemented in <a class="el" href="classGizmo.html#a43f749b11ead975d2755746082fcaa72">Gizmo</a>, and <a class="el" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject</a>.</p>
 <div class="dynheader">
@@ -233,11 +273,18 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the shader used to render this object. </p>
+<p>The shader is used as part of the batch key for instanced rendering, grouping objects that share the same shader and mesh.</p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="classShader.html">Shader</a> object. Must not be null.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classResourceManager.html#a3899655c6a1e40089930df4fbc9f1be9">ResourceManager::getShader()</a> </dd>
+<dd>
+<a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> </dd></dl>
+
 <p>Implemented in <a class="el" href="classGizmo.html#ac79f6008da87ac759573442d0635c7f1">Gizmo</a>, and <a class="el" href="classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a">SceneObject</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>src/graphics/core/<a class="el" href="IDrawable_8h_source.html">IDrawable.h</a></li>
 </ul>
 </div><!-- contents -->
