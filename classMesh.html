@@ -103,28 +103,46 @@ $(document).ready(function(){initNavTree('classMesh.html',''); initResizable(); 
 </div><!--header-->
 <div class="contents">
 
+<p>GPU mesh representation with support for instanced rendering.  
+ <a href="classMesh.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Mesh_8h_source.html">Mesh.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8d474ebd2de6747d4d68c2c25622c4a5" id="r_a8d474ebd2de6747d4d68c2c25622c4a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#a8d474ebd2de6747d4d68c2c25622c4a5">Mesh</a> (const std::vector&lt; <a class="el" href="structVertex.html">Vertex</a> &gt; &amp;verts, const std::vector&lt; unsigned int &gt; &amp;idx, QOpenGLFunctions_4_5_Core *funcs)</td></tr>
+<tr class="memdesc:a8d474ebd2de6747d4d68c2c25622c4a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a mesh from vertex and index data.  <br /></td></tr>
 <tr class="separator:a8d474ebd2de6747d4d68c2c25622c4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5efe4da1a4c0971cfb037bd70304c303" id="r_a5efe4da1a4c0971cfb037bd70304c303"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#a5efe4da1a4c0971cfb037bd70304c303">~Mesh</a> ()</td></tr>
+<tr class="memdesc:a5efe4da1a4c0971cfb037bd70304c303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the mesh and releases GPU resources.  <br /></td></tr>
 <tr class="separator:a5efe4da1a4c0971cfb037bd70304c303"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79b998580025a501675a517e9fc1283f" id="r_a79b998580025a501675a517e9fc1283f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#a79b998580025a501675a517e9fc1283f">draw</a> () const</td></tr>
+<tr class="memdesc:a79b998580025a501675a517e9fc1283f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws a single instance of this mesh.  <br /></td></tr>
 <tr class="separator:a79b998580025a501675a517e9fc1283f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a194205a979361c68cef87f323eb145b4" id="r_a194205a979361c68cef87f323eb145b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#a194205a979361c68cef87f323eb145b4">drawInstanced</a> (const std::vector&lt; <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> &gt; &amp;instances)</td></tr>
-<tr class="separator:a194205a979361c68cef87f323eb145b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae498c212f82d8562a48e847e9f976ed8" id="r_ae498c212f82d8562a48e847e9f976ed8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structVertex.html">Vertex</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#ae498c212f82d8562a48e847e9f976ed8">getVertices</a> () const</td></tr>
-<tr class="separator:ae498c212f82d8562a48e847e9f976ed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e8ee7c54cfb8c089eb1254ab0c06635" id="r_a6e8ee7c54cfb8c089eb1254ab0c06635"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#a6e8ee7c54cfb8c089eb1254ab0c06635">getIndices</a> () const</td></tr>
-<tr class="separator:a6e8ee7c54cfb8c089eb1254ab0c06635"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea8949f714fa050c3f0c8dd5cd3c56f8" id="r_aea8949f714fa050c3f0c8dd5cd3c56f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#aea8949f714fa050c3f0c8dd5cd3c56f8">drawInstanced</a> (const std::vector&lt; <a class="el" href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a> &gt; &amp;instances)</td></tr>
+<tr class="memdesc:aea8949f714fa050c3f0c8dd5cd3c56f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws multiple instances of this mesh in a single draw call.  <br /></td></tr>
+<tr class="separator:aea8949f714fa050c3f0c8dd5cd3c56f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6fd3ef6fb3dab29756b8864ea4ee8a8" id="r_ab6fd3ef6fb3dab29756b8864ea4ee8a8"><td class="memItemLeft" align="right" valign="top">std::span&lt; const <a class="el" href="structVertex.html">Vertex</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">getVertices</a> () const</td></tr>
+<tr class="memdesc:ab6fd3ef6fb3dab29756b8864ea4ee8a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides read-only view of vertex data without copying.  <br /></td></tr>
+<tr class="separator:ab6fd3ef6fb3dab29756b8864ea4ee8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6a1eabbc84c5429b112d359bf02b073" id="r_ae6a1eabbc84c5429b112d359bf02b073"><td class="memItemLeft" align="right" valign="top">std::span&lt; const unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">getIndices</a> () const</td></tr>
+<tr class="memdesc:ae6a1eabbc84c5429b112d359bf02b073"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides read-only view of index data without copying.  <br /></td></tr>
+<tr class="separator:ae6a1eabbc84c5429b112d359bf02b073"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac43fb0ac6de4d28096bba83517801882" id="r_ac43fb0ac6de4d28096bba83517801882"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html#ac43fb0ac6de4d28096bba83517801882">getLocalAABB</a> () const</td></tr>
+<tr class="memdesc:ac43fb0ac6de4d28096bba83517801882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the local-space axis-aligned bounding box.  <br /></td></tr>
 <tr class="separator:ac43fb0ac6de4d28096bba83517801882"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00034">34</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<div class="textblock"><p>GPU mesh representation with support for instanced rendering. </p>
+<p>Manages vertex data, indices, and GPU buffers for a single mesh. Supports both standard and instanced rendering. Meshes are immutable after construction - vertex and index data cannot be modified.</p>
+<dl class="section note"><dt>Note</dt><dd>This class assumes an active OpenGL context during construction. </dd>
+<dd>
+The mesh automatically computes an axis-aligned bounding box (AABB) in local space for collision detection and culling.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classResourceManager.html">ResourceManager</a> for mesh loading and management </dd>
+<dd>
+<a class="el" href="structRendering_1_1InstanceData.html" title="Per-instance data for instanced rendering.">Rendering::InstanceData</a> for per-instance data layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00058">58</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8d474ebd2de6747d4d68c2c25622c4a5" name="a8d474ebd2de6747d4d68c2c25622c4a5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d474ebd2de6747d4d68c2c25622c4a5">&#9670;&#160;</a></span>Mesh()</h2>
@@ -158,6 +176,24 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Constructs a mesh from vertex and index data. </p>
+<p>Uploads data to GPU and sets up vertex attributes for rendering. Automatically computes a local-space AABB for the mesh.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">verts</td><td><a class="el" href="structVertex.html" title="Vertex data for a single vertex in a mesh.">Vertex</a> data (positions, normals) </td></tr>
+    <tr><td class="paramname">idx</td><td>Index buffer for indexed drawing </td></tr>
+    <tr><td class="paramname">funcs</td><td>OpenGL function pointers for the current context</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>An OpenGL context must be current on this thread </dd>
+<dd>
+funcs must not be nullptr </dd>
+<dd>
+verts must not be empty </dd>
+<dd>
+idx must not be empty and all indices must be valid </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00005">5</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 
 </div>
@@ -176,6 +212,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Destroys the mesh and releases GPU resources. </p>
+<p>Deletes VAO, VBO, EBO, and instance VBO if they exist. </p>
 
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00029">29</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 
@@ -197,12 +236,18 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Draws a single instance of this mesh. </p>
+<p>Uses the currently bound shader. Model matrix and other uniforms must be set by the caller before drawing.</p>
+<dl class="section note"><dt>Note</dt><dd>A shader must be bound via glUseProgram </dd>
+<dd>
+Appropriate uniforms must be set in the bound shader </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00072">72</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a194205a979361c68cef87f323eb145b4" name="a194205a979361c68cef87f323eb145b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a194205a979361c68cef87f323eb145b4">&#9670;&#160;</a></span>drawInstanced()</h2>
+<a id="aea8949f714fa050c3f0c8dd5cd3c56f8" name="aea8949f714fa050c3f0c8dd5cd3c56f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea8949f714fa050c3f0c8dd5cd3c56f8">&#9670;&#160;</a></span>drawInstanced()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,36 +255,65 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Mesh::drawInstanced </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>instances</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Draws multiple instances of this mesh in a single draw call. </p>
+<p>More efficient than multiple <a class="el" href="classMesh.html#a79b998580025a501675a517e9fc1283f" title="Draws a single instance of this mesh.">draw()</a> calls for rendering many copies of the same mesh with different transforms/properties.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">instances</td><td>Per-instance data (transforms, IDs, colors, etc.)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>A shader must be bound that supports instanced rendering </dd>
+<dd>
+instances must not be empty </dd>
+<dd>
+<a class="el" href="classShader.html">Shader</a> must have vertex attributes matching InstanceData layout</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structRendering_1_1InstanceData.html" title="Per-instance data for instanced rendering.">Rendering::InstanceData</a> for the expected data layout </dd>
+<dd>
+setupInstanceAttributes() for attribute configuration </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00078">78</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classMesh_a194205a979361c68cef87f323eb145b4_icgraph.svg" width="323" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classMesh_aea8949f714fa050c3f0c8dd5cd3c56f8_icgraph.svg" width="323" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
 </div>
-<a id="a6e8ee7c54cfb8c089eb1254ab0c06635" name="a6e8ee7c54cfb8c089eb1254ab0c06635"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e8ee7c54cfb8c089eb1254ab0c06635">&#9670;&#160;</a></span>getIndices()</h2>
+<a id="ae6a1eabbc84c5429b112d359bf02b073" name="ae6a1eabbc84c5429b112d359bf02b073"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6a1eabbc84c5429b112d359bf02b073">&#9670;&#160;</a></span>getIndices()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; unsigned int &gt; Mesh::getIndices </td>
+          <td class="memname">std::span&lt; const unsigned int &gt; Mesh::getIndices </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Provides read-only view of index data without copying. </p>
+<p>Returns a non-owning view over the mesh's index array.</p>
+<dl class="section return"><dt>Returns</dt><dd>Non-owning span view of index data</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The returned span is only valid while this <a class="el" href="classMesh.html" title="GPU mesh representation with support for instanced rendering.">Mesh</a> exists </dd>
+<dd>
+The span is read-only - use const iteration </dd>
+<dd>
+Cannot modify index data through this view (mesh is immutable after construction)</dd></dl>
+<dl class="section user"><dt>Example Usage:</dt><dd><div class="fragment"><div class="line">std::span&lt;const unsigned int&gt; indices = mesh-&gt;getIndices();</div>
+<div class="line"><span class="keywordtype">size_t</span> triangleCount = indices.size() / 3;</div>
+</div><!-- fragment --> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00094">94</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 
@@ -268,7 +342,12 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00043">43</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<p>Gets the local-space axis-aligned bounding box. </p>
+<p>The AABB is computed during construction and represents the tightest axis-aligned box that contains all vertices.</p>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the cached local AABB</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>To get a world-space AABB, call getTransformed() on the result with the object's model matrix </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00163">163</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -277,20 +356,34 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="ae498c212f82d8562a48e847e9f976ed8" name="ae498c212f82d8562a48e847e9f976ed8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae498c212f82d8562a48e847e9f976ed8">&#9670;&#160;</a></span>getVertices()</h2>
+<a id="ab6fd3ef6fb3dab29756b8864ea4ee8a8" name="ab6fd3ef6fb3dab29756b8864ea4ee8a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6fd3ef6fb3dab29756b8864ea4ee8a8">&#9670;&#160;</a></span>getVertices()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="structVertex.html">Vertex</a> &gt; Mesh::getVertices </td>
+          <td class="memname">std::span&lt; const <a class="el" href="structVertex.html">Vertex</a> &gt; Mesh::getVertices </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Provides read-only view of vertex data without copying. </p>
+<p>Returns a non-owning view over the mesh's vertex array.</p>
+<dl class="section return"><dt>Returns</dt><dd>Non-owning span view of vertex data</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The returned span is only valid while this <a class="el" href="classMesh.html" title="GPU mesh representation with support for instanced rendering.">Mesh</a> exists </dd>
+<dd>
+The span is read-only - use const iteration: <code>for (const auto&amp; v : span)</code> </dd>
+<dd>
+Cannot modify vertex data through this view (mesh is immutable after construction)</dd></dl>
+<dl class="section user"><dt>Example Usage:</dt><dd><div class="fragment"><div class="line">std::span&lt;const Vertex&gt; verts = mesh-&gt;getVertices();</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; vertex : verts) {</div>
+<div class="line">    <span class="comment">// Process vertex.pos, vertex.normal, etc.</span></div>
+<div class="line">}</div>
+</div><!-- fragment --> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="Mesh_8cpp_source.html#l00090">90</a> of file <a class="el" href="Mesh_8cpp_source.html">Mesh.cpp</a>.</p>
 

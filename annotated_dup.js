@@ -16,6 +16,9 @@ var annotated_dup =
       [ "PointMass", "classPhysics_1_1PointMass.html", "classPhysics_1_1PointMass" ],
       [ "RigidBody", "classPhysics_1_1RigidBody.html", "classPhysics_1_1RigidBody" ]
     ] ],
+    [ "Rendering", "namespaceRendering.html", [
+      [ "InstanceData", "structRendering_1_1InstanceData.html", "structRendering_1_1InstanceData" ]
+    ] ],
     [ "std", "namespacestd.html", [
       [ "hash< Vertex >", "structstd_1_1hash_3_01Vertex_01_4.html", "structstd_1_1hash_3_01Vertex_01_4" ]
     ] ],
@@ -33,7 +36,6 @@ var annotated_dup =
     [ "IInstancedDrawable", "classIInstancedDrawable.html", "classIInstancedDrawable" ],
     [ "InspectorRow", "classInspectorRow.html", "classInspectorRow" ],
     [ "InspectorWidget", "classInspectorWidget.html", "classInspectorWidget" ],
-    [ "InstanceData", "Mesh_8h.html#structInstanceData", "Mesh_8h_structInstanceData" ],
     [ "InterceptSolver", "classInterceptSolver.html", "classInterceptSolver" ],
     [ "IPickable", "classIPickable.html", "classIPickable" ],
     [ "ISolver", "classISolver.html", "classISolver" ],

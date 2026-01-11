@@ -104,23 +104,31 @@ $(document).ready(function(){initNavTree('structVertex.html',''); initResizable(
 </div><!--header-->
 <div class="contents">
 
+<p><a class="el" href="structVertex.html" title="Vertex data for a single vertex in a mesh.">Vertex</a> data for a single vertex in a mesh.  
+ <a href="structVertex.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Mesh_8h_source.html">Mesh.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a80a54a84866d511b63bcc6f38899bed9" id="r_a80a54a84866d511b63bcc6f38899bed9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVertex.html#a80a54a84866d511b63bcc6f38899bed9">operator==</a> (const <a class="el" href="structVertex.html">Vertex</a> &amp;other) const</td></tr>
+<tr class="memdesc:a80a54a84866d511b63bcc6f38899bed9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equality comparison for vertex deduplication.  <br /></td></tr>
 <tr class="separator:a80a54a84866d511b63bcc6f38899bed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a858242dc7b40c034c5e13c589b30cfb4" id="r_a858242dc7b40c034c5e13c589b30cfb4"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVertex.html#a858242dc7b40c034c5e13c589b30cfb4">pos</a></td></tr>
+<tr class="memdesc:a858242dc7b40c034c5e13c589b30cfb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in local/model space.  <br /></td></tr>
 <tr class="separator:a858242dc7b40c034c5e13c589b30cfb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3aa35fe84025ecf1acccb5f65f5577fd" id="r_a3aa35fe84025ecf1acccb5f65f5577fd"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVertex.html#a3aa35fe84025ecf1acccb5f65f5577fd">normal</a></td></tr>
+<tr class="memdesc:a3aa35fe84025ecf1acccb5f65f5577fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surface normal.  <br /></td></tr>
 <tr class="separator:a3aa35fe84025ecf1acccb5f65f5577fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00007">7</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<div class="textblock"><p><a class="el" href="structVertex.html" title="Vertex data for a single vertex in a mesh.">Vertex</a> data for a single vertex in a mesh. </p>
+<p>Contains geometric and shading information for rendering. </p>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00013">13</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a80a54a84866d511b63bcc6f38899bed9" name="a80a54a84866d511b63bcc6f38899bed9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a80a54a84866d511b63bcc6f38899bed9">&#9670;&#160;</a></span>operator==()</h2>
@@ -146,7 +154,16 @@ Data Fields</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00011">11</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<p>Equality comparison for vertex deduplication. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The vertex to compare against </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if position and normal are identical </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00022">22</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -163,7 +180,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00009">9</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<p>Surface normal. </p>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00015">15</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -179,7 +198,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00008">8</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
+<p>Position in local/model space. </p>
+
+<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00014">14</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
 
 </div>
 </div>

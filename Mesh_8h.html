@@ -107,10 +107,11 @@ $(document).ready(function(){initNavTree('Mesh_8h.html',''); initResizable(); })
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;glm/glm.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="AABB_8h_source.html">physics/bounding/AABB.h</a>&gt;</code><br />
+<code>#include &quot;<a class="el" href="InstanceData_8h_source.html">graphics/core/InstanceData.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Mesh.h:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="Mesh_8h__incl.svg" width="100%" height="569"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="Mesh_8h__incl.svg" width="636" height="359"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -123,57 +124,20 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVertex.html">Vertex</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structVertex.html" title="Vertex data for a single vertex in a mesh.">Vertex</a> data for a single vertex in a mesh.  <a href="structVertex.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:structInstanceData" id="r_structInstanceData"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a></td></tr>
-<tr class="separator:structInstanceData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1hash_3_01Vertex_01_4.html">std::hash&lt; Vertex &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMesh.html">Mesh</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">GPU mesh representation with support for instanced rendering.  <a href="classMesh.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacestd" id="r_namespacestd"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestd.html">std</a></td></tr>
+<tr class="memdesc:namespacestd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hash specialization for <a class="el" href="structVertex.html" title="Vertex data for a single vertex in a mesh.">Vertex</a> to enable use in unordered containers. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/><h2 class="groupheader">Data Structure Documentation</h2>
-<a name="structInstanceData" id="structInstanceData"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#structInstanceData">&#9670;&#160;</a></span>InstanceData</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">struct InstanceData</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Mesh_8h_source.html#l00017">17</a> of file <a class="el" href="Mesh_8h_source.html">Mesh.h</a>.</p>
-</div><table class="fieldtable">
-<tr><th colspan="3">Data Fields</th></tr>
-<tr><td class="fieldtype">
-<a id="a1ffe2472a1a3ff8e20b971860636bbe1" name="a1ffe2472a1a3ff8e20b971860636bbe1"></a>vec3</td>
-<td class="fieldname">
-color</td>
-<td class="fielddoc">
-</td></tr>
-<tr><td class="fieldtype">
-<a id="ac212f0d8e381b56fec9265ed559ddf39" name="ac212f0d8e381b56fec9265ed559ddf39"></a>mat4</td>
-<td class="fieldname">
-model</td>
-<td class="fielddoc">
-</td></tr>
-<tr><td class="fieldtype">
-<a id="abcb0b0554e32bf242e05e7733baa5454" name="abcb0b0554e32bf242e05e7733baa5454"></a>uint32_t</td>
-<td class="fieldname">
-objectID</td>
-<td class="fielddoc">
-</td></tr>
-</table>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

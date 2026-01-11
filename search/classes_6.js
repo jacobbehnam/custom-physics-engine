@@ -8,7 +8,7 @@ var searchData=
   ['iinstanceddrawable_5',['IInstancedDrawable',['../classIInstancedDrawable.html',1,'']]],
   ['inspectorrow_6',['InspectorRow',['../classInspectorRow.html',1,'']]],
   ['inspectorwidget_7',['InspectorWidget',['../classInspectorWidget.html',1,'']]],
-  ['instancedata_8',['InstanceData',['../Mesh_8h.html#structInstanceData',1,'']]],
+  ['instancedata_8',['InstanceData',['../structRendering_1_1InstanceData.html',1,'Rendering']]],
   ['interceptsolver_9',['InterceptSolver',['../classInterceptSolver.html',1,'']]],
   ['ipickable_10',['IPickable',['../classIPickable.html',1,'']]],
   ['isolver_11',['ISolver',['../classISolver.html',1,'']]]

@@ -6,5 +6,6 @@ var namespaces_dup =
     ] ],
     [ "Math", "namespaceMath.html", "namespaceMath" ],
     [ "Physics", "namespacePhysics.html", "namespacePhysics" ],
+    [ "Rendering", "namespaceRendering.html", "namespaceRendering" ],
     [ "std", "namespacestd.html", "namespacestd" ]
 ];

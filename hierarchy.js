@@ -24,7 +24,7 @@ var hierarchy =
       [ "TranslateHandle", "classTranslateHandle.html", null ]
     ] ],
     [ "InspectorRow", "classInspectorRow.html", null ],
-    [ "InstanceData", "Mesh_8h.html#structInstanceData", null ],
+    [ "Rendering::InstanceData", "structRendering_1_1InstanceData.html", null ],
     [ "IPickable", "classIPickable.html", [
       [ "Gizmo", "classGizmo.html", null ],
       [ "SceneObject", "classSceneObject.html", null ]

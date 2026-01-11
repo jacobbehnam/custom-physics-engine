@@ -3,6 +3,7 @@ var dir_130ee61508126559bb38bbda29818231 =
     [ "Camera.cpp", "Camera_8cpp.html", null ],
     [ "Camera.h", "Camera_8h.html", "Camera_8h" ],
     [ "IDrawable.h", "IDrawable_8h.html", "IDrawable_8h" ],
+    [ "InstanceData.h", "InstanceData_8h.html", "InstanceData_8h" ],
     [ "IPickable.h", "IPickable_8h.html", "IPickable_8h" ],
     [ "ResourceManager.cpp", "ResourceManager_8cpp.html", null ],
     [ "ResourceManager.h", "ResourceManager_8h.html", "ResourceManager_8h" ],

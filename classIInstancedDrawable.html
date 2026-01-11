@@ -123,9 +123,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a89feb02187f064ae133a53843ea2d7df" id="r_a89feb02187f064ae133a53843ea2d7df"><td class="memItemLeft" align="right" valign="top">virtual glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInstancedDrawable.html#a89feb02187f064ae133a53843ea2d7df">getModelMatrix</a> () const =0</td></tr>
 <tr class="memdesc:a89feb02187f064ae133a53843ea2d7df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the model transformation matrix for this instance.  <br /></td></tr>
 <tr class="separator:a89feb02187f064ae133a53843ea2d7df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a494972a2cd2cfa6319825fed4e21978d" id="r_a494972a2cd2cfa6319825fed4e21978d"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInstancedDrawable.html#a494972a2cd2cfa6319825fed4e21978d">getInstanceData</a> () const</td></tr>
-<tr class="memdesc:a494972a2cd2cfa6319825fed4e21978d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the complete per-instance data for GPU upload.  <br /></td></tr>
-<tr class="separator:a494972a2cd2cfa6319825fed4e21978d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea390aaac2857505049bd0d95b73e777" id="r_aea390aaac2857505049bd0d95b73e777"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIInstancedDrawable.html#aea390aaac2857505049bd0d95b73e777">getInstanceData</a> () const</td></tr>
+<tr class="memdesc:aea390aaac2857505049bd0d95b73e777"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the complete per-instance data for GPU upload.  <br /></td></tr>
+<tr class="separator:aea390aaac2857505049bd0d95b73e777"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classIDrawable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIDrawable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIDrawable.html">IDrawable</a></td></tr>
 <tr class="memitem:ae8ef74d2e7a2a75669b3096049c61973 inherit pub_methods_classIDrawable" id="r_ae8ef74d2e7a2a75669b3096049c61973"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIDrawable.html#ae8ef74d2e7a2a75669b3096049c61973">~IDrawable</a> ()=default</td></tr>
 <tr class="memdesc:ae8ef74d2e7a2a75669b3096049c61973 inherit pub_methods_classIDrawable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for proper cleanup of derived classes.  <br /></td></tr>
@@ -144,7 +144,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Interface for objects that support GPU instanced rendering. </p>
 <p>Objects implementing this interface can be efficiently batched and rendered together when they share the same mesh and shader. The <a class="el" href="classScene.html">Scene</a> groups compatible objects and renders them in a single instanced draw call, significantly reducing CPU overhead and draw call count.</p>
 <p>This is the preferred rendering path for most scene objects (<a class="el" href="classSceneObject.html">SceneObject</a>, etc.) as it provides optimal performance for large numbers of similar objects.</p>
-<dl class="section note"><dt>Note</dt><dd>The default <a class="el" href="classIInstancedDrawable.html#a494972a2cd2cfa6319825fed4e21978d" title="Gets the complete per-instance data for GPU upload.">getInstanceData()</a> implementation provides basic transform and ID data. Override for custom per-instance attributes (e.g., color).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The default <a class="el" href="classIInstancedDrawable.html#aea390aaac2857505049bd0d95b73e777" title="Gets the complete per-instance data for GPU upload.">getInstanceData()</a> implementation provides basic transform and ID data. Override for custom per-instance attributes (e.g., color).</dd></dl>
 <p>Example usage: </p><div class="fragment"><div class="line"><span class="keyword">class </span><a class="code hl_class" href="classSceneObject.html">SceneObject</a> : <span class="keyword">public</span> <a class="code hl_interface" href="classIInstancedDrawable.html">IInstancedDrawable</a> {</div>
 <div class="line">    glm::mat4 getModelMatrix()<span class="keyword"> const override </span>{</div>
 <div class="line">        <span class="keywordflow">return</span> computeTransformMatrix();</div>
@@ -154,14 +154,14 @@ Public Member Functions</h2></td></tr>
 <div class="ttc" id="aclassSceneObject_html"><div class="ttname"><a href="classSceneObject.html">SceneObject</a></div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00021">SceneObject.h:21</a></div></div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw()</a> </dd>
 <dd>
-<a class="el" href="classMesh.html#a194205a979361c68cef87f323eb145b4">Mesh::drawInstanced()</a> </dd>
+<a class="el" href="classMesh.html#aea8949f714fa050c3f0c8dd5cd3c56f8" title="Draws multiple instances of this mesh in a single draw call.">Mesh::drawInstanced()</a> </dd>
 <dd>
-<a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> </dd></dl>
+<a class="el" href="structRendering_1_1InstanceData.html" title="Per-instance data for instanced rendering.">Rendering::InstanceData</a> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="IDrawable_8h_source.html#l00111">111</a> of file <a class="el" href="IDrawable_8h_source.html">IDrawable.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a494972a2cd2cfa6319825fed4e21978d" name="a494972a2cd2cfa6319825fed4e21978d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a494972a2cd2cfa6319825fed4e21978d">&#9670;&#160;</a></span>getInstanceData()</h2>
+<a id="aea390aaac2857505049bd0d95b73e777" name="aea390aaac2857505049bd0d95b73e777"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea390aaac2857505049bd0d95b73e777">&#9670;&#160;</a></span>getInstanceData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +170,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> IInstancedDrawable::getInstanceData </td>
+          <td class="memname">virtual <a class="el" href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a> IInstancedDrawable::getInstanceData </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -184,19 +184,19 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Gets the complete per-instance data for GPU upload. </p>
-<p>Constructs an <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> structure containing the model matrix, object ID, and any additional per-instance attributes. This data is uploaded to the GPU's instance buffer for instanced rendering.</p>
+<p>Constructs an InstanceData structure containing the model matrix, object ID, and any additional per-instance attributes. This data is uploaded to the GPU's instance buffer for instanced rendering.</p>
 <p>The default implementation provides model matrix and object ID. Override to add custom attributes (e.g., per-instance color).</p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> structure for this object.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The <a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> layout must match the vertex attribute setup in Mesh::setupInstanceAttributes().</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="Mesh_8h.html#structInstanceData">InstanceData</a> </dd>
+<dl class="section return"><dt>Returns</dt><dd>InstanceData structure for this object.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The InstanceData layout must match the vertex attribute setup in Mesh::setupInstanceAttributes().</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structRendering_1_1InstanceData.html" title="Per-instance data for instanced rendering.">Rendering::InstanceData</a> </dd>
 <dd>
-<a class="el" href="classMesh.html#a194205a979361c68cef87f323eb145b4">Mesh::drawInstanced()</a> </dd></dl>
+<a class="el" href="classMesh.html#aea8949f714fa050c3f0c8dd5cd3c56f8" title="Draws multiple instances of this mesh in a single draw call.">Mesh::drawInstanced()</a> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="IDrawable_8h_source.html#l00144">144</a> of file <a class="el" href="IDrawable_8h_source.html">IDrawable.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classIInstancedDrawable_a494972a2cd2cfa6319825fed4e21978d_cgraph.svg" width="383" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classIInstancedDrawable_aea390aaac2857505049bd0d95b73e777_cgraph.svg" width="383" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
