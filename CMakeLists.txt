@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 project(PhysicsEngine)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Where CLion’s embedded vcpkg installs stuff:
 set(VCPKG_INSTALLED_DIR "C:/Users/Jacob/.vcpkg-clion/vcpkg/installed/x64-mingw-dynamic")
@@ -114,6 +114,7 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/ForcesInspectorWidget.h
         src/ui/inspector/GlobalsInspectorWidget.cpp
         src/ui/inspector/GlobalsInspectorWidget.h
+        src/graphics/core/InstanceData.h
 )
 
 # Include directories

@@ -77,7 +77,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
 
     // --- instanced ---
-    std::map<BatchKey, std::vector<InstanceData>> batches;
+    std::map<BatchKey, std::vector<Rendering::InstanceData>> batches;
 
     for (auto* obj : instancedDrawables) {
         BatchKey key{ obj->getMesh(), obj->getShader() };

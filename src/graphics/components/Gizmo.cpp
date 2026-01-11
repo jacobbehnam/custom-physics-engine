@@ -47,7 +47,7 @@ void Gizmo::draw() const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
 
-    std::vector<InstanceData> drawData;
+    std::vector<Rendering::InstanceData> drawData;
     for (const auto& handle : handles) {
         glm::vec3 color = handle->getAxisDir(); // base RGB per axis
 

@@ -40,18 +40,18 @@ void Mesh::setupInstanceAttributes() {
     // Model matrix = 4 vec4s = locations 2, 3, 4, 5
     for (int i = 0; i < 4; ++i) {
         funcs->glEnableVertexAttribArray(2 + i);
-        funcs->glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)(sizeof(glm::vec4) * i));
+        funcs->glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(Rendering::InstanceData), (void*)(sizeof(glm::vec4) * i));
         funcs->glVertexAttribDivisor(2 + i, 1);
     }
 
     // objectID = location 6
     funcs->glEnableVertexAttribArray(6);
-    funcs->glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(InstanceData), (void*)offsetof(InstanceData, objectID));
+    funcs->glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Rendering::InstanceData), (void*)offsetof(Rendering::InstanceData, objectID));
     funcs->glVertexAttribDivisor(6, 1);
 
     // color = location 7
     funcs->glEnableVertexAttribArray(7);
-    funcs->glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)offsetof(InstanceData, color));
+    funcs->glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(Rendering::InstanceData), (void*)offsetof(Rendering::InstanceData, color));
     funcs->glVertexAttribDivisor(7, 1);
 
     funcs->glBindVertexArray(0);
@@ -75,22 +75,22 @@ void Mesh::draw() const {
     funcs->glBindVertexArray(0);
 }
 
-void Mesh::drawInstanced(const std::vector<InstanceData>& instances) {
+void Mesh::drawInstanced(const std::vector<Rendering::InstanceData>& instances) {
     assert(VAO != 0 && "asdVAO generation failed — is GL context current?");
     funcs->glBindVertexArray(VAO);
 
     funcs->glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-    funcs->glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(InstanceData), instances.data(), GL_DYNAMIC_DRAW);
+    funcs->glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(Rendering::InstanceData), instances.data(), GL_DYNAMIC_DRAW);
 
     funcs->glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instances.size());
 
     funcs->glBindVertexArray(0);
 }
 
-std::vector<Vertex> Mesh::getVertices() const {
+std::span<const Vertex> Mesh::getVertices() const {
     return vertices;
 }
 
-std::vector<unsigned int> Mesh::getIndices() const {
+std::span<const unsigned int> Mesh::getIndices() const {
     return indices;
 }

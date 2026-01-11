@@ -83,15 +83,15 @@ std::optional<float> SceneObject::intersectsAABB(const Math::Ray& ray) const {
 }
 
 std::optional<float> SceneObject::intersectsMesh(const Math::Ray& ray) const {
-    const std::vector<Vertex>& verts = mesh->getVertices();
+    std::span<const Vertex> verts = mesh->getVertices();
     std::vector<glm::vec3> vertPositions;
     vertPositions.reserve(verts.size());
-    for (auto vert : verts) {
+    for (const auto& vert : verts) {
         vertPositions.push_back({vert.pos});
     }
     const size_t triCount = verts.size() / 3;
 
-    const std::vector<unsigned int>& indices = mesh->getIndices();
+    std::span<const unsigned int> indices = mesh->getIndices();
     auto *glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_4_5_Core>(QOpenGLContext::currentContext());
     ComputeShader compute("assets/shaders/meshIntersection.comp", glFuncs);
     (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * sizeof(glm::vec3), 0);

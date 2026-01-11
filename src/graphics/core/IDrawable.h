@@ -106,7 +106,7 @@ public:
  *
  * @see Scene::draw()
  * @see Mesh::drawInstanced()
- * @see InstanceData
+ * @see Rendering::InstanceData
  */
 class IInstancedDrawable : public IDrawable {
 public:
@@ -138,10 +138,10 @@ public:
      * @note The InstanceData layout must match the vertex attribute setup
      *       in Mesh::setupInstanceAttributes().
      *
-     * @see InstanceData
+     * @see Rendering::InstanceData
      * @see Mesh::drawInstanced()
      */
-    virtual InstanceData getInstanceData() const {
+    virtual Rendering::InstanceData getInstanceData() const {
         return {getModelMatrix(), getObjectID()};
     }
 };
