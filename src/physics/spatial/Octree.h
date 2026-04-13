@@ -3,9 +3,18 @@
 #include "../PhysicsBody.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <cstdint>
 
 struct NodeIndex {
     int val = -1;
+};
+
+struct Octant {
+    std::uint8_t val; // 0-7 representing the octant
+
+    static constexpr std::uint8_t X_MASK = 1 << 0;
+    static constexpr std::uint8_t Y_MASK = 1 << 1;
+    static constexpr std::uint8_t Z_MASK = 1 << 2;
 };
 
 struct OctreeNode {
@@ -18,7 +27,7 @@ struct OctreeNode {
 
     // Aggregated properties (center, mass)
     glm::vec3 massCenter;
-    float totalMass;
+    float totalMass = 0.0f;
 
     bool isLeaf() const {
         return body != nullptr;
@@ -28,7 +37,12 @@ struct OctreeNode {
 class Octree {
 private:
     std::vector<OctreeNode> nodes;
+    void clear();
+    NodeIndex allocateNode(const glm::vec3& center, float halfSize);
+    void insert(NodeIndex nodeIndex, Physics::PhysicsBody* body);
+    Octant getOctant(NodeIndex nodeIdx, const glm::vec3& pos) const;
 public:
-    Octree(const glm::vec3& center, float halfSize);
-    void insert(Physics::PhysicsBody* body);
+    Octree() = default;
+    glm::vec3 computeForce(Physics::PhysicsBody* body);
+    void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };
