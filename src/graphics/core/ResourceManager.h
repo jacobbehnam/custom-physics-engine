@@ -14,6 +14,7 @@ public:
     static Mesh* loadMeshFromOBJ(const std::string& path, const std::string &name);
 
     static Shader* getShader(const std::string &name);
+    static std::string getShaderName(const Shader* shader);
     static Mesh* getMesh(const std::string &name);
 
 private:

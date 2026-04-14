@@ -49,6 +49,8 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
         QJsonObject objJson;
         objJson["id"] = static_cast<double>(obj->getObjectID());
         objJson["meshName"] = QString::fromStdString(obj->getMeshName());
+        objJson["name"] = QString::fromStdString(obj->getName());
+        objJson["shader"] = QString::fromStdString(ResourceManager::getShaderName(obj->getShader()));
 
         QJsonObject optionsJson;
         std::visit([&](auto&& opt){
@@ -61,11 +63,13 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
             if constexpr (std::is_same_v<T, PointMassOptions>) {
                 data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
                 data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
+                data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
                 optionsJson["type"] = "PointMassOptions";
             }
             else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
                 data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
                 data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
+                data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
                 optionsJson["type"] = "RigidBodyOptions";
             }
             else {
@@ -127,6 +131,8 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
 
             uint32_t id = static_cast<uint32_t>(objJson["id"].toDouble());
             std::string meshName = objJson["meshName"].toString().toStdString();
+            std::string objName = objJson["name"].toString().toStdString();
+            std::string shaderName = objJson["shader"].toString().toStdString();
 
             CreationOptions options;
             if (objJson.contains("options") && objJson["options"].isObject()) {
@@ -144,20 +150,25 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
                     pointOpt.base = base;
                     pointOpt.isStatic = data["isStatic"].toBool();
                     pointOpt.mass = data["mass"].toDouble();
+                    pointOpt.velocity = JsonUtils::jsonToVec3(data["velocity"].toArray());
                     options = pointOpt;
                 }
                 else if (type == "RigidBodyOptions") {
+                    // Needs collider so have to use this method
                     options = RigidBodyOptions::Box(
                         base, 
                         data["isStatic"].toBool(),
-                        data["mass"].toDouble()
+                        data["mass"].toDouble(),
+                        JsonUtils::jsonToVec3(data["velocity"].toArray())
                     );
                 }
                 else {
                     options = base;
                 }
             }
-            sceneManager->createObject(meshName, ResourceManager::getShader("basic"), options);
+            Shader* shader = ResourceManager::getShader(shaderName);
+            SceneObject* createObj = sceneManager->createObject(meshName, shader, options);
+            sceneManager->setObjectName(createObj, objName);
         }
     }
     return true;

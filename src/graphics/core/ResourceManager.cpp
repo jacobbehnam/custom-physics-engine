@@ -39,6 +39,13 @@ Shader* ResourceManager::getShader(const std::string &name) {
     }
 }
 
+std::string ResourceManager::getShaderName(const Shader *target) {
+    for (const auto& [name, shader] : shaders) {
+        if (&shader == target) return name;
+    }
+    assert(false && "Shader not found in ResourceManager!");
+}
+
 Mesh* ResourceManager::getMesh(const std::string &name) {
     auto it = meshes.find(name);
     if (it != meshes.end()) {

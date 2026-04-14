@@ -73,9 +73,11 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
-    if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
-        removeFromPhysicsSystem(body);
-    }
+    // Destructor already handle this
+    // if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
+    //     removeFromPhysicsSystem(body);
+    // }
+
     pickableObjects.erase(
         std::remove(pickableObjects.begin(), pickableObjects.end(), static_cast<IPickable*>(obj)),
         pickableObjects.end()
@@ -94,9 +96,11 @@ void SceneManager::deleteObject(SceneObject *obj) {
 }
 
 void SceneManager::deleteAllObjects() {
-    for (const auto &obj : sceneObjects) {
-        deleteObject(obj.get());
+    // Use while to not skipping elements
+    while (!sceneObjects.empty()) {
+        deleteObject(sceneObjects.back().get());
     }
+    usedNames.clear();
 }
 
 std::vector<SceneObject*> SceneManager::getObjects() const {
