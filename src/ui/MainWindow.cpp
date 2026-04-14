@@ -8,6 +8,8 @@
 #include <QLineEdit>
 #include <QScrollArea>
 #include <QMenuBar>
+#include <QFileDialog>
+#include <QDir> 
 
 #include "HierarchyWidget.h"
 #include "inspector/InspectorWidget.h"
@@ -103,8 +105,12 @@ void MainWindow::setupMenuBar() {
     QMenu *fileMenu = menuBar()->addMenu("File");
     QAction *saveAction = new QAction("Save", this);
     fileMenu->addAction(saveAction);
+    QAction *saveAsAction = new QAction("Save As", this);
+    fileMenu->addAction(saveAsAction);
     QAction *loadAction = new QAction("Load", this);
     fileMenu->addAction(loadAction);
+    QAction *loadFromAction = new QAction("Load From", this);
+    fileMenu->addAction(loadFromAction);
 
     connect(saveAction, &QAction::triggered, this, [this](){
         if (sceneManager->saveScene("scene.json"))
@@ -117,6 +123,24 @@ void MainWindow::setupMenuBar() {
             std::cout << "Load Success!" << std::endl;
         else
             std::cout << "Load Failed!" << std::endl;
+    });
+    connect(saveAsAction, &QAction::triggered, this, [this](){
+        QString fileName = QFileDialog::getSaveFileName(this, "Save Scene", QDir::homePath(), "JSON Files (*.json)");
+        if (!fileName.isEmpty()) {
+            if (sceneManager->saveScene(fileName))
+                std::cout << "Save Success!" << std::endl;
+            else
+                std::cout << "Save Failed!" << std::endl;
+        }
+    });
+    connect(loadFromAction, &QAction::triggered, this, [this](){
+        QString fileName = QFileDialog::getOpenFileName(this, "Load Scene", QDir::homePath(), "JSON Files (*.json)");
+        if (!fileName.isEmpty()) {
+            if (sceneManager->loadScene(fileName))
+                std::cout << "Load Success!" << std::endl;
+            else
+                std::cout << "Load Failed!" << std::endl;
+        }
     });
 }
 
