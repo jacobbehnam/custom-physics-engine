@@ -2,6 +2,7 @@ var classInspectorRow =
 [
     [ "InspectorRow", "classInspectorRow.html#ab946a433fac1b3b709fea57cee22fa91", null ],
     [ "InspectorRow", "classInspectorRow.html#a2af11b13e23873bd51a9c77cbd9fcc88", null ],
+    [ "addButton", "classInspectorRow.html#a3e2ce291c5e4165bfad1819118e6ddcd", null ],
     [ "addCheckbox", "classInspectorRow.html#a60ff7c5170eb83103079a8eae56f7f99", null ],
     [ "addScalar", "classInspectorRow.html#a4dcc325817964300845e49e72a5712e2", null ],
     [ "addVec3", "classInspectorRow.html#a93bc288f51b9f390abd3ceb6f3b2d2c7", null ],

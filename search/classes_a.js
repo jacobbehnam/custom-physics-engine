@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['rawinputfilter_0',['RawInputFilter',['../classRawInputFilter.html',1,'']]],
-  ['ray_1',['Ray',['../namespaceMath.html#structMath_1_1Ray',1,'Math']]],
-  ['resourcemanager_2',['ResourceManager',['../classResourceManager.html',1,'']]],
-  ['rigidbody_3',['RigidBody',['../classPhysics_1_1RigidBody.html',1,'Physics']]],
-  ['rigidbodyoptions_4',['RigidBodyOptions',['../structRigidBodyOptions.html',1,'']]],
-  ['rotatehandle_5',['RotateHandle',['../classRotateHandle.html',1,'']]]
+  ['physicsbody_0',['PhysicsBody',['../classPhysics_1_1PhysicsBody.html',1,'Physics']]],
+  ['physicsinspectorwidget_1',['PhysicsInspectorWidget',['../classPhysicsInspectorWidget.html',1,'']]],
+  ['physicssystem_2',['PhysicsSystem',['../classPhysics_1_1PhysicsSystem.html',1,'Physics']]],
+  ['pointmass_3',['PointMass',['../classPhysics_1_1PointMass.html',1,'Physics']]],
+  ['pointmassoptions_4',['PointMassOptions',['../structPointMassOptions.html',1,'']]],
+  ['problemrouter_5',['ProblemRouter',['../classProblemRouter.html',1,'']]]
 ];

@@ -46,7 +46,8 @@ var NAVTREE =
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
-        [ "Functions", "namespacemembers_func.html", null ]
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
       ] ]
     ] ],
     [ "Data Structures", "annotated.html", [
@@ -77,9 +78,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"classCamera.html#a03987cf3bbf312be16bb881939382d83",
-"classPhysics_1_1PhysicsBody.html#a62e6fec19245649b1b7185614e2f3683",
-"classShader.html"
+"UniformBuffer_8h.html",
+"classPhysics_1_1PhysicsBody.html#a2d5ddf4c1593c1f510e5c53c5cff57c2",
+"classSceneObject.html#a65d990f152f55417e054550d05fd54dc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

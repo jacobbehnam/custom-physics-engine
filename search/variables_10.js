@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['yaw_0',['yaw',['../classCamera.html#a54536224732656e8f4a419cf11662d3e',1,'Camera']]]
+  ['worldup_0',['worldUp',['../classCamera.html#a97e7a4ff433ea2bfcbfd40469aaf4d83',1,'Camera']]]
 ];

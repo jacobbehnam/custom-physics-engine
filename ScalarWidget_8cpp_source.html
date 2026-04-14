@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('ScalarWidget_8cpp_source.html',''); in
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    layout-&gt;setContentsMargins(0, 0, 0, 0);</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    spin = <span class="keyword">new</span> QDoubleSpinBox(<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    spin-&gt;setRange(-10000.0, 10000.0);</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    spin-&gt;setRange(-10000000.0, 10000000.0);</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    spin-&gt;setDecimals(2);</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    spin-&gt;setSuffix(suffix);</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    spin-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);</div>
@@ -126,7 +126,7 @@ $(document).ready(function(){initNavTree('ScalarWidget_8cpp_source.html',''); in
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="classScalarWidget.html#a9a9d3984a78d05739493cdac099a125e">   18</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="classScalarWidget.html#a9a9d3984a78d05739493cdac099a125e">ScalarWidget::getValue</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> spin-&gt;value();<span class="keywordflow">return</span> spin-&gt;value();</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> spin-&gt;value();</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
 </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
@@ -144,8 +144,15 @@ $(document).ready(function(){initNavTree('ScalarWidget_8cpp_source.html',''); in
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    spin-&gt;setRange(min, max);</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
 </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classScalarWidget.html#a47a2e738ca5e458b1d3fddb71b642d59">   33</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classScalarWidget.html#a47a2e738ca5e458b1d3fddb71b642d59">ScalarWidget::setDecimals</a>(<span class="keywordtype">int</span> decimals) {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    spin-&gt;setDecimals(decimals);</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
+</div>
 <div class="ttc" id="aScalarWidget_8h_html"><div class="ttname"><a href="ScalarWidget_8h.html">ScalarWidget.h</a></div></div>
 <div class="ttc" id="aclassScalarWidget_html_a38e4e8f11bf9148da775df93f9e3d5af"><div class="ttname"><a href="classScalarWidget.html#a38e4e8f11bf9148da775df93f9e3d5af">ScalarWidget::setRange</a></div><div class="ttdeci">void setRange(double min, double max)</div><div class="ttdef"><b>Definition</b> <a href="ScalarWidget_8cpp_source.html#l00029">ScalarWidget.cpp:29</a></div></div>
+<div class="ttc" id="aclassScalarWidget_html_a47a2e738ca5e458b1d3fddb71b642d59"><div class="ttname"><a href="classScalarWidget.html#a47a2e738ca5e458b1d3fddb71b642d59">ScalarWidget::setDecimals</a></div><div class="ttdeci">void setDecimals(int decimals)</div><div class="ttdef"><b>Definition</b> <a href="ScalarWidget_8cpp_source.html#l00033">ScalarWidget.cpp:33</a></div></div>
 <div class="ttc" id="aclassScalarWidget_html_a489333cb6ecc52b3e3304c0921305203"><div class="ttname"><a href="classScalarWidget.html#a489333cb6ecc52b3e3304c0921305203">ScalarWidget::ScalarWidget</a></div><div class="ttdeci">ScalarWidget(const QString &amp;suffix=&quot;&quot;, QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition</b> <a href="ScalarWidget_8cpp_source.html#l00003">ScalarWidget.cpp:3</a></div></div>
 <div class="ttc" id="aclassScalarWidget_html_a7aeafab4753e43897baa6874d385a8d8"><div class="ttname"><a href="classScalarWidget.html#a7aeafab4753e43897baa6874d385a8d8">ScalarWidget::valueChanged</a></div><div class="ttdeci">void valueChanged(double newValue)</div></div>
 <div class="ttc" id="aclassScalarWidget_html_a9a9d3984a78d05739493cdac099a125e"><div class="ttname"><a href="classScalarWidget.html#a9a9d3984a78d05739493cdac099a125e">ScalarWidget::getValue</a></div><div class="ttdeci">double getValue() const</div><div class="ttdef"><b>Definition</b> <a href="ScalarWidget_8cpp_source.html#l00018">ScalarWidget.cpp:18</a></div></div>

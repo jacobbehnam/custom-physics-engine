@@ -117,6 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4dcc325817964300845e49e72a5712e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60ff7c5170eb83103079a8eae56f7f99" id="r_a60ff7c5170eb83103079a8eae56f7f99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classInspectorRow.html">InspectorRow</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInspectorRow.html#a60ff7c5170eb83103079a8eae56f7f99">addCheckbox</a> (const std::function&lt; bool()&gt; &amp;get, const std::function&lt; void(bool)&gt; &amp;set, const std::function&lt; void(QCheckBox *)&gt; &amp;onInit=nullptr)</td></tr>
 <tr class="separator:a60ff7c5170eb83103079a8eae56f7f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e2ce291c5e4165bfad1819118e6ddcd" id="r_a3e2ce291c5e4165bfad1819118e6ddcd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classInspectorRow.html">InspectorRow</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInspectorRow.html#a3e2ce291c5e4165bfad1819118e6ddcd">addButton</a> (const QString &amp;text, const std::function&lt; void()&gt; &amp;onClick, const std::function&lt; void(QPushButton *)&gt; &amp;onInit=nullptr)</td></tr>
+<tr class="separator:a3e2ce291c5e4165bfad1819118e6ddcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11409c3061db6eb96ede7396fd56df2f" id="r_a11409c3061db6eb96ede7396fd56df2f"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInspectorRow.html#a11409c3061db6eb96ede7396fd56df2f">getLabel</a> () const</td></tr>
 <tr class="separator:a11409c3061db6eb96ede7396fd56df2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5195f4dffc8088e510c542eac951bb4" id="r_ad5195f4dffc8088e510c542eac951bb4"><td class="memItemLeft" align="right" valign="top">QWidget *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInspectorRow.html#ad5195f4dffc8088e510c542eac951bb4">getEditor</a> () const</td></tr>
@@ -128,7 +130,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00013">13</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00014">14</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab946a433fac1b3b709fea57cee22fa91" name="ab946a433fac1b3b709fea57cee22fa91"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab946a433fac1b3b709fea57cee22fa91">&#9670;&#160;</a></span>InspectorRow() <span class="overload">[1/2]</span></h2>
@@ -205,6 +207,42 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3e2ce291c5e4165bfad1819118e6ddcd" name="a3e2ce291c5e4165bfad1819118e6ddcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e2ce291c5e4165bfad1819118e6ddcd">&#9670;&#160;</a></span>addButton()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classInspectorRow.html">InspectorRow</a> &amp; InspectorRow::addButton </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>text</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void()&gt; &amp;&#160;</td>
+          <td class="paramname"><em>onClick</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(QPushButton *)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>onInit</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8cpp_source.html#l00086">86</a> of file <a class="el" href="InspectorRow_8cpp_source.html">InspectorRow.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a60ff7c5170eb83103079a8eae56f7f99" name="a60ff7c5170eb83103079a8eae56f7f99"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a60ff7c5170eb83103079a8eae56f7f99">&#9670;&#160;</a></span>addCheckbox()</h2>
 
@@ -363,7 +401,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00024">24</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00026">26</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -395,7 +433,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00023">23</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00025">25</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -427,7 +465,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00026">26</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00028">28</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
 
 </div>
 </div>
@@ -455,7 +493,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00032">32</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="InspectorRow_8h_source.html#l00034">34</a> of file <a class="el" href="InspectorRow_8h_source.html">InspectorRow.h</a>.</p>
 
 </div>
 </div>

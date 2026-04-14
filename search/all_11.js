@@ -31,13 +31,14 @@ var searchData=
   ['rigidbody_2ecpp_28',['RigidBody.cpp',['../RigidBody_8cpp.html',1,'']]],
   ['rigidbody_2eh_29',['RigidBody.h',['../RigidBody_8h.html',1,'']]],
   ['rigidbodyoptions_30',['RigidBodyOptions',['../structRigidBodyOptions.html',1,'']]],
-  ['rotate_31',['ROTATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa9faf4e337734315fde20af1922cc6f9d',1,'Gizmo.h']]],
-  ['rotatefromytoaxis_32',['rotateFromYToAxis',['../classIHandle.html#ac190d421b2f8652e91c342a2d19e5efb',1,'IHandle']]],
-  ['rotatehandle_33',['rotatehandle',['../classRotateHandle.html',1,'RotateHandle'],['../classRotateHandle.html#a3d2edf126d09c9cd2f00fa80b5617fe1',1,'RotateHandle::RotateHandle()']]],
-  ['rotatehandle_2ecpp_34',['RotateHandle.cpp',['../RotateHandle_8cpp.html',1,'']]],
-  ['rotatehandle_2eh_35',['RotateHandle.h',['../RotateHandle_8h.html',1,'']]],
-  ['rotation_36',['rotation',['../SceneObjectOptions_8h.html#a5f5e8366e95b96c2ce8b81420da51166',1,'ObjectOptions']]],
-  ['routeproblem_37',['routeProblem',['../classProblemRouter.html#af832077eb416c64e3f4f693a72877b70',1,'ProblemRouter']]],
-  ['rowcount_38',['rowCount',['../classSnapshotTableModel.html#a8459a77086102a851e84bf7a2ec1a2fa',1,'SnapshotTableModel']]],
-  ['runsolver_39',['runSolver',['../classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072',1,'GlobalsInspectorWidget']]]
+  ['rootindex_31',['rootIndex',['../structOctreeNode.html#a7c0ad5d5e22da69a1c2574c01aa59403',1,'OctreeNode']]],
+  ['rotate_32',['ROTATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa9faf4e337734315fde20af1922cc6f9d',1,'Gizmo.h']]],
+  ['rotatefromytoaxis_33',['rotateFromYToAxis',['../classIHandle.html#ac190d421b2f8652e91c342a2d19e5efb',1,'IHandle']]],
+  ['rotatehandle_34',['rotatehandle',['../classRotateHandle.html',1,'RotateHandle'],['../classRotateHandle.html#a3d2edf126d09c9cd2f00fa80b5617fe1',1,'RotateHandle::RotateHandle()']]],
+  ['rotatehandle_2ecpp_35',['RotateHandle.cpp',['../RotateHandle_8cpp.html',1,'']]],
+  ['rotatehandle_2eh_36',['RotateHandle.h',['../RotateHandle_8h.html',1,'']]],
+  ['rotation_37',['rotation',['../SceneObjectOptions_8h.html#a5f5e8366e95b96c2ce8b81420da51166',1,'ObjectOptions']]],
+  ['routeproblem_38',['routeProblem',['../classProblemRouter.html#af832077eb416c64e3f4f693a72877b70',1,'ProblemRouter']]],
+  ['rowcount_39',['rowCount',['../classSnapshotTableModel.html#a8459a77086102a851e84bf7a2ec1a2fa',1,'SnapshotTableModel']]],
+  ['runsolver_40',['runSolver',['../classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072',1,'GlobalsInspectorWidget']]]
 ];

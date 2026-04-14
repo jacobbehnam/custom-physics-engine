@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['uniformbuffer_0',['UniformBuffer',['../classUniformBuffer.html',1,'']]]
+  ['transforminspectorwidget_0',['TransformInspectorWidget',['../classTransformInspectorWidget.html',1,'']]],
+  ['translatehandle_1',['TranslateHandle',['../classTranslateHandle.html',1,'']]]
 ];

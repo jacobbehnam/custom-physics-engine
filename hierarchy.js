@@ -34,8 +34,12 @@ var hierarchy =
       [ "VectorRootSolver< InputT, OutputT >", "classVectorRootSolver.html", null ]
     ] ],
     [ "Mesh", "classMesh.html", null ],
+    [ "NodeIndex", "structNodeIndex.html", null ],
     [ "ObjectOptions", "SceneObjectOptions_8h.html#structObjectOptions", null ],
     [ "ObjectSnapshot", "PhysicsBody_8h.html#structObjectSnapshot", null ],
+    [ "Octant", "structOctant.html", null ],
+    [ "Octree", "classOctree.html", null ],
+    [ "OctreeNode", "structOctreeNode.html", null ],
     [ "OneUnknownSolver< InputT, OutputT >", "classOneUnknownSolver.html", null ],
     [ "Physics::PhysicsBody", "classPhysics_1_1PhysicsBody.html", [
       [ "Physics::PointMass", "classPhysics_1_1PointMass.html", null ],
