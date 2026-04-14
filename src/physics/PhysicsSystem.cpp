@@ -160,9 +160,9 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
 
-        glm::vec3 nBodyGravity = PhysicsSystem::octree.computeForce(body);
+        glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());
         glm::vec3 globalGravity = body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration();
-        glm::vec3 totalGravity = nBodyGravity + globalGravity;
+        glm::vec3 totalGravity  = nBodyGravity + globalGravity;
         
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
         body->setForce("Gravity", totalGravity, BodyLock::NOLOCK);

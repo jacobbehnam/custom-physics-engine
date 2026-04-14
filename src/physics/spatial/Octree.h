@@ -52,6 +52,6 @@ private:
     Octant getOctant(NodeIndex nodeIdx, const glm::vec3& pos) const;
 public:
     Octree() = default;
-    glm::vec3 computeForce(Physics::PhysicsBody* body);
+    glm::vec3 computeForce(Physics::PhysicsBody* body, float G);
     void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };

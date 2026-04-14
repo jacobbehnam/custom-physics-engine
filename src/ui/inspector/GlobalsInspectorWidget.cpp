@@ -9,6 +9,7 @@
 #include "graphics/core/SceneManager.h"
 #include "graphics/core/SceneObject.h"
 #include "physics/Constants.h"
+#include "physics/PhysicsSystem.h"
 #include "ui/ScalarWidget.h"
 #include "ui/Vector3Widget.h"
 
@@ -35,18 +36,19 @@ void GlobalsInspectorWidget::createUiComponents() {
 
     {
         InspectorRow row("Gravitational Constant", this);
+        Physics::PhysicsSystem* physicSystem = sceneManager->physicsSystem.get();
         row.addScalar(
-            []() { return Physics::GRAVITATIONAL_CONST; },
-            [](float g) { Physics::GRAVITATIONAL_CONST = g; },
+            [physicSystem]() { return physicSystem->getGravitationalConstant(); },
+            [physicSystem](float g) { physicSystem->setGravitationalConstant(g); },
             "N·m²/kg²",
             [](ScalarWidget* widget) {
                 widget->setDecimals(15);
             }
-        ).addButton("Default scaled", [this]() {
-            Physics::GRAVITATIONAL_CONST = Constants::G_SCALED;
+        ).addButton("Default scaled", [this, physicSystem]() {
+            physicSystem->setGravitationalConstant(Constants::G_SCALED);
             refresh();
-        }).addButton("Realism (reset)", [this]() {
-            Physics::GRAVITATIONAL_CONST = Constants::G;
+        }).addButton("Realism (reset)", [this, physicSystem]() {
+            physicSystem->setGravitationalConstant(Constants::G);
             refresh();
         });
         layout->addRow(row.getLabel(), row.getEditor());

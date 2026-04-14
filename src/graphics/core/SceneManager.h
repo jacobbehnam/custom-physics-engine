@@ -44,6 +44,8 @@ public:
     void setGlobalAcceleration(const glm::vec3& newAcceleration) const { physicsSystem->setGlobalAcceleration(newAcceleration); }
     float getSimSpeed() const { return window->getSimSpeed(); }
     void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
+    float getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
+    void setGravitationalConstant(float newG) const { physicsSystem->setGravitationalConstant(newG); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }

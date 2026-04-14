@@ -40,6 +40,7 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     // Global settings
     QJsonObject settings;
     settings["gravity"] = JsonUtils::vec3ToJson(sceneManager->getGlobalAcceleration());
+    settings["gravitationalConstant"] = sceneManager->getGravitationalConstant();
     settings["simSpeed"] = sceneManager->getSimSpeed();
     root["settings"] = settings;
 
@@ -112,6 +113,7 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
         QJsonObject settings = root["settings"].toObject();
         sceneManager->setGlobalAcceleration(JsonUtils::jsonToVec3(settings["gravity"].toArray()));
         sceneManager->setSimSpeed(settings["simSpeed"].toDouble());
+        sceneManager->setGravitationalConstant(settings["gravitationalConstant"].toDouble());
     }
 
     sceneManager->deleteAllObjects();

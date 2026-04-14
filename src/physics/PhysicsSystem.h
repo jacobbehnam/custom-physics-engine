@@ -14,8 +14,6 @@
 #include "solver/VectorRootSolver.h"
 
 namespace Physics {
-    inline float GRAVITATIONAL_CONST = Constants::G;
-
     class PhysicsSystem {
     public:
         explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
@@ -39,6 +37,8 @@ namespace Physics {
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration.store(newAcceleration); }
         float getSimSpeed() const { return simSpeed.load(); }
         void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
+        float getGravitationalConstant() const { return gravitationalConstant.load(); }
+        void setGravitationalConstant(float newG) { gravitationalConstant.store(newG); }
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
@@ -61,6 +61,7 @@ namespace Physics {
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};
+        std::atomic<float> gravitationalConstant{Constants::G};
         std::atomic<long long> stepCount{0};
         std::vector<PhysicsBody*> bodies;
 
