@@ -6,7 +6,7 @@ Vector3Widget::Vector3Widget(const QString& suffix, QWidget* parent) : QWidget(p
 
     auto setupSpin = [&](QDoubleSpinBox*& spin) {
         spin = new QDoubleSpinBox();
-        spin->setRange(-10000.0, 10000.0);
+        spin->setRange(-10000000.0, 10000000.0);
         spin->setDecimals(2);
         spin->setButtonSymbols(QAbstractSpinBox::NoButtons); // Clean look
         spin->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
