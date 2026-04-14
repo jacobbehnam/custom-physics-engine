@@ -18,7 +18,7 @@ namespace Physics {
 
     class PhysicsSystem {
     public:
-        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -Constants::EARTH_ACCELERATION, 0.0f));
+        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
         ~PhysicsSystem();
 
         // thread control
