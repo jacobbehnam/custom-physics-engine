@@ -14,7 +14,7 @@
 #include "solver/VectorRootSolver.h"
 
 namespace Physics {
-    inline float GRAVITATIONAL_CONST = Constants::G_SCALED;
+    inline float GRAVITATIONAL_CONST = Constants::G;
 
     class PhysicsSystem {
     public:
