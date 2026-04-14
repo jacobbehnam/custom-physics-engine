@@ -47,6 +47,10 @@ add_library(PhysicsCore STATIC
         src/physics/solver/VectorRootSolver.cpp
         src/physics/solver/ISolver.h
 
+        # Spatial
+        src/physics/spatial/Octree.h
+        src/physics/spatial/Octree.cpp
+
         # Dependencies
         src/math/MathUtils.h
         src/math/Ray.h
@@ -132,6 +136,11 @@ target_link_libraries(PhysicsEngine PRIVATE
         Qt6::OpenGLWidgets
         atomic
 )
+
+if (UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+    target_link_libraries(PhysicsEngine PRIVATE X11 Xi)
+endif()
 
 set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
 set(ASSETS_DEST "$<TARGET_FILE_DIR:PhysicsEngine>/assets")

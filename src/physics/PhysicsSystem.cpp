@@ -155,10 +155,17 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
 
 void Physics::PhysicsSystem::advancePhysics(float dt) {
     float targetTime = stepCount.load() * dt + dt; // the time we will be at after this step
+
+    PhysicsSystem::octree.build(bodies);
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
+
+        glm::vec3 nBodyGravity = PhysicsSystem::octree.computeForce(body);
+        glm::vec3 globalGravity = body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration();
+        glm::vec3 totalGravity = nBodyGravity + globalGravity;
+        
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
-        body->setForce("Gravity", body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration(), BodyLock::NOLOCK);
+        body->setForce("Gravity", totalGravity, BodyLock::NOLOCK);
 
         if (body->getIsStatic(BodyLock::NOLOCK))
             continue;

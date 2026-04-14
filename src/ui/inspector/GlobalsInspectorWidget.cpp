@@ -8,6 +8,7 @@
 
 #include "graphics/core/SceneManager.h"
 #include "graphics/core/SceneObject.h"
+#include "physics/Constants.h"
 #include "ui/ScalarWidget.h"
 #include "ui/Vector3Widget.h"
 
@@ -28,6 +29,26 @@ void GlobalsInspectorWidget::createUiComponents() {
             [this](glm::vec3 g) { sceneManager->setGlobalAcceleration(g); },
             "m/s²"
         );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+
+    {
+        InspectorRow row("Gravitational Constant", this);
+        row.addScalar(
+            []() { return Physics::GRAVITATIONAL_CONST; },
+            [](float g) { Physics::GRAVITATIONAL_CONST = g; },
+            "N·m²/kg²",
+            [](ScalarWidget* widget) {
+                widget->setDecimals(15);
+            }
+        ).addButton("Default scaled", [this]() {
+            Physics::GRAVITATIONAL_CONST = Constants::G_SCALED;
+            refresh();
+        }).addButton("Realism (reset)", [this]() {
+            Physics::GRAVITATIONAL_CONST = Constants::G;
+            refresh();
+        });
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
     }

@@ -1,4 +1,5 @@
 #pragma once
+#include <qpushbutton.h>
 #include <vector>
 #include <functional>
 #include <QWidget>
@@ -19,6 +20,7 @@ public:
     InspectorRow& addVec3(const std::function<glm::vec3()> &get, const std::function<void(glm::vec3)> &set, const QString& unit = "", const std::function<void(Vector3Widget*)> &onInit = nullptr);
     InspectorRow& addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit = "", const std::function<void(ScalarWidget*)> &onInit = nullptr);
     InspectorRow& addCheckbox(const std::function<bool()> &get, const std::function<void(bool)> &set, const std::function<void(QCheckBox*)> &onInit = nullptr);
+    InspectorRow& addButton(const QString& text, const std::function<void()> &onClick, const std::function<void(QPushButton*)> &onInit = nullptr);
 
     QString getLabel() const { return label; }
     QWidget* getEditor() const { return container; }

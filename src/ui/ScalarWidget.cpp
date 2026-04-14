@@ -5,7 +5,7 @@ ScalarWidget::ScalarWidget(const QString &suffix, QWidget *parent) {
     layout->setContentsMargins(0, 0, 0, 0);
 
     spin = new QDoubleSpinBox(this);
-    spin->setRange(-10000.0, 10000.0);
+    spin->setRange(-10000000.0, 10000000.0);
     spin->setDecimals(2);
     spin->setSuffix(suffix);
     spin->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -16,7 +16,7 @@ ScalarWidget::ScalarWidget(const QString &suffix, QWidget *parent) {
 }
 
 double ScalarWidget::getValue() const {
-    return spin->value();return spin->value();
+    return spin->value();
 }
 
 void ScalarWidget::setValue(double val) {
@@ -28,4 +28,8 @@ void ScalarWidget::setValue(double val) {
 
 void ScalarWidget::setRange(double min, double max) {
     spin->setRange(min, max);
+}
+
+void ScalarWidget::setDecimals(int decimals) {
+    spin->setDecimals(decimals);
 }

@@ -7,15 +7,18 @@
 #include <optional>
 
 #include "RigidBody.h"
+#include "physics/Constants.h"
 #include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
+#include "spatial/Octree.h"
 #include "solver/VectorRootSolver.h"
 
 namespace Physics {
+    inline float GRAVITATIONAL_CONST = Constants::G;
 
     class PhysicsSystem {
     public:
-        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -9.81f, 0.0f));
+        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
         ~PhysicsSystem();
 
         // thread control
@@ -53,6 +56,8 @@ namespace Physics {
         std::unique_ptr<ISolver> solver = nullptr;
         float solverTargetTime = 10.0f;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
+
+        Octree octree;
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};

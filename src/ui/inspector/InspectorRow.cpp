@@ -83,3 +83,17 @@ InspectorRow& InspectorRow::addCheckbox(const std::function<bool()> &get, const 
 
     return *this;
 }
+InspectorRow& InspectorRow::addButton(const QString& text, const std::function<void()> &onClick, const std::function<void(QPushButton*)> &onInit) {
+    QPushButton* btn = new QPushButton(text);
+    layout->addWidget(btn);
+
+    if (onInit) {
+        onInit(btn);
+    }
+
+    QObject::connect(btn, &QPushButton::clicked, [onClick](){
+        if (onClick) onClick();
+    });
+
+    return *this;
+}
