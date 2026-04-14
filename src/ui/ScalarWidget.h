@@ -13,6 +13,7 @@ public:
     void setValue(double val);
 
     void setRange(double min, double max);
+    void setDecimals(int decimals);
 signals:
     void valueChanged(double newValue);
 

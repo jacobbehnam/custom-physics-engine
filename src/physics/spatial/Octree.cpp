@@ -1,5 +1,6 @@
 #include "Octree.h"
 #include "physics/Constants.h"
+#include "physics/PhysicsSystem.h"
 #include <bit>
 #include <glm/gtx/component_wise.hpp>
 #include <cstdint>
@@ -132,7 +133,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body) {
             float invDist = 1.0f / sqrt(softeningDistSq);
             float invDist3 = invDist * invDist * invDist;
 
-            float force = (Constants::G * bodyMass * node.totalMass) * invDist3;
+            float force = (Physics::GRAVITATIONAL_CONST * bodyMass * node.totalMass) * invDist3;
             totalForce += force * dist;
         } else {
             float widthSq = node.halfSize * node.halfSize * 4.0f;
@@ -142,7 +143,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body) {
                 float invDist = 1.0f / sqrt(softeningDistSq);
                 float invDist3 = invDist * invDist * invDist;
 
-                float force = (Constants::G * bodyMass * node.totalMass) * invDist3;
+                float force = (Physics::GRAVITATIONAL_CONST * bodyMass * node.totalMass) * invDist3;
                 totalForce += force * dist;
             } else {
                 // Add valid children to stack

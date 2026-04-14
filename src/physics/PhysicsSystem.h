@@ -7,16 +7,18 @@
 #include <optional>
 
 #include "RigidBody.h"
+#include "physics/Constants.h"
 #include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
 #include "spatial/Octree.h"
 #include "solver/VectorRootSolver.h"
 
 namespace Physics {
+    inline float GRAVITATIONAL_CONST = Constants::G_SCALED;
 
     class PhysicsSystem {
     public:
-        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -9.81f, 0.0f));
+        explicit PhysicsSystem(const glm::vec3& globalAccel = glm::vec3(0.0f, -Constants::EARTH_ACCELERATION, 0.0f));
         ~PhysicsSystem();
 
         // thread control

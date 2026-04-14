@@ -29,3 +29,7 @@ void ScalarWidget::setValue(double val) {
 void ScalarWidget::setRange(double min, double max) {
     spin->setRange(min, max);
 }
+
+void ScalarWidget::setDecimals(int decimals) {
+    spin->setDecimals(decimals);
+}

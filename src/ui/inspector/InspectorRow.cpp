@@ -37,9 +37,10 @@ InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const
     return *this;
 }
 
-InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit) {
+InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit, int decimals) {
     auto* scalar = new ScalarWidget(" " + unit);
     scalar->setValue(get());
+    scalar->setDecimals(decimals);
     layout->addWidget(scalar);
 
     if (onInit) {
@@ -79,6 +80,20 @@ InspectorRow& InspectorRow::addCheckbox(const std::function<bool()> &get, const 
             const QSignalBlocker blocker(cb);
             cb->setChecked(val);
         }
+    });
+
+    return *this;
+}
+InspectorRow& InspectorRow::addButton(const QString& text, const std::function<void()> &onClick, const std::function<void(QPushButton*)> &onInit) {
+    QPushButton* btn = new QPushButton(text);
+    layout->addWidget(btn);
+
+    if (onInit) {
+        onInit(btn);
+    }
+
+    QObject::connect(btn, &QPushButton::clicked, [onClick](){
+        if (onClick) onClick();
     });
 
     return *this;
