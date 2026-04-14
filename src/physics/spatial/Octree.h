@@ -7,6 +7,10 @@
 
 struct NodeIndex {
     int val = -1;
+
+    bool isEmpty() const {
+        return val == -1;
+    }
 };
 
 struct Octant {
@@ -21,6 +25,7 @@ struct OctreeNode {
     glm::vec3 center;
     float halfSize;
     NodeIndex children[8];
+    uint8_t childMask = 0; // Bitmask to track which children exist
 
     // Leaf nodes only
     Physics::PhysicsBody* body = nullptr;
@@ -30,7 +35,11 @@ struct OctreeNode {
     float totalMass = 0.0f;
 
     bool isLeaf() const {
-        return body != nullptr;
+        return childMask == 0;
+    }
+
+    static NodeIndex rootIndex() {
+        return NodeIndex{0};
     }
 };
 

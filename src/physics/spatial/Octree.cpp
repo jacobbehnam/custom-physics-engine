@@ -24,54 +24,57 @@ NodeIndex Octree::allocateNode(const glm::vec3& center, float halfSize) {
 }
 
 void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
-    OctreeNode& node        = nodes[nodeIndex.val];
-    glm::vec3 nodeCenter    = node.center;
+    OctreeNode* node        = &nodes[nodeIndex.val];
+    glm::vec3 nodeCenter    = node->center;
     glm::vec3 bodyPos       = body->getPosition(BodyLock::NOLOCK);
     float bodyMass          = body->getMass(BodyLock::NOLOCK);
+    float childHalfSize     = node->halfSize * 0.5f;
 
     // Node is empty, put the body here
-    if (node.body == nullptr && node.totalMass == 0.0f) {
-        node.body       = body;
-        node.massCenter = bodyPos;
-        node.totalMass  = bodyMass;
+    if (node->body == nullptr && node->totalMass == 0.0f) {
+        node->body       = body;
+        node->massCenter = bodyPos;
+        node->totalMass  = bodyMass;
         return;
     }
 
     // Since this node now contains this body, update
-    float newMass   = node.totalMass + bodyMass;
-    node.massCenter = (
-        node.massCenter * node.totalMass + 
+    float newMass   = node->totalMass + bodyMass;
+    node->massCenter = (
+        node->massCenter * node->totalMass + 
         bodyPos         * bodyMass
     ) / newMass;
-    node.totalMass  = newMass;
+    node->totalMass  = newMass;
 
-    // Leaf already has a body, has to push it down
-    if (node.body != nullptr) {
-        Physics::PhysicsBody* existingBody = node.body;
+    Physics::PhysicsBody* existingBody = node->body;
 
-        // Clear first
-        node.body = nullptr;
+    auto insertBody = [&](Physics::PhysicsBody* b) {
+        glm::vec3 bPos = b->getPosition(BodyLock::NOLOCK);
+        Octant bOct = Octree::getOctant(nodeIndex, bPos);
 
-        // Allocate children
-        float childHalfSize = node.halfSize * 0.5f;
-        for (uint8_t oct = 0; oct < 8; ++oct) {
+        // Could change due to vector resize during recursion 
+        node = &nodes[nodeIndex.val];
+        if (node->children[bOct.val].isEmpty()) {
             glm::vec3 childCenter = nodeCenter + childHalfSize * glm::vec3(
-                (oct & Octant::X_MASK) ? 1.0f : -1.0f,
-                (oct & Octant::Y_MASK) ? 1.0f : -1.0f,
-                (oct & Octant::Z_MASK) ? 1.0f : -1.0f
+                (bOct.val & Octant::X_MASK) ? 1.0f : -1.0f,
+                (bOct.val & Octant::Y_MASK) ? 1.0f : -1.0f,
+                (bOct.val & Octant::Z_MASK) ? 1.0f : -1.0f
             );
-
-            node.children[oct] = allocateNode(childCenter, childHalfSize);
+            NodeIndex childNode = allocateNode(childCenter, childHalfSize);
+            node = &nodes[nodeIndex.val]; // Refresh reference after potential vector resize
+            node->children[bOct.val] = childNode;
+            node->childMask |= (1 << bOct.val);
         }
+        insert(node->children[bOct.val], b);
+    };
 
-        // Push it down
-        Octant existingOctant = getOctant(nodeIndex, existingBody->getPosition(BodyLock::NOLOCK));
-        insert(node.children[existingOctant.val], existingBody);
+    if (existingBody != nullptr) {
+        // Clear and Push the existing body down the tree
+        node->body = nullptr;
+        insertBody(existingBody);
     }
-
-    // Insert body into tree
-    Octant octant = Octree::getOctant(nodeIndex, bodyPos);
-    insert(node.children[octant.val], body);
+    // Insert the new body
+    insertBody(body);
 }
 
 void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
@@ -95,5 +98,28 @@ void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
 
     for (const auto& body : bodies) {
         insert(root, body);
+    }
+}
+
+glm::vec3 Octree::computeForce(Physics::PhysicsBody* body) {
+    if (nodes.empty() || body == nullptr) {
+        return glm::vec3(0.0f);
+    }
+
+    // Max depth of 64, thats already
+    NodeIndex stack[64]; 
+    int stackPtr = 0;
+    stack[stackPtr++] = OctreeNode::rootIndex();
+
+    while (stackPtr > 0) {
+        NodeIndex currentIdx = stack[--stackPtr];
+        const OctreeNode& node = nodes[currentIdx.val];
+
+        // Empty region
+        if (node.totalMass == 0.0f) continue;
+        
+        glm::vec3 dist = node.massCenter - body->getPosition(BodyLock::NOLOCK);
+        float distSq = glm::dot(dist, dist);
+        float widthSq = node.halfSize * node.halfSize * 4.0f;
     }
 }
