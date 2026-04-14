@@ -6,6 +6,7 @@ var classSceneObject =
     [ "getCreationOptions", "classSceneObject.html#a2ed12216f0ee45423035ddfdb0c9044b", null ],
     [ "getHovered", "classSceneObject.html#afa640b48a9b4dfa9078d632506bab308", null ],
     [ "getMesh", "classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e", null ],
+    [ "getMeshName", "classSceneObject.html#a67fffede336f82183a5b5d2c9d6c8239", null ],
     [ "getName", "classSceneObject.html#abebc043e3253d66da477f862a950775d", null ],
     [ "getObjectID", "classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8", null ],
     [ "getPhysicsBody", "classSceneObject.html#ab3595ced6ccce80d1e864bbf28e1988a", null ],

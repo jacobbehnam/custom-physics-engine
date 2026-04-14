@@ -78,9 +78,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"UniformBuffer_8h.html",
+"UniformBuffer_8h_source.html",
 "classPhysics_1_1PhysicsBody.html#a2d5ddf4c1593c1f510e5c53c5cff57c2",
-"classSceneObject.html#a65d990f152f55417e054550d05fd54dc"
+"classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

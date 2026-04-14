@@ -283,9 +283,9 @@ $(document).ready(function(){initNavTree('PhysicsSystem_8cpp_source.html',''); i
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> body : bodies) {</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        std::unique_lock&lt;std::mutex&gt; guard = body-&gt;lockState();</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        glm::vec3 nBodyGravity = PhysicsSystem::octree.computeForce(body);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        glm::vec3 globalGravity = body-&gt;getMass(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>) * getGlobalAcceleration();</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        glm::vec3 totalGravity = nBodyGravity + globalGravity;</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        glm::vec3 totalGravity  = nBodyGravity + globalGravity;</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        </div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        body-&gt;setForce(<span class="stringliteral">&quot;Normal&quot;</span>, glm::vec3(0.0f), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        body-&gt;setForce(<span class="stringliteral">&quot;Gravity&quot;</span>, totalGravity, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>

@@ -138,6 +138,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a25719bf1b0c73ab9c5ad43e940d9921d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97664c9cb1c110ebc9556faa3f0d5992" id="r_a97664c9cb1c110ebc9556faa3f0d5992"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsSystem.html#a97664c9cb1c110ebc9556faa3f0d5992">setSimSpeed</a> (float newSpeed)</td></tr>
 <tr class="separator:a97664c9cb1c110ebc9556faa3f0d5992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57fc8e7d65471080988cbb5be7b76f27" id="r_a57fc8e7d65471080988cbb5be7b76f27"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsSystem.html#a57fc8e7d65471080988cbb5be7b76f27">getGravitationalConstant</a> () const</td></tr>
+<tr class="separator:a57fc8e7d65471080988cbb5be7b76f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76107071237fe8941f8ca9609f3f4926" id="r_a76107071237fe8941f8ca9609f3f4926"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsSystem.html#a76107071237fe8941f8ca9609f3f4926">setGravitationalConstant</a> (float newG)</td></tr>
+<tr class="separator:a76107071237fe8941f8ca9609f3f4926"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0925c56ed3f32dac7734bb55b54de818" id="r_a0925c56ed3f32dac7734bb55b54de818"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsSystem.html#a0925c56ed3f32dac7734bb55b54de818">fetchLatestSnapshot</a> (float renderSimTime)</td></tr>
 <tr class="separator:a0925c56ed3f32dac7734bb55b54de818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9ac1b7d19dcf0068c0d68f7addf2b4f" id="r_aa9ac1b7d19dcf0068c0d68f7addf2b4f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classProblemRouter.html">ProblemRouter</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsSystem.html#aa9ac1b7d19dcf0068c0d68f7addf2b4f">getRouter</a> () const</td></tr>
@@ -154,7 +158,7 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00019">19</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00017">17</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aefa23e1450e80dfd4847516e6d38fae3" name="aefa23e1450e80dfd4847516e6d38fae3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aefa23e1450e80dfd4847516e6d38fae3">&#9670;&#160;</a></span>PhysicsSystem()</h2>
@@ -340,12 +344,39 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00038">38</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00036">36</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1PhysicsSystem_a5d87e4fa68709f538fb3ff8425cf6e1d_icgraph.svg" width="291" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
+
+</div>
+</div>
+<a id="a57fc8e7d65471080988cbb5be7b76f27" name="a57fc8e7d65471080988cbb5be7b76f27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57fc8e7d65471080988cbb5be7b76f27">&#9670;&#160;</a></span>getGravitationalConstant()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Physics::PhysicsSystem::getGravitationalConstant </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00040">40</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 
 </div>
 </div>
@@ -399,7 +430,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00040">40</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00038">38</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -476,12 +507,40 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00039">39</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00037">37</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1PhysicsSystem_a0dde017f73c1604ba8c9fc7d2966c92a_icgraph.svg" width="291" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
+
+</div>
+</div>
+<a id="a76107071237fe8941f8ca9609f3f4926" name="a76107071237fe8941f8ca9609f3f4926"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76107071237fe8941f8ca9609f3f4926">&#9670;&#160;</a></span>setGravitationalConstant()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Physics::PhysicsSystem::setGravitationalConstant </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>newG</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00041">41</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 
 </div>
 </div>
@@ -509,7 +568,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00041">41</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsSystem_8h_source.html#l00039">39</a> of file <a class="el" href="PhysicsSystem_8h_source.html">PhysicsSystem.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
