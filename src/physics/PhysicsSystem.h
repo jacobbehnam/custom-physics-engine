@@ -9,6 +9,7 @@
 #include "RigidBody.h"
 #include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
+#include "spatial/Octree.h"
 #include "solver/VectorRootSolver.h"
 
 namespace Physics {
@@ -53,6 +54,8 @@ namespace Physics {
         std::unique_ptr<ISolver> solver = nullptr;
         float solverTargetTime = 10.0f;
         std::unordered_map<PhysicsBody*, ObjectSnapshot> resetState{};
+
+        Octree octree;
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};
