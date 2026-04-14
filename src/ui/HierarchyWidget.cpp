@@ -163,3 +163,18 @@ SceneObject *HierarchyWidget::getObjectFromItem(QTreeWidgetItem *item) {
     QVariant var = item->data(0, Qt::UserRole);
     return static_cast<SceneObject*>(var.value<void*>());
 }
+
+void HierarchyWidget::keyPressEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+        deleteSelected();
+    }
+    QWidget::keyPressEvent(event);
+}
+
+void HierarchyWidget::deleteSelected() {
+    if (QTreeWidgetItem* item = tree->currentItem()) {
+        if (SceneObject* obj = getObjectFromItem(item)) {
+            emit deleteObjectRequested(obj);
+        }
+    }
+}

@@ -296,13 +296,14 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     if (heldKeys.contains(Qt::Key_S))
         camera->processKeyboard(Movement::BACKWARD, dt);
 
+    // TODO: Z,X,P,O should be processed by press once
+    // It currently triggers every frame (caused bugs)
     if (heldKeys.contains(Qt::Key_Z)) {
         physicsSystem->enablePhysics();
     }
     if (heldKeys.contains(Qt::Key_X)) {
         physicsSystem->disablePhysics();
     }
-
     if (heldKeys.contains(Qt::Key_P)) {
         if (saveScene("scene.json"))
             std::cout << "Save Success!" << std::endl;

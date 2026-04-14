@@ -72,6 +72,9 @@ void MainWindow::setupDockWidgets() {
 
         sceneManager->setObjectName(obj, finalName);
     });
+    connect(hierarchy, &HierarchyWidget::deleteObjectRequested, this, [this](SceneObject* obj) {
+        sceneManager->deleteObject(obj);
+    });
     connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
     connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(); });
     connect(sceneManager, &SceneManager::objectRenamed, this, [=](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });

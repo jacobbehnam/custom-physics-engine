@@ -11,12 +11,14 @@ public:
     explicit HierarchyWidget(QWidget* parent = nullptr);
     void addObject(SceneObject* obj);
     void removeObject(SceneObject* obj);
+    void deleteSelected();
     //SceneObject* getSelectedObject() const;
 
 signals:
     void selectionChanged(SceneObject* previous, SceneObject* current);
     void createObjectRequested(const CreationOptions& options);
     void renameObjectRequested(SceneObject* obj, const QString& newName);
+    void deleteObjectRequested(SceneObject* obj);
 
 public slots:
     void onItemNameChanged(QTreeWidgetItem* item, int column);
@@ -32,4 +34,7 @@ private:
 
     static SceneObject* getObjectFromItem(QTreeWidgetItem* item);
     QString typeFor(SceneObject* obj);
+
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
 };
