@@ -39,14 +39,13 @@ void GlobalsInspectorWidget::createUiComponents() {
             []() { return Physics::GRAVITATIONAL_CONST; },
             [](float g) { Physics::GRAVITATIONAL_CONST = g; },
             "N·m²/kg²",
-            nullptr,
-            15
-        );
-        row.addButton("Default scaled", [this]() {
+            [](ScalarWidget* widget) {
+                widget->setDecimals(15);
+            }
+        ).addButton("Default scaled", [this]() {
             Physics::GRAVITATIONAL_CONST = Constants::G_SCALED;
             refresh();
-        });
-        row.addButton("Realism (reset)", [this]() {
+        }).addButton("Realism (reset)", [this]() {
             Physics::GRAVITATIONAL_CONST = Constants::G;
             refresh();
         });

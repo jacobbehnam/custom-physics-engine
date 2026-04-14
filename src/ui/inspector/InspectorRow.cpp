@@ -37,10 +37,9 @@ InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const
     return *this;
 }
 
-InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit, int decimals) {
+InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit) {
     auto* scalar = new ScalarWidget(" " + unit);
     scalar->setValue(get());
-    scalar->setDecimals(decimals);
     layout->addWidget(scalar);
 
     if (onInit) {
