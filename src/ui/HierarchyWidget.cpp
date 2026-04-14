@@ -65,6 +65,13 @@ HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
 void HierarchyWidget::showContextMenu(const QPoint& pos) {
     QMenu contextMenu(this);
 
+    QAction* unselectAction = contextMenu.addAction("Deselect All");
+    connect(unselectAction, &QAction::triggered, [this]() {
+        tree->setCurrentItem(nullptr);
+        tree->clearSelection();
+    });
+    contextMenu.addSeparator();
+
     QAction* addPmAction = contextMenu.addAction("Add Point Mass");
 
     // connect(addPmAction, &QAction::triggered, [this]() {
