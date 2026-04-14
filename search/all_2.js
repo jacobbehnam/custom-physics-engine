@@ -7,7 +7,7 @@ var searchData=
   ['bind_4',['bind',['../classUniformBuffer.html#a44cb72507959b1ba40651b31468a32ab',1,'UniformBuffer']]],
   ['body_5',['body',['../PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308',1,'ObjectSnapshot::body'],['../structOctreeNode.html#a0554b7c130f254bb8dd128c0ba0671eb',1,'OctreeNode::body']]],
   ['bodylock_6',['BodyLock',['../PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2',1,'PhysicsBody.h']]],
-  ['box_7',['Box',['../structRigidBodyOptions.html#a8a6ec7f2434036026c0f7dccf9082738',1,'RigidBodyOptions']]],
+  ['box_7',['Box',['../structRigidBodyOptions.html#a6cf379ca7435acbcab6561601a2ab331',1,'RigidBodyOptions']]],
   ['boxcollider_8',['boxcollider',['../classPhysics_1_1Bounding_1_1BoxCollider.html',1,'Physics::Bounding::BoxCollider'],['../classPhysics_1_1Bounding_1_1BoxCollider.html#a3917a2a259443fa045bc8de31cec95ea',1,'Physics::Bounding::BoxCollider::BoxCollider()=default'],['../classPhysics_1_1Bounding_1_1BoxCollider.html#a4bf5c17099b952e44f928ae8bf8f66eb',1,'Physics::Bounding::BoxCollider::BoxCollider(const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents, const glm::quat &amp;rotation)']]],
   ['boxcollider_2ecpp_9',['BoxCollider.cpp',['../BoxCollider_8cpp.html',1,'']]],
   ['boxcollider_2eh_10',['BoxCollider.h',['../BoxCollider_8h.html',1,'']]],

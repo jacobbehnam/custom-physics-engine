@@ -113,8 +113,8 @@ Collaboration diagram for RigidBodyOptions:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a8a6ec7f2434036026c0f7dccf9082738" id="r_a8a6ec7f2434036026c0f7dccf9082738"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structRigidBodyOptions.html">RigidBodyOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRigidBodyOptions.html#a8a6ec7f2434036026c0f7dccf9082738">Box</a> (<a class="el" href="SceneObjectOptions_8h.html#structObjectOptions">ObjectOptions</a> <a class="el" href="structRigidBodyOptions.html#a445d5b27547afb87e078f5591f1f02bc">base</a>, bool <a class="el" href="structRigidBodyOptions.html#a0743907d6f1c419c692530086a199ffb">isStatic</a>=false, float <a class="el" href="structRigidBodyOptions.html#a1879b6ce3726a5ebb1ebc99140ee531b">mass</a>=1.0f)</td></tr>
-<tr class="separator:a8a6ec7f2434036026c0f7dccf9082738"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf379ca7435acbcab6561601a2ab331" id="r_a6cf379ca7435acbcab6561601a2ab331"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structRigidBodyOptions.html">RigidBodyOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRigidBodyOptions.html#a6cf379ca7435acbcab6561601a2ab331">Box</a> (<a class="el" href="SceneObjectOptions_8h.html#structObjectOptions">ObjectOptions</a> <a class="el" href="structRigidBodyOptions.html#a445d5b27547afb87e078f5591f1f02bc">base</a>, bool <a class="el" href="structRigidBodyOptions.html#a0743907d6f1c419c692530086a199ffb">isStatic</a>=false, float <a class="el" href="structRigidBodyOptions.html#a1879b6ce3726a5ebb1ebc99140ee531b">mass</a>=1.0f, glm::vec3 <a class="el" href="structRigidBodyOptions.html#ae4b6c4c54801d4923c75f66aed502027">velocity</a>=glm::vec3(0.0f))</td></tr>
+<tr class="separator:a6cf379ca7435acbcab6561601a2ab331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -126,13 +126,15 @@ Data Fields</h2></td></tr>
 <tr class="separator:a0743907d6f1c419c692530086a199ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1879b6ce3726a5ebb1ebc99140ee531b" id="r_a1879b6ce3726a5ebb1ebc99140ee531b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRigidBodyOptions.html#a1879b6ce3726a5ebb1ebc99140ee531b">mass</a> = 1.0f</td></tr>
 <tr class="separator:a1879b6ce3726a5ebb1ebc99140ee531b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4b6c4c54801d4923c75f66aed502027" id="r_ae4b6c4c54801d4923c75f66aed502027"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRigidBodyOptions.html#ae4b6c4c54801d4923c75f66aed502027">velocity</a> = glm::vec3(0.0f)</td></tr>
+<tr class="separator:ae4b6c4c54801d4923c75f66aed502027"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00024">24</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00025">25</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8a6ec7f2434036026c0f7dccf9082738" name="a8a6ec7f2434036026c0f7dccf9082738"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a6ec7f2434036026c0f7dccf9082738">&#9670;&#160;</a></span>Box()</h2>
+<a id="a6cf379ca7435acbcab6561601a2ab331" name="a6cf379ca7435acbcab6561601a2ab331"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cf379ca7435acbcab6561601a2ab331">&#9670;&#160;</a></span>Box()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,7 +158,13 @@ Data Fields</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>mass</em> = <code>1.0f</code>&#160;</td>
+          <td class="paramname"><em>mass</em> = <code>1.0f</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">glm::vec3&#160;</td>
+          <td class="paramname"><em>velocity</em> = <code>glm::vec3(0.0f)</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -171,11 +179,11 @@ Data Fields</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00031">31</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00033">33</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structRigidBodyOptions_a8a6ec7f2434036026c0f7dccf9082738_icgraph.svg" width="100%" height="413"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structRigidBodyOptions_a6cf379ca7435acbcab6561601a2ab331_icgraph.svg" width="100%" height="413"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -193,7 +201,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00025">25</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00026">26</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 
 </div>
 </div>
@@ -209,7 +217,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00026">26</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00027">27</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +233,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00027">27</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00028">28</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 
 </div>
 </div>
@@ -241,7 +249,23 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00028">28</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00029">29</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
+
+</div>
+</div>
+<a id="ae4b6c4c54801d4923c75f66aed502027" name="ae4b6c4c54801d4923c75f66aed502027"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4b6c4c54801d4923c75f66aed502027">&#9670;&#160;</a></span>velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 RigidBodyOptions::velocity = glm::vec3(0.0f)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneObjectOptions_8h_source.html#l00030">30</a> of file <a class="el" href="SceneObjectOptions_8h_source.html">SceneObjectOptions.h</a>.</p>
 
 </div>
 </div>
