@@ -43,6 +43,7 @@ public:
     Mesh* getMesh() const override { return mesh; }
     uint32_t getObjectID() const override;
     const std::string& getName() const { return objectName; }
+    const std::string& getMeshName() const { return meshName; }
     void setName(std::string name) { objectName = std::move(name); }
     CreationOptions getCreationOptions() const { return creationOptions; }
 
@@ -59,6 +60,7 @@ private:
 
     QObject* parent;
     Mesh* mesh;
+    std::string meshName;
     Shader* shader;
     Scene* ownerScene;
     SceneManager* sceneManager;

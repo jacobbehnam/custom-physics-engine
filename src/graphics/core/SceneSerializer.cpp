@@ -48,7 +48,7 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     for (auto* obj : sceneManager->getObjects()) {
         QJsonObject objJson;
         objJson["id"] = static_cast<double>(obj->getObjectID());
-        //objJson["meshName"] = obj->getMeshName().c_str();
+        objJson["meshName"] = QString::fromStdString(obj->getMeshName());
 
         QJsonObject optionsJson;
         std::visit([&](auto&& opt){
@@ -147,11 +147,11 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
                     options = pointOpt;
                 }
                 else if (type == "RigidBodyOptions") {
-                    RigidBodyOptions rigidOpt;
-                    rigidOpt.base = base;
-                    rigidOpt.isStatic = data["isStatic"].toBool();
-                    rigidOpt.mass = data["mass"].toDouble();
-                    options = rigidOpt;
+                    options = RigidBodyOptions::Box(
+                        base, 
+                        data["isStatic"].toBool(),
+                        data["mass"].toDouble()
+                    );
                 }
                 else {
                     options = base;
