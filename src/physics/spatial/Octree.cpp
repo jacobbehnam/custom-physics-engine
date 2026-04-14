@@ -1,6 +1,6 @@
 #include "Octree.h"
-#include "glm/glm.hpp"
-#include "algorithm"
+#include "physics/Constants.h"
+#include <bit>
 #include <glm/gtx/component_wise.hpp>
 #include <cstdint>
 
@@ -39,12 +39,12 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     }
 
     // Since this node now contains this body, update
-    float newMass   = node->totalMass + bodyMass;
-    node->massCenter = (
-        node->massCenter * node->totalMass + 
-        bodyPos         * bodyMass
+    float newMass       = node->totalMass + bodyMass;
+    node->massCenter    = (
+        node->massCenter    * node->totalMass + 
+        bodyPos             * bodyMass
     ) / newMass;
-    node->totalMass  = newMass;
+    node->totalMass     = newMass;
 
     Physics::PhysicsBody* existingBody = node->body;
 
@@ -106,6 +106,10 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body) {
         return glm::vec3(0.0f);
     }
 
+    glm::vec3 totalForce(0.0f);
+    glm::vec3 bodyPos   = body->getPosition(BodyLock::NOLOCK);
+    float bodyMass      = body->getMass(BodyLock::NOLOCK);
+
     // Max depth of 64, thats already
     NodeIndex stack[64]; 
     int stackPtr = 0;
@@ -120,6 +124,37 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body) {
         
         glm::vec3 dist = node.massCenter - body->getPosition(BodyLock::NOLOCK);
         float distSq = glm::dot(dist, dist);
-        float widthSq = node.halfSize * node.halfSize * 4.0f;
+        float softeningDistSq = distSq + Constants::SOFTENING_SQ;
+
+        if (node.isLeaf()) {
+            if (node.body == body) continue; // Skip self
+
+            float invDist = 1.0f / sqrt(softeningDistSq);
+            float invDist3 = invDist * invDist * invDist;
+
+            float force = (Constants::G * bodyMass * node.totalMass) * invDist3;
+            totalForce += force * dist;
+        } else {
+            float widthSq = node.halfSize * node.halfSize * 4.0f;
+
+            if (widthSq < Constants::THETA_SQ * distSq) {
+                // Treat as a single body
+                float invDist = 1.0f / sqrt(softeningDistSq);
+                float invDist3 = invDist * invDist * invDist;
+
+                float force = (Constants::G * bodyMass * node.totalMass) * invDist3;
+                totalForce += force * dist;
+            } else {
+                // Add valid children to stack
+                std::uint8_t childMask = node.childMask;
+                while (childMask) {
+                    int childOctant = std::countr_zero(childMask);
+                    stack[stackPtr++] = node.children[childOctant];
+                    childMask &= (childMask - 1);
+                }
+            }
+            
+        }
     }
+    return totalForce;
 }
