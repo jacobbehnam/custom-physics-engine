@@ -1,0 +1,146 @@
+{
+    "engineVersion": "1.0.0",
+    "objects": [
+        {
+            "id": 0,
+            "meshName": "prim_sphere",
+            "name": "Sun",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 10000,
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        10,
+                        10,
+                        10
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        },
+        {
+            "id": 1,
+            "meshName": "prim_sphere",
+            "name": "Earth",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 10,
+                    "position": [
+                        50,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        2,
+                        2,
+                        2
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        36.53499984741211
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        },
+        {
+            "id": 2,
+            "meshName": "prim_sphere",
+            "name": "Moon",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 0.10000000149011612,
+                    "position": [
+                        52,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        0.800000011920929,
+                        0.800000011920929,
+                        0.800000011920929
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        42.31100082397461
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        },
+        {
+            "id": 3,
+            "meshName": "prim_sphere",
+            "name": "Mars",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 5,
+                    "position": [
+                        80,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        1.5,
+                        1.5,
+                        1.5
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        28.884000778198242
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        }
+    ],
+    "settings": {
+        "gravitationalConstant": 6.674300193786621,
+        "gravity": [
+            0,
+            0,
+            0
+        ],
+        "simSpeed": 0.5
+    }
+}

@@ -1,0 +1,113 @@
+{
+    "engineVersion": "1.0.0",
+    "objects": [
+        {
+            "id": 0,
+            "meshName": "prim_sphere",
+            "name": "Ball",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 1,
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "velocity": [
+                        0,
+                        15,
+                        0
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        },
+        {
+            "id": 1,
+            "meshName": "prim_cube",
+            "name": "Ground",
+            "options": {
+                "data": {
+                    "isStatic": true,
+                    "mass": 1,
+                    "position": [
+                        0,
+                        -0.5,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        2000,
+                        1,
+                        300000
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "type": "RigidBodyOptions"
+            },
+            "shader": "checkerboard"
+        },
+        {
+            "id": 2,
+            "meshName": "prim_sphere",
+            "name": "Keys",
+            "options": {
+                "data": {
+                    "isStatic": false,
+                    "mass": 1,
+                    "position": [
+                        0,
+                        20,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "velocity": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "type": "PointMassOptions"
+            },
+            "shader": "basic"
+        }
+    ],
+    "settings": {
+        "gravitationalConstant": 6.674300001563438e-11,
+        "gravity": [
+            0,
+            -9.8100004196167,
+            0
+        ],
+        "simSpeed": 1
+    }
+}
