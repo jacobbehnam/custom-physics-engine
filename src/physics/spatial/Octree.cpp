@@ -111,13 +111,15 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
     glm::vec3 bodyPos   = body->getPosition(BodyLock::NOLOCK);
     float bodyMass      = body->getMass(BodyLock::NOLOCK);
 
-    // Max depth of 64, thats already
-    NodeIndex stack[64]; 
-    int stackPtr = 0;
-    stack[stackPtr++] = OctreeNode::rootIndex();
+    // Use vector incase overflow
+    // I was planning for 512 elements but not sure
+    std::vector<NodeIndex> stack;
+    stack.reserve(512);
+    stack.push_back(OctreeNode::rootIndex());
 
-    while (stackPtr > 0) {
-        NodeIndex currentIdx = stack[--stackPtr];
+    while (!stack.empty()) {
+        NodeIndex currentIdx = stack.back();
+        stack.pop_back();
         const OctreeNode& node = nodes[currentIdx.val];
 
         // Empty region
@@ -126,8 +128,10 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
         glm::vec3 dist = node.massCenter - body->getPosition(BodyLock::NOLOCK);
         float distSq = glm::dot(dist, dist);
         float softeningDistSq = distSq + Constants::SOFTENING_SQ;
+        float widthSq = node.halfSize * node.halfSize * 4.0f;
 
-        if (node.isLeaf()) {
+        // Only single body or sufficiently far away, treat as point mass
+        if (node.isLeaf() || widthSq < Constants::THETA_SQ * distSq) {
             if (node.body == body) continue; // Skip self
 
             float invDist = 1.0f / sqrt(softeningDistSq);
@@ -136,25 +140,13 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
             float force = (G * bodyMass * node.totalMass) * invDist3;
             totalForce += force * dist;
         } else {
-            float widthSq = node.halfSize * node.halfSize * 4.0f;
-
-            if (widthSq < Constants::THETA_SQ * distSq) {
-                // Treat as a single body
-                float invDist = 1.0f / sqrt(softeningDistSq);
-                float invDist3 = invDist * invDist * invDist;
-
-                float force = (G * bodyMass * node.totalMass) * invDist3;
-                totalForce += force * dist;
-            } else {
-                // Add valid children to stack
-                std::uint8_t childMask = node.childMask;
-                while (childMask) {
-                    int childOctant = std::countr_zero(childMask);
-                    stack[stackPtr++] = node.children[childOctant];
-                    childMask &= (childMask - 1);
-                }
+            // Add valid children to stack
+            std::uint8_t childMask = node.childMask;
+            while (childMask) {
+                int childOctant = std::countr_zero(childMask);
+                stack.push_back(node.children[childOctant]);
+                childMask &= (childMask - 1);
             }
-            
         }
     }
     return totalForce;
