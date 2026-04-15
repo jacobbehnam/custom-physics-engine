@@ -29,11 +29,16 @@ void Physics::PhysicsBody::setForce(const std::string &name, const glm::vec3 &fo
 
     forces[name] = force;
     // Recalculate net force
-    glm::vec3 tempNetForce(0.0f);
-    for (const auto& [name, vec] : forces) {
-        tempNetForce += vec;
+    auto it = forces.find(name);
+    if (it != forces.end()) {
+        // Its old value we remove it
+        netForce -= it->second;
+        it->second = force;
+    } else {
+        forces[name] = force;
     }
-    netForce = tempNetForce;
+    // Just add new force
+    netForce += force;
 }
 
 glm::vec3 Physics::PhysicsBody::getForce(const std::string &name, BodyLock lock) const {
