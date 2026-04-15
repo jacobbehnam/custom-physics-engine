@@ -81,6 +81,7 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
 void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
     Octree::clear();
     if (bodies.empty()) return;
+    nodes.reserve(bodies.size() * 2);
 
     // Find the center
     glm::vec3 min = bodies[0]->getPosition(BodyLock::NOLOCK);

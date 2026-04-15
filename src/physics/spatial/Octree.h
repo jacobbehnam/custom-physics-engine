@@ -1,17 +1,10 @@
 #pragma once
 
 #include "../PhysicsBody.h"
+#include "NodeIndex.h"
 #include <glm/glm.hpp>
 #include <vector>
 #include <cstdint>
-
-struct NodeIndex {
-    int val = -1;
-
-    bool isEmpty() const {
-        return val == -1;
-    }
-};
 
 struct Octant {
     std::uint8_t val; // 0-7 representing the octant
