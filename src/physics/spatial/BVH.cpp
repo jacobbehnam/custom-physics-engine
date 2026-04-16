@@ -1,4 +1,5 @@
 #include "BVH.h"
+#include <algorithm>
 
 void BVH::clear() {
     nodes.clear();
@@ -9,17 +10,18 @@ NodeIndex BVH::allocateNode() {
     return NodeIndex{static_cast<int>(nodes.size() - 1)};
 }
 
-void BVH::build(const std::vector<Physics::PhysicsBody*> bodies) {
+void BVH::build(std::vector<Physics::PhysicsBody*> bodies) {
     BVH::clear();
     if (bodies.empty()) return;
     nodes.reserve(bodies.size() * 2);
     build(bodies, NodeIndex{0}, NodeIndex{static_cast<int>(bodies.size())});
 }
 
-NodeIndex BVH::build(const std::vector<Physics::PhysicsBody*>& bodies, NodeIndex start, NodeIndex end) {
+NodeIndex BVH::build(std::vector<Physics::PhysicsBody*>& bodies, NodeIndex start, NodeIndex end) {
     NodeIndex nodeIdx = allocateNode();
     BVHNode& node = nodes[nodeIdx.val];
     
+    // Base case, leaf node has a body and its own bounds
     if (end.val - start.val == 1) {
         Physics::PhysicsBody* body              = bodies[start.val];
         glm::vec3 pos                           = body->getPosition(BodyLock::NOLOCK);
@@ -39,7 +41,45 @@ NodeIndex BVH::build(const std::vector<Physics::PhysicsBody*>& bodies, NodeIndex
 
         return nodeIdx;
     }
-    return NodeIndex{0}; //TODO
+
+    glm::vec3 centroidMin = bodies[start.val]->getPosition(BodyLock::NOLOCK);
+    glm::vec3 centroidMax = bodies[start.val]->getPosition(BodyLock::NOLOCK);
+    for (int i = start.val + 1; i < end.val; i++) {
+        glm::vec3 pos = bodies[i]->getPosition(BodyLock::NOLOCK);
+        centroidMin = glm::min(centroidMin, pos);
+        centroidMax = glm::max(centroidMax, pos);
+    }
+
+    // Choose the most spread axis to split on
+    glm::vec3 extent = centroidMax - centroidMin;
+    Axis splitAxis = Axis::X;
+    if (extent.y > extent.x) splitAxis = Axis::Y;
+    if (extent.z > extent[splitAxis]) splitAxis = Axis::Z;
+
+    // split into 2 group and recurse
+    int mid = start.val + (end.val - start.val) / 2; // avoid overflow
+    std::nth_element(
+        bodies.begin() + start.val,
+        bodies.begin() + mid,
+        bodies.begin() + end.val,
+        [splitAxis](Physics::PhysicsBody* a, Physics::PhysicsBody* b) {
+            return a->getPosition(BodyLock::NOLOCK)[splitAxis] < 
+                    b->getPosition(BodyLock::NOLOCK)[splitAxis];
+        }
+    );
+    NodeIndex leftIdx = build(bodies, start, NodeIndex{mid});
+    NodeIndex rightIdx = build(bodies, NodeIndex{mid}, end);
+    Physics::Bounding::AABB mergedBound = nodes[leftIdx.val].bounds;
+    mergedBound.expand(nodes[rightIdx.val].bounds);
+
+    // Update internal node bounds according to the children
+    node        = nodes[nodeIdx.val]; // Refresh reference after potential vector resize
+    node.left   = leftIdx;
+    node.right  = rightIdx;
+    node.body   = nullptr;
+    node.bounds = mergedBound;
+    
+    return nodeIdx;
 }
 
 

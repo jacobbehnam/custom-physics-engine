@@ -6,6 +6,12 @@
 #include "NodeIndex.h"
 #include "physics/PhysicsBody.h"
 
+enum Axis {
+    X = 0,
+    Y = 1,
+    Z = 2
+};
+
 struct BVHNode {
     Physics::Bounding::AABB bounds;
     NodeIndex left;
@@ -23,9 +29,9 @@ private:
 
     void clear();
     NodeIndex allocateNode();
-    NodeIndex build(const std::vector<Physics::PhysicsBody*>& bodies, NodeIndex start, NodeIndex end);
+    NodeIndex build(std::vector<Physics::PhysicsBody*>& bodies, NodeIndex start, NodeIndex end);
 public:
     BVH() = default;
-    void build(const std::vector<Physics::PhysicsBody*> bodies);
+    void build(std::vector<Physics::PhysicsBody*> bodies);
     std::vector<std::pair<Physics::PhysicsBody*, Physics::PhysicsBody*>> getPotentialCollisions() const;
 };
