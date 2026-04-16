@@ -50,6 +50,8 @@ add_library(PhysicsCore STATIC
         # Spatial
         src/physics/spatial/Octree.h
         src/physics/spatial/Octree.cpp
+        src/physics/spatial/BVH.h
+        src/physics/spatial/BVH.cpp
 
         # Dependencies
         src/math/MathUtils.h

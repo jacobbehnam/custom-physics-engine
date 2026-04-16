@@ -1,6 +1,8 @@
-#include "BVH.h"
 #include <algorithm>
 #include <glm/gtx/component_wise.hpp>
+
+#include "BVH.h"
+#include "../../graphics/components/Axis.h"
 
 void BVH::clear() {
     nodes.clear();

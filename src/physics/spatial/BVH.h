@@ -6,12 +6,6 @@
 #include "NodeIndex.h"
 #include "physics/PhysicsBody.h"
 
-enum Axis {
-    X = 0,
-    Y = 1,
-    Z = 2
-};
-
 struct BVHNode {
     Physics::Bounding::AABB bounds;
     NodeIndex left;

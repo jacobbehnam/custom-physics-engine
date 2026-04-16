@@ -6,14 +6,7 @@
 #pragma once
 #include "../core/IDrawable.h"
 #include <glm/gtc/quaternion.hpp>
-
-/**
- * @enum Axis
- * @brief Cardinal axes for handle orientation.
- */
-enum class Axis {
-    X, Y, Z
-};
+#include "Axis.h"
 
 /**
  * @brief Converts an axis enum to its corresponding unit vector.
