@@ -16,9 +16,8 @@ namespace Physics {
 
     class PointMass;
     class RigidBody;
+    class PhysicsBody;
 }
-
-struct ObjectSnapshot;
 
 enum class BodyLock {
     LOCK,
@@ -28,6 +27,13 @@ enum class BodyLock {
 constexpr BodyLock operator!(BodyLock lock) {
     return (lock == BodyLock::LOCK) ? BodyLock::NOLOCK : BodyLock::LOCK;
 }
+
+struct ObjectSnapshot {
+    Physics::PhysicsBody* body;
+    float time;
+    glm::vec3 position;
+    glm::vec3 velocity;
+};
 
 namespace Physics {
     class PhysicsBody {
@@ -97,10 +103,3 @@ namespace Physics {
         float mass = 1.0f;
     };
 }
-
-struct ObjectSnapshot {
-    Physics::PhysicsBody* body;
-    float time;
-    glm::vec3 position;
-    glm::vec3 velocity;
-};

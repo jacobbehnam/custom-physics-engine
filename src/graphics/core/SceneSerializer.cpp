@@ -59,17 +59,14 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
             data["position"] = JsonUtils::vec3ToJson(obj->getPosition());
             data["scale"] = JsonUtils::vec3ToJson(obj->getScale());
             data["rotation"] = JsonUtils::vec3ToJson(obj->getRotation());
+            data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
+            data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
+            data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
 
             if constexpr (std::is_same_v<T, PointMassOptions>) {
-                data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
-                data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
-                data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
                 optionsJson["type"] = "PointMassOptions";
             }
             else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
-                data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
-                data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
-                data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
                 optionsJson["type"] = "RigidBodyOptions";
             }
             else {

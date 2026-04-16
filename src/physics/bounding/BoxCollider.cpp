@@ -69,3 +69,23 @@ std::unique_ptr<Physics::Bounding::ICollider> Physics::Bounding::BoxCollider::ge
 
     return std::make_unique<BoxCollider>(scale * center + translation, halfExtents*scale, rot);
 }
+
+glm::vec3 Physics::Bounding::BoxCollider::getAABBMin() const {
+    glm::mat3 R = glm::mat3_cast(rotation);
+    glm::mat3 absR = glm::mat3(
+        glm::abs(R[0]),
+        glm::abs(R[1]),
+        glm::abs(R[2])
+    );
+    return center - absR * halfExtents;
+}
+glm::vec3 Physics::Bounding::BoxCollider::getAABBMax() const {
+    glm::mat3 R = glm::mat3_cast(rotation);
+    glm::mat3 absR = glm::mat3(
+        glm::abs(R[0]),
+        glm::abs(R[1]),
+        glm::abs(R[2])
+    );
+    return center + absR * halfExtents;
+}
+

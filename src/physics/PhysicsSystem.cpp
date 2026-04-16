@@ -155,10 +155,14 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
 
 void Physics::PhysicsSystem::advancePhysics(float dt) {
     float targetTime = stepCount.load() * dt + dt; // the time we will be at after this step
+    std::vector<PhysicsBody*> collidableBodies;
 
     PhysicsSystem::octree.build(bodies);
     for (auto body : bodies) {
         std::unique_lock<std::mutex> guard = body->lockState();
+        if (body->getCollider() != nullptr) {
+            collidableBodies.push_back(body);
+        }
 
         glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());
         glm::vec3 globalGravity = body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration();
@@ -182,18 +186,18 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         body->recordFrame(targetTime, BodyLock::NOLOCK);
     }
 
-    for (int i = 0; i < bodies.size(); ++i) {
-        for (int j = i + 1; j < bodies.size(); ++j) {
-            PhysicsBody* a = bodies[i];
-            PhysicsBody* b = bodies[j];
+    // Broad phase
+    BVH bvh;
+    bvh.build(collidableBodies);
+    for (const auto[a, b] : bvh.getPotentialCollisions()) {
+        // Narrow phase
+        if (a->getIsStatic(BodyLock::LOCK) && b->getIsStatic(BodyLock::LOCK)) continue;
 
-            if (a->getIsStatic(BodyLock::LOCK) && b->getIsStatic(BodyLock::LOCK)) continue;
-
-            if (a->collidesWith(*b)) {
-                a->resolveCollisionWith(*b);
-            }
+        if (a->collidesWith(*b)) {
+            a->resolveCollisionWith(*b);
         }
     }
+
     stepCount++;
     simTime = targetTime;
 }

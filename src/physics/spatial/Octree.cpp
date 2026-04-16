@@ -81,6 +81,7 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
 void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
     Octree::clear();
     if (bodies.empty()) return;
+    nodes.reserve(bodies.size() * 2);
 
     // Find the center
     glm::vec3 min = bodies[0]->getPosition(BodyLock::NOLOCK);
@@ -115,7 +116,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
     // I was planning for 512 elements but not sure
     std::vector<NodeIndex> stack;
     stack.reserve(512);
-    stack.push_back(OctreeNode::rootIndex());
+    stack.push_back(NodeIndex::rootIndex());
 
     while (!stack.empty()) {
         NodeIndex currentIdx = stack.back();

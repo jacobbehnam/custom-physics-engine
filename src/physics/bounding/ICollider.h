@@ -131,5 +131,17 @@ namespace Physics::Bounding {
          * @see Ray
          */
         virtual std::optional<float> intersectRay(const Math::Ray& ray) const = 0;
+            
+
+        /**
+         * @brief Gets the minimum, maximum corner of the axis-aligned bounding box (AABB) that contains this collider
+         *
+         * @return Minimum or Maximum corner of AABB in local space
+         *
+         * @note This is used for broad-phase collision detection and spatial partitioning
+         * @note For simple colliders like AABB, this is just the min,max corner. For others, it may require computation.
+         */
+        virtual glm::vec3 getAABBMin() const { return glm::vec3(0.0f); }
+        virtual glm::vec3 getAABBMax() const { return glm::vec3(0.0f); }
     };
 }

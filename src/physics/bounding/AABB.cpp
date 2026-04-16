@@ -48,9 +48,24 @@ std::optional<float> Physics::Bounding::AABB::intersectRay(const Math::Ray& ray)
 }
 
 bool Physics::Bounding::AABB::contains(const glm::vec3 &p) const {
-    //TODO
+    return (p.x >= minCorner.x && p.x <= maxCorner.x) &&
+           (p.y >= minCorner.y && p.y <= maxCorner.y) &&
+           (p.z >= minCorner.z && p.z <= maxCorner.z);
 }
 
 Physics::Bounding::ContactInfo Physics::Bounding::AABB::closestPoint(const glm::vec3 &p) const {
     //TODO
+    return {p, glm::vec3(0.0f), 0.0f};
+}
+
+void Physics::Bounding::AABB::expand(const glm::vec3& point) {
+    minCorner = glm::min(minCorner, point);
+    maxCorner = glm::max(maxCorner, point);
+    center = (minCorner + maxCorner) * 0.5f;
+    halfExtents = (maxCorner - minCorner) * 0.5f;
+}
+
+void Physics::Bounding::AABB::expand(const AABB& other) {
+    expand(other.getAABBMin());
+    expand(other.getAABBMax());
 }

@@ -15,6 +15,9 @@ namespace Physics::Bounding {
         ContactInfo closestPoint(const glm::vec3 &p) const override;
 
         std::optional<float> intersectRay(const Math::Ray& ray) const override;
+
+        glm::vec3 getAABBMin() const override;
+        glm::vec3 getAABBMax() const override;
     private:
         glm::vec3 center{};
         glm::vec3 halfExtents{};
