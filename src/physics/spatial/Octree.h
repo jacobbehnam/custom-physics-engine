@@ -30,10 +30,6 @@ struct OctreeNode {
     bool isLeaf() const {
         return childMask == 0;
     }
-
-    static NodeIndex rootIndex() {
-        return NodeIndex{0};
-    }
 };
 
 class Octree {

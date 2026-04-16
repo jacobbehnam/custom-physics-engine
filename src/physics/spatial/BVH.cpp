@@ -1,5 +1,6 @@
 #include "BVH.h"
 #include <algorithm>
+#include <glm/gtx/component_wise.hpp>
 
 void BVH::clear() {
     nodes.clear();
@@ -82,5 +83,81 @@ NodeIndex BVH::build(std::vector<Physics::PhysicsBody*>& bodies, NodeIndex start
     return nodeIdx;
 }
 
+std::vector<std::pair<Physics::PhysicsBody*, Physics::PhysicsBody*>> BVH::getPotentialCollisions() const {
+    std::vector<std::pair<Physics::PhysicsBody*, Physics::PhysicsBody*>> potentialCollisions;
+    if (nodes.empty() || nodes[NodeIndex::rootIndex().val].isLeaf()) return potentialCollisions;
+
+    // A micro optimize is to store as raw pointer
+    // since we dont allocate more nodes so its guarantee to be safe
+    std::vector<std::pair<NodeIndex, NodeIndex>> stack;
+    stack.reserve(512);
+    stack.emplace_back(NodeIndex::rootIndex(), NodeIndex::rootIndex());
+
+    while (!stack.empty()) {
+        auto [idxA, idxB] = stack.back();
+        stack.pop_back();
+
+        const BVHNode& a = nodes[idxA.val];
+        const BVHNode& b = nodes[idxB.val];
+
+        // Check internal node
+        if (idxA.val == idxB.val) {
+            if (!a.isLeaf()) {
+                stack.emplace_back(a.left, a.left);
+                stack.emplace_back(a.right, a.right);
+                
+                const BVHNode& leftChild = nodes[a.left.val];
+                const BVHNode& rightChild = nodes[a.right.val];
+                
+                if (leftChild.bounds.intersectsAABB(rightChild.bounds)) {
+                    stack.emplace_back(a.left, a.right);
+                }
+            }
+            continue;
+        }
+        
+        // Check leaf node
+        if (a.isLeaf() && b.isLeaf()) {
+            potentialCollisions.emplace_back(a.body, b.body);
+            continue;
+        }
+
+        // Split on the bigger volume
+        bool splitA;
+        if (a.isLeaf()) {
+            splitA = false;
+        } else if (b.isLeaf()) {
+            splitA = true;
+        } else {
+            glm::vec3 extentA = a.bounds.getAABBMax() - a.bounds.getAABBMin();
+            glm::vec3 extentB = b.bounds.getAABBMax() - b.bounds.getAABBMin();
+            splitA = glm::compMul(extentA) > glm::compMul(extentB);
+        }
+
+        if (splitA) {
+            const BVHNode& aLeft = nodes[a.left.val];
+            const BVHNode& aRight = nodes[a.right.val];
+
+            if (aLeft.bounds.intersectsAABB(b.bounds)) {
+                stack.emplace_back(a.left, idxB);
+            }
+            if (aRight.bounds.intersectsAABB(b.bounds)) {
+                stack.emplace_back(a.right, idxB);
+            }
+        } else {
+            const BVHNode& bLeft = nodes[b.left.val];
+            const BVHNode& bRight = nodes[b.right.val];
+
+            if (a.bounds.intersectsAABB(bLeft.bounds)) {
+                stack.emplace_back(idxA, b.left);
+            }
+            if (a.bounds.intersectsAABB(bRight.bounds)) {
+                stack.emplace_back(idxA, b.right);
+            }
+        }
+    }
+
+    return potentialCollisions;
+}
 
 

@@ -6,5 +6,9 @@ struct NodeIndex {
     bool isEmpty() const {
         return val == -1;
     }
+
+    static NodeIndex rootIndex() {
+        return NodeIndex{0};
+    }
 };
 

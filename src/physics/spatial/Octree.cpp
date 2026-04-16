@@ -116,7 +116,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
     // I was planning for 512 elements but not sure
     std::vector<NodeIndex> stack;
     stack.reserve(512);
-    stack.push_back(OctreeNode::rootIndex());
+    stack.push_back(NodeIndex::rootIndex());
 
     while (!stack.empty()) {
         NodeIndex currentIdx = stack.back();
