@@ -18,8 +18,8 @@ namespace Physics::Bounding{
         void expand(const glm::vec3& point);
         void expand(const AABB& other);
 
-        glm::vec3 getMinCorner() const { return minCorner; }
-        glm::vec3 getMaxCorner() const { return maxCorner; }
+        glm::vec3 getAABBMin() const override { return minCorner; }
+        glm::vec3 getAABBMax() const override { return maxCorner; }
         glm::vec3 getCenter() const { return center; }
 
     private:

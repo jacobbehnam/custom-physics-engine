@@ -7,6 +7,8 @@
 
 Physics::Bounding::AABB::AABB(const glm::vec3 &ctr, const glm::vec3 &halfExt)
     : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}
+Physics::Bounding::AABB::AABB(const glm::vec3 &minC, const glm::vec3 &maxC)
+    : minCorner(minC), maxCorner(maxC), center((minC+maxC)*0.5f), halfExtents((maxC-minC)*0.5f) {}
 
 std::unique_ptr<Physics::Bounding::ICollider> Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
     auto L = glm::mat3(modelMatrix);
@@ -65,6 +67,6 @@ void Physics::Bounding::AABB::expand(const glm::vec3& point) {
 }
 
 void Physics::Bounding::AABB::expand(const AABB& other) {
-    expand(other.getMinCorner());
-    expand(other.getMaxCorner());
+    expand(other.getAABBMin());
+    expand(other.getAABBMax());
 }

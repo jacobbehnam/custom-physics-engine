@@ -21,11 +21,21 @@ NodeIndex BVH::build(const std::vector<Physics::PhysicsBody*>& bodies, NodeIndex
     BVHNode& node = nodes[nodeIdx.val];
     
     if (end.val - start.val == 1) {
-        Physics::PhysicsBody* body  = bodies[start.val];
-        glm::vec3 pos               = body->getPosition(BodyLock::NOLOCK);
+        Physics::PhysicsBody* body              = bodies[start.val];
+        glm::vec3 pos                           = body->getPosition(BodyLock::NOLOCK);
+        Physics::Bounding::ICollider* collider  = body->getCollider();
+
+        std::unique_ptr<Physics::Bounding::ICollider> worldCollider = 
+            collider->getTransformed(body->getWorldTransform(BodyLock::NOLOCK));
+
+        glm::vec3 minCorner = worldCollider->getAABBMin();
+        glm::vec3 maxCorner = worldCollider->getAABBMax();
+
+        glm::vec3 center        = (minCorner + maxCorner) * 0.5f;
+        glm::vec3 halfExtents   = (maxCorner - minCorner) * 0.5f;
 
         node.body   = body;
-        node.bounds = Physics::Bounding::AABB(pos, glm::vec3(0.5f)); // Maybe real bound or just AABB (not sure yet)
+        node.bounds = Physics::Bounding::AABB(center, halfExtents);
 
         return nodeIdx;
     }
