@@ -39,6 +39,7 @@ NodeIndex BVH::build(const std::vector<Physics::PhysicsBody*>& bodies, NodeIndex
 
         return nodeIdx;
     }
+    return NodeIndex{0}; //TODO
 }
 
 

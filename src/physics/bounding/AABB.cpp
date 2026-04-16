@@ -7,8 +7,6 @@
 
 Physics::Bounding::AABB::AABB(const glm::vec3 &ctr, const glm::vec3 &halfExt)
     : center(ctr), halfExtents(halfExt), minCorner(ctr-halfExt), maxCorner(ctr+halfExt) {}
-Physics::Bounding::AABB::AABB(const glm::vec3 &minC, const glm::vec3 &maxC)
-    : minCorner(minC), maxCorner(maxC), center((minC+maxC)*0.5f), halfExtents((maxC-minC)*0.5f) {}
 
 std::unique_ptr<Physics::Bounding::ICollider> Physics::Bounding::AABB::getTransformed(const glm::mat4 &modelMatrix) const {
     auto L = glm::mat3(modelMatrix);
@@ -57,6 +55,7 @@ bool Physics::Bounding::AABB::contains(const glm::vec3 &p) const {
 
 Physics::Bounding::ContactInfo Physics::Bounding::AABB::closestPoint(const glm::vec3 &p) const {
     //TODO
+    return {p, glm::vec3(0.0f), 0.0f};
 }
 
 void Physics::Bounding::AABB::expand(const glm::vec3& point) {
