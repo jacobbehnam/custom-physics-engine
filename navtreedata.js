@@ -69,6 +69,7 @@ var NAVTREE =
         [ "Variables", "globals_vars.html", null ],
         [ "Typedefs", "globals_type.html", null ],
         [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -78,10 +79,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"UniformBuffer_8h_source.html",
-"classPhysics_1_1PhysicsBody.html#a1aedc823891235ff429c55e0740ab423",
-"classSceneObject.html",
-"structstd_1_1hash_3_01Vertex_01_4.html"
+"TransformInspectorWidget_8h_source.html",
+"classPhysics_1_1Bounding_1_1ICollider.html",
+"classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467",
+"structOctreeNode.html#a438377c5b3bcf093c1ecfbc6f8ecbc2a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -23,6 +23,8 @@ var annotated_dup =
       [ "hash< Vertex >", "structstd_1_1hash_3_01Vertex_01_4.html", "structstd_1_1hash_3_01Vertex_01_4" ]
     ] ],
     [ "BatchKey", "structBatchKey.html", "structBatchKey" ],
+    [ "BVH", "classBVH.html", "classBVH" ],
+    [ "BVHNode", "structBVHNode.html", "structBVHNode" ],
     [ "Camera", "classCamera.html", "classCamera" ],
     [ "ComputeShader", "classComputeShader.html", "classComputeShader" ],
     [ "ForcesInspectorWidget", "classForcesInspectorWidget.html", "classForcesInspectorWidget" ],

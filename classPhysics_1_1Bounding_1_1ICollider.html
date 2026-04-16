@@ -130,6 +130,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a977fe4612b17e7fffbb0cbd561d09b4b" id="r_a977fe4612b17e7fffbb0cbd561d09b4b"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#a977fe4612b17e7fffbb0cbd561d09b4b">intersectRay</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray) const =0</td></tr>
 <tr class="memdesc:a977fe4612b17e7fffbb0cbd561d09b4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests ray-collider intersection.  <br /></td></tr>
 <tr class="separator:a977fe4612b17e7fffbb0cbd561d09b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a979b1c40249e7209717c204335db5318" id="r_a979b1c40249e7209717c204335db5318"><td class="memItemLeft" align="right" valign="top">virtual glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#a979b1c40249e7209717c204335db5318">getAABBMin</a> () const</td></tr>
+<tr class="memdesc:a979b1c40249e7209717c204335db5318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum, maximum corner of the axis-aligned bounding box (<a class="el" href="classPhysics_1_1Bounding_1_1AABB.html">AABB</a>) that contains this collider.  <br /></td></tr>
+<tr class="separator:a979b1c40249e7209717c204335db5318"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4a1886c44f3896ab8023b49e8ce4896" id="r_ae4a1886c44f3896ab8023b49e8ce4896"><td class="memItemLeft" align="right" valign="top">virtual glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html#ae4a1886c44f3896ab8023b49e8ce4896">getAABBMax</a> () const</td></tr>
+<tr class="separator:ae4a1886c44f3896ab8023b49e8ce4896"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract base class for collision volumes in the physics engine. </p>
@@ -258,6 +263,70 @@ The normal always points away from the collider surface</dd></dl>
 This test is typically performed in world space after transformation </dd></dl>
 
 <p>Implemented in <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html#a3a01e51b334ce41496ce11c0f8e336f9">Physics::Bounding::AABB</a>, and <a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#aa740fbf38f472a4d440fc4bc427535af">Physics::Bounding::BoxCollider</a>.</p>
+
+</div>
+</div>
+<a id="ae4a1886c44f3896ab8023b49e8ce4896" name="ae4a1886c44f3896ab8023b49e8ce4896"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4a1886c44f3896ab8023b49e8ce4896">&#9670;&#160;</a></span>getAABBMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual glm::vec3 Physics::Bounding::ICollider::getAABBMax </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html#ae2e9255b1fb12c53754eb49d52bd9ab1">Physics::Bounding::AABB</a>, and <a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#a4ef063f0b9991fa8ce0ea44ae11bb712">Physics::Bounding::BoxCollider</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="ICollider_8h_source.html#l00145">145</a> of file <a class="el" href="ICollider_8h_source.html">ICollider.h</a>.</p>
+
+</div>
+</div>
+<a id="a979b1c40249e7209717c204335db5318" name="a979b1c40249e7209717c204335db5318"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a979b1c40249e7209717c204335db5318">&#9670;&#160;</a></span>getAABBMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual glm::vec3 Physics::Bounding::ICollider::getAABBMin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum, maximum corner of the axis-aligned bounding box (<a class="el" href="classPhysics_1_1Bounding_1_1AABB.html">AABB</a>) that contains this collider. </p>
+<dl class="section return"><dt>Returns</dt><dd>Minimum or Maximum corner of <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html">AABB</a> in local space</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is used for broad-phase collision detection and spatial partitioning </dd>
+<dd>
+For simple colliders like <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html">AABB</a>, this is just the min,max corner. For others, it may require computation. </dd></dl>
+
+<p>Implemented in <a class="el" href="classPhysics_1_1Bounding_1_1AABB.html#a82da107e7cc38d54f475c926b1dff12e">Physics::Bounding::AABB</a>, and <a class="el" href="classPhysics_1_1Bounding_1_1BoxCollider.html#aff02b3339657009b0ce44b66b92a37d0">Physics::Bounding::BoxCollider</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="ICollider_8h_source.html#l00144">144</a> of file <a class="el" href="ICollider_8h_source.html">ICollider.h</a>.</p>
 
 </div>
 </div>

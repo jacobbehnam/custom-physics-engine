@@ -15,7 +15,7 @@ var searchData=
   ['intersecttriangle_12',['intersectTriangle',['../namespaceMath.html#a92a3fd90b031f3c40f9797b59e15d54b',1,'Math']]],
   ['isempty_13',['isEmpty',['../structNodeIndex.html#af39e96a8d454aca3e355292dfb709afb',1,'NodeIndex']]],
   ['iskeypressed_14',['isKeyPressed',['../classOpenGLWindow.html#a6385cb51d61e023b727e2d4f112db9ac',1,'OpenGLWindow']]],
-  ['isleaf_15',['isLeaf',['../structOctreeNode.html#a438377c5b3bcf093c1ecfbc6f8ecbc2a',1,'OctreeNode']]],
+  ['isleaf_15',['isleaf',['../structBVHNode.html#ae90cf9b820a0aaeece37d5af669f5dc5',1,'BVHNode::isLeaf()'],['../structOctreeNode.html#a438377c5b3bcf093c1ecfbc6f8ecbc2a',1,'OctreeNode::isLeaf()']]],
   ['ismousebuttonheld_16',['isMouseButtonHeld',['../classOpenGLWindow.html#af1fce23ea11a3279b43567daa0348d24',1,'OpenGLWindow']]],
   ['ismousecaptured_17',['isMouseCaptured',['../classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949',1,'OpenGLWindow']]],
   ['isnameunique_18',['isNameUnique',['../classSceneManager.html#a624cd344feba3357d2ec95bab7229a6f',1,'SceneManager']]],

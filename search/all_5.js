@@ -4,6 +4,7 @@ var searchData=
   ['enablephysics_1',['enablePhysics',['../classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c',1,'Physics::PhysicsSystem']]],
   ['error_20model_2',['Floating-Point Error Model',['../testing.html#autotoc_md24',1,'']]],
   ['example_20scenario_3',['Example Scenario',['../index.html#autotoc_md6',1,'']]],
-  ['expect_5fvec3_5fexact_4',['EXPECT_VEC3_EXACT',['../PhysicsTests_8cpp.html#a6bdc6c8201b917569c083f9586985075',1,'PhysicsTests.cpp']]],
-  ['expect_5fvec3_5fnear_5',['EXPECT_VEC3_NEAR',['../PhysicsTests_8cpp.html#a8ee5ddd46e69146fbaa22fbd7a26eba7',1,'PhysicsTests.cpp']]]
+  ['expand_4',['expand',['../classPhysics_1_1Bounding_1_1AABB.html#a7212bbd302e70583ea8799a4c1449f2d',1,'Physics::Bounding::AABB::expand(const glm::vec3 &amp;point)'],['../classPhysics_1_1Bounding_1_1AABB.html#ac50fec6079b49b1c47debde7440bfb47',1,'Physics::Bounding::AABB::expand(const AABB &amp;other)']]],
+  ['expect_5fvec3_5fexact_5',['EXPECT_VEC3_EXACT',['../PhysicsTests_8cpp.html#a6bdc6c8201b917569c083f9586985075',1,'PhysicsTests.cpp']]],
+  ['expect_5fvec3_5fnear_6',['EXPECT_VEC3_NEAR',['../PhysicsTests_8cpp.html#a8ee5ddd46e69146fbaa22fbd7a26eba7',1,'PhysicsTests.cpp']]]
 ];

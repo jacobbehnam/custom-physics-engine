@@ -1,6 +1,8 @@
 var hierarchy =
 [
     [ "BatchKey", "structBatchKey.html", null ],
+    [ "BVH", "classBVH.html", null ],
+    [ "BVHNode", "structBVHNode.html", null ],
     [ "Camera", "classCamera.html", null ],
     [ "ComputeShader", "classComputeShader.html", null ],
     [ "Physics::Bounding::ContactInfo", "namespacePhysics_1_1Bounding.html#structPhysics_1_1Bounding_1_1ContactInfo", null ],

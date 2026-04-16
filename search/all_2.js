@@ -5,11 +5,16 @@ var searchData=
   ['base_5ffloat_5ftolerance_2',['BASE_FLOAT_TOLERANCE',['../PhysicsTests_8cpp.html#aaf07ecb47b49a9bb98ebbb129b7780ce',1,'PhysicsTests.cpp']]],
   ['batchkey_3',['BatchKey',['../structBatchKey.html',1,'']]],
   ['bind_4',['bind',['../classUniformBuffer.html#a44cb72507959b1ba40651b31468a32ab',1,'UniformBuffer']]],
-  ['body_5',['body',['../PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308',1,'ObjectSnapshot::body'],['../structOctreeNode.html#a0554b7c130f254bb8dd128c0ba0671eb',1,'OctreeNode::body']]],
+  ['body_5',['body',['../structOctreeNode.html#a0554b7c130f254bb8dd128c0ba0671eb',1,'OctreeNode::body'],['../structBVHNode.html#adc945264b96070e9b2c1531ee5d08e6f',1,'BVHNode::body'],['../PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308',1,'ObjectSnapshot::body']]],
   ['bodylock_6',['BodyLock',['../PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2',1,'PhysicsBody.h']]],
-  ['box_7',['Box',['../structRigidBodyOptions.html#a6cf379ca7435acbcab6561601a2ab331',1,'RigidBodyOptions']]],
-  ['boxcollider_8',['boxcollider',['../classPhysics_1_1Bounding_1_1BoxCollider.html',1,'Physics::Bounding::BoxCollider'],['../classPhysics_1_1Bounding_1_1BoxCollider.html#a3917a2a259443fa045bc8de31cec95ea',1,'Physics::Bounding::BoxCollider::BoxCollider()=default'],['../classPhysics_1_1Bounding_1_1BoxCollider.html#a4bf5c17099b952e44f928ae8bf8f66eb',1,'Physics::Bounding::BoxCollider::BoxCollider(const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents, const glm::quat &amp;rotation)']]],
-  ['boxcollider_2ecpp_9',['BoxCollider.cpp',['../BoxCollider_8cpp.html',1,'']]],
-  ['boxcollider_2eh_10',['BoxCollider.h',['../BoxCollider_8h.html',1,'']]],
-  ['build_11',['build',['../classOctree.html#a3ce4d26b06d82c7de15eaca20d537440',1,'Octree']]]
+  ['bounds_7',['bounds',['../structBVHNode.html#ae0aa5754f943ff6da78b8619a478945e',1,'BVHNode']]],
+  ['box_8',['Box',['../structRigidBodyOptions.html#a6cf379ca7435acbcab6561601a2ab331',1,'RigidBodyOptions']]],
+  ['boxcollider_9',['boxcollider',['../classPhysics_1_1Bounding_1_1BoxCollider.html#a3917a2a259443fa045bc8de31cec95ea',1,'Physics::Bounding::BoxCollider::BoxCollider()=default'],['../classPhysics_1_1Bounding_1_1BoxCollider.html#a4bf5c17099b952e44f928ae8bf8f66eb',1,'Physics::Bounding::BoxCollider::BoxCollider(const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents, const glm::quat &amp;rotation)'],['../classPhysics_1_1Bounding_1_1BoxCollider.html',1,'Physics::Bounding::BoxCollider']]],
+  ['boxcollider_2ecpp_10',['BoxCollider.cpp',['../BoxCollider_8cpp.html',1,'']]],
+  ['boxcollider_2eh_11',['BoxCollider.h',['../BoxCollider_8h.html',1,'']]],
+  ['build_12',['build',['../classBVH.html#ab67773242dd30e59955d931fdf264b4c',1,'BVH::build()'],['../classOctree.html#a3ce4d26b06d82c7de15eaca20d537440',1,'Octree::build()']]],
+  ['bvh_13',['bvh',['../classBVH.html#ae869d24c9c73f0cce65a6f782559f838',1,'BVH::BVH()'],['../classBVH.html',1,'BVH']]],
+  ['bvh_2ecpp_14',['BVH.cpp',['../BVH_8cpp.html',1,'']]],
+  ['bvh_2eh_15',['BVH.h',['../BVH_8h.html',1,'']]],
+  ['bvhnode_16',['BVHNode',['../structBVHNode.html',1,'']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['z_5fmask_0',['Z_MASK',['../structOctant.html#a70ec8643e23552658d64acd7a86b28a0',1,'Octant']]]
+  ['y_5fmask_0',['Y_MASK',['../structOctant.html#a49ae7d78c6077c20a3a95b3223e701b2',1,'Octant']]],
+  ['yaw_1',['yaw',['../classCamera.html#a54536224732656e8f4a419cf11662d3e',1,'Camera']]]
 ];
