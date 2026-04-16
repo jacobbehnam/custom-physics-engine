@@ -35,6 +35,7 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             scale = o.base.scale;
             rotation = o.base.rotation;
             physicsBody = std::make_unique<Physics::PointMass>(objectID, o.mass, o.base.position, o.isStatic);
+            physicsBody->setVelocity(o.velocity, BodyLock::LOCK);
             //physicsBody->setUnknown("v0", true);
             sceneManager->addToPhysicsSystem(physicsBody.get());
         } else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
@@ -42,6 +43,7 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             scale = o.base.scale;
             rotation = o.base.rotation;
             physicsBody = std::make_unique<Physics::RigidBody>(objectID, o.mass, o.createCollider(o.base), o.base.position, o.isStatic);
+            physicsBody->setVelocity(o.velocity, BodyLock::LOCK);
             sceneManager->addToPhysicsSystem(physicsBody.get());
         } else {
             std::cout << "Problem with CreationOptions on SceneObject construction!" << std::endl;

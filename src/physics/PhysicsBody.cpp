@@ -27,7 +27,6 @@ void Physics::PhysicsBody::setForce(const std::string &name, const glm::vec3 &fo
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    forces[name] = force;
     // Recalculate net force
     auto it = forces.find(name);
     if (it != forces.end()) {
