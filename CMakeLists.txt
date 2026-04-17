@@ -94,6 +94,8 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/OpenGLWindow.h
         src/ui/MainWindow.cpp
         src/ui/MainWindow.h
+        src/ui/AppSettings.cpp
+        src/ui/AppSettings.h
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
         src/ui/inspector/InspectorWidget.cpp

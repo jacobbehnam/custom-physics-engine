@@ -15,10 +15,12 @@
 #include <QDoubleSpinBox>
 #include <QDialogButtonBox>
 #include <QDir> 
+#include <QSettings>
 
 #include "HierarchyWidget.h"
 #include "inspector/InspectorWidget.h"
 #include "SolverDialog.h"
+#include "AppSettings.h"
 #include "graphics/core/Camera.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -49,6 +51,7 @@ void MainWindow::onGLInitialized() {
     setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
+    loadAppSettings();
     connect(sceneManager, &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
 }
 
@@ -166,24 +169,25 @@ void MainWindow::setupSettingMenu() {
         QWidget* cameraTab = new QWidget();
         QFormLayout* cameraLayout = new QFormLayout(cameraTab);
         Camera* cam = sceneManager->scene->getCamera();
+        const CameraSettings& currentSettings = cam->getSettings();
 
         // Mouse Sensitivity
         QDoubleSpinBox* sensBox = new QDoubleSpinBox();
         sensBox->setRange(0.01, 2.0);
         sensBox->setSingleStep(0.01);
-        sensBox->setValue(cam->mouseSensitivity);
+        sensBox->setValue(currentSettings.mouseSensitivity);
         
         // Movement Speed
         QDoubleSpinBox* speedBox = new QDoubleSpinBox();
         speedBox->setRange(0.1, 100.0);
         speedBox->setSingleStep(0.5);
-        speedBox->setValue(cam->movementSpeed);
+        speedBox->setValue(currentSettings.movementSpeed);
         
         // FOV
         QDoubleSpinBox* fovBox = new QDoubleSpinBox();
         fovBox->setRange(10.0, 120.0);
         fovBox->setSingleStep(1.0);
-        fovBox->setValue(cam->fov);
+        fovBox->setValue(currentSettings.fov);
 
         cameraLayout->addRow("Mouse Sensitivity:", sensBox);
         cameraLayout->addRow("Movement Speed:", speedBox);
@@ -193,10 +197,12 @@ void MainWindow::setupSettingMenu() {
         mainLayout->addWidget(tabWidget);
         QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
         mainLayout->addWidget(buttonBox);
-        connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
-            cam->mouseSensitivity = sensBox->value();
-            cam->movementSpeed = speedBox->value();
-            cam->fov = fovBox->value();
+        connect(buttonBox, &QDialogButtonBox::accepted, [&, this]() {
+            saveCameraSettings({
+                .movementSpeed = static_cast<float>(speedBox->value()),
+                .mouseSensitivity = static_cast<float>(sensBox->value()),
+                .fov = static_cast<float>(fovBox->value()),
+            });
             dialog.accept();
         });
         connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -207,6 +213,39 @@ void MainWindow::setupSettingMenu() {
 void MainWindow::setupMenuBar() {
     MainWindow::setupFileMenu();
     MainWindow::setupSettingMenu();
+}
+
+void MainWindow::loadAppSettings() {
+    if (!sceneManager || !sceneManager->scene) {
+        return;
+    }
+
+    Camera* camera = sceneManager->scene->getCamera();
+    if (!camera) {
+        return;
+    }
+
+    QSettings settings;
+    const AppSettings appSettings = AppSettings::load(settings);
+    camera->setSettings(appSettings.camera);
+}
+
+void MainWindow::saveCameraSettings(const CameraSettings& cameraSettings) {
+    if (!sceneManager || !sceneManager->scene) {
+        return;
+    }
+
+    Camera* camera = sceneManager->scene->getCamera();
+    if (!camera) {
+        return;
+    }
+
+    camera->setSettings(cameraSettings);
+
+    QSettings qSettings;
+    AppSettings appSettings = AppSettings::load(qSettings);
+    appSettings.camera = cameraSettings;
+    appSettings.save(qSettings);
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {

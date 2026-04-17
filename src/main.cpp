@@ -6,6 +6,8 @@
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
+    app.setOrganizationName("PhysicsEngine");
+    app.setApplicationName("PhysicsEngine");
 
     MainWindow mainWindow;
     mainWindow.resize(800, 600);
