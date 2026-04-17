@@ -9,11 +9,17 @@
 #include <QScrollArea>
 #include <QMenuBar>
 #include <QFileDialog>
+#include <QDialog>
+#include <QTabWidget>
+#include <QFormLayout>
+#include <QDoubleSpinBox>
+#include <QDialogButtonBox>
 #include <QDir> 
 
 #include "HierarchyWidget.h"
 #include "inspector/InspectorWidget.h"
 #include "SolverDialog.h"
+#include "graphics/core/Camera.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
@@ -103,8 +109,7 @@ void MainWindow::setupDockWidgets() {
     addDockWidget(Qt::RightDockWidgetArea, tableDock);
 }
 
-void MainWindow::setupMenuBar() {
-    // File Menu
+void MainWindow::setupFileMenu() {
     QMenu *fileMenu = menuBar()->addMenu("File");
     QAction *saveAction = new QAction("Save", this);
     fileMenu->addAction(saveAction);
@@ -145,6 +150,63 @@ void MainWindow::setupMenuBar() {
                 std::cout << "Load Failed!" << std::endl;
         }
     });
+}
+
+void MainWindow::setupSettingMenu() {
+    QMenu *settingMenu = menuBar()->addMenu("Settings");
+    QAction *preferencesAction = new QAction("Preferences", this);
+    settingMenu->addAction(preferencesAction);
+    connect(preferencesAction, &QAction::triggered, this, [this]() {
+        QDialog dialog(this);
+        dialog.setWindowTitle("Settings");
+        dialog.resize(300, 200);
+        QVBoxLayout* mainLayout = new QVBoxLayout(&dialog);
+        QTabWidget* tabWidget = new QTabWidget(&dialog);
+        
+        QWidget* cameraTab = new QWidget();
+        QFormLayout* cameraLayout = new QFormLayout(cameraTab);
+        Camera* cam = sceneManager->scene->getCamera();
+
+        // Mouse Sensitivity
+        QDoubleSpinBox* sensBox = new QDoubleSpinBox();
+        sensBox->setRange(0.01, 2.0);
+        sensBox->setSingleStep(0.01);
+        sensBox->setValue(cam->mouseSensitivity);
+        
+        // Movement Speed
+        QDoubleSpinBox* speedBox = new QDoubleSpinBox();
+        speedBox->setRange(0.1, 100.0);
+        speedBox->setSingleStep(0.5);
+        speedBox->setValue(cam->movementSpeed);
+        
+        // FOV
+        QDoubleSpinBox* fovBox = new QDoubleSpinBox();
+        fovBox->setRange(10.0, 120.0);
+        fovBox->setSingleStep(1.0);
+        fovBox->setValue(cam->fov);
+
+        cameraLayout->addRow("Mouse Sensitivity:", sensBox);
+        cameraLayout->addRow("Movement Speed:", speedBox);
+        cameraLayout->addRow("Field of View (FOV):", fovBox);
+        tabWidget->addTab(cameraTab, "Camera");
+        
+        mainLayout->addWidget(tabWidget);
+        QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        mainLayout->addWidget(buttonBox);
+        connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+            cam->mouseSensitivity = sensBox->value();
+            cam->movementSpeed = speedBox->value();
+            cam->fov = fovBox->value();
+            dialog.accept();
+        });
+        connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        dialog.exec();
+    });
+}
+
+void MainWindow::setupMenuBar() {
+    MainWindow::setupFileMenu();
+    MainWindow::setupSettingMenu();
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {

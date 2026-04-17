@@ -39,5 +39,7 @@ private:
     SnapshotTableModel* snapshotModel;
 
     void setupDockWidgets();
+    void setupFileMenu();
+    void setupSettingMenu();
     void setupMenuBar();
 };
