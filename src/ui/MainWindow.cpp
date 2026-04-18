@@ -30,6 +30,11 @@
 #include "AppSettings.h"
 #include "graphics/core/Camera.h"
 
+namespace {
+    constexpr auto kGraphScrollAreaName = "GraphScrollArea";
+    constexpr int minimumCardWidth = 180;
+}
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
 
@@ -126,6 +131,8 @@ void MainWindow::setupDockWidgets() {
     graphTabLayout->setContentsMargins(0, 0, 0, 0);
 
     auto* graphScrollArea = new QScrollArea(graphTab);
+    graphScrollArea->setObjectName(kGraphScrollAreaName);
+    graphScrollArea->installEventFilter(this);
     graphScrollArea->setWidgetResizable(true);
     auto* graphContainer = new QWidget(graphScrollArea);
     frameGraphContainer = graphContainer;
@@ -352,12 +359,6 @@ void MainWindow::clearFrameGraph() {
     }
 }
 
-void MainWindow::resizeEvent(QResizeEvent* event) {
-    QMainWindow::resizeEvent(event);
-    
-    relayoutFrameGraphs(); 
-}
-
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {
         sceneManager->setSelectFor(previous, false);
@@ -383,6 +384,13 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
     relayoutFrameGraphs();
 }
 
+bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
+    if (event->type() == QEvent::Resize && watched->objectName() == kGraphScrollAreaName) {
+        relayoutFrameGraphs();
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
 // Auto relayout number of graphs on a row
 void MainWindow::relayoutFrameGraphs() {
     if (!frameGraphLayout) {
@@ -397,10 +405,10 @@ void MainWindow::relayoutFrameGraphs() {
     }
 
     QWidget* parentWidget = frameGraphLayout->parentWidget();
-    const int availableWidth = parentWidget
-        ? parentWidget->contentsRect().width() - frameGraphLayout->contentsMargins().left() - frameGraphLayout->contentsMargins().right()
-        : 0;
-    const int minimumCardWidth = 240;
+    QScrollArea* scrollArea = parentWidget ? qobject_cast<QScrollArea*>(parentWidget->parentWidget()->parentWidget()) : nullptr;
+    const int availableWidth = scrollArea
+        ? scrollArea->viewport()->width() - frameGraphLayout->contentsMargins().left() - frameGraphLayout->contentsMargins().right()
+        : (parentWidget ? parentWidget->contentsRect().width() - frameGraphLayout->contentsMargins().left() - frameGraphLayout->contentsMargins().right() : 0);
     const int spacing = frameGraphLayout->horizontalSpacing();
     const int columns = std::max(1, (availableWidth + spacing) / (minimumCardWidth + spacing));
     if (columns == frameGraphColumns && frameGraphLayout->count() == static_cast<int>(frameGraphs.size())) {
