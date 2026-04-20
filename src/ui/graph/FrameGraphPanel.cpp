@@ -6,17 +6,20 @@
 
 namespace {
     constexpr int kMinimumCardWidth = 180;
+    constexpr int kLayoutMargin     = 0;
+    constexpr int kGridMargin       = 8;
+    constexpr int kGridSpacing      = 8;
 }
 
 FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
     auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(kLayoutMargin, kLayoutMargin, kLayoutMargin, kLayoutMargin);
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     auto* container = new QWidget(scrollArea);
     gridLayout = new QGridLayout(container);
-    gridLayout->setContentsMargins(8, 8, 8, 8);
-    gridLayout->setSpacing(8);
+    gridLayout->setContentsMargins(kGridMargin, kGridMargin, kGridMargin, kGridMargin);
+    gridLayout->setSpacing(kGridSpacing);
     gridLayout->setAlignment(Qt::AlignTop);
     const std::array<FrameGraphWidget::Metric, 6> metrics = {
         FrameGraphWidget::Metric::PositionX, FrameGraphWidget::Metric::PositionY, FrameGraphWidget::Metric::PositionZ,

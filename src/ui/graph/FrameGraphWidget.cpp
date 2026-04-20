@@ -12,19 +12,26 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
-#include <array>
-
 #include "physics/PhysicsBody.h"
 #include "FrameGraphCanvas.h"
 
+namespace {
+    constexpr int kLayoutMargin     = 6;
+    constexpr int kLayoutSpacing    = 4;
+    constexpr int kHeaderMargin     = 0;
+    constexpr int kHeaderSpacing    = 4;
+    constexpr int kMinWidgetHeight  = 150;
+    constexpr int kMaxWidgetHeight  = 190;
+}
+
 FrameGraphWidget::FrameGraphWidget(QWidget* parent) : QWidget(parent) {
     auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(6, 6, 6, 6);
-    layout->setSpacing(4);
+    layout->setContentsMargins(kLayoutMargin, kLayoutMargin, kLayoutMargin, kLayoutMargin);
+    layout->setSpacing(kLayoutSpacing);
 
     auto* headerLayout = new QHBoxLayout();
-    headerLayout->setContentsMargins(0, 0, 0, 0);
-    headerLayout->setSpacing(4);
+    headerLayout->setContentsMargins(kHeaderMargin, kHeaderMargin, kHeaderMargin, kHeaderMargin);
+    headerLayout->setSpacing(kHeaderSpacing);
 
     titleLabel = new QLabel(metricLabel(), this);
     titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -44,8 +51,8 @@ FrameGraphWidget::FrameGraphWidget(QWidget* parent) : QWidget(parent) {
     layout->addWidget(canvas, 1);
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    setMinimumHeight(150);
-    setMaximumHeight(190);
+    setMinimumHeight(kMinWidgetHeight);
+    setMaximumHeight(kMaxWidgetHeight);
 
     connect(metricSelector, &QComboBox::currentIndexChanged, this, [this](int index) {
         setMetric(static_cast<Metric>(index));

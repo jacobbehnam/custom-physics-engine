@@ -7,11 +7,25 @@
 
 #include "FrameGraphCanvas.h"
 
+namespace {
+    constexpr int   kMinCanvasHeight        = 110;
+    constexpr float kLineWidth              = 2.0f;
+    constexpr float kHoverLineWidth         = 1.0f;
+    constexpr float kHoverPointRadius       = 4.0f;
+    constexpr int   kPlotMarginLeft         = 8;
+    constexpr int   kPlotMarginRight        = 8;
+    constexpr int   kPlotMarginTop          = 6;
+    constexpr int   kPlotMarginBottomOffset = 4;
+    constexpr int   kLabelOffset            = 2;
+    constexpr float kAxisPadding            = 0.5f;
+    constexpr int   kGridLines              = 3;
+}
+
 FrameGraphCanvas::FrameGraphCanvas(FrameGraphWidget* owner) 
     : QWidget(owner), graphWidget(owner) {
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setMinimumHeight(110);
+    setMinimumHeight(kMinCanvasHeight);
 }
 
 void FrameGraphCanvas::setSnapshots(const std::vector<ObjectSnapshot>& snapshots) {
@@ -52,12 +66,12 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     painter.setPen(borderColor);
     painter.drawRect(rect);
     painter.setPen(mutedText);
-    for (int i = 1; i < 3; ++i) {
-        const int y = rect.top() + (rect.height() * i) / 3;
+    for (int i = 1; i < kGridLines; ++i) {
+        const int y = rect.top() + (rect.height() * i) / kGridLines;
         painter.drawLine(rect.left(), y, rect.right(), y);
     }
     painter.setPen(textColor);
-    painter.drawText(QRect(rect.left(), rect.bottom() + 2, rect.width(), bottomLabelHeight()),
+    painter.drawText(QRect(rect.left(), rect.bottom() + kLabelOffset, rect.width(), bottomLabelHeight()),
                      Qt::AlignRight | Qt::AlignVCenter,
                      tr("Time (s)"));
     if (graphPoints.empty()) {
@@ -70,15 +84,15 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     for (size_t i = 1; i < graphPoints.size(); ++i) {
         path.lineTo(graphPoints[i]);
     }
-    painter.setPen(QPen(lineColor, 2.0));
+    painter.setPen(QPen(lineColor, kLineWidth));
     painter.drawPath(path);
     if (hoverIndex >= 0 && hoverIndex < static_cast<int>(graphPoints.size())) {
         const QPointF point = graphPoints[hoverIndex];
-        painter.setPen(QPen(hoverColor, 1.0, Qt::DashLine));
+        painter.setPen(QPen(hoverColor, kHoverLineWidth, Qt::DashLine));
         painter.drawLine(QPointF(point.x(), rect.top()), QPointF(point.x(), rect.bottom()));
         painter.setBrush(hoverColor);
         painter.setPen(Qt::NoPen);
-        painter.drawEllipse(point, 4.0, 4.0);
+        painter.drawEllipse(point, kHoverPointRadius, kHoverPointRadius);
     }
 }
 
@@ -142,15 +156,12 @@ float FrameGraphCanvas::metricValue(const ObjectSnapshot& snapshot) const {
 }
 
 int FrameGraphCanvas::bottomLabelHeight() const {
-    return fontMetrics().height() + 2;
+    return fontMetrics().height() + kLabelOffset;
 }
 
 QRect FrameGraphCanvas::plotRect() const {
-    const int left = 8;
-    const int right = 8;
-    const int top = 6;
-    const int bottom = bottomLabelHeight() + 4;
-    return rect().adjusted(left, top, -right, -bottom);
+    const int bottom = bottomLabelHeight() + kPlotMarginBottomOffset;
+    return rect().adjusted(kPlotMarginLeft, kPlotMarginTop, -kPlotMarginRight, -bottom);
 }
 
 void FrameGraphCanvas::rebuildPoints() {
@@ -171,12 +182,12 @@ void FrameGraphCanvas::rebuildPoints() {
         maxValue = std::max(maxValue, value);
     }
     if (minTime == maxTime) {
-        minTime -= 0.5f;
-        maxTime += 0.5f;
+        minTime -= kAxisPadding;
+        maxTime += kAxisPadding;
     }
     if (minValue == maxValue) {
-        minValue -= 0.5f;
-        maxValue += 0.5f;
+        minValue -= kAxisPadding;
+        maxValue += kAxisPadding;
     }
     graphPoints.reserve(frames.size());
     for (const auto& frame : frames) {
