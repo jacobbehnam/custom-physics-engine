@@ -21,12 +21,11 @@ FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
     gridLayout->setContentsMargins(kGridMargin, kGridMargin, kGridMargin, kGridMargin);
     gridLayout->setSpacing(kGridSpacing);
     gridLayout->setAlignment(Qt::AlignTop);
-    const std::array<FrameGraphWidget::Metric, 6> metrics = {
-        FrameGraphWidget::Metric::PositionX, FrameGraphWidget::Metric::PositionY, FrameGraphWidget::Metric::PositionZ,
-        FrameGraphWidget::Metric::VelocityX, FrameGraphWidget::Metric::VelocityY, FrameGraphWidget::Metric::VelocityZ
-    };
-    frameGraphs.reserve(metrics.size());
-    for (auto metric : metrics) {
+
+    int cntMetric = static_cast<int>(FrameGraphWidget::Metric::Count);
+    frameGraphs.reserve(cntMetric);
+    for (int i = 0; i < cntMetric; ++i) {
+        FrameGraphWidget::Metric metric = static_cast<FrameGraphWidget::Metric>(i);
         auto* graph = new FrameGraphWidget(container);
         graph->setMetric(metric);
         graph->setSelectorVisible(false);

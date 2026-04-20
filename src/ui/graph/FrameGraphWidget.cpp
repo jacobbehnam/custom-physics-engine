@@ -68,7 +68,6 @@ void FrameGraphWidget::clear() {
 }
 
 void FrameGraphWidget::setMetric(Metric metric) {
-    assert(metric != Metric::Count && "Invalid metric");
     currentMetric = metric;
     titleLabel->setText(metricLabel());
     metricSelector->blockSignals(true);
@@ -89,10 +88,9 @@ QString FrameGraphWidget::metricLabel(Metric metric) {
         case Metric::VelocityX: return tr("Velocity X");
         case Metric::VelocityY: return tr("Velocity Y");
         case Metric::VelocityZ: return tr("Velocity Z");
-        default:
-            throw std::invalid_argument("Invalid metric");
+        case Metric::Count:     return tr("Invalid Metric");
     }
-    return {};
+    return tr("Unknown Metric");
 }
 
 QString FrameGraphWidget::metricLabel() const {
