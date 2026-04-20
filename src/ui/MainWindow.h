@@ -45,5 +45,4 @@ private:
     void setupSettingMenu();
     void setupMenuBar();
     void loadAppSettings();
-    void saveCameraSettings(const CameraSettings& cameraSettings);
 };

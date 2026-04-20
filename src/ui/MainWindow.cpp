@@ -16,6 +16,8 @@
 #include <QDoubleSpinBox>
 #include <QDialogButtonBox>
 #include <QDir> 
+#include <QSpinBox>
+#include <QCheckBox>
 #include <QSettings>
 #include <QTabWidget>
 #include <QTableView>
@@ -28,8 +30,15 @@
 #include "SolverDialog.h"
 #include "AppSettings.h"
 #include "graphics/core/Camera.h"
+#include "ui/AppSettings.h"
+#include "ui/settings/CameraSettingsGroup.h"
+#include "ui/settings/DebugSettings.h"
+#include "ui/settings/SettingsDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    AppSettings::getInstance().registerGroup<CameraSettingsGroup>();
+    AppSettings::getInstance().registerGroup<DebugSettings>();
+
     glWindow = new OpenGLWindow(nullptr, this);
 
     setWindowTitle("Physics Engine");
@@ -198,52 +207,7 @@ void MainWindow::setupSettingMenu() {
     QAction *preferencesAction = new QAction("Preferences", this);
     settingMenu->addAction(preferencesAction);
     connect(preferencesAction, &QAction::triggered, this, [this]() {
-        QDialog dialog(this);
-        dialog.setWindowTitle("Settings");
-        dialog.resize(300, 200);
-        QVBoxLayout* mainLayout = new QVBoxLayout(&dialog);
-        QTabWidget* tabWidget = new QTabWidget(&dialog);
-        
-        QWidget* cameraTab = new QWidget();
-        QFormLayout* cameraLayout = new QFormLayout(cameraTab);
-        Camera* cam = sceneManager->scene->getCamera();
-        const CameraSettings& currentSettings = cam->getSettings();
-
-        // Mouse Sensitivity
-        QDoubleSpinBox* sensBox = new QDoubleSpinBox();
-        sensBox->setRange(0.01, 2.0);
-        sensBox->setSingleStep(0.01);
-        sensBox->setValue(currentSettings.mouseSensitivity);
-        
-        // Movement Speed
-        QDoubleSpinBox* speedBox = new QDoubleSpinBox();
-        speedBox->setRange(0.1, 100.0);
-        speedBox->setSingleStep(0.5);
-        speedBox->setValue(currentSettings.movementSpeed);
-        
-        // FOV
-        QDoubleSpinBox* fovBox = new QDoubleSpinBox();
-        fovBox->setRange(10.0, 120.0);
-        fovBox->setSingleStep(1.0);
-        fovBox->setValue(currentSettings.fov);
-
-        cameraLayout->addRow("Mouse Sensitivity:", sensBox);
-        cameraLayout->addRow("Movement Speed:", speedBox);
-        cameraLayout->addRow("Field of View (FOV):", fovBox);
-        tabWidget->addTab(cameraTab, "Camera");
-        
-        mainLayout->addWidget(tabWidget);
-        QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-        mainLayout->addWidget(buttonBox);
-        connect(buttonBox, &QDialogButtonBox::accepted, [&, this]() {
-            saveCameraSettings({
-                .movementSpeed = static_cast<float>(speedBox->value()),
-                .mouseSensitivity = static_cast<float>(sensBox->value()),
-                .fov = static_cast<float>(fovBox->value()),
-            });
-            dialog.accept();
-        });
-        connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        SettingsDialog dialog(this);
         dialog.exec();
     });
 }
@@ -254,36 +218,8 @@ void MainWindow::setupMenuBar() {
 }
 
 void MainWindow::loadAppSettings() {
-    if (!sceneManager || !sceneManager->scene) {
-        return;
-    }
-
-    Camera* camera = sceneManager->scene->getCamera();
-    if (!camera) {
-        return;
-    }
-
     QSettings settings;
-    const AppSettings appSettings = AppSettings::load(settings);
-    camera->setSettings(appSettings.camera);
-}
-
-void MainWindow::saveCameraSettings(const CameraSettings& cameraSettings) {
-    if (!sceneManager || !sceneManager->scene) {
-        return;
-    }
-
-    Camera* camera = sceneManager->scene->getCamera();
-    if (!camera) {
-        return;
-    }
-
-    camera->setSettings(cameraSettings);
-
-    QSettings qSettings;
-    AppSettings appSettings = AppSettings::load(qSettings);
-    appSettings.camera = cameraSettings;
-    appSettings.save(qSettings);
+    AppSettings::getInstance().load(settings);
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {

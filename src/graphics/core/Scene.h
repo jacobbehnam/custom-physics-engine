@@ -6,12 +6,16 @@
 #include <vector>
 #include <deque>
 #include <unordered_set>
+#include <memory>
+
+class PathTraceRenderer;
 
 class Scene {
 public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
+    void drawPathTrails(const std::vector<class SceneObject*>& objects, int maxLength);
 
     void addDrawable(IDrawable* drawable);
     void removeDrawable(IDrawable* drawable);
@@ -35,4 +39,6 @@ private:
 
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
+
+    std::unique_ptr<PathTraceRenderer> pathTraceRenderer;
 };

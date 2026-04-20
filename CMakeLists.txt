@@ -61,6 +61,8 @@ add_library(PhysicsCore STATIC
 add_executable(PhysicsEngine src/main.cpp
         src/graphics/core/SceneObject.cpp
         src/graphics/core/SceneObject.h
+        src/graphics/core/PathTraceRenderer.cpp
+        src/graphics/core/PathTraceRenderer.h
         src/graphics/core/Camera.cpp
         src/graphics/core/Camera.h
         src/graphics/core/Scene.cpp
@@ -102,6 +104,13 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/graph/FrameGraphPanel.h
         src/ui/AppSettings.cpp
         src/ui/AppSettings.h
+        src/ui/settings/ISettingsGroup.h
+        src/ui/settings/CameraSettingsGroup.h
+        src/ui/settings/CameraSettingsGroup.cpp
+        src/ui/settings/DebugSettings.h
+        src/ui/settings/DebugSettings.cpp
+        src/ui/settings/SettingsDialog.h
+        src/ui/settings/SettingsDialog.cpp
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
         src/ui/inspector/InspectorWidget.cpp

@@ -9,6 +9,7 @@
 #include <chrono>
 #include "math/Ray.h"
 
+class PathTraceRenderer;
 class Scene;
 class SceneManager;
 namespace Physics { class PhysicsSystem; }

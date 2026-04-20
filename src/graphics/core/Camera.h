@@ -1,12 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct CameraSettings {
-    float movementSpeed = 3.0f;
-    float mouseSensitivity = 0.05f;
-    float fov = 45.0f;
-};
-
 enum class Movement {
     FORWARD,
     BACKWARD,
@@ -27,12 +21,10 @@ public: // TODO: make these not public
     double yaw = -90.0f;
     double pitch = 0.0f;
 
-    Camera(glm::vec3 initPosition, CameraSettings settings = {});
+    Camera(glm::vec3 initPosition);
 
     glm::mat4 getViewMatrix() const;
     glm::mat4 getProjMatrix() const;
-    const CameraSettings& getSettings() const { return settings; }
-    void setSettings(const CameraSettings& newSettings) { settings = newSettings; }
 
     void setAspectRatio(float ratio) { aspectRatio = ratio; }
 
@@ -49,7 +41,6 @@ public: // TODO: make these not public
 private:
     void updateCameraVectors();
 
-    CameraSettings settings;
     float aspectRatio;
     SceneObject* targetObject = nullptr;
     glm::vec3 followOffset{20.0f, 15.0f, 30.0f};
