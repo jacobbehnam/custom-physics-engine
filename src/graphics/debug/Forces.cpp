@@ -56,9 +56,7 @@ void Forces::draw() const {
             model = glm::translate(model, startPos);
             model = model * rotateFromYToDir(force);
             
-            // Gizmo-like scale, with slight length variation based on magnitude
             float lengthFactor = std::clamp(mag * 0.1f, 1.0f, 2.0f);
-            // "almost same size of the gizmo move thing, like around 1/1.5 or something"
             model = glm::scale(model, glm::vec3(1.0f, 1.5f * lengthFactor, 1.0f));
 
             Rendering::InstanceData inst(model, obj->getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f));
