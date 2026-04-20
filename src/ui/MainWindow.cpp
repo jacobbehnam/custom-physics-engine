@@ -4,25 +4,16 @@
 
 #include "OpenGLWindow.h"
 #include <QDockWidget>
-#include <QHeaderView>
 #include <QStatusBar>
 #include <QLineEdit>
 #include <QScrollArea>
 #include <QMenuBar>
 #include <QFileDialog>
-#include <QDialog>
-#include <QTabWidget>
-#include <QFormLayout>
-#include <QDoubleSpinBox>
-#include <QDialogButtonBox>
 #include <QDir> 
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QSettings>
-#include <QTabWidget>
+#include <QHeaderView>
 #include <QTableView>
+#include <QTabWidget>
 #include <QVBoxLayout>
-#include <QResizeEvent>
 
 #include "HierarchyWidget.h"
 #include "graph/FrameGraphPanel.h"
@@ -30,7 +21,6 @@
 #include "SolverDialog.h"
 #include "AppSettings.h"
 #include "graphics/core/Camera.h"
-#include "ui/AppSettings.h"
 #include "ui/settings/CameraSettingsGroup.h"
 #include "ui/settings/DebugSettings.h"
 #include "ui/settings/SettingsDialog.h"
@@ -208,6 +198,16 @@ void MainWindow::setupSettingMenu() {
     settingMenu->addAction(preferencesAction);
     connect(preferencesAction, &QAction::triggered, this, [this]() {
         SettingsDialog dialog(this);
+        connect(&dialog, &SettingsDialog::settingsSaved, this, [this]() {
+            // Push saved settings down to Camera and debug drawables
+            auto& camGroup = AppSettings::getInstance().getGroup<CameraSettingsGroup>();
+            Camera* camera = sceneManager->scene->getCamera();
+            camera->movementSpeed = camGroup.movementSpeed;
+            camera->mouseSensitivity = camGroup.mouseSensitivity;
+            camera->fov = camGroup.fov;
+
+            sceneManager->applyDebugSettings();
+        });
         dialog.exec();
     });
 }
@@ -220,6 +220,16 @@ void MainWindow::setupMenuBar() {
 void MainWindow::loadAppSettings() {
     QSettings settings;
     AppSettings::getInstance().load(settings);
+
+    // Push loaded settings down to Camera
+    auto& camGroup = AppSettings::getInstance().getGroup<CameraSettingsGroup>();
+    Camera* camera = sceneManager->scene->getCamera();
+    camera->movementSpeed = camGroup.movementSpeed;
+    camera->mouseSensitivity = camGroup.mouseSensitivity;
+    camera->fov = camGroup.fov;
+
+    // Push loaded settings down to debug drawables
+    sceneManager->applyDebugSettings();
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {

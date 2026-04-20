@@ -1,10 +1,11 @@
 #pragma once
 #include "ISettingsGroup.h"
+#include "graphics/core/Camera.h"
 
 struct CameraSettingsGroup : public ISettingsGroup {
-    float movementSpeed = 3.0f;
-    float mouseSensitivity = 0.05f;
-    float fov = 45.0f;
+    float movementSpeed = Camera::kDefaultMovementSpeed;
+    float mouseSensitivity = Camera::kDefaultMouseSensitivity;
+    float fov = Camera::kDefaultFov;
 
     CameraSettingsGroup() = default;
 

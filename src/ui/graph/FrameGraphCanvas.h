@@ -4,16 +4,16 @@
 #include <vector>
 #include <QPointF>
 
-#include "FrameGraphWidget.h"
+#include "Metric.h"
 #include "physics/PhysicsBody.h"
 
 class FrameGraphCanvas : public QWidget {
     Q_OBJECT
 public:
-    explicit FrameGraphCanvas(FrameGraphWidget* owner);
+    explicit FrameGraphCanvas(QWidget* parent = nullptr);
     void setSnapshots(const std::vector<ObjectSnapshot>& snapshots);
     void clear();
-    void setMetric(FrameGraphWidget::Metric metric);
+    void setMetric(Metric metric);
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
@@ -24,8 +24,7 @@ private:
     int bottomLabelHeight() const;
     QRect plotRect() const;
     void rebuildPoints();
-    FrameGraphWidget* graphWidget;
-    FrameGraphWidget::Metric currentMetric = FrameGraphWidget::Metric::PositionX;
+    Metric currentMetric = Metric::PositionX;
     std::vector<ObjectSnapshot> frames;
     std::vector<QPointF> graphPoints;
     int hoverIndex = -1;

@@ -1,8 +1,9 @@
-#include "PathTraceRenderer.h"
+#include "PathTraces.h"
 #include "physics/PhysicsBody.h"
-#include "ResourceManager.h"
+#include "graphics/core/ResourceManager.h"
+#include "graphics/core/SceneManager.h"
 
-PathTraceRenderer::PathTraceRenderer(QOpenGLFunctions_4_5_Core* glFuncs) : gl(glFuncs) {
+PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
     gl->glGenVertexArrays(1, &vao);
     gl->glGenBuffers(1, &vbo);
 
@@ -12,16 +13,22 @@ PathTraceRenderer::PathTraceRenderer(QOpenGLFunctions_4_5_Core* glFuncs) : gl(gl
     gl->glEnableVertexAttribArray(0);
     gl->glBindVertexArray(0);
 
-    traceShader = ResourceManager::loadShader("assets/shaders/debug/pathtrace.vert", "assets/shaders/debug/pathtrace.frag", "pathtrace");
+    traceShader = ResourceManager::getShader("pathtrace");
+    if (!traceShader) {
+        traceShader = ResourceManager::loadShader("assets/shaders/debug/pathtrace.vert", "assets/shaders/debug/pathtrace.frag", "pathtrace");
+    }
 }
 
-PathTraceRenderer::~PathTraceRenderer() {
+PathTraces::~PathTraces() {
     if (vao) gl->glDeleteVertexArrays(1, &vao);
     if (vbo) gl->glDeleteBuffers(1, &vbo);
 }
 
-void PathTraceRenderer::drawTrails(const std::vector<class SceneObject*>& objects, float timeWindow) {
+void PathTraces::draw() const {
     if (!traceShader) return;
+    if (!enabled) return;
+
+    const auto& objects = sceneManager->getObjects();
 
     traceShader->use();
 

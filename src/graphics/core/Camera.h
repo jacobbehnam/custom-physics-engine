@@ -21,6 +21,14 @@ public: // TODO: make these not public
     double yaw = -90.0f;
     double pitch = 0.0f;
 
+    static constexpr float kDefaultMovementSpeed = 3.0f;
+    static constexpr float kDefaultMouseSensitivity = 0.05f;
+    static constexpr float kDefaultFov = 45.0f;
+
+    float movementSpeed = kDefaultMovementSpeed;
+    float mouseSensitivity = kDefaultMouseSensitivity;
+    float fov = kDefaultFov;
+
     Camera(glm::vec3 initPosition);
 
     glm::mat4 getViewMatrix() const;

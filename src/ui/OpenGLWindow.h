@@ -9,7 +9,6 @@
 #include <chrono>
 #include "math/Ray.h"
 
-class PathTraceRenderer;
 class Scene;
 class SceneManager;
 namespace Physics { class PhysicsSystem; }
@@ -70,8 +69,8 @@ private:
     bool firstMouse = false;
     bool mouseCaptured = false;
 
-    Scene* scene;
-    SceneManager* sceneManager;
+    Scene* scene = nullptr;
+    SceneManager* sceneManager = nullptr;
 
     void calculateFPS();
     Math::Ray getMouseRay();

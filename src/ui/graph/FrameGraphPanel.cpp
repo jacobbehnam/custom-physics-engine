@@ -3,6 +3,7 @@
 #include <array>
 
 #include "FrameGraphPanel.h"
+#include "FrameGraphWidget.h"
 
 namespace {
     constexpr int kMinimumCardWidth = 180;
@@ -22,10 +23,10 @@ FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
     gridLayout->setSpacing(kGridSpacing);
     gridLayout->setAlignment(Qt::AlignTop);
 
-    int cntMetric = static_cast<int>(FrameGraphWidget::Metric::Count);
+    int cntMetric = static_cast<int>(Metric::Count);
     frameGraphs.reserve(cntMetric);
     for (int i = 0; i < cntMetric; ++i) {
-        FrameGraphWidget::Metric metric = static_cast<FrameGraphWidget::Metric>(i);
+        Metric metric = static_cast<Metric>(i);
         auto* graph = new FrameGraphWidget(container);
         graph->setMetric(metric);
         graph->setSelectorVisible(false);

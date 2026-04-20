@@ -4,9 +4,6 @@
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneManager.h"
-#include "ui/AppSettings.h"
-#include "ui/settings/DebugSettings.h"
-#include "graphics/core/PathTraceRenderer.h"
 
 #include "graphics/components/Gizmo.h"
 #include "graphics/core/ResourceManager.h"
@@ -59,11 +56,6 @@ void OpenGLWindow::paintGL() {
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
     scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
-
-    auto& dbgGroup = AppSettings::getInstance().getGroup<DebugSettings>();
-    if (dbgGroup.showAllPathTrails) {
-        scene->drawPathTrails(sceneManager->getObjects(), dbgGroup.pathTrailTime);
-    }
 
     calculateFPS();
 

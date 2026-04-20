@@ -21,8 +21,8 @@ namespace {
     constexpr int   kGridLines              = 3;
 }
 
-FrameGraphCanvas::FrameGraphCanvas(FrameGraphWidget* owner) 
-    : QWidget(owner), graphWidget(owner) {
+FrameGraphCanvas::FrameGraphCanvas(QWidget* parent) 
+    : QWidget(parent) {
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumHeight(kMinCanvasHeight);
@@ -42,7 +42,7 @@ void FrameGraphCanvas::clear() {
     update();
 }
 
-void FrameGraphCanvas::setMetric(FrameGraphWidget::Metric metric) {
+void FrameGraphCanvas::setMetric(Metric metric) {
     currentMetric = metric;
     rebuildPoints();
     update();
@@ -122,7 +122,7 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
     QToolTip::showText(event->globalPosition().toPoint(),
                        tr("t=%1 s\n%2=%3")
                            .arg(sample.time, 0, 'f', 3)
-                           .arg(graphWidget->metricLabel())
+                           .arg(metricLabel(currentMetric))
                            .arg(value, 0, 'f', 4),
                        this,
                        rect);
@@ -143,13 +143,13 @@ void FrameGraphCanvas::resizeEvent(QResizeEvent* event) {
 
 float FrameGraphCanvas::metricValue(const ObjectSnapshot& snapshot) const {
     switch (currentMetric) {
-        case FrameGraphWidget::Metric::PositionX: return snapshot.position.x;
-        case FrameGraphWidget::Metric::PositionY: return snapshot.position.y;
-        case FrameGraphWidget::Metric::PositionZ: return snapshot.position.z;
-        case FrameGraphWidget::Metric::VelocityX: return snapshot.velocity.x;
-        case FrameGraphWidget::Metric::VelocityY: return snapshot.velocity.y;
-        case FrameGraphWidget::Metric::VelocityZ: return snapshot.velocity.z;
-        case FrameGraphWidget::Metric::Count:     return 0.0f;
+        case Metric::PositionX: return snapshot.position.x;
+        case Metric::PositionY: return snapshot.position.y;
+        case Metric::PositionZ: return snapshot.position.z;
+        case Metric::VelocityX: return snapshot.velocity.x;
+        case Metric::VelocityY: return snapshot.velocity.y;
+        case Metric::VelocityZ: return snapshot.velocity.z;
+        case Metric::Count:     return 0.0f;
     }
     return 0.0f;
 }

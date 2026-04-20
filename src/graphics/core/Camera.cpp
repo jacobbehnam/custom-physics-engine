@@ -2,8 +2,6 @@
 
 #include "SceneObject.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "ui/AppSettings.h"
-#include "ui/settings/CameraSettingsGroup.h"
 
 Camera::Camera(glm::vec3 initPosition) {
     position = initPosition;
@@ -18,13 +16,13 @@ glm::mat4 Camera::getViewMatrix() const {
 }
 
 glm::mat4 Camera::getProjMatrix() const {
-    float fov = AppSettings::getInstance().getGroup<CameraSettingsGroup>().fov;
     return glm::perspective(
         glm::radians(fov),
         aspectRatio,
         0.1f,
         300000.0f
     );
+
 }
 
 void Camera::setTarget(SceneObject* obj) {
@@ -51,10 +49,10 @@ void Camera::update() {
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-    float mouseSensitivity = AppSettings::getInstance().getGroup<CameraSettingsGroup>().mouseSensitivity;
 
-    yaw += xoffset * mouseSensitivity;
-    pitch += yoffset * mouseSensitivity;
+
+    yaw += xoffset * this->mouseSensitivity;
+    pitch += yoffset * this->mouseSensitivity;
 
     if (pitch > 90)
         pitch = 90;
@@ -65,9 +63,9 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
-    float movementSpeed = AppSettings::getInstance().getGroup<CameraSettingsGroup>().movementSpeed;
 
-    float velocity = movementSpeed * deltaTime;
+
+    float velocity = this->movementSpeed * deltaTime;
     switch (direction) {
         case Movement::FORWARD:
             position += front * velocity;

@@ -5,8 +5,10 @@
 #include <QScrollArea>
 #include <vector>
 
-#include "FrameGraphWidget.h"
+#include "Metric.h"
 #include "physics/PhysicsBody.h"
+
+class FrameGraphWidget;
 
 class FrameGraphPanel : public QWidget {
     Q_OBJECT

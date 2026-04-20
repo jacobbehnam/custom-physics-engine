@@ -3,37 +3,26 @@
 #include <QWidget>
 #include <vector>
 
+#include "Metric.h"
+
 class QComboBox;
 class QLabel;
-
+class FrameGraphCanvas;
 struct ObjectSnapshot;
 
 class FrameGraphWidget : public QWidget {
     Q_OBJECT
 public:
-    enum class Metric {
-        PositionX,
-        PositionY,
-        PositionZ,
-        VelocityX,
-        VelocityY,
-        VelocityZ,
-
-        Count, // Must be last (just dont have to hard code the count elsewhere)
-    };
-
     explicit FrameGraphWidget(QWidget* parent = nullptr);
 
     void setSnapshots(const std::vector<ObjectSnapshot>& snapshots);
     void clear();
     void setMetric(Metric metric);
     void setSelectorVisible(bool visible);
-    QString metricLabel() const;
-    static QString metricLabel(Metric metric);
 
 private:
     QComboBox* metricSelector;
     QLabel* titleLabel;
-    QWidget* canvas;
-    Metric currentMetric;
+    FrameGraphCanvas* canvas;
+    Metric currentMetric = Metric::PositionX;
 };

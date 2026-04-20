@@ -1,5 +1,8 @@
 #pragma once
 #include <QDialog>
+#include <vector>
+
+class ISettingsTab;
 
 class SettingsDialog : public QDialog {
     Q_OBJECT
@@ -8,4 +11,7 @@ public:
 
 signals:
     void settingsSaved();
+
+private:
+    std::vector<ISettingsTab*> m_tabs;
 };
