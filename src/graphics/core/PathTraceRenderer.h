@@ -10,7 +10,7 @@ public:
     PathTraceRenderer(QOpenGLFunctions_4_5_Core* glFuncs);
     ~PathTraceRenderer();
 
-    void drawTrails(const std::vector<SceneObject*>& objects, int maxLength);
+    void drawTrails(const std::vector<class SceneObject*>& objects, float timeWindow);
 
 private:
     QOpenGLFunctions_4_5_Core* gl;

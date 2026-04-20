@@ -62,7 +62,7 @@ void OpenGLWindow::paintGL() {
 
     auto& dbgGroup = AppSettings::getInstance().getGroup<DebugSettings>();
     if (dbgGroup.showAllPathTrails) {
-        scene->drawPathTrails(sceneManager->getObjects(), dbgGroup.pathTrailLength);
+        scene->drawPathTrails(sceneManager->getObjects(), dbgGroup.pathTrailTime);
     }
 
     calculateFPS();

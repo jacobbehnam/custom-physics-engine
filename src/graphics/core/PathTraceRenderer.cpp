@@ -20,12 +20,17 @@ PathTraceRenderer::~PathTraceRenderer() {
     if (vbo) gl->glDeleteBuffers(1, &vbo);
 }
 
-void PathTraceRenderer::drawTrails(const std::vector<SceneObject*>& objects, int maxLength) {
+void PathTraceRenderer::drawTrails(const std::vector<class SceneObject*>& objects, float timeWindow) {
     if (!traceShader) return;
 
     traceShader->use();
 
     gl->glBindVertexArray(vao);
+    
+    float oldLineWidth;
+    gl->glGetFloatv(GL_LINE_WIDTH, &oldLineWidth);
+    
+    gl->glLineWidth(1.0f);
 
     std::vector<glm::vec3> points;
     for (SceneObject* obj : objects) {
@@ -35,11 +40,19 @@ void PathTraceRenderer::drawTrails(const std::vector<SceneObject*>& objects, int
         const std::vector<ObjectSnapshot> snapshots = body->getAllFrames(BodyLock::LOCK);
         if (snapshots.size() < 2) continue;
 
+        float latestTime = snapshots.back().time;
+        float startTime = latestTime - timeWindow;
+
         points.clear();
-        int count = std::min((int)snapshots.size(), maxLength);
+        
+        int startIdx = (int)snapshots.size() - 1;
+        while (startIdx > 0 && snapshots[startIdx].time >= startTime) {
+            startIdx--;
+        }
+
+        int count = (int)snapshots.size() - startIdx;
         points.reserve(count);
         
-        int startIdx = (int)snapshots.size() - count;
         for (int i = startIdx; i < snapshots.size(); ++i) {
             points.push_back(snapshots[i].position);
         }
@@ -53,4 +66,5 @@ void PathTraceRenderer::drawTrails(const std::vector<SceneObject*>& objects, int
     }
 
     gl->glBindVertexArray(0);
+    gl->glLineWidth(oldLineWidth);
 }

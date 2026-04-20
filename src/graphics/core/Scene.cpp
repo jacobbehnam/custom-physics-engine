@@ -96,9 +96,9 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 }
 
-void Scene::drawPathTrails(const std::vector<SceneObject*>& objects, int maxLength) {
+void Scene::drawPathTrails(const std::vector<SceneObject*>& objects, float timeWindow) {
     if (pathTraceRenderer) {
-        pathTraceRenderer->drawTrails(objects, maxLength);
+        pathTraceRenderer->drawTrails(objects, timeWindow);
     }
 }
 

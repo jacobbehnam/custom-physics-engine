@@ -50,16 +50,16 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     auto* debugLayout = new QFormLayout(debugTab);
 
     auto* showTrailsBox = new QCheckBox();
-    auto* trailLengthBox = new QSpinBox();
-    trailLengthBox->setRange(10, 1000);
-    trailLengthBox->setSingleStep(10);
+    auto* trailTimeBox = new QDoubleSpinBox();
+    trailTimeBox->setRange(0.1, 60.0);
+    trailTimeBox->setSingleStep(0.5);
 
     auto& dbgGroup = AppSettings::getInstance().getGroup<DebugSettings>();
     showTrailsBox->setChecked(dbgGroup.showAllPathTrails);
-    trailLengthBox->setValue(dbgGroup.pathTrailLength);
+    trailTimeBox->setValue(dbgGroup.pathTrailTime);
 
     debugLayout->addRow("Show All Path Trails:", showTrailsBox);
-    debugLayout->addRow("Path Trail Length (frames):", trailLengthBox);
+    debugLayout->addRow("Path Trail Time (seconds):", trailTimeBox);
     tabWidget->addTab(debugTab, "Debug");
 
     mainLayout->addWidget(tabWidget);
@@ -75,7 +75,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         
         auto& dbgGroupSave = AppSettings::getInstance().getGroup<DebugSettings>();
         dbgGroupSave.showAllPathTrails = showTrailsBox->isChecked();
-        dbgGroupSave.pathTrailLength = trailLengthBox->value();
+        dbgGroupSave.pathTrailTime = trailTimeBox->value();
 
         QSettings qSettings;
         AppSettings::getInstance().save(qSettings);

@@ -15,7 +15,7 @@ public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
-    void drawPathTrails(const std::vector<class SceneObject*>& objects, int maxLength);
+    void drawPathTrails(const std::vector<class SceneObject*>& objects, float timeWindow);
 
     void addDrawable(IDrawable* drawable);
     void removeDrawable(IDrawable* drawable);
