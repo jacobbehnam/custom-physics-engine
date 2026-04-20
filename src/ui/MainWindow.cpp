@@ -21,19 +21,13 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QResizeEvent>
-#include <array>
 
 #include "HierarchyWidget.h"
-#include "FrameGraphWidget.h"
+#include "graph/FrameGraphPanel.h"
 #include "inspector/InspectorWidget.h"
 #include "SolverDialog.h"
 #include "AppSettings.h"
 #include "graphics/core/Camera.h"
-
-namespace {
-    constexpr auto kGraphScrollAreaName = "GraphScrollArea";
-    constexpr int minimumCardWidth = 180;
-}
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     glWindow = new OpenGLWindow(nullptr, this);
@@ -123,46 +117,12 @@ void MainWindow::setupDockWidgets() {
     auto* tableView = new QTableView(tabs);
     tableView->horizontalHeader()->setStretchLastSection(true);
     snapshotModel = new SnapshotTableModel(this);
+
     tableView->setModel(snapshotModel);
     tabs->addTab(tableView, tr("History"));
 
-    auto* graphTab = new QWidget(tabs);
-    auto* graphTabLayout = new QVBoxLayout(graphTab);
-    graphTabLayout->setContentsMargins(0, 0, 0, 0);
-
-    auto* graphScrollArea = new QScrollArea(graphTab);
-    graphScrollArea->setObjectName(kGraphScrollAreaName);
-    graphScrollArea->installEventFilter(this);
-    graphScrollArea->setWidgetResizable(true);
-    auto* graphContainer = new QWidget(graphScrollArea);
-    frameGraphContainer = graphContainer;
-    frameGraphLayout = new QGridLayout(graphContainer);
-    frameGraphLayout->setContentsMargins(8, 8, 8, 8);
-    frameGraphLayout->setSpacing(8);
-    frameGraphLayout->setAlignment(Qt::AlignTop);
-
-    const std::array<FrameGraphWidget::Metric, 6> metrics = {
-        FrameGraphWidget::Metric::PositionX,
-        FrameGraphWidget::Metric::PositionY,
-        FrameGraphWidget::Metric::PositionZ,
-        FrameGraphWidget::Metric::VelocityX,
-        FrameGraphWidget::Metric::VelocityY,
-        FrameGraphWidget::Metric::VelocityZ,
-    };
-
-    frameGraphs.reserve(metrics.size());
-    for (FrameGraphWidget::Metric metric : metrics) {
-        auto* graph = new FrameGraphWidget(graphContainer);
-        graph->setMetric(metric);
-        graph->setSelectorVisible(false);
-        frameGraphs.push_back(graph);
-    }
-
-    relayoutFrameGraphs();
-
-    graphScrollArea->setWidget(graphContainer);
-    graphTabLayout->addWidget(graphScrollArea);
-    tabs->addTab(graphTab, tr("Graphs"));
+    frameGraphPanel = new FrameGraphPanel(tabs);
+    tabs->addTab(frameGraphPanel, tr("Graphs"));
 
     historyDock->setWidget(tabs);
     addDockWidget(Qt::RightDockWidgetArea, historyDock);
@@ -352,13 +312,6 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
 
     contextMenu.exec(pos);
 }
-void MainWindow::clearFrameGraph() {
-    snapshotModel->setSnapshots({});
-    for (FrameGraphWidget* graph : frameGraphs) {
-        graph->clear();
-    }
-}
-
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {
         sceneManager->setSelectFor(previous, false);
@@ -371,68 +324,15 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         if (auto* selectedBody = current->getPhysicsBody()) {
             const std::vector<ObjectSnapshot> snapshots = selectedBody->getAllFrames(BodyLock::LOCK);
             snapshotModel->setSnapshots(snapshots);
-            for (FrameGraphWidget* graph : frameGraphs) {
-                graph->setSnapshots(snapshots);
-            }
+            frameGraphPanel->loadSnapshots(snapshots);
         } else {
-            MainWindow::clearFrameGraph();
+            snapshotModel->setSnapshots({});
+            frameGraphPanel->clear();
         }
     } else {
         inspector->unloadObject();
-        MainWindow::clearFrameGraph();
-    }
-    relayoutFrameGraphs();
-}
-
-bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
-    if (event->type() == QEvent::Resize && watched->objectName() == kGraphScrollAreaName) {
-        relayoutFrameGraphs();
-    }
-    return QMainWindow::eventFilter(watched, event);
-}
-
-// Auto relayout number of graphs on a row
-void MainWindow::relayoutFrameGraphs() {
-    if (!frameGraphLayout) {
-        return;
-    }
-    const int maxTracks = static_cast<int>(frameGraphs.size());
-    for (int index = 0; index < maxTracks; ++index) {
-        frameGraphLayout->setColumnStretch(index, 0);
-        frameGraphLayout->setColumnMinimumWidth(index, 0);
-        frameGraphLayout->setRowStretch(index, 0);
-        frameGraphLayout->setRowMinimumHeight(index, 0);
-    }
-
-    QWidget* parentWidget = frameGraphLayout->parentWidget();
-    QScrollArea* scrollArea = parentWidget ? qobject_cast<QScrollArea*>(parentWidget->parentWidget()->parentWidget()) : nullptr;
-    const int availableWidth = scrollArea
-        ? scrollArea->viewport()->width() - frameGraphLayout->contentsMargins().left() - frameGraphLayout->contentsMargins().right()
-        : (parentWidget ? parentWidget->contentsRect().width() - frameGraphLayout->contentsMargins().left() - frameGraphLayout->contentsMargins().right() : 0);
-    const int spacing = frameGraphLayout->horizontalSpacing();
-    const int columns = std::max(1, (availableWidth + spacing) / (minimumCardWidth + spacing));
-    if (columns == frameGraphColumns && frameGraphLayout->count() == static_cast<int>(frameGraphs.size())) {
-        return;
-    }
-    frameGraphColumns = columns;
-    for (FrameGraphWidget* graph : frameGraphs) {
-        frameGraphLayout->removeWidget(graph);
-    }
-
-
-    for (int i = 0; i < static_cast<int>(frameGraphs.size()); ++i) {
-        const int row = i / columns;
-        const int column = i % columns;
-        frameGraphLayout->addWidget(frameGraphs[i], row, column);
-    }
-
-    for (int column = 0; column < columns; ++column) {
-        frameGraphLayout->setColumnStretch(column, 1);
-    }
-
-    frameGraphLayout->invalidate();
-    if (parentWidget) {
-        parentWidget->updateGeometry();
+        snapshotModel->setSnapshots({});
+        frameGraphPanel->clear();
     }
 }
 

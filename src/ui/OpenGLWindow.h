@@ -9,8 +9,6 @@
 #include <chrono>
 #include "math/Ray.h"
 
-#include "physics/PhysicsSystem.h"
-
 class Scene;
 class SceneManager;
 namespace Physics { class PhysicsSystem; }

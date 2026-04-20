@@ -94,10 +94,12 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/OpenGLWindow.h
         src/ui/MainWindow.cpp
         src/ui/MainWindow.h
-        src/ui/FrameGraphWidget.cpp
-        src/ui/FrameGraphWidget.h
-        src/ui/FrameGraphCanvas.cpp
-        src/ui/FrameGraphCanvas.h
+        src/ui/graph/FrameGraphWidget.cpp
+        src/ui/graph/FrameGraphWidget.h
+        src/ui/graph/FrameGraphCanvas.cpp
+        src/ui/graph/FrameGraphCanvas.h
+        src/ui/graph/FrameGraphPanel.cpp
+        src/ui/graph/FrameGraphPanel.h
         src/ui/AppSettings.cpp
         src/ui/AppSettings.h
         src/ui/RawInputFilter.cpp

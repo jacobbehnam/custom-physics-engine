@@ -5,6 +5,7 @@
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneObjectOptions.h"
 #include "ui/OpenGLWindow.h"
+#include "physics/PhysicsSystem.h"
 
 enum class Primitive {
     CUBE,

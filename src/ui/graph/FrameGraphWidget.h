@@ -18,6 +18,8 @@ public:
         VelocityX,
         VelocityY,
         VelocityZ,
+
+        Count, // Must be last (just dont have to hard code the count elsewhere)
     };
 
     explicit FrameGraphWidget(QWidget* parent = nullptr);
@@ -27,6 +29,7 @@ public:
     void setMetric(Metric metric);
     void setSelectorVisible(bool visible);
     QString metricLabel() const;
+    static QString metricLabel(Metric metric);
 
 private:
     QComboBox* metricSelector;

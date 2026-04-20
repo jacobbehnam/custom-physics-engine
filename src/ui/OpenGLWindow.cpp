@@ -3,7 +3,6 @@
 #include <QElapsedTimer>
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
-#include <iostream>
 #include "graphics/core/SceneManager.h"
 
 #include "graphics/components/Gizmo.h"

@@ -12,6 +12,8 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
+#include <array>
+
 #include "physics/PhysicsBody.h"
 #include "FrameGraphCanvas.h"
 
@@ -28,12 +30,9 @@ FrameGraphWidget::FrameGraphWidget(QWidget* parent) : QWidget(parent) {
     titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     metricSelector = new QComboBox(this);
-    metricSelector->addItem(tr("Position X"));
-    metricSelector->addItem(tr("Position Y"));
-    metricSelector->addItem(tr("Position Z"));
-    metricSelector->addItem(tr("Velocity X"));
-    metricSelector->addItem(tr("Velocity Y"));
-    metricSelector->addItem(tr("Velocity Z"));
+    for (int i = 0; i < static_cast<int>(FrameGraphWidget::Metric::Count); ++i) {
+        metricSelector->addItem(FrameGraphWidget::metricLabel(static_cast<Metric>(i)));
+    }
 
     headerLayout->addWidget(titleLabel);
     headerLayout->addStretch();
@@ -62,6 +61,7 @@ void FrameGraphWidget::clear() {
 }
 
 void FrameGraphWidget::setMetric(Metric metric) {
+    assert(metric != Metric::Count && "Invalid metric");
     currentMetric = metric;
     titleLabel->setText(metricLabel());
     metricSelector->blockSignals(true);
@@ -74,14 +74,20 @@ void FrameGraphWidget::setSelectorVisible(bool visible) {
     metricSelector->setVisible(visible);
 }
 
-QString FrameGraphWidget::metricLabel() const {
-    switch (currentMetric) {
+QString FrameGraphWidget::metricLabel(Metric metric) {
+    switch (metric) {
         case Metric::PositionX: return tr("Position X");
         case Metric::PositionY: return tr("Position Y");
         case Metric::PositionZ: return tr("Position Z");
         case Metric::VelocityX: return tr("Velocity X");
         case Metric::VelocityY: return tr("Velocity Y");
         case Metric::VelocityZ: return tr("Velocity Z");
+        default:
+            throw std::invalid_argument("Invalid metric");
     }
     return {};
+}
+
+QString FrameGraphWidget::metricLabel() const {
+    return FrameGraphWidget::metricLabel(currentMetric);
 }

@@ -135,6 +135,8 @@ float FrameGraphCanvas::metricValue(const ObjectSnapshot& snapshot) const {
         case FrameGraphWidget::Metric::VelocityX: return snapshot.velocity.x;
         case FrameGraphWidget::Metric::VelocityY: return snapshot.velocity.y;
         case FrameGraphWidget::Metric::VelocityZ: return snapshot.velocity.z;
+        default:
+            throw std::runtime_error("Invalid metric");
     }
     return 0.0f;
 }
