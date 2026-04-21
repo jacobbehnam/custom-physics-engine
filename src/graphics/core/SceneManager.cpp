@@ -384,7 +384,7 @@ void SceneManager::initDebugDrawables() {
     if (!scene || !window) return;
 
     pathTraces = std::make_unique<PathTraces>(this, window);
-    forces = std::make_unique<Forces>(this, window);
+    forces = std::make_unique<Forces>(this);
     colliders = std::make_unique<Colliders>(this, window);
 
     scene->addDrawable(pathTraces.get());

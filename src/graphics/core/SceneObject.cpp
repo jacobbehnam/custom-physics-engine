@@ -17,7 +17,6 @@
 SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, Shader *sdr, const CreationOptions &options, QObject* objectParent)
     : shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent), meshName(nameOfMesh) {
     shader->use();
-    shader->setVec3("color", glm::vec3(1.0f, 1.0f, 0.0f));
     shader->setBool("isHovered", false);
 
     assert((mesh = ResourceManager::getMesh(nameOfMesh)));
@@ -200,4 +199,6 @@ uint32_t SceneObject::getObjectID() const {
     return objectID;
 }
 
-
+Rendering::InstanceData SceneObject::getInstanceData() const {
+    return {getModelMatrix(), getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f)};
+}

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <QOpenGLFunctions_4_5_Core>
+#include "graphics/core/InstanceData.h"
 #include "graphics/components/Shader.h"
 #include "graphics/components/Mesh.h"
 #include "graphics/core/IDrawable.h"
@@ -27,4 +28,7 @@ private:
     Shader* basicShader = nullptr;
     Mesh* cubeMesh = nullptr;
     bool enabled = false;
+
+    /** Reused each draw to avoid per-frame heap allocations when collider overlay is on. */
+    mutable std::vector<Rendering::InstanceData> m_instanceScratch;
 };

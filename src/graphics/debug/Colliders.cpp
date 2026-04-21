@@ -6,6 +6,10 @@
 #include "graphics/core/ResourceManager.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace {
+constexpr glm::vec3 kColliderColor(0.2f, 0.9f, 1.0f);
+}
+
 Colliders::Colliders(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) 
     : sceneManager(sceneManager), gl(glFuncs) {
     basicShader = ResourceManager::getShader("basic");
@@ -19,12 +23,12 @@ void Colliders::draw() const {
     if (!enabled) return;
 
     if (!basicShader || !cubeMesh) return;
-    basicShader->use();
-    basicShader->setVec3("color", glm::vec3(0.2f, 0.9f, 1.0f));
 
-    std::vector<Rendering::InstanceData> instances;
     const auto& objects = sceneManager->getObjects();
-    instances.reserve(objects.size());
+    m_instanceScratch.clear();
+    if (m_instanceScratch.capacity() < objects.size()) {
+        m_instanceScratch.reserve(objects.size());
+    }
 
     for (SceneObject* obj : objects) {
         auto* body = obj->getPhysicsBody();
@@ -44,10 +48,12 @@ void Colliders::draw() const {
         glm::mat4 model(1.0f);
         model = glm::translate(model, center);
         model = glm::scale(model, extents);
-        instances.emplace_back(model, obj->getObjectID(), glm::vec3(0.2f, 0.9f, 1.0f));
+        m_instanceScratch.emplace_back(model, obj->getObjectID(), kColliderColor);
     }
 
-    if (instances.empty()) return;
+    if (m_instanceScratch.empty()) return;
+
+    basicShader->use();
 
     GLint oldPolygonMode[2];
     GLfloat oldLineWidth = 1.0f;
@@ -56,8 +62,7 @@ void Colliders::draw() const {
 
     gl->glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     gl->glLineWidth(1.0f);
-    cubeMesh->drawInstanced(instances);
-    gl->glPolygonMode(GL_FRONT, oldPolygonMode[0]);
-    gl->glPolygonMode(GL_BACK, oldPolygonMode[1]);
+    cubeMesh->drawInstanced(m_instanceScratch);
+    gl->glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(oldPolygonMode[0]));
     gl->glLineWidth(oldLineWidth);
 }
