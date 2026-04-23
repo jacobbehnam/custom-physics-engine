@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <limits>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -18,6 +17,23 @@ namespace {
     constexpr int   kPlotMarginBottomOffset = 4;
     constexpr int   kLabelOffset            = 2;
     constexpr int   kGridLines              = 3;
+
+    int nearestIndexByX(const std::vector<QPointF>& pts, qreal mx) {
+        if (pts.empty()) return -1;
+        const auto it = std::lower_bound(pts.begin(), pts.end(), mx,
+            [](const QPointF& p, qreal x) { return p.x() < x; });
+        if (it == pts.begin()) {
+            return 0;
+        }
+        if (it == pts.end()) {
+            return static_cast<int>(pts.size() - 1);
+        }
+        const int i1 = static_cast<int>(it - pts.begin());
+        const int i0 = i1 - 1;
+        const qreal d0 = std::abs(pts[static_cast<size_t>(i0)].x() - mx);
+        const qreal d1 = std::abs(pts[static_cast<size_t>(i1)].x() - mx);
+        return d0 <= d1 ? i0 : i1;
+    }
 }
 
 FrameGraphCanvas::FrameGraphCanvas(QWidget* parent) 
@@ -118,16 +134,8 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
         }
         return;
     }
-    int nearestIndex = -1;
-    qreal nearestDistance = std::numeric_limits<qreal>::max();
-    for (int i = 0; i < static_cast<int>(graphPoints.size()); ++i) {
-        const qreal distance = std::abs(graphPoints[i].x() - event->position().x());
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestIndex = i;
-        }
-    }
-    if (nearestIndex == -1) return;
+    const int nearestIndex = nearestIndexByX(graphPoints, event->position().x());
+    if (nearestIndex < 0) return;
     hoverIndex = nearestIndex;
     const ObjectSnapshot& sample = (*framesRef)[static_cast<size_t>(nearestIndex)];
     const float value = objectSnapshotValue(currentMetric, sample);
