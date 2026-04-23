@@ -117,8 +117,7 @@ void Scene::removeDrawable(IDrawable* drawable) {
             std::remove(instancedDrawables.begin(), instancedDrawables.end(), instanced),
             instancedDrawables.end()
         );
-    }
-    else if (auto custom = dynamic_cast<ICustomDrawable*>(drawable)) {
+    } else if (auto custom = dynamic_cast<ICustomDrawable*>(drawable)) {
         customDrawables.erase(
             std::remove(customDrawables.begin(), customDrawables.end(), custom),
             customDrawables.end()

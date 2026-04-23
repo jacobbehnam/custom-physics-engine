@@ -12,6 +12,7 @@
 class OpenGLWindow;
 class InspectorWidget;
 class HierarchyWidget;
+class FrameGraphPanel;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -37,7 +38,11 @@ private:
     InspectorWidget* inspector;
     HierarchyWidget* hierarchy;
     SnapshotTableModel* snapshotModel;
+    FrameGraphPanel* frameGraphPanel;
 
     void setupDockWidgets();
+    void setupFileMenu();
+    void setupSettingMenu();
     void setupMenuBar();
+    void loadAppSettings();
 };

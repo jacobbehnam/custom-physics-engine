@@ -22,6 +22,7 @@ glm::mat4 Camera::getProjMatrix() const {
         0.1f,
         300000.0f
     );
+
 }
 
 void Camera::setTarget(SceneObject* obj) {
@@ -48,8 +49,10 @@ void Camera::update() {
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-    yaw += xoffset * mouseSensitivity;
-    pitch += yoffset * mouseSensitivity;
+
+
+    yaw += xoffset * this->mouseSensitivity;
+    pitch += yoffset * this->mouseSensitivity;
 
     if (pitch > 90)
         pitch = 90;
@@ -60,7 +63,9 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
-    float velocity = movementSpeed * deltaTime;
+
+
+    float velocity = this->movementSpeed * deltaTime;
     switch (direction) {
         case Movement::FORWARD:
             position += front * velocity;

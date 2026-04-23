@@ -61,6 +61,12 @@ add_library(PhysicsCore STATIC
 add_executable(PhysicsEngine src/main.cpp
         src/graphics/core/SceneObject.cpp
         src/graphics/core/SceneObject.h
+        src/graphics/debug/PathTraces.cpp
+        src/graphics/debug/PathTraces.h
+        src/graphics/debug/Forces.cpp
+        src/graphics/debug/Forces.h
+        src/graphics/debug/Colliders.cpp
+        src/graphics/debug/Colliders.h
         src/graphics/core/Camera.cpp
         src/graphics/core/Camera.h
         src/graphics/core/Scene.cpp
@@ -94,6 +100,27 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/OpenGLWindow.h
         src/ui/MainWindow.cpp
         src/ui/MainWindow.h
+        src/ui/graph/FrameGraphWidget.cpp
+        src/ui/graph/FrameGraphWidget.h
+        src/ui/graph/FrameGraphCanvas.cpp
+        src/ui/graph/FrameGraphCanvas.h
+        src/ui/graph/FrameGraphPanel.cpp
+        src/ui/graph/FrameGraphPanel.h
+        src/ui/graph/Metric.h
+        src/ui/AppSettings.cpp
+        src/ui/AppSettings.h
+        src/ui/settings/ISettingsGroup.h
+        src/ui/settings/ISettingsTab.h
+        src/ui/settings/CameraSettingsGroup.h
+        src/ui/settings/CameraSettingsGroup.cpp
+        src/ui/settings/DebugSettings.h
+        src/ui/settings/DebugSettings.cpp
+        src/ui/settings/SettingsDialog.h
+        src/ui/settings/SettingsDialog.cpp
+        src/ui/settings/CameraTab.h
+        src/ui/settings/CameraTab.cpp
+        src/ui/settings/DebugTab.h
+        src/ui/settings/DebugTab.cpp
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
         src/ui/inspector/InspectorWidget.cpp

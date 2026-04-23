@@ -153,14 +153,6 @@ void Physics::PhysicsBody::setWorldTransform(const glm::mat4 &M, BodyLock lock) 
     worldMatrix = M;
 }
 
-std::vector<ObjectSnapshot> Physics::PhysicsBody::getAllFrames(BodyLock lock) const {
-    std::unique_lock<std::mutex> maybeLock;
-    if (lock == BodyLock::LOCK)
-        maybeLock = std::unique_lock<std::mutex>(stateMutex);
-
-    return frames;
-}
-
 void Physics::PhysicsBody::clearAllFrames(BodyLock lock) {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)

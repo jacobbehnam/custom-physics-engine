@@ -82,7 +82,8 @@ void Mesh::drawInstanced(const std::vector<Rendering::InstanceData>& instances) 
     funcs->glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     funcs->glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(Rendering::InstanceData), instances.data(), GL_DYNAMIC_DRAW);
 
-    funcs->glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr, instances.size());
+    funcs->glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr,
+                                   static_cast<GLsizei>(instances.size()));
 
     funcs->glBindVertexArray(0);
 }

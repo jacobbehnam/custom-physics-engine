@@ -34,6 +34,7 @@ public:
     glm::vec3 getScale() const;
 
     Shader* getShader() const override;
+    Rendering::InstanceData getInstanceData() const override;
     Physics::PhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
     std::optional<float> intersectsRay(const Math::Ray& ray) const override;
 

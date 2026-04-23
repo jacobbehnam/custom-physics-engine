@@ -178,7 +178,9 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
 
             if (resetState.find(body) == resetState.end()) {
-                resetState[body] = body->getAllFrames(BodyLock::NOLOCK).front();
+                body->withFrames(BodyLock::NOLOCK, [this, body](const std::vector<ObjectSnapshot>& fr) {
+                    if (!fr.empty()) resetState[body] = fr.front();
+                });
             }
         }
 
@@ -209,11 +211,12 @@ bool Physics::PhysicsSystem::step(float dt) {
         float finalDuration = this->simTime - (dt * 0.5f); // ensures no extra step is made due to floating point errors
 
         for (auto body : bodies) {
-            const auto& frames = body->getAllFrames(BodyLock::LOCK);
-            if (!frames.empty()) {
-                // The first frame is always t=0 for the current trajectory
-                resetState[body] = frames.front();
-            }
+            body->withFrames(BodyLock::LOCK, [this, body](const std::vector<ObjectSnapshot>& frames) {
+                if (!frames.empty()) {
+                    // The first frame is always t=0 for the current trajectory
+                    resetState[body] = frames.front();
+                }
+            });
         }
         reset();
 

@@ -10,12 +10,25 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QDir> 
+#include <QHeaderView>
+#include <QTableView>
+#include <QTabWidget>
+#include <QVBoxLayout>
 
 #include "HierarchyWidget.h"
+#include "graph/FrameGraphPanel.h"
 #include "inspector/InspectorWidget.h"
 #include "SolverDialog.h"
+#include "AppSettings.h"
+#include "graphics/core/Camera.h"
+#include "ui/settings/CameraSettingsGroup.h"
+#include "ui/settings/DebugSettings.h"
+#include "ui/settings/SettingsDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    AppSettings::getInstance().registerGroup<CameraSettingsGroup>();
+    AppSettings::getInstance().registerGroup<DebugSettings>();
+
     glWindow = new OpenGLWindow(nullptr, this);
 
     setWindowTitle("Physics Engine");
@@ -43,6 +56,7 @@ void MainWindow::onGLInitialized() {
     setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
+    loadAppSettings();
     connect(sceneManager, &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
 }
 
@@ -94,17 +108,26 @@ void MainWindow::setupDockWidgets() {
     inspectorDock->setWidget(scrollArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
 
-    auto* tableDock = new QDockWidget(tr("Frame History"), this);
-    tableDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    auto* tableView = new QTableView(this);
+    auto* historyDock = new QDockWidget(tr("Frame History"), this);
+    historyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    auto* tabs = new QTabWidget(historyDock);
+
+    auto* tableView = new QTableView(tabs);
+    tableView->horizontalHeader()->setStretchLastSection(true);
     snapshotModel = new SnapshotTableModel(this);
+
     tableView->setModel(snapshotModel);
-    tableDock->setWidget(tableView);
-    addDockWidget(Qt::RightDockWidgetArea, tableDock);
+    tabs->addTab(tableView, tr("History"));
+
+    frameGraphPanel = new FrameGraphPanel(tabs);
+    tabs->addTab(frameGraphPanel, tr("Graphs"));
+
+    historyDock->setWidget(tabs);
+    addDockWidget(Qt::RightDockWidgetArea, historyDock);
 }
 
-void MainWindow::setupMenuBar() {
-    // File Menu
+void MainWindow::setupFileMenu() {
     QMenu *fileMenu = menuBar()->addMenu("File");
     QAction *saveAction = new QAction("Save", this);
     fileMenu->addAction(saveAction);
@@ -116,35 +139,97 @@ void MainWindow::setupMenuBar() {
     fileMenu->addAction(loadFromAction);
 
     connect(saveAction, &QAction::triggered, this, [this](){
-        if (sceneManager->saveScene("scene.json"))
+        if (sceneManager->saveScene("scene.json")) {
             std::cout << "Save Success!" << std::endl;
-        else
+            statusBar()->showMessage("Scene saved to scene.json", 3000);
+        } else {
             std::cout << "Save Failed!" << std::endl;
+            statusBar()->showMessage("Failed to save scene to scene.json", 3000);
+        }
     });
     connect(loadAction, &QAction::triggered, this, [this](){
-        if (sceneManager->loadScene("scene.json"))
+        if (sceneManager->loadScene("scene.json")) {
             std::cout << "Load Success!" << std::endl;
-        else
+            statusBar()->showMessage("Scene loaded from scene.json", 3000);
+        } else {
             std::cout << "Load Failed!" << std::endl;
+            statusBar()->showMessage("Failed to load scene from scene.json", 3000);
+        }
     });
     connect(saveAsAction, &QAction::triggered, this, [this](){
-        QString fileName = QFileDialog::getSaveFileName(this, "Save Scene", QDir::currentPath(), "JSON Files (*.json)");
-        if (!fileName.isEmpty()) {
-            if (sceneManager->saveScene(fileName))
+        QFileDialog dialog(this, "Save Scene", QDir::currentPath(), "JSON Files (*.json)");
+        dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
+        dialog.setDefaultSuffix("json");
+
+        if (dialog.exec() == QDialog::Accepted) {
+            const QString fileName = dialog.selectedFiles().value(0);
+            if (sceneManager->saveScene(fileName)) {
                 std::cout << "Save Success!" << std::endl;
-            else
+                statusBar()->showMessage(QString("Scene saved to %1").arg(fileName), 3000);
+            }
+            else {
                 std::cout << "Save Failed!" << std::endl;
+                statusBar()->showMessage(QString("Failed to save scene to %1").arg(fileName), 3000);
+            }
         }
     });
     connect(loadFromAction, &QAction::triggered, this, [this](){
-        QString fileName = QFileDialog::getOpenFileName(this, "Load Scene", QDir::currentPath(), "JSON Files (*.json)");
-        if (!fileName.isEmpty()) {
-            if (sceneManager->loadScene(fileName))
+        QFileDialog dialog(this, "Load Scene", QDir::currentPath(), "JSON Files (*.json)");
+        dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+        dialog.setFileMode(QFileDialog::ExistingFile);
+
+        if (dialog.exec() == QDialog::Accepted) {
+            const QString fileName = dialog.selectedFiles().value(0);
+            if (sceneManager->loadScene(fileName)) {
                 std::cout << "Load Success!" << std::endl;
-            else
+                statusBar()->showMessage(QString("Scene loaded from %1").arg(fileName), 3000);
+            } else {
                 std::cout << "Load Failed!" << std::endl;
+                statusBar()->showMessage(QString("Failed to load scene from %1").arg(fileName), 3000);
+            }
         }
     });
+}
+
+void MainWindow::setupSettingMenu() {
+    QMenu *settingMenu = menuBar()->addMenu("Settings");
+    QAction *preferencesAction = new QAction("Preferences", this);
+    settingMenu->addAction(preferencesAction);
+    connect(preferencesAction, &QAction::triggered, this, [this]() {
+        SettingsDialog dialog(this);
+        connect(&dialog, &SettingsDialog::settingsSaved, this, [this]() {
+            // Push saved settings down to Camera and debug drawables
+            auto& camGroup = AppSettings::getInstance().getGroup<CameraSettingsGroup>();
+            Camera* camera = sceneManager->scene->getCamera();
+            camera->movementSpeed = camGroup.movementSpeed;
+            camera->mouseSensitivity = camGroup.mouseSensitivity;
+            camera->fov = camGroup.fov;
+
+            sceneManager->applyDebugSettings();
+        });
+        dialog.exec();
+    });
+}
+
+void MainWindow::setupMenuBar() {
+    MainWindow::setupFileMenu();
+    MainWindow::setupSettingMenu();
+}
+
+void MainWindow::loadAppSettings() {
+    QSettings settings;
+    AppSettings::getInstance().load(settings);
+
+    // Push loaded settings down to Camera
+    auto& camGroup = AppSettings::getInstance().getGroup<CameraSettingsGroup>();
+    Camera* camera = sceneManager->scene->getCamera();
+    camera->movementSpeed = camGroup.movementSpeed;
+    camera->mouseSensitivity = camGroup.mouseSensitivity;
+    camera->fov = camGroup.fov;
+
+    // Push loaded settings down to debug drawables
+    sceneManager->applyDebugSettings();
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
@@ -173,7 +258,6 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
 
     contextMenu.exec(pos);
 }
-
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
     if (previous) {
         sceneManager->setSelectFor(previous, false);
@@ -182,15 +266,21 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         sceneManager->setSelectFor(current, true);
         sceneManager->setGizmoFor(current, true);
         inspector->loadObject(current);
-        if (auto* body = current->getPhysicsBody()) {
-            std::vector<ObjectSnapshot> snaps = body->getAllFrames(BodyLock::LOCK);
-            snapshotModel->setSnapshots(snaps);
+
+        if (auto* selectedBody = current->getPhysicsBody()) {
+            selectedBody->withFrames(BodyLock::LOCK, [this](const std::vector<ObjectSnapshot>& snapshots) {
+                snapshotModel->setSnapshots(snapshots);
+                frameGraphPanel->loadSnapshots(snapshots);
+            });
+        } else {
+            snapshotModel->setSnapshots({});
+            frameGraphPanel->clear();
         }
     } else {
         inspector->unloadObject();
+        snapshotModel->setSnapshots({});
+        frameGraphPanel->clear();
     }
 }
 
-MainWindow::~MainWindow() {
-    // automatically handled
-}
+MainWindow::~MainWindow() {}

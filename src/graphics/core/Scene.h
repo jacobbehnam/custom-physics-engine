@@ -6,6 +6,7 @@
 #include <vector>
 #include <deque>
 #include <unordered_set>
+#include <memory>
 
 class Scene {
 public:

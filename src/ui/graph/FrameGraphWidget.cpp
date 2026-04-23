@@ -1,0 +1,78 @@
+#include "FrameGraphWidget.h"
+
+#include <QComboBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
+
+#include "physics/PhysicsBody.h"
+#include "FrameGraphCanvas.h"
+
+namespace {
+    constexpr int kLayoutMargin     = 6;
+    constexpr int kLayoutSpacing    = 4;
+    constexpr int kHeaderMargin     = 0;
+    constexpr int kHeaderSpacing    = 4;
+    constexpr int kMinWidgetHeight  = 150;
+    constexpr int kMaxWidgetHeight  = 190;
+}
+
+FrameGraphWidget::FrameGraphWidget(QWidget* parent) : QWidget(parent) {
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(kLayoutMargin, kLayoutMargin, kLayoutMargin, kLayoutMargin);
+    layout->setSpacing(kLayoutSpacing);
+
+    auto* headerLayout = new QHBoxLayout();
+    headerLayout->setContentsMargins(kHeaderMargin, kHeaderMargin, kHeaderMargin, kHeaderMargin);
+    headerLayout->setSpacing(kHeaderSpacing);
+
+    titleLabel = new QLabel(metricLabel(currentMetric), this);
+    titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    metricSelector = new QComboBox(this);
+    for (int i = 0; i < static_cast<int>(Metric::Count); ++i) {
+        metricSelector->addItem(metricLabel(static_cast<Metric>(i)));
+    }
+
+    headerLayout->addWidget(titleLabel);
+    headerLayout->addStretch();
+    headerLayout->addWidget(metricSelector);
+
+    canvas = new FrameGraphCanvas(this);
+
+    layout->addLayout(headerLayout);
+    layout->addWidget(canvas, 1);
+
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    setMinimumHeight(kMinWidgetHeight);
+    setMaximumHeight(kMaxWidgetHeight);
+
+    connect(metricSelector, &QComboBox::currentIndexChanged, this, [this](int index) {
+        setMetric(static_cast<Metric>(index));
+    });
+}
+
+void FrameGraphWidget::setSharedData(
+    const std::vector<ObjectSnapshot>* frames,
+    const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, 
+    float tMin, float tMax
+) {
+    canvas->setSharedData(frames, valueMinMax, tMin, tMax);
+}
+
+void FrameGraphWidget::clear() {
+    canvas->clear();
+}
+
+void FrameGraphWidget::setMetric(Metric metric) {
+    currentMetric = metric;
+    titleLabel->setText(metricLabel(metric));
+    metricSelector->blockSignals(true);
+    metricSelector->setCurrentIndex(static_cast<int>(metric));
+    metricSelector->blockSignals(false);
+    canvas->setMetric(metric);
+}
+
+void FrameGraphWidget::setSelectorVisible(bool visible) {
+    metricSelector->setVisible(visible);
+}

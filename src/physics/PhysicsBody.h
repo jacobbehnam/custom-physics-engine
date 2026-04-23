@@ -1,6 +1,7 @@
 #pragma once
 #include <atomic>
 #include <string>
+#include <utility>
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
@@ -68,8 +69,10 @@ namespace Physics {
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
         void setGlobalAccelerationRef(std::atomic<glm::vec3>& globalAccRef) { globalAccelPtr = &globalAccRef; }
-        std::vector<ObjectSnapshot> getAllFrames(BodyLock lock) const;
         void clearAllFrames(BodyLock lock);
+
+        template <typename F>
+        void withFrames(BodyLock lock, F&& fn) const;
 
         virtual Bounding::ICollider *getCollider() const { return nullptr; }
 
@@ -102,4 +105,12 @@ namespace Physics {
 
         float mass = 1.0f;
     };
+
+    template <typename F>
+    void PhysicsBody::withFrames(BodyLock lock, F&& fn) const {
+        std::unique_lock<std::mutex> maybeLock;
+        if (lock == BodyLock::LOCK)
+            maybeLock = std::unique_lock<std::mutex>(stateMutex);
+        std::forward<F>(fn)(frames);
+    }
 }

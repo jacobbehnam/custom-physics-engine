@@ -5,6 +5,11 @@
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneObjectOptions.h"
 #include "ui/OpenGLWindow.h"
+#include "physics/PhysicsSystem.h"
+
+class PathTraces;
+class Forces;
+class Colliders;
 
 enum class Primitive {
     CUBE,
@@ -26,6 +31,7 @@ class SceneManager : public QObject {
 
 public:
     SceneManager(OpenGLWindow* win, Scene* scene);
+    ~SceneManager() override;
     SceneObject* createPrimitive(Primitive type, Shader* shader, const CreationOptions& = ObjectOptions{});
     SceneObject* createObject(const std::string &meshName, Shader* shader = ResourceManager::getShader("basic"), const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
@@ -60,6 +66,8 @@ public:
     void setGizmoFor(SceneObject *newTarget, bool redraw = false);
     void deleteCurrentGizmo();
 
+    void applyDebugSettings();
+
     bool saveScene(const QString &file);
     bool loadScene(const QString &file);
 
@@ -91,6 +99,13 @@ private:
     std::unordered_map<std::string, SceneObject*> usedNames;
 
     Math::Ray getMouseRay();
+
+    void initDebugDrawables();
+    void removeDebugDrawables();
+
+    std::unique_ptr<PathTraces> pathTraces;
+    std::unique_ptr<Forces> forces;
+    std::unique_ptr<Colliders> colliders;
 
     // To track if a right click was a click or drag
     glm::vec3 rightClickStartDir;

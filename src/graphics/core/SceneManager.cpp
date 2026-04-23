@@ -1,4 +1,4 @@
-#include "SceneManager.h"
+#include "graphics/core/SceneManager.h"
 
 #include <iostream>
 #include <QApplication>
@@ -8,10 +8,20 @@
 #include "physics/bounding/BoxCollider.h"
 #include "graphics/core/SceneObject.h"
 #include "ui/OpenGLWindow.h"
+#include "graphics/debug/PathTraces.h"
+#include "graphics/debug/Forces.h"
+#include "graphics/debug/Colliders.h"
+#include "ui/AppSettings.h"
+#include "ui/settings/DebugSettings.h"
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
     physicsSystem->start();
+    initDebugDrawables();
+}
+
+SceneManager::~SceneManager() {
+    removeDebugDrawables();
 }
 
 void SceneManager::defaultSetup() {
@@ -368,4 +378,55 @@ bool SceneManager::saveScene(const QString &file) {
 bool SceneManager::loadScene(const QString &file) {
     SceneSerializer serializer(this);
     return serializer.loadFromJson(file);
+}
+
+void SceneManager::initDebugDrawables() {
+    if (!scene || !window) return;
+
+    pathTraces = std::make_unique<PathTraces>(this, window);
+    forces = std::make_unique<Forces>(this);
+    colliders = std::make_unique<Colliders>(this, window);
+
+    scene->addDrawable(pathTraces.get());
+    scene->addDrawable(forces.get());
+    scene->addDrawable(colliders.get());
+}
+
+void SceneManager::removeDebugDrawables() {
+    if (!scene) {
+        pathTraces.reset();
+        forces.reset();
+        colliders.reset();
+        return;
+    }
+
+    if (pathTraces) {
+        scene->removeDrawable(pathTraces.get());
+        pathTraces.reset();
+    }
+
+    if (forces) {
+        scene->removeDrawable(forces.get());
+        forces.reset();
+    }
+
+    if (colliders) {
+        scene->removeDrawable(colliders.get());
+        colliders.reset();
+    }
+}
+
+void SceneManager::applyDebugSettings() {
+    auto& dbg = AppSettings::getInstance().getGroup<DebugSettings>();
+
+    if (pathTraces) {
+        pathTraces->setEnabled(dbg.showAllPathTrails);
+        pathTraces->setTimeWindow(dbg.pathTrailTime);
+    }
+    if (forces) {
+        forces->setEnabled(dbg.showForces);
+    }
+    if (colliders) {
+        colliders->setEnabled(dbg.showColliders);
+    }
 }
