@@ -79,10 +79,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"TransformInspectorWidget_8h_source.html",
-"classPhysics_1_1Bounding_1_1ICollider.html",
-"classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467",
-"structOctreeNode.html#a438377c5b3bcf093c1ecfbc6f8ecbc2a"
+"RotateHandle_8cpp_source.html",
+"classISettingsGroup.html#a52333422b0c2e5c49b3e2bf60c6afec8",
+"classPhysics_1_1PhysicsSystem.html#a76107071237fe8941f8ca9609f3f4926",
+"dir_59425e443f801f1f2fd8bbe4959a3ccf.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['aabb_0',['aabb',['../classPhysics_1_1Bounding_1_1AABB.html',1,'Physics::Bounding::AABB'],['../classPhysics_1_1Bounding_1_1AABB.html#a28a0a97fa3e0efb670b44bd87e33c3d9',1,'Physics::Bounding::AABB::AABB()=default'],['../classPhysics_1_1Bounding_1_1AABB.html#a5c5ef80b8ea4309c2ed24aed8dc530c7',1,'Physics::Bounding::AABB::AABB(const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents)']]],
+  ['aabb_0',['aabb',['../classPhysics_1_1Bounding_1_1AABB.html',1,'Physics::Bounding::AABB'],['../classPhysics_1_1Bounding_1_1AABB.html#a5c5ef80b8ea4309c2ed24aed8dc530c7',1,'Physics::Bounding::AABB::AABB(const glm::vec3 &amp;center, const glm::vec3 &amp;halfExtents)'],['../classPhysics_1_1Bounding_1_1AABB.html#a28a0a97fa3e0efb670b44bd87e33c3d9',1,'Physics::Bounding::AABB::AABB()=default']]],
   ['aabb_2ecpp_1',['AABB.cpp',['../AABB_8cpp.html',1,'']]],
   ['aabb_2eh_2',['AABB.h',['../AABB_8h.html',1,'']]],
   ['addbody_3',['addBody',['../classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e',1,'Physics::PhysicsSystem']]],
@@ -13,12 +13,16 @@ var searchData=
   ['addtophysicssystem_10',['addToPhysicsSystem',['../classSceneManager.html#ab4c384d4f3ae448f6ddc3140aa9766be',1,'SceneManager']]],
   ['addvec3_11',['addVec3',['../classInspectorRow.html#a93bc288f51b9f390abd3ceb6f3b2d2c7',1,'InspectorRow']]],
   ['allocateobjectid_12',['allocateObjectID',['../classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1',1,'Scene']]],
-  ['and_20validation_13',['and validation',['../index.html#autotoc_md15',1,'Testing and Validation'],['../testing.html',1,'Testing and Validation']]],
+  ['and_20validation_13',['and validation',['../testing.html',1,'Testing and Validation'],['../index.html#autotoc_md15',1,'Testing and Validation']]],
   ['application_20layer_14',['Application layer',['../index.html#autotoc_md16',1,'']]],
-  ['applyimpulse_15',['applyImpulse',['../classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3',1,'Physics::PointMass']]],
-  ['architecture_20overview_16',['Architecture Overview',['../index.html#autotoc_md13',1,'']]],
-  ['author_17',['Author',['../index.html#autotoc_md18',1,'']]],
-  ['axis_18',['Axis',['../Axis_8h.html#ae3996976d8ffb3e58d88f58227473f8e',1,'Axis.h']]],
-  ['axis_2eh_19',['Axis.h',['../Axis_8h.html',1,'']]],
-  ['axisdir_20',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
+  ['applydebugsettings_15',['applyDebugSettings',['../classSceneManager.html#af2a17ef84ef7682d13ab8c36e3c9fdd3',1,'SceneManager']]],
+  ['applyimpulse_16',['applyImpulse',['../classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3',1,'Physics::PointMass']]],
+  ['appsettings_17',['AppSettings',['../classAppSettings.html',1,'']]],
+  ['appsettings_2ecpp_18',['AppSettings.cpp',['../AppSettings_8cpp.html',1,'']]],
+  ['appsettings_2eh_19',['AppSettings.h',['../AppSettings_8h.html',1,'']]],
+  ['architecture_20overview_20',['Architecture Overview',['../index.html#autotoc_md13',1,'']]],
+  ['author_21',['Author',['../index.html#autotoc_md18',1,'']]],
+  ['axis_22',['Axis',['../Axis_8h.html#ae3996976d8ffb3e58d88f58227473f8e',1,'Axis.h']]],
+  ['axis_2eh_23',['Axis.h',['../Axis_8h.html',1,'']]],
+  ['axisdir_24',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
 ];

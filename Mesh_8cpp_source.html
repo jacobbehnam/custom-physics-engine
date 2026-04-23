@@ -196,29 +196,30 @@ $(document).ready(function(){initNavTree('Mesh_8cpp_source.html',''); initResiza
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    funcs-&gt;glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    funcs-&gt;glBufferData(GL_ARRAY_BUFFER, instances.size() * <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a>), instances.data(), GL_DYNAMIC_DRAW);</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    funcs-&gt;glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, <span class="keyword">nullptr</span>, instances.size());</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    funcs-&gt;glBindVertexArray(0);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    funcs-&gt;glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, <span class="keyword">nullptr</span>,</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                                   <span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(instances.size()));</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    funcs-&gt;glBindVertexArray(0);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
 </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">   90</a></span>std::span&lt;const Vertex&gt; <a class="code hl_function" href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">Mesh::getVertices</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordflow">return</span> vertices;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>}</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">   91</a></span>std::span&lt;const Vertex&gt; <a class="code hl_function" href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">Mesh::getVertices</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">return</span> vertices;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
 </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="foldopen" id="foldopen00094" data-start="{" data-end="}">
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">   94</a></span>std::span&lt;const unsigned int&gt; <a class="code hl_function" href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">Mesh::getIndices</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">return</span> indices;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>}</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="foldopen" id="foldopen00095" data-start="{" data-end="}">
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">   95</a></span>std::span&lt;const unsigned int&gt; <a class="code hl_function" href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">Mesh::getIndices</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordflow">return</span> indices;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>}</div>
 </div>
 <div class="ttc" id="aMesh_8h_html"><div class="ttname"><a href="Mesh_8h.html">Mesh.h</a></div></div>
 <div class="ttc" id="aclassMesh_html_a5efe4da1a4c0971cfb037bd70304c303"><div class="ttname"><a href="classMesh.html#a5efe4da1a4c0971cfb037bd70304c303">Mesh::~Mesh</a></div><div class="ttdeci">~Mesh()</div><div class="ttdoc">Destroys the mesh and releases GPU resources.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00029">Mesh.cpp:29</a></div></div>
 <div class="ttc" id="aclassMesh_html_a79b998580025a501675a517e9fc1283f"><div class="ttname"><a href="classMesh.html#a79b998580025a501675a517e9fc1283f">Mesh::draw</a></div><div class="ttdeci">void draw() const</div><div class="ttdoc">Draws a single instance of this mesh.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00072">Mesh.cpp:72</a></div></div>
 <div class="ttc" id="aclassMesh_html_a8d474ebd2de6747d4d68c2c25622c4a5"><div class="ttname"><a href="classMesh.html#a8d474ebd2de6747d4d68c2c25622c4a5">Mesh::Mesh</a></div><div class="ttdeci">Mesh(const std::vector&lt; Vertex &gt; &amp;verts, const std::vector&lt; unsigned int &gt; &amp;idx, QOpenGLFunctions_4_5_Core *funcs)</div><div class="ttdoc">Constructs a mesh from vertex and index data.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00005">Mesh.cpp:5</a></div></div>
-<div class="ttc" id="aclassMesh_html_ab6fd3ef6fb3dab29756b8864ea4ee8a8"><div class="ttname"><a href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">Mesh::getVertices</a></div><div class="ttdeci">std::span&lt; const Vertex &gt; getVertices() const</div><div class="ttdoc">Provides read-only view of vertex data without copying.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00090">Mesh.cpp:90</a></div></div>
-<div class="ttc" id="aclassMesh_html_ae6a1eabbc84c5429b112d359bf02b073"><div class="ttname"><a href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">Mesh::getIndices</a></div><div class="ttdeci">std::span&lt; const unsigned int &gt; getIndices() const</div><div class="ttdoc">Provides read-only view of index data without copying.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00094">Mesh.cpp:94</a></div></div>
+<div class="ttc" id="aclassMesh_html_ab6fd3ef6fb3dab29756b8864ea4ee8a8"><div class="ttname"><a href="classMesh.html#ab6fd3ef6fb3dab29756b8864ea4ee8a8">Mesh::getVertices</a></div><div class="ttdeci">std::span&lt; const Vertex &gt; getVertices() const</div><div class="ttdoc">Provides read-only view of vertex data without copying.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00091">Mesh.cpp:91</a></div></div>
+<div class="ttc" id="aclassMesh_html_ae6a1eabbc84c5429b112d359bf02b073"><div class="ttname"><a href="classMesh.html#ae6a1eabbc84c5429b112d359bf02b073">Mesh::getIndices</a></div><div class="ttdeci">std::span&lt; const unsigned int &gt; getIndices() const</div><div class="ttdoc">Provides read-only view of index data without copying.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00095">Mesh.cpp:95</a></div></div>
 <div class="ttc" id="aclassMesh_html_aea8949f714fa050c3f0c8dd5cd3c56f8"><div class="ttname"><a href="classMesh.html#aea8949f714fa050c3f0c8dd5cd3c56f8">Mesh::drawInstanced</a></div><div class="ttdeci">void drawInstanced(const std::vector&lt; Rendering::InstanceData &gt; &amp;instances)</div><div class="ttdoc">Draws multiple instances of this mesh in a single draw call.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8cpp_source.html#l00078">Mesh.cpp:78</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1Bounding_1_1AABB_html"><div class="ttname"><a href="classPhysics_1_1Bounding_1_1AABB.html">Physics::Bounding::AABB</a></div><div class="ttdef"><b>Definition</b> <a href="AABB_8h_source.html#l00006">AABB.h:6</a></div></div>
 <div class="ttc" id="astructRendering_1_1InstanceData_html"><div class="ttname"><a href="structRendering_1_1InstanceData.html">Rendering::InstanceData</a></div><div class="ttdoc">Per-instance data for instanced rendering.</div><div class="ttdef"><b>Definition</b> <a href="InstanceData_8h_source.html#l00017">InstanceData.h:17</a></div></div>

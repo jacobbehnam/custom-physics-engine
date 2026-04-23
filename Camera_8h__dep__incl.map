@@ -1,71 +1,94 @@
 <map id="src/graphics/core/Camera.h" name="src/graphics/core/Camera.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="3120,5,3319,31"/>
-<area shape="rect" id="Node000002" href="$Gizmo_8h.html" title="Interactive 3D manipulation gizmo for scene objects." alt="" coords="3258,79,3442,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="3252,36,3320,76,3317,81,3249,40"/>
-<area shape="rect" id="Node000004" href="$Scene_8h.html" title=" " alt="" coords="3126,167,3313,192"/>
-<area shape="poly" id="edge42_Node000001_Node000004" title=" " alt="" coords="3222,44,3222,166,3217,166,3217,44"/>
-<area shape="rect" id="Node000014" href="$Camera_8cpp.html" title=" " alt="" coords="160,394,375,419"/>
-<area shape="poly" id="edge41_Node000001_Node000014" title=" " alt="" coords="3106,22,2444,27,1987,35,1509,49,1055,68,853,81,674,96,525,113,411,133,339,155,321,167,315,179,315,254,311,296,300,336,276,395,271,393,295,334,306,295,310,254,310,177,317,163,337,150,410,128,524,108,674,91,852,76,1055,63,1508,43,1987,30,2444,22,3106,17"/>
-<area shape="rect" id="Node000003" href="$Gizmo_8cpp.html" title=" " alt="" coords="2737,475,2921,515"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="3397,124,3427,147,3456,177,3477,211,3484,231,3486,251,3486,327,3486,383,3479,406,3460,429,3431,441,3381,452,3237,471,3069,484,2921,492,2921,487,3069,478,3236,465,3380,447,3429,436,3456,425,3474,404,3481,382,3481,327,3481,251,3479,232,3473,214,3452,180,3424,151,3394,128"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="3308,128,3240,169,3237,164,3305,124"/>
-<area shape="rect" id="Node000027" href="$OpenGLWindow_8cpp.html" title=" " alt="" coords="3257,313,3446,339"/>
-<area shape="poly" id="edge40_Node000002_Node000027" title=" " alt="" coords="3353,132,3354,313,3349,313,3348,132"/>
-<area shape="rect" id="Node000005" href="$Scene_8cpp.html" title=" " alt="" coords="3243,394,3446,419"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="3220,206,3223,269,3232,304,3247,337,3261,355,3279,370,3317,392,3314,396,3276,374,3258,359,3242,340,3227,306,3218,270,3215,206"/>
-<area shape="rect" id="Node000006" href="$SceneManager_8h.html" title=" " alt="" coords="2627,240,2870,265"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="3131,197,2825,243,2824,237,3130,191"/>
-<area shape="rect" id="Node000008" href="$SceneObject_8cpp.html" title=" " alt="" coords="399,394,643,419"/>
-<area shape="poly" id="edge38_Node000004_Node000008" title=" " alt="" coords="3112,186,2775,199,2279,223,1697,262,1397,287,1104,316,956,335,810,357,581,397,580,391,809,352,955,329,1103,311,1397,281,1697,256,2279,218,2775,194,3112,181"/>
-<area shape="poly" id="edge39_Node000004_Node000027" title=" " alt="" coords="3241,201,3343,311,3339,315,3238,204"/>
-<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="2833,265,2930,285,3035,311,3126,345,3160,364,3183,385,3192,407,3183,428,3165,443,3140,454,3074,472,2997,484,2921,491,2921,486,2996,479,3073,467,3139,449,3163,438,3179,425,3186,407,3178,388,3157,368,3124,350,3033,316,2929,290,2832,270"/>
-<area shape="rect" id="Node000007" href="$SceneManager_8cpp.html" title=" " alt="" coords="2699,394,2958,419"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="2775,273,2792,291,2807,312,2823,356,2830,393,2825,394,2818,357,2802,315,2788,294,2771,277"/>
-<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="2614,259,2047,275,1683,291,1314,316,1209,328,1104,341,879,365,654,389,599,397,598,391,654,384,878,359,1103,336,1208,322,1314,311,1682,286,2047,269,2614,253"/>
-<area shape="rect" id="Node000009" href="$SceneObject_8h.html" title=" " alt="" coords="1855,313,2085,339"/>
-<area shape="poly" id="edge9_Node000006_Node000009" title=" " alt="" coords="2614,269,2085,317,2085,312,2613,264"/>
-<area shape="rect" id="Node000020" href="$GlobalsInspectorWidget_8cpp.html" title=" " alt="" coords="667,387,841,427"/>
-<area shape="poly" id="edge36_Node000006_Node000020" title=" " alt="" coords="2614,260,2300,273,1863,296,1361,334,1104,359,853,389,842,391,841,386,852,384,1104,354,1361,329,1863,291,2299,267,2614,255"/>
-<area shape="rect" id="Node000021" href="$InspectorWidget_8cpp.html" title=" " alt="" coords="2983,387,3168,427"/>
-<area shape="poly" id="edge37_Node000006_Node000021" title=" " alt="" coords="2786,269,3036,384,3033,389,2784,273"/>
-<area shape="rect" id="Node000024" href="$SceneSerializer_8h.html" title=" " alt="" coords="2545,313,2792,339"/>
-<area shape="poly" id="edge29_Node000006_Node000024" title=" " alt="" coords="2728,276,2684,315,2680,311,2724,272"/>
-<area shape="rect" id="Node000025" href="$MainWindow_8h.html" title=" " alt="" coords="5,313,161,339"/>
-<area shape="poly" id="edge32_Node000006_Node000025" title=" " alt="" coords="2614,260,162,325,162,320,2614,255"/>
-<area shape="poly" id="edge35_Node000006_Node000027" title=" " alt="" coords="2859,264,3257,311,3256,316,2859,270"/>
-<area shape="poly" id="edge10_Node000009_Node000003" title=" " alt="" coords="2098,329,2158,335,2223,346,2287,362,2350,384,2366,394,2377,405,2387,415,2402,424,2487,453,2577,473,2662,484,2737,489,2736,495,2661,489,2576,478,2486,459,2400,429,2383,419,2373,409,2363,398,2348,389,2286,367,2221,351,2158,341,2098,334"/>
-<area shape="poly" id="edge17_Node000009_Node000005" title=" " alt="" coords="2099,328,2575,347,2877,363,3181,384,3254,391,3254,397,3180,389,2876,368,2575,352,2098,334"/>
-<area shape="poly" id="edge18_Node000009_Node000007" title=" " alt="" coords="2099,333,2370,354,2688,384,2748,391,2748,397,2687,389,2370,360,2098,339"/>
-<area shape="poly" id="edge19_Node000009_Node000008" title=" " alt="" coords="1842,332,1323,347,990,364,654,389,593,397,593,391,654,384,990,359,1322,342,1842,326"/>
-<area shape="rect" id="Node000010" href="$RotateHandle_8cpp.html" title=" " alt="" coords="1486,387,1670,427"/>
-<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="1900,344,1671,390,1670,384,1899,339"/>
-<area shape="rect" id="Node000011" href="$ScaleHandle_8h.html" title=" " alt="" coords="2153,387,2337,427"/>
-<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="2024,340,2179,384,2178,389,2022,345"/>
-<area shape="rect" id="Node000013" href="$TranslateHandle_8cpp.html" title=" " alt="" coords="1694,387,1878,427"/>
-<area shape="poly" id="edge15_Node000009_Node000013" title=" " alt="" coords="1932,346,1831,389,1829,384,1930,341"/>
-<area shape="poly" id="edge16_Node000009_Node000014" title=" " alt="" coords="1842,330,1576,332,1215,340,803,358,592,372,386,389,331,397,330,391,386,384,592,366,803,353,1215,335,1576,326,1842,324"/>
-<area shape="rect" id="Node000015" href="$SceneSerializer_8cpp.html" title=" " alt="" coords="2412,394,2675,419"/>
-<area shape="poly" id="edge20_Node000009_Node000015" title=" " alt="" coords="2067,338,2460,391,2460,397,2066,343"/>
-<area shape="rect" id="Node000016" href="$HierarchyWidget_8h.html" title=" " alt="" coords="865,394,1048,419"/>
-<area shape="poly" id="edge21_Node000009_Node000016" title=" " alt="" coords="1842,334,1489,351,1274,367,1060,389,1013,397,1012,391,1059,384,1274,362,1488,346,1842,328"/>
-<area shape="rect" id="Node000019" href="$ForcesInspectorWidget_8cpp.html" title=" " alt="" coords="1902,387,2129,427"/>
-<area shape="poly" id="edge24_Node000009_Node000019" title=" " alt="" coords="1986,349,2007,385,2002,388,1981,352"/>
-<area shape="poly" id="edge25_Node000009_Node000020" title=" " alt="" coords="1842,335,1323,357,1051,373,853,389,842,391,841,385,852,384,1051,367,1323,352,1841,329"/>
-<area shape="poly" id="edge26_Node000009_Node000021" title=" " alt="" coords="2098,328,2489,344,2729,360,2970,384,2983,386,2982,391,2970,389,2729,366,2488,349,2098,333"/>
-<area shape="rect" id="Node000022" href="$PhysicsInspectorWidget_8cpp.html" title=" " alt="" coords="1072,387,1247,427"/>
-<area shape="poly" id="edge27_Node000009_Node000022" title=" " alt="" coords="1842,337,1572,356,1415,371,1258,389,1247,391,1247,386,1258,384,1414,365,1572,350,1841,331"/>
-<area shape="rect" id="Node000023" href="$TransformInspectorWidget_8cpp.html" title=" " alt="" coords="1271,387,1461,427"/>
-<area shape="poly" id="edge28_Node000009_Node000023" title=" " alt="" coords="1848,343,1671,363,1474,389,1462,391,1461,386,1474,384,1671,358,1848,337"/>
-<area shape="poly" id="edge13_Node000011_Node000003" title=" " alt="" coords="2351,423,2356,424,2737,478,2736,484,2355,429,2350,429"/>
-<area shape="rect" id="Node000012" href="$ScaleHandle_8cpp.html" title=" " alt="" coords="2153,475,2337,515"/>
-<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="2247,441,2247,474,2242,474,2242,441"/>
-<area shape="rect" id="Node000017" href="$HierarchyWidget_8cpp.html" title=" " alt="" coords="858,482,1055,507"/>
-<area shape="poly" id="edge22_Node000016_Node000017" title=" " alt="" coords="959,433,959,481,954,481,954,433"/>
-<area shape="rect" id="Node000018" href="$MainWindow_8cpp.html" title=" " alt="" coords="286,482,457,507"/>
-<area shape="poly" id="edge23_Node000016_Node000018" title=" " alt="" coords="883,424,853,429,457,485,456,480,852,424,882,419"/>
-<area shape="poly" id="edge30_Node000024_Node000007" title=" " alt="" coords="2705,342,2807,392,2804,396,2703,347"/>
-<area shape="poly" id="edge31_Node000024_Node000015" title=" " alt="" coords="2640,348,2563,396,2560,392,2637,344"/>
-<area shape="poly" id="edge34_Node000025_Node000018" title=" " alt="" coords="57,349,37,366,21,386,14,407,15,416,20,425,37,438,62,450,130,468,210,480,286,487,286,492,209,485,129,473,60,455,34,443,16,428,10,418,8,406,16,384,33,363,53,345"/>
-<area shape="rect" id="Node000026" href="$main_8cpp.html" title=" " alt="" coords="31,394,136,419"/>
-<area shape="poly" id="edge33_Node000025_Node000026" title=" " alt="" coords="86,352,86,394,81,394,81,352"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="3603,5,3802,31"/>
+<area shape="rect" id="Node000002" href="$Gizmo_8h.html" title="Interactive 3D manipulation gizmo for scene objects." alt="" coords="174,79,358,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="3589,25,358,98,358,93,3589,19"/>
+<area shape="rect" id="Node000004" href="$Scene_8h.html" title=" " alt="" coords="381,174,568,199"/>
+<area shape="poly" id="edge52_Node000001_Node000004" title=" " alt="" coords="3589,28,568,183,568,178,3589,22"/>
+<area shape="rect" id="Node000014" href="$Camera_8cpp.html" title=" " alt="" coords="3595,409,3810,434"/>
+<area shape="poly" id="edge51_Node000001_Node000014" title=" " alt="" coords="3705,44,3705,185,3705,269,3705,409,3700,409,3700,269,3700,185,3700,44"/>
+<area shape="rect" id="Node000023" href="$MainWindow_8cpp.html" title=" " alt="" coords="3917,497,4088,522"/>
+<area shape="poly" id="edge53_Node000001_Node000023" title=" " alt="" coords="3816,28,3889,46,3925,59,3958,75,3987,96,4010,121,4025,150,4030,185,4030,342,4028,387,4022,432,4008,497,4003,496,4016,431,4022,387,4025,342,4025,186,4020,152,4005,124,3983,100,3955,80,3923,64,3887,51,3815,33"/>
+<area shape="rect" id="Node000033" href="$CameraSettingsGroup_8h.html" title=" " alt="" coords="4186,79,4408,119"/>
+<area shape="poly" id="edge54_Node000001_Node000033" title=" " alt="" coords="3802,30,4186,80,4186,85,3802,35"/>
+<area shape="rect" id="Node000003" href="$Gizmo_8cpp.html" title=" " alt="" coords="452,489,636,529"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="165,125,110,146,60,176,40,194,24,215,14,239,10,266,10,342,10,397,17,418,35,439,64,457,106,471,158,483,216,491,340,502,451,505,451,511,339,507,215,497,157,488,105,477,62,462,31,443,12,421,5,398,5,342,5,266,9,238,19,213,36,191,57,171,108,141,163,120"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="325,121,448,172,445,176,323,126"/>
+<area shape="rect" id="Node000032" href="$OpenGLWindow_8cpp.html" title=" " alt="" coords="121,328,310,353"/>
+<area shape="poly" id="edge50_Node000002_Node000032" title=" " alt="" coords="262,132,221,328,215,327,257,131"/>
+<area shape="rect" id="Node000005" href="$Scene_8cpp.html" title=" " alt="" coords="3266,409,3469,434"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="581,185,1105,186,1469,191,1864,202,2263,219,2636,244,2805,260,2957,279,3088,301,3196,325,3243,343,3288,365,3353,406,3351,411,3285,369,3241,347,3195,331,3087,306,2956,284,2804,265,2636,249,2262,224,1864,207,1469,197,1105,191,581,190"/>
+<area shape="rect" id="Node000006" href="$SceneManager_8h.html" title=" " alt="" coords="586,255,829,280"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="522,201,674,252,673,257,520,206"/>
+<area shape="rect" id="Node000008" href="$SceneObject_8cpp.html" title=" " alt="" coords="46,409,290,434"/>
+<area shape="poly" id="edge48_Node000004_Node000008" title=" " alt="" coords="368,200,299,214,228,239,195,256,163,276,135,301,111,329,107,339,106,350,116,371,133,391,152,406,149,411,130,394,111,374,101,351,101,338,107,327,131,297,160,272,192,251,226,234,298,209,366,194"/>
+<area shape="poly" id="edge49_Node000004_Node000032" title=" " alt="" coords="445,208,237,330,234,326,442,204"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="573,277,510,291,449,314,421,331,397,351,377,374,362,402,356,422,362,440,380,459,402,475,452,495,450,500,399,479,376,463,357,443,351,422,357,400,373,371,393,347,418,326,446,310,508,286,572,272"/>
+<area shape="rect" id="Node000007" href="$SceneManager_8cpp.html" title=" " alt="" coords="2294,497,2553,522"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="843,267,2114,286,2798,303,3048,314,3196,325,3242,329,3284,330,3357,330,3390,335,3422,346,3453,367,3483,400,3492,421,3490,433,3483,443,3466,450,3434,456,3330,466,3029,480,2565,492,2501,499,2501,494,2565,487,3029,475,3330,461,3433,451,3465,445,3479,439,3485,431,3487,422,3479,403,3449,371,3419,351,3389,340,3357,335,3284,335,3242,335,3195,331,3047,319,2798,309,2113,292,843,273"/>
+<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="598,285,491,303,380,331,352,342,323,356,195,411,193,406,321,351,349,337,379,325,490,298,597,279"/>
+<area shape="rect" id="Node000009" href="$SceneObject_8h.html" title=" " alt="" coords="1666,328,1896,353"/>
+<area shape="poly" id="edge9_Node000006_Node000009" title=" " alt="" coords="843,275,1666,329,1666,334,843,280"/>
+<area shape="rect" id="Node000016" href="$Colliders_8cpp.html" title=" " alt="" coords="2760,401,2904,441"/>
+<area shape="poly" id="edge39_Node000006_Node000016" title=" " alt="" coords="843,267,1179,273,1652,293,1919,310,2196,332,2475,362,2748,399,2760,401,2759,406,2747,404,2475,367,2196,338,1919,315,1651,298,1179,279,843,272"/>
+<area shape="rect" id="Node000018" href="$Forces_8cpp.html" title=" " alt="" coords="3126,489,3270,529"/>
+<area shape="poly" id="edge40_Node000006_Node000018" title=" " alt="" coords="842,266,1408,268,2182,277,2567,284,2908,294,3173,308,3267,316,3329,325,3385,334,3430,342,3451,350,3470,361,3488,377,3506,400,3514,416,3517,430,3515,444,3508,456,3484,474,3449,488,3407,498,3360,505,3270,511,3270,505,3360,499,3406,493,3448,483,3482,470,3504,452,3510,442,3512,431,3509,418,3501,403,3484,381,3467,365,3448,354,3429,348,3384,340,3328,331,3266,321,3172,313,2908,300,2567,289,2182,282,1408,274,842,271"/>
+<area shape="rect" id="Node000020" href="$PathTraces_8cpp.html" title=" " alt="" coords="1292,489,1436,529"/>
+<area shape="poly" id="edge41_Node000006_Node000020" title=" " alt="" coords="610,285,555,301,498,324,447,358,424,379,406,403,398,422,400,431,405,439,766,466,1291,501,1291,506,765,471,402,444,395,433,393,422,401,400,421,375,443,354,496,320,553,296,609,280"/>
+<area shape="rect" id="Node000025" href="$GlobalsInspectorWidget_8cpp.html" title=" " alt="" coords="416,401,591,441"/>
+<area shape="poly" id="edge46_Node000006_Node000025" title=" " alt="" coords="683,290,531,403,527,399,680,286"/>
+<area shape="rect" id="Node000026" href="$InspectorWidget_8cpp.html" title=" " alt="" coords="615,401,800,441"/>
+<area shape="poly" id="edge47_Node000006_Node000026" title=" " alt="" coords="710,293,710,401,705,401,705,293"/>
+<area shape="rect" id="Node000029" href="$SceneSerializer_8h.html" title=" " alt="" coords="2936,328,3183,353"/>
+<area shape="poly" id="edge36_Node000006_Node000029" title=" " alt="" coords="843,270,2936,333,2936,338,843,275"/>
+<area shape="rect" id="Node000030" href="$MainWindow_8h.html" title=" " alt="" coords="3808,328,3964,353"/>
+<area shape="poly" id="edge42_Node000006_Node000030" title=" " alt="" coords="843,268,1969,288,2763,305,3576,325,3808,333,3808,339,3575,331,2762,310,1969,293,843,273"/>
+<area shape="poly" id="edge45_Node000006_Node000032" title=" " alt="" coords="616,285,295,331,294,325,615,279"/>
+<area shape="poly" id="edge10_Node000009_Node000003" title=" " alt="" coords="1653,344,1457,345,1229,354,1118,361,1016,372,929,386,865,404,850,412,840,422,830,433,814,444,770,462,724,477,637,498,635,493,723,472,768,457,812,439,826,429,836,419,846,408,863,399,928,381,1015,366,1117,356,1229,348,1457,340,1653,338"/>
+<area shape="poly" id="edge17_Node000009_Node000005" title=" " alt="" coords="1909,342,2471,358,2836,375,3204,399,3279,406,3278,411,3203,404,2835,380,2471,364,1909,347"/>
+<area shape="poly" id="edge18_Node000009_Node000007" title=" " alt="" coords="1910,343,2022,350,2140,360,2247,376,2289,387,2322,399,2344,415,2370,442,2416,495,2412,498,2367,446,2341,419,2320,404,2288,392,2246,382,2140,366,2021,355,1909,349"/>
+<area shape="poly" id="edge19_Node000009_Node000008" title=" " alt="" coords="1653,349,1109,369,404,404,290,412,290,407,403,399,1109,363,1652,343"/>
+<area shape="rect" id="Node000010" href="$RotateHandle_8cpp.html" title=" " alt="" coords="1084,401,1268,441"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="1655,357,1477,378,1280,404,1268,406,1267,400,1279,399,1477,372,1655,352"/>
+<area shape="rect" id="Node000011" href="$ScaleHandle_8h.html" title=" " alt="" coords="876,401,1060,441"/>
+<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="1652,352,1384,371,1072,404,1060,406,1060,400,1071,399,1384,366,1652,346"/>
+<area shape="rect" id="Node000013" href="$TranslateHandle_8cpp.html" title=" " alt="" coords="1292,401,1476,441"/>
+<area shape="poly" id="edge15_Node000009_Node000013" title=" " alt="" coords="1710,359,1476,405,1475,399,1709,353"/>
+<area shape="poly" id="edge16_Node000009_Node000014" title=" " alt="" coords="1910,342,2582,359,3028,376,3481,399,3595,407,3595,413,3481,404,3028,381,2582,364,1909,347"/>
+<area shape="rect" id="Node000015" href="$SceneSerializer_8cpp.html" title=" " alt="" coords="2928,409,3191,434"/>
+<area shape="poly" id="edge20_Node000009_Node000015" title=" " alt="" coords="1909,343,2355,361,2635,377,2916,399,2981,406,2980,411,2915,404,2634,382,2355,366,1909,348"/>
+<area shape="poly" id="edge21_Node000009_Node000016" title=" " alt="" coords="1909,341,2077,345,2286,355,2517,372,2748,399,2760,401,2759,406,2747,404,2517,378,2286,361,2077,351,1909,346"/>
+<area shape="rect" id="Node000017" href="$Forces_8h.html" title=" " alt="" coords="2384,401,2528,441"/>
+<area shape="poly" id="edge22_Node000009_Node000017" title=" " alt="" coords="1910,349,2123,368,2365,399,2384,402,2383,407,2364,404,2123,374,1909,354"/>
+<area shape="rect" id="Node000019" href="$PathTraces_8h.html" title=" " alt="" coords="1500,401,1644,441"/>
+<area shape="poly" id="edge25_Node000009_Node000019" title=" " alt="" coords="1739,361,1623,404,1621,399,1737,356"/>
+<area shape="rect" id="Node000021" href="$HierarchyWidget_8h.html" title=" " alt="" coords="2552,409,2735,434"/>
+<area shape="poly" id="edge28_Node000009_Node000021" title=" " alt="" coords="1909,345,2198,364,2369,380,2540,399,2586,406,2586,411,2539,404,2369,385,2198,370,1909,351"/>
+<area shape="rect" id="Node000024" href="$ForcesInspectorWidget_8cpp.html" title=" " alt="" coords="1668,401,1894,441"/>
+<area shape="poly" id="edge31_Node000009_Node000024" title=" " alt="" coords="1784,367,1784,401,1778,401,1778,367"/>
+<area shape="poly" id="edge32_Node000009_Node000025" title=" " alt="" coords="1652,345,1450,349,1188,359,896,376,602,404,591,405,591,400,602,399,896,371,1188,353,1449,344,1652,340"/>
+<area shape="poly" id="edge33_Node000009_Node000026" title=" " alt="" coords="1652,348,1278,366,1049,382,820,404,801,406,800,401,819,399,1049,377,1278,361,1652,343"/>
+<area shape="rect" id="Node000027" href="$PhysicsInspectorWidget_8cpp.html" title=" " alt="" coords="1919,401,2094,441"/>
+<area shape="poly" id="edge34_Node000009_Node000027" title=" " alt="" coords="1827,355,1953,399,1951,404,1825,360"/>
+<area shape="rect" id="Node000028" href="$TransformInspectorWidget_8cpp.html" title=" " alt="" coords="2118,401,2308,441"/>
+<area shape="poly" id="edge35_Node000009_Node000028" title=" " alt="" coords="1858,353,2118,400,2117,405,1857,358"/>
+<area shape="poly" id="edge13_Node000011_Node000003" title=" " alt="" coords="863,446,636,492,635,487,862,441"/>
+<area shape="rect" id="Node000012" href="$ScaleHandle_8cpp.html" title=" " alt="" coords="876,489,1060,529"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="970,455,970,489,965,489,965,455"/>
+<area shape="poly" id="edge23_Node000017_Node000007" title=" " alt="" coords="2446,455,2430,497,2425,495,2441,453"/>
+<area shape="poly" id="edge24_Node000017_Node000018" title=" " alt="" coords="2541,439,2541,439,2705,461,2867,479,3126,501,3126,506,2867,485,2704,467,2540,444,2540,444"/>
+<area shape="poly" id="edge26_Node000019_Node000007" title=" " alt="" coords="1658,439,1834,462,2006,479,2294,499,2294,505,2006,484,1833,467,1657,444"/>
+<area shape="poly" id="edge27_Node000019_Node000020" title=" " alt="" coords="1514,449,1410,492,1408,487,1512,444"/>
+<area shape="rect" id="Node000022" href="$HierarchyWidget_8cpp.html" title=" " alt="" coords="2577,497,2774,522"/>
+<area shape="poly" id="edge29_Node000021_Node000022" title=" " alt="" coords="2655,446,2674,495,2669,497,2650,448"/>
+<area shape="poly" id="edge30_Node000021_Node000023" title=" " alt="" coords="2713,434,2748,439,3086,470,3420,489,3710,500,3917,504,3917,510,3710,505,3420,495,3086,475,2747,444,2712,439"/>
+<area shape="poly" id="edge37_Node000029_Node000007" title=" " alt="" coords="3144,355,3178,373,3206,400,3214,422,3212,433,3205,443,3190,453,3166,461,3094,472,2999,480,2893,485,2688,489,2565,492,2504,499,2503,494,2565,487,2688,483,2893,479,2999,475,3093,467,3164,455,3188,448,3202,439,3208,431,3209,422,3201,403,3175,377,3141,360"/>
+<area shape="poly" id="edge38_Node000029_Node000015" title=" " alt="" coords="3062,367,3062,408,3057,408,3057,367"/>
+<area shape="poly" id="edge44_Node000030_Node000023" title=" " alt="" coords="3915,360,3954,400,3983,452,4001,496,3996,498,3979,454,3949,403,3911,364"/>
+<area shape="rect" id="Node000031" href="$main_8cpp.html" title=" " alt="" coords="3834,409,3939,434"/>
+<area shape="poly" id="edge43_Node000030_Node000031" title=" " alt="" coords="3889,367,3889,408,3884,408,3884,367"/>
+<area shape="poly" id="edge55_Node000033_Node000023" title=" " alt="" coords="4422,106,4454,114,4486,127,4516,143,4543,165,4561,188,4568,211,4569,266,4569,342,4565,361,4554,378,4537,394,4515,408,4457,434,4387,455,4309,472,4230,486,4088,503,4088,498,4229,480,4308,467,4386,450,4456,429,4512,404,4534,390,4550,375,4560,359,4564,342,4564,266,4563,212,4556,191,4539,169,4513,148,4484,131,4453,119,4420,111"/>
+<area shape="rect" id="Node000034" href="$CameraSettingsGroup_8cpp.html" title=" " alt="" coords="4065,167,4286,207"/>
+<area shape="poly" id="edge56_Node000033_Node000034" title=" " alt="" coords="4261,129,4204,169,4201,164,4257,124"/>
+<area shape="rect" id="Node000035" href="$CameraTab_8cpp.html" title=" " alt="" coords="4311,174,4528,199"/>
+<area shape="poly" id="edge57_Node000033_Node000035" title=" " alt="" coords="4337,125,4404,172,4401,176,4334,129"/>
 </map>

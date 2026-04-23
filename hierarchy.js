@@ -1,5 +1,6 @@
 var hierarchy =
 [
+    [ "AppSettings", "classAppSettings.html", null ],
     [ "BatchKey", "structBatchKey.html", null ],
     [ "BVH", "classBVH.html", null ],
     [ "BVHNode", "structBVHNode.html", null ],
@@ -14,7 +15,10 @@ var hierarchy =
     ] ],
     [ "IDrawable", "classIDrawable.html", [
       [ "ICustomDrawable", "classICustomDrawable.html", [
-        [ "Gizmo", "classGizmo.html", null ]
+        [ "Colliders", "classColliders.html", null ],
+        [ "Forces", "classForces.html", null ],
+        [ "Gizmo", "classGizmo.html", null ],
+        [ "PathTraces", "classPathTraces.html", null ]
       ] ],
       [ "IInstancedDrawable", "classIInstancedDrawable.html", [
         [ "SceneObject", "classSceneObject.html", null ]
@@ -30,6 +34,14 @@ var hierarchy =
     [ "IPickable", "classIPickable.html", [
       [ "Gizmo", "classGizmo.html", null ],
       [ "SceneObject", "classSceneObject.html", null ]
+    ] ],
+    [ "ISettingsGroup", "classISettingsGroup.html", [
+      [ "CameraSettingsGroup", "structCameraSettingsGroup.html", null ],
+      [ "DebugSettings", "structDebugSettings.html", null ]
+    ] ],
+    [ "ISettingsTab", "classISettingsTab.html", [
+      [ "CameraTab", "classCameraTab.html", null ],
+      [ "DebugTab", "classDebugTab.html", null ]
     ] ],
     [ "ISolver", "classISolver.html", [
       [ "InterceptSolver", "classInterceptSolver.html", null ],
@@ -57,6 +69,7 @@ var hierarchy =
       [ "SnapshotTableModel", "classSnapshotTableModel.html", null ]
     ] ],
     [ "QDialog", null, [
+      [ "SettingsDialog", "classSettingsDialog.html", null ],
       [ "SolverDialog", "classSolverDialog.html", null ]
     ] ],
     [ "QMainWindow", null, [
@@ -73,6 +86,11 @@ var hierarchy =
       [ "OpenGLWindow", "classOpenGLWindow.html", null ]
     ] ],
     [ "QWidget", null, [
+      [ "CameraTab", "classCameraTab.html", null ],
+      [ "DebugTab", "classDebugTab.html", null ],
+      [ "FrameGraphCanvas", "classFrameGraphCanvas.html", null ],
+      [ "FrameGraphPanel", "classFrameGraphPanel.html", null ],
+      [ "FrameGraphWidget", "classFrameGraphWidget.html", null ],
       [ "HierarchyWidget", "classHierarchyWidget.html", null ],
       [ "IInspectorSection", "classIInspectorSection.html", [
         [ "ForcesInspectorWidget", "classForcesInspectorWidget.html", null ],

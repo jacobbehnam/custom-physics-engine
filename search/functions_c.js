@@ -5,6 +5,8 @@ var searchData=
   ['makesolver_2',['makeSolver',['../classProblemRouter.html#ad2daff44da45791ff678714a4b8a10a6',1,'ProblemRouter']]],
   ['makeuniquename_3',['makeUniqueName',['../classSceneManager.html#ab6a7ecbff438f2dbee8a0f31795456f9',1,'SceneManager']]],
   ['mesh_4',['Mesh',['../classMesh.html#a8d474ebd2de6747d4d68c2c25622c4a5',1,'Mesh']]],
-  ['mousepressevent_5',['mousePressEvent',['../classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a',1,'OpenGLWindow']]],
-  ['mousereleaseevent_6',['mouseReleaseEvent',['../classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73',1,'OpenGLWindow']]]
+  ['metriclabel_5',['metricLabel',['../Metric_8h.html#ab746e1ae92860da7517511330ec101e3',1,'Metric.h']]],
+  ['mousemoveevent_6',['mouseMoveEvent',['../classFrameGraphCanvas.html#a2fb3135fccab06c3acdf4e55bf1b8d58',1,'FrameGraphCanvas']]],
+  ['mousepressevent_7',['mousePressEvent',['../classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a',1,'OpenGLWindow']]],
+  ['mousereleaseevent_8',['mouseReleaseEvent',['../classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73',1,'OpenGLWindow']]]
 ];

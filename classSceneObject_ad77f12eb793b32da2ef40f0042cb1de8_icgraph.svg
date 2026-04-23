@@ -46,9 +46,9 @@
   </g>
 </defs>
 <script type="application/ecmascript">
-var viewWidth = 1132;
+var viewWidth = 1141;
 var viewHeight = 124;
-var sectionId = 'dynsection-5';
+var sectionId = 'dynsection-6';
 </script>
 <script type="application/ecmascript" xlink:href="svg.min.js"/>
 <svg id="graph" class="graph">
@@ -58,17 +58,17 @@ var sectionId = 'dynsection-5';
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Gets the unique identifier for this object.">
-<polygon fill="#999999" stroke="#666666" points="1124,-40 983,-40 983,-21 1124,-21 1124,-40"/>
-<text text-anchor="middle" x="1053.5" y="-28" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
+<polygon fill="#999999" stroke="#666666" points="1133,-58 992,-58 992,-39 1133,-39 1133,-58"/>
+<text text-anchor="middle" x="1062.5" y="-46" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getObjectID</text>
 </a>
 </g>
 </g>
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="947,-40 792,-40 792,-21 947,-21 947,-40"/>
-<text text-anchor="middle" x="869.5" y="-28" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
+<g id="a_Node000002"><a xlink:href="classSceneObject.html#a55121847afa67b03afa5a4a27922bde0" target="_top" xlink:title="Gets the complete per&#45;instance data for GPU upload.">
+<polygon fill="white" stroke="#666666" points="956,-77 792,-77 792,-58 956,-58 956,-77"/>
+<text text-anchor="middle" x="874" y="-65" font-family="Helvetica,sans-Serif" font-size="10.00">SceneObject::getInstanceData</text>
 </a>
 </g>
 </g>
@@ -76,55 +76,36 @@ var sectionId = 'dynsection-5';
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M972.91,-30.5C964.31,-30.5 955.58,-30.5 947.02,-30.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="972.91,-34 982.91,-30.5 972.91,-27 972.91,-34"/>
+<path fill="none" stroke="#63b8ff" d="M981.63,-56.64C973.22,-57.49 964.67,-58.36 956.25,-59.22"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="982.2,-60.1 991.79,-55.6 981.49,-53.13 982.2,-60.1"/>
 </a>
 </g>
 </g>
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="754,-67.5 594,-67.5 594,-37.5 754,-37.5 754,-67.5"/>
-<text text-anchor="start" x="602" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::handleMouse</text>
-<text text-anchor="middle" x="674" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Button</text>
+<g id="a_Node000003"><a xlink:href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="951.5,-40 796.5,-40 796.5,-21 951.5,-21 951.5,-40"/>
+<text text-anchor="middle" x="874" y="-28" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::setSelectFor</text>
 </a>
 </g>
 </g>
-<!-- Node2&#45;&gt;Node3 -->
-<g id="edge2_Node000002_Node000003" class="edge">
-<title>Node2&#45;&gt;Node3</title>
-<g id="a_edge2_Node000002_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M781.53,-40.39C772.43,-41.42 763.21,-42.47 754.2,-43.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="782.21,-43.83 791.75,-39.23 781.41,-36.88 782.21,-43.83"/>
-</a>
-</g>
-</g>
-<!-- Node6 -->
-<g id="Node000006" class="node">
-<title>Node6</title>
-<g id="a_Node000006"><a xlink:href="classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="756,-19 592,-19 592,0 756,0 756,-19"/>
-<text text-anchor="middle" x="674" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneSerializer::loadFromJson</text>
-</a>
-</g>
-</g>
-<!-- Node2&#45;&gt;Node6 -->
-<g id="edge5_Node000002_Node000006" class="edge">
-<title>Node2&#45;&gt;Node6</title>
-<g id="a_edge5_Node000002_Node000006"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M781.78,-21.09C773.24,-20.16 764.59,-19.22 756.11,-18.3"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="781.43,-24.57 791.75,-22.17 782.18,-17.61 781.43,-24.57"/>
+<!-- Node1&#45;&gt;Node3 -->
+<g id="edge2_Node000001_Node000003" class="edge">
+<title>Node1&#45;&gt;Node3</title>
+<g id="a_edge2_Node000001_Node000003"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M981.83,-40.81C971.78,-39.84 961.51,-38.85 951.51,-37.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="981.5,-44.29 991.79,-41.77 982.17,-37.33 981.5,-44.29"/>
 </a>
 </g>
 </g>
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="550,-115.5 392,-115.5 392,-85.5 550,-85.5 550,-115.5"/>
-<text text-anchor="start" x="400" y="-103.5" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::mousePress</text>
-<text text-anchor="middle" x="471" y="-92.5" font-family="Helvetica,sans-Serif" font-size="10.00">Event</text>
+<g id="a_Node000004"><a xlink:href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="754,-67.5 594,-67.5 594,-37.5 754,-37.5 754,-67.5"/>
+<text text-anchor="start" x="602" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::handleMouse</text>
+<text text-anchor="middle" x="674" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Button</text>
 </a>
 </g>
 </g>
@@ -132,54 +113,73 @@ var sectionId = 'dynsection-5';
 <g id="edge3_Node000003_Node000004" class="edge">
 <title>Node3&#45;&gt;Node4</title>
 <g id="a_edge3_Node000003_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M599.96,-69.94C578.62,-75.04 555.48,-80.57 534.82,-85.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="601.04,-73.28 609.95,-67.56 599.41,-66.47 601.04,-73.28"/>
-</a>
-</g>
-</g>
-<!-- Node5 -->
-<g id="Node000005" class="node">
-<title>Node5</title>
-<g id="a_Node000005"><a xlink:href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="556,-67.5 386,-67.5 386,-37.5 556,-37.5 556,-67.5"/>
-<text text-anchor="start" x="394" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::mouseRelease</text>
-<text text-anchor="middle" x="471" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Event</text>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node5 -->
-<g id="edge4_Node000003_Node000005" class="edge">
-<title>Node3&#45;&gt;Node5</title>
-<g id="a_edge4_Node000003_Node000005"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M583.58,-52.5C574.42,-52.5 565.14,-52.5 556.05,-52.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="583.85,-56 593.85,-52.5 583.85,-49 583.85,-56"/>
+<path fill="none" stroke="#63b8ff" d="M786.31,-40.13C775.67,-41.31 764.83,-42.52 754.29,-43.69"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="786.9,-43.59 796.45,-39.01 786.12,-36.63 786.9,-43.59"/>
 </a>
 </g>
 </g>
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
-<g id="a_Node000007"><a xlink:href="classSceneManager.html#a7b7b0a022dcce523178e8414fb8e4463" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="543.5,-19 398.5,-19 398.5,0 543.5,0 543.5,-19"/>
-<text text-anchor="middle" x="471" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::loadScene</text>
+<g id="a_Node000007"><a xlink:href="classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="756,-19 592,-19 592,0 756,0 756,-19"/>
+<text text-anchor="middle" x="674" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneSerializer::loadFromJson</text>
 </a>
 </g>
 </g>
-<!-- Node6&#45;&gt;Node7 -->
-<g id="edge6_Node000006_Node000007" class="edge">
-<title>Node6&#45;&gt;Node7</title>
-<g id="a_edge6_Node000006_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M581.68,-9.5C568.97,-9.5 556.05,-9.5 543.77,-9.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="581.83,-13 591.82,-9.5 581.82,-6 581.83,-13"/>
+<!-- Node3&#45;&gt;Node7 -->
+<g id="edge6_Node000003_Node000007" class="edge">
+<title>Node3&#45;&gt;Node7</title>
+<g id="a_edge6_Node000003_Node000007"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M786.48,-21.32C776.44,-20.26 766.23,-19.18 756.27,-18.12"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="786.13,-24.81 796.45,-22.38 786.87,-17.85 786.13,-24.81"/>
+</a>
+</g>
+</g>
+<!-- Node5 -->
+<g id="Node000005" class="node">
+<title>Node5</title>
+<g id="a_Node000005"><a xlink:href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="550,-115.5 392,-115.5 392,-85.5 550,-85.5 550,-115.5"/>
+<text text-anchor="start" x="400" y="-103.5" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::mousePress</text>
+<text text-anchor="middle" x="471" y="-92.5" font-family="Helvetica,sans-Serif" font-size="10.00">Event</text>
+</a>
+</g>
+</g>
+<!-- Node4&#45;&gt;Node5 -->
+<g id="edge4_Node000004_Node000005" class="edge">
+<title>Node4&#45;&gt;Node5</title>
+<g id="a_edge4_Node000004_Node000005"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M599.96,-69.94C578.62,-75.04 555.48,-80.57 534.82,-85.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="601.04,-73.28 609.95,-67.56 599.41,-66.47 601.04,-73.28"/>
+</a>
+</g>
+</g>
+<!-- Node6 -->
+<g id="Node000006" class="node">
+<title>Node6</title>
+<g id="a_Node000006"><a xlink:href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="556,-67.5 386,-67.5 386,-37.5 556,-37.5 556,-67.5"/>
+<text text-anchor="start" x="394" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::mouseRelease</text>
+<text text-anchor="middle" x="471" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">Event</text>
+</a>
+</g>
+</g>
+<!-- Node4&#45;&gt;Node6 -->
+<g id="edge5_Node000004_Node000006" class="edge">
+<title>Node4&#45;&gt;Node6</title>
+<g id="a_edge5_Node000004_Node000006"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M583.58,-52.5C574.42,-52.5 565.14,-52.5 556.05,-52.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="583.85,-56 593.85,-52.5 583.85,-49 583.85,-56"/>
 </a>
 </g>
 </g>
 <!-- Node8 -->
 <g id="Node000008" class="node">
 <title>Node8</title>
-<g id="a_Node000008"><a xlink:href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="350,-19 172,-19 172,0 350,0 350,-19"/>
-<text text-anchor="middle" x="261" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::processHeldKeys</text>
+<g id="a_Node000008"><a xlink:href="classSceneManager.html#a7b7b0a022dcce523178e8414fb8e4463" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="543.5,-19 398.5,-19 398.5,0 543.5,0 543.5,-19"/>
+<text text-anchor="middle" x="471" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::loadScene</text>
 </a>
 </g>
 </g>
@@ -187,17 +187,17 @@ var sectionId = 'dynsection-5';
 <g id="edge7_Node000007_Node000008" class="edge">
 <title>Node7&#45;&gt;Node8</title>
 <g id="a_edge7_Node000007_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M388.1,-9.5C375.68,-9.5 362.81,-9.5 350.26,-9.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="388.42,-13 398.42,-9.5 388.42,-6 388.42,-13"/>
+<path fill="none" stroke="#63b8ff" d="M581.68,-9.5C568.97,-9.5 556.05,-9.5 543.77,-9.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="581.83,-13 591.82,-9.5 581.82,-6 581.83,-13"/>
 </a>
 </g>
 </g>
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
-<g id="a_Node000009"><a xlink:href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="136,-19 0,-19 0,0 136,0 136,-19"/>
-<text text-anchor="middle" x="68" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::paintGL</text>
+<g id="a_Node000009"><a xlink:href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="350,-19 172,-19 172,0 350,0 350,-19"/>
+<text text-anchor="middle" x="261" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">SceneManager::processHeldKeys</text>
 </a>
 </g>
 </g>
@@ -205,6 +205,24 @@ var sectionId = 'dynsection-5';
 <g id="edge8_Node000008_Node000009" class="edge">
 <title>Node8&#45;&gt;Node9</title>
 <g id="a_edge8_Node000008_Node000009"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M388.1,-9.5C375.68,-9.5 362.81,-9.5 350.26,-9.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="388.42,-13 398.42,-9.5 388.42,-6 388.42,-13"/>
+</a>
+</g>
+</g>
+<!-- Node10 -->
+<g id="Node000010" class="node">
+<title>Node10</title>
+<g id="a_Node000010"><a xlink:href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="136,-19 0,-19 0,0 136,0 136,-19"/>
+<text text-anchor="middle" x="68" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">OpenGLWindow::paintGL</text>
+</a>
+</g>
+</g>
+<!-- Node9&#45;&gt;Node10 -->
+<g id="edge9_Node000009_Node000010" class="edge">
+<title>Node9&#45;&gt;Node10</title>
+<g id="a_edge9_Node000009_Node000010"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M161.6,-9.5C152.94,-9.5 144.32,-9.5 136,-9.5"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="161.77,-13 171.77,-9.5 161.77,-6 161.77,-13"/>
 </a>

@@ -1,6 +1,10 @@
 var dir_da5c6b39c0a2f54e57df6799511cd3ab =
 [
+    [ "graph", "dir_4f0d090463e2df1c750e218771cf8ab8.html", "dir_4f0d090463e2df1c750e218771cf8ab8" ],
     [ "inspector", "dir_dcdb6e2c55277f38c2f293d252aedf56.html", "dir_dcdb6e2c55277f38c2f293d252aedf56" ],
+    [ "settings", "dir_de56a105f7c21a78ac2526330527c47b.html", "dir_de56a105f7c21a78ac2526330527c47b" ],
+    [ "AppSettings.cpp", "AppSettings_8cpp.html", null ],
+    [ "AppSettings.h", "AppSettings_8h.html", "AppSettings_8h" ],
     [ "HierarchyWidget.cpp", "HierarchyWidget_8cpp.html", null ],
     [ "HierarchyWidget.h", "HierarchyWidget_8h.html", "HierarchyWidget_8h" ],
     [ "MainWindow.cpp", "MainWindow_8cpp.html", null ],

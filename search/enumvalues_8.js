@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['x_0',['X',['../Axis_8h.html#ae3996976d8ffb3e58d88f58227473f8ea58833a3110c570fb05130d40c365d1e4',1,'Axis.h']]]
+  ['translate_0',['TRANSLATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa6ba95f0374a24124cc1632dc38333c82',1,'Gizmo.h']]]
 ];

@@ -1,9 +1,11 @@
 var classSceneManager =
 [
     [ "SceneManager", "classSceneManager.html#aac0c52b9be10e597bacacb46b2887877", null ],
+    [ "~SceneManager", "classSceneManager.html#aee90061b91b550bc8796d4174737fc41", null ],
     [ "addDrawable", "classSceneManager.html#ad0d1661e5869720d7a07b1912d75318d", null ],
     [ "addPickable", "classSceneManager.html#a31d525542db0b239ba61dd36a3d92d43", null ],
     [ "addToPhysicsSystem", "classSceneManager.html#ab4c384d4f3ae448f6ddc3140aa9766be", null ],
+    [ "applyDebugSettings", "classSceneManager.html#af2a17ef84ef7682d13ab8c36e3c9fdd3", null ],
     [ "clearCameraTarget", "classSceneManager.html#ad143244bc503acbe2371b662ea0dcd0c", null ],
     [ "contextMenuRequested", "classSceneManager.html#a12c57c5dbb78e8d6365adb723ea0aef3", null ],
     [ "createObject", "classSceneManager.html#a1daee617aa556b8af8a7202d3f8f28c8", null ],

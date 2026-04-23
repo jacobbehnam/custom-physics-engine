@@ -8,7 +8,6 @@ var classPhysics_1_1PhysicsBody =
     [ "collidesWithPointMass", "classPhysics_1_1PhysicsBody.html#a1a0074c821332df842a8964bb26381e1", null ],
     [ "collidesWithRigidBody", "classPhysics_1_1PhysicsBody.html#abd13f91a0aaeaef21e492db3f1507043", null ],
     [ "getAllForces", "classPhysics_1_1PhysicsBody.html#a6fb25efd74ad88f01f5c481bd516bad8", null ],
-    [ "getAllFrames", "classPhysics_1_1PhysicsBody.html#a956983b2c01b34a508ffe85d1a133396", null ],
     [ "getCollider", "classPhysics_1_1PhysicsBody.html#ad67776bca8ab8dda937bdb1dc50855e6", null ],
     [ "getForce", "classPhysics_1_1PhysicsBody.html#a1669edd42a9c728fa053fb56a2b2ad9f", null ],
     [ "getID", "classPhysics_1_1PhysicsBody.html#a548a65cb04a05bb13dba6a32b8212afb", null ],
@@ -34,6 +33,7 @@ var classPhysics_1_1PhysicsBody =
     [ "setVelocity", "classPhysics_1_1PhysicsBody.html#a9c75c65ff08d82aac980c01ec89c6991", null ],
     [ "setWorldTransform", "classPhysics_1_1PhysicsBody.html#a94022d3b4061c1b34df175ff11f43378", null ],
     [ "step", "classPhysics_1_1PhysicsBody.html#afc59ca2d939ab0727571a34148ff55ff", null ],
+    [ "withFrames", "classPhysics_1_1PhysicsBody.html#a9cf191f9d4b783a6365e6c06a846f989", null ],
     [ "frames", "classPhysics_1_1PhysicsBody.html#ad10fa891d4a79fb61db2e7fbc01e7990", null ],
     [ "stateMutex", "classPhysics_1_1PhysicsBody.html#acaa77c267f89fea18c073868508af6dd", null ]
 ];

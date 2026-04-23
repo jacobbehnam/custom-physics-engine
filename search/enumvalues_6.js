@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['scale_0',['SCALE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa127ea1d20becc4dba06d9d152db0c2e5',1,'Gizmo.h']]],
-  ['simulate_1',['SIMULATE',['../ProblemRouter_8h.html#af261046fac9aeea352427e62dd09d230a2d76c2c2373adde3dfb950eb5ca53eea',1,'ProblemRouter.h']]],
-  ['solve_2',['SOLVE',['../ProblemRouter_8h.html#af261046fac9aeea352427e62dd09d230abf61c5b43708f01f5a198843f93e521a',1,'ProblemRouter.h']]],
-  ['sphere_3',['SPHERE',['../SceneManager_8h.html#a08260379b97fd733e30ea92e891ede1ea6f7cea7381e843e2ee0338b4a92b0d43',1,'SceneManager.h']]]
+  ['right_0',['RIGHT',['../Camera_8h.html#a2fc3593b03b2993ef34f3900f6be985ea21507b40c80068eda19865706fdc2403',1,'Camera.h']]],
+  ['rotate_1',['ROTATE',['../Gizmo_8h.html#ae2917dc722c1d3959593328ee4a5a31fa9faf4e337734315fde20af1922cc6f9d',1,'Gizmo.h']]]
 ];

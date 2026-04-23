@@ -114,24 +114,26 @@ $(document).ready(function(){initNavTree('main_8cpp_source.html',''); initResiza
 <div class="foldopen" id="foldopen00007" data-start="{" data-end="}">
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">    7</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv) {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    QApplication app(argc, argv);</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <a class="code hl_class" href="classMainWindow.html">MainWindow</a> mainWindow;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    mainWindow.resize(800, 600);</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    mainWindow.show();</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="comment">// input gets handled by RawInputFilter before Qt handles it</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">auto</span> filter = <span class="keyword">new</span> <a class="code hl_class" href="classRawInputFilter.html">RawInputFilter</a>([&amp;](<span class="keywordtype">int</span> dx, <span class="keywordtype">int</span> dy){</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    mainWindow.<a class="code hl_function" href="classMainWindow.html#acf6754e4687180ed789419271385d30a">getGlWindow</a>()-&gt;handleRawMouseDelta(dx, dy); });</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    app.installNativeEventFilter(filter);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> QApplication::exec();</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    app.setOrganizationName(<span class="stringliteral">&quot;PhysicsEngine&quot;</span>);</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    app.setApplicationName(<span class="stringliteral">&quot;PhysicsEngine&quot;</span>);</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <a class="code hl_class" href="classMainWindow.html">MainWindow</a> mainWindow;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    mainWindow.resize(800, 600);</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    mainWindow.show();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="comment">// input gets handled by RawInputFilter before Qt handles it</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">auto</span> filter = <span class="keyword">new</span> <a class="code hl_class" href="classRawInputFilter.html">RawInputFilter</a>([&amp;](<span class="keywordtype">int</span> dx, <span class="keywordtype">int</span> dy){</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    mainWindow.<a class="code hl_function" href="classMainWindow.html#acf6754e4687180ed789419271385d30a">getGlWindow</a>()-&gt;handleRawMouseDelta(dx, dy); });</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    app.installNativeEventFilter(filter);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordflow">return</span> QApplication::exec();</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>}</div>
 </div>
 <div class="ttc" id="aMainWindow_8h_html"><div class="ttname"><a href="MainWindow_8h.html">MainWindow.h</a></div></div>
 <div class="ttc" id="aOpenGLWindow_8h_html"><div class="ttname"><a href="OpenGLWindow_8h.html">OpenGLWindow.h</a></div></div>
 <div class="ttc" id="aRawInputFilter_8h_html"><div class="ttname"><a href="RawInputFilter_8h.html">RawInputFilter.h</a></div></div>
-<div class="ttc" id="aclassMainWindow_html"><div class="ttname"><a href="classMainWindow.html">MainWindow</a></div><div class="ttdef"><b>Definition</b> <a href="MainWindow_8h_source.html#l00016">MainWindow.h:16</a></div></div>
-<div class="ttc" id="aclassMainWindow_html_acf6754e4687180ed789419271385d30a"><div class="ttname"><a href="classMainWindow.html#acf6754e4687180ed789419271385d30a">MainWindow::getGlWindow</a></div><div class="ttdeci">OpenGLWindow * getGlWindow()</div><div class="ttdef"><b>Definition</b> <a href="MainWindow_8h_source.html#l00023">MainWindow.h:23</a></div></div>
+<div class="ttc" id="aclassMainWindow_html"><div class="ttname"><a href="classMainWindow.html">MainWindow</a></div><div class="ttdef"><b>Definition</b> <a href="MainWindow_8h_source.html#l00017">MainWindow.h:17</a></div></div>
+<div class="ttc" id="aclassMainWindow_html_acf6754e4687180ed789419271385d30a"><div class="ttname"><a href="classMainWindow.html#acf6754e4687180ed789419271385d30a">MainWindow::getGlWindow</a></div><div class="ttdeci">OpenGLWindow * getGlWindow()</div><div class="ttdef"><b>Definition</b> <a href="MainWindow_8h_source.html#l00024">MainWindow.h:24</a></div></div>
 <div class="ttc" id="aclassRawInputFilter_html"><div class="ttname"><a href="classRawInputFilter.html">RawInputFilter</a></div><div class="ttdef"><b>Definition</b> <a href="RawInputFilter_8h_source.html#l00009">RawInputFilter.h:9</a></div></div>
 <div class="ttc" id="amain_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition</b> <a href="main_8cpp_source.html#l00007">main.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

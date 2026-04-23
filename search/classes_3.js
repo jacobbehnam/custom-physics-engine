@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['forcesinspectorwidget_0',['ForcesInspectorWidget',['../classForcesInspectorWidget.html',1,'']]]
+  ['debugsettings_0',['DebugSettings',['../structDebugSettings.html',1,'']]],
+  ['debugtab_1',['DebugTab',['../classDebugTab.html',1,'']]]
 ];

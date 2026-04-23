@@ -11,6 +11,7 @@ var searchData=
   ['addtophysicssystem_8',['addToPhysicsSystem',['../classSceneManager.html#ab4c384d4f3ae448f6ddc3140aa9766be',1,'SceneManager']]],
   ['addvec3_9',['addVec3',['../classInspectorRow.html#a93bc288f51b9f390abd3ceb6f3b2d2c7',1,'InspectorRow']]],
   ['allocateobjectid_10',['allocateObjectID',['../classScene.html#a5d266d10bd4db4e9881ad23f1bd338d1',1,'Scene']]],
-  ['applyimpulse_11',['applyImpulse',['../classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3',1,'Physics::PointMass']]],
-  ['axisdir_12',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
+  ['applydebugsettings_11',['applyDebugSettings',['../classSceneManager.html#af2a17ef84ef7682d13ab8c36e3c9fdd3',1,'SceneManager']]],
+  ['applyimpulse_12',['applyImpulse',['../classPhysics_1_1PointMass.html#aad903165a31093747ecd85f644a84bd3',1,'Physics::PointMass']]],
+  ['axisdir_13',['axisDir',['../IHandle_8h.html#a01f9a99cec31c4adf6364e0977de90da',1,'IHandle.h']]]
 ];

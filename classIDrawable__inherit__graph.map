@@ -1,11 +1,17 @@
 <map id="IDrawable" name="IDrawable">
-<area shape="rect" id="Node000001" title="Base interface for all renderable objects in the scene." alt="" coords="115,5,203,31"/>
-<area shape="rect" id="Node000002" href="$classICustomDrawable.html" title="Interface for objects with specialized rendering requirements." alt="" coords="5,79,144,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,42,90,80,87,76,133,38"/>
-<area shape="rect" id="Node000004" href="$classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering." alt="" coords="169,79,319,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="184,37,232,76,228,80,181,41"/>
-<area shape="rect" id="Node000003" href="$classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects." alt="" coords="43,152,107,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,118,77,152,72,152,72,118"/>
-<area shape="rect" id="Node000005" href="$classSceneObject.html" title=" " alt="" coords="193,152,295,177"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="247,118,247,152,241,152,241,118"/>
+<area shape="rect" id="Node000001" title="Base interface for all renderable objects in the scene." alt="" coords="269,5,357,31"/>
+<area shape="rect" id="Node000002" href="$classICustomDrawable.html" title="Interface for objects with specialized rendering requirements." alt="" coords="159,79,298,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="290,42,244,80,241,76,287,38"/>
+<area shape="rect" id="Node000007" href="$classIInstancedDrawable.html" title="Interface for objects that support GPU instanced rendering." alt="" coords="349,79,500,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="344,36,408,76,405,81,341,40"/>
+<area shape="rect" id="Node000003" href="$classColliders.html" title=" " alt="" coords="5,152,84,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="187,111,76,154,74,149,185,106"/>
+<area shape="rect" id="Node000004" href="$classForces.html" title=" " alt="" coords="109,152,173,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="206,115,157,154,153,150,202,110"/>
+<area shape="rect" id="Node000005" href="$classGizmo.html" title="Interactive 3D manipulation widget for transforming scene objects." alt="" coords="197,152,261,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="231,118,231,152,226,152,226,118"/>
+<area shape="rect" id="Node000006" href="$classPathTraces.html" title=" " alt="" coords="285,152,375,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="258,110,315,150,312,154,255,114"/>
+<area shape="rect" id="Node000008" href="$classSceneObject.html" title=" " alt="" coords="400,152,503,177"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="436,116,450,151,445,153,431,118"/>
 </map>

@@ -162,10 +162,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a94022d3b4061c1b34df175ff11f43378"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b7acd17bcaf79c062616c501791a734" id="r_a6b7acd17bcaf79c062616c501791a734"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a6b7acd17bcaf79c062616c501791a734">setGlobalAccelerationRef</a> (std::atomic&lt; glm::vec3 &gt; &amp;globalAccRef)</td></tr>
 <tr class="separator:a6b7acd17bcaf79c062616c501791a734"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a956983b2c01b34a508ffe85d1a133396" id="r_a956983b2c01b34a508ffe85d1a133396"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a956983b2c01b34a508ffe85d1a133396">getAllFrames</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) const</td></tr>
-<tr class="separator:a956983b2c01b34a508ffe85d1a133396"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c0a4967c8f4cc55a79fed088065c404" id="r_a3c0a4967c8f4cc55a79fed088065c404"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a3c0a4967c8f4cc55a79fed088065c404">clearAllFrames</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
 <tr class="separator:a3c0a4967c8f4cc55a79fed088065c404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cf191f9d4b783a6365e6c06a846f989" id="r_a9cf191f9d4b783a6365e6c06a846f989"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:a9cf191f9d4b783a6365e6c06a846f989"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a9cf191f9d4b783a6365e6c06a846f989">withFrames</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock, F &amp;&amp;fn) const</td></tr>
+<tr class="separator:a9cf191f9d4b783a6365e6c06a846f989"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad67776bca8ab8dda937bdb1dc50855e6" id="r_ad67776bca8ab8dda937bdb1dc50855e6"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Bounding::ICollider</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#ad67776bca8ab8dda937bdb1dc50855e6">getCollider</a> () const</td></tr>
 <tr class="separator:ad67776bca8ab8dda937bdb1dc50855e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9adc84ac7f3f25bfea6e316e8293fbec" id="r_a9adc84ac7f3f25bfea6e316e8293fbec"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a9adc84ac7f3f25bfea6e316e8293fbec">collidesWith</a> (const <a class="el" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> &amp;other) const =0</td></tr>
@@ -195,7 +196,7 @@ Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00039">39</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00040">40</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2d5ddf4c1593c1f510e5c53c5cff57c2" name="a2d5ddf4c1593c1f510e5c53c5cff57c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2d5ddf4c1593c1f510e5c53c5cff57c2">&#9670;&#160;</a></span>PhysicsBody() <span class="overload">[1/2]</span></h2>
@@ -271,7 +272,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00085">85</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00088">88</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -292,7 +293,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8cpp_source.html#l00164">164</a> of file <a class="el" href="PhysicsBody_8cpp_source.html">PhysicsBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8cpp_source.html#l00156">156</a> of file <a class="el" href="PhysicsBody_8cpp_source.html">PhysicsBody.cpp</a>.</p>
 
 </div>
 </div>
@@ -415,26 +416,6 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a956983b2c01b34a508ffe85d1a133396" name="a956983b2c01b34a508ffe85d1a133396"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a956983b2c01b34a508ffe85d1a133396">&#9670;&#160;</a></span>getAllFrames()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; Physics::PhysicsBody::getAllFrames </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a>&#160;</td>
-          <td class="paramname"><em>lock</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8cpp_source.html#l00156">156</a> of file <a class="el" href="PhysicsBody_8cpp_source.html">PhysicsBody.cpp</a>.</p>
-
-</div>
-</div>
 <a id="ad67776bca8ab8dda937bdb1dc50855e6" name="ad67776bca8ab8dda937bdb1dc50855e6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad67776bca8ab8dda937bdb1dc50855e6">&#9670;&#160;</a></span>getCollider()</h2>
 
@@ -460,7 +441,7 @@ Here is the caller graph for this function:</div>
 
 <p>Reimplemented in <a class="el" href="classPhysics_1_1RigidBody.html#a6802a4f6886c96c3bdfd22f0c23e4feb">Physics::RigidBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00074">74</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00077">77</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -517,7 +498,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00050">50</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00051">51</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -752,7 +733,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00048">48</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00049">49</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -953,7 +934,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00070">70</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00071">71</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -1201,6 +1182,43 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a9cf191f9d4b783a6365e6c06a846f989" name="a9cf191f9d4b783a6365e6c06a846f989"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cf191f9d4b783a6365e6c06a846f989">&#9670;&#160;</a></span>withFrames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Physics::PhysicsBody::withFrames </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a>&#160;</td>
+          <td class="paramname"><em>lock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>fn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00110">110</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1PhysicsBody_a9cf191f9d4b783a6365e6c06a846f989_icgraph.svg" width="351" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
 <h2 class="groupheader">Field Documentation</h2>
 <a id="ad10fa891d4a79fb61db2e7fbc01e7990" name="ad10fa891d4a79fb61db2e7fbc01e7990"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad10fa891d4a79fb61db2e7fbc01e7990">&#9670;&#160;</a></span>frames</h2>
@@ -1222,7 +1240,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00088">88</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00091">91</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>
@@ -1246,7 +1264,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00087">87</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsBody_8h_source.html#l00090">90</a> of file <a class="el" href="PhysicsBody_8h_source.html">PhysicsBody.h</a>.</p>
 
 </div>
 </div>

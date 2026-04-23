@@ -1,5 +1,6 @@
 var searchData=
 [
   ['waitforstop_0',['waitForStop',['../classPhysics_1_1PhysicsSystem.html#a8ca667cece20839864c63fe8f14f870d',1,'Physics::PhysicsSystem']]],
-  ['worldup_1',['worldUp',['../classCamera.html#a97e7a4ff433ea2bfcbfd40469aaf4d83',1,'Camera']]]
+  ['withframes_1',['withFrames',['../classPhysics_1_1PhysicsBody.html#a9cf191f9d4b783a6365e6c06a846f989',1,'Physics::PhysicsBody']]],
+  ['worldup_2',['worldUp',['../classCamera.html#a97e7a4ff433ea2bfcbfd40469aaf4d83',1,'Camera']]]
 ];

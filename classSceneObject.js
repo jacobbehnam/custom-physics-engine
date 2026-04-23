@@ -5,6 +5,7 @@ var classSceneObject =
     [ "~SceneObject", "classSceneObject.html#ab258d6b94e982d5ae71ad4d7652381f4", null ],
     [ "getCreationOptions", "classSceneObject.html#a2ed12216f0ee45423035ddfdb0c9044b", null ],
     [ "getHovered", "classSceneObject.html#afa640b48a9b4dfa9078d632506bab308", null ],
+    [ "getInstanceData", "classSceneObject.html#a55121847afa67b03afa5a4a27922bde0", null ],
     [ "getMesh", "classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e", null ],
     [ "getMeshName", "classSceneObject.html#a67fffede336f82183a5b5d2c9d6c8239", null ],
     [ "getName", "classSceneObject.html#abebc043e3253d66da477f862a950775d", null ],
