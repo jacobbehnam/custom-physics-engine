@@ -44,32 +44,33 @@ void PathTraces::draw() const {
         Physics::PhysicsBody* body = obj->getPhysicsBody();
         if (!body) continue;
 
-        const std::vector<ObjectSnapshot> snapshots = body->getAllFrames(BodyLock::LOCK);
-        if (snapshots.size() < 2) continue;
+        body->withFrames(BodyLock::LOCK, [this, &points](const std::vector<ObjectSnapshot>& snapshots) {
+        if (snapshots.size() < 2) return;
 
-        float latestTime = snapshots.back().time;
-        float startTime = latestTime - timeWindow;
+        const float latestTime = snapshots.back().time;
+        const float startTime = latestTime - this->timeWindow;
 
         points.clear();
-        
-        int startIdx = (int)snapshots.size() - 1;
-        while (startIdx > 0 && snapshots[startIdx].time >= startTime) {
+
+        int startIdx = static_cast<int>(snapshots.size() - 1);
+        while (startIdx > 0 && snapshots[static_cast<size_t>(startIdx)].time >= startTime) {
             startIdx--;
         }
 
-        int count = (int)snapshots.size() - startIdx;
-        points.reserve(count);
-        
-        for (int i = startIdx; i < snapshots.size(); ++i) {
-            points.push_back(snapshots[i].position);
+        const int count = static_cast<int>(snapshots.size()) - startIdx;
+        points.reserve(static_cast<size_t>(count));
+
+        for (int i = startIdx; i < static_cast<int>(snapshots.size()); ++i) {
+            points.push_back(snapshots[static_cast<size_t>(i)].position);
         }
 
-        if (points.size() < 2) continue;
+        if (points.size() < 2) return;
 
-        gl->glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
+        this->gl->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+        this->gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
 
-        gl->glDrawArrays(GL_LINE_STRIP, 0, points.size());
+        this->gl->glDrawArrays(GL_LINE_STRIP, 0, static_cast<GLsizei>(points.size()));
+        });
     }
 
     gl->glBindVertexArray(0);

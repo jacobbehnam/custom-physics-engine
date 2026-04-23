@@ -268,9 +268,10 @@ void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject 
         inspector->loadObject(current);
 
         if (auto* selectedBody = current->getPhysicsBody()) {
-            const std::vector<ObjectSnapshot> snapshots = selectedBody->getAllFrames(BodyLock::LOCK);
-            snapshotModel->setSnapshots(snapshots);
-            frameGraphPanel->loadSnapshots(snapshots);
+            selectedBody->withFrames(BodyLock::LOCK, [this](const std::vector<ObjectSnapshot>& snapshots) {
+                snapshotModel->setSnapshots(snapshots);
+                frameGraphPanel->loadSnapshots(snapshots);
+            });
         } else {
             snapshotModel->setSnapshots({});
             frameGraphPanel->clear();
