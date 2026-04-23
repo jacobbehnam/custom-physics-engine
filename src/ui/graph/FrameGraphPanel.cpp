@@ -1,15 +1,18 @@
+#include <algorithm>
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <array>
 
 #include "FrameGraphPanel.h"
 #include "FrameGraphWidget.h"
+#include "Metric.h"
 
 namespace {
-    constexpr int kMinimumCardWidth = 180;
-    constexpr int kLayoutMargin     = 0;
-    constexpr int kGridMargin       = 8;
-    constexpr int kGridSpacing      = 8;
+    constexpr int   kMinimumCardWidth = 180;
+    constexpr int   kLayoutMargin     = 0;
+    constexpr int   kGridMargin       = 8;
+    constexpr int   kGridSpacing      = 8;
+    constexpr float kAxisPadding      = 0.5f;
 }
 
 FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
@@ -36,13 +39,57 @@ FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
     layout->addWidget(scrollArea);
 }
 
+void FrameGraphPanel::recomputeTimeAndValueRanges() {
+    if (m_snapshots.empty()) {
+        m_tMin = m_tMax = 0.0f;
+        m_valueMinMaxPerMetric = {};
+        return;
+    }
+    m_tMin = m_tMax = m_snapshots.front().time;
+    for (int m = 0; m < static_cast<int>(kPlottableMetricCount); ++m) {
+        const float v = objectSnapshotValue(static_cast<Metric>(m), m_snapshots.front());
+        m_valueMinMaxPerMetric[static_cast<size_t>(m)] = {v, v};
+    }
+    for (const auto& s : m_snapshots) {
+        m_tMin = std::min(m_tMin, s.time);
+        m_tMax = std::max(m_tMax, s.time);
+        for (int m = 0; m < static_cast<int>(kPlottableMetricCount); ++m) {
+            const float v = objectSnapshotValue(static_cast<Metric>(m), s);
+            auto& pr = m_valueMinMaxPerMetric[static_cast<size_t>(m)];
+            pr.first = std::min(pr.first, v);
+            pr.second = std::max(pr.second, v);
+        }
+    }
+    if (m_tMin == m_tMax) {
+        m_tMin -= kAxisPadding;
+        m_tMax += kAxisPadding;
+    }
+    for (auto& pr : m_valueMinMaxPerMetric) {
+        if (pr.first == pr.second) {
+            pr.first -= kAxisPadding;
+            pr.second += kAxisPadding;
+        }
+    }
+}
+
 void FrameGraphPanel::loadSnapshots(const std::vector<ObjectSnapshot>& snapshots) {
+    m_snapshots = snapshots;
+    recomputeTimeAndValueRanges();
+    if (m_snapshots.empty()) {
+        for (auto* graph : frameGraphs) {
+            graph->clear();
+        }
+        return;
+    }
     for (auto* graph : frameGraphs) {
-        graph->setSnapshots(snapshots);
+        graph->setSharedData(&m_snapshots, m_valueMinMaxPerMetric, m_tMin, m_tMax);
     }
 }
 
 void FrameGraphPanel::clear() {
+    m_snapshots.clear();
+    m_tMin = m_tMax = 0.0f;
+    m_valueMinMaxPerMetric = {};
     for (auto* graph : frameGraphs) {
         graph->clear();
     }

@@ -17,7 +17,6 @@ namespace {
     constexpr int   kPlotMarginTop          = 6;
     constexpr int   kPlotMarginBottomOffset = 4;
     constexpr int   kLabelOffset            = 2;
-    constexpr float kAxisPadding            = 0.5f;
     constexpr int   kGridLines              = 3;
 }
 
@@ -28,14 +27,27 @@ FrameGraphCanvas::FrameGraphCanvas(QWidget* parent)
     setMinimumHeight(kMinCanvasHeight);
 }
 
-void FrameGraphCanvas::setSnapshots(const std::vector<ObjectSnapshot>& snapshots) {
-    frames = snapshots;
+void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
+    const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMinP, float tMaxP) {
+    framesRef = (frames && !frames->empty()) ? frames : nullptr;
+    if (framesRef) {
+        valueMinMaxPerMetric = valueMinMax;
+        tMin = tMinP;
+        tMax = tMaxP;
+    } else {
+        valueMinMaxPerMetric = {};
+        tMin = 0.0f;
+        tMax = 0.0f;
+    }
     rebuildPoints();
     update();
 }
 
 void FrameGraphCanvas::clear() {
-    frames.clear();
+    framesRef = nullptr;
+    valueMinMaxPerMetric = {};
+    tMin = 0.0f;
+    tMax = 0.0f;
     graphPoints.clear();
     hoverIndex = -1;
     QToolTip::hideText();
@@ -74,7 +86,7 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     painter.drawText(QRect(rect.left(), rect.bottom() + kLabelOffset, rect.width(), bottomLabelHeight()),
                      Qt::AlignRight | Qt::AlignVCenter,
                      tr("Time (s)"));
-    if (graphPoints.empty()) {
+    if (graphPoints.empty() || !framesRef) {
         painter.setPen(mutedText);
         painter.drawText(rect, Qt::AlignCenter, tr("Select a simulated object to view its history."));
         return;
@@ -117,8 +129,8 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
     }
     if (nearestIndex == -1) return;
     hoverIndex = nearestIndex;
-    const ObjectSnapshot& sample = frames[nearestIndex];
-    const float value = metricValue(sample);
+    const ObjectSnapshot& sample = (*framesRef)[static_cast<size_t>(nearestIndex)];
+    const float value = objectSnapshotValue(currentMetric, sample);
     QToolTip::showText(event->globalPosition().toPoint(),
                        tr("t=%1 s\n%2=%3")
                            .arg(sample.time, 0, 'f', 3)
@@ -141,19 +153,6 @@ void FrameGraphCanvas::resizeEvent(QResizeEvent* event) {
     rebuildPoints();
 }
 
-float FrameGraphCanvas::metricValue(const ObjectSnapshot& snapshot) const {
-    switch (currentMetric) {
-        case Metric::PositionX: return snapshot.position.x;
-        case Metric::PositionY: return snapshot.position.y;
-        case Metric::PositionZ: return snapshot.position.z;
-        case Metric::VelocityX: return snapshot.velocity.x;
-        case Metric::VelocityY: return snapshot.velocity.y;
-        case Metric::VelocityZ: return snapshot.velocity.z;
-        case Metric::Count:     return 0.0f;
-    }
-    return 0.0f;
-}
-
 int FrameGraphCanvas::bottomLabelHeight() const {
     return fontMetrics().height() + kLabelOffset;
 }
@@ -166,34 +165,26 @@ QRect FrameGraphCanvas::plotRect() const {
 void FrameGraphCanvas::rebuildPoints() {
     graphPoints.clear();
     hoverIndex = -1;
-    if (frames.empty()) return;
+    if (!framesRef || framesRef->empty()) return;
     const QRect rect = plotRect();
     if (rect.width() <= 1 || rect.height() <= 1) return;
-    float minTime = frames.front().time;
-    float maxTime = frames.back().time;
-    float minValue = metricValue(frames.front());
-    float maxValue = minValue;
-    for (const auto& frame : frames) {
-        minTime = std::min(minTime, frame.time);
-        maxTime = std::max(maxTime, frame.time);
-        const float value = metricValue(frame);
-        minValue = std::min(minValue, value);
-        maxValue = std::max(maxValue, value);
-    }
-    if (minTime == maxTime) {
-        minTime -= kAxisPadding;
-        maxTime += kAxisPadding;
-    }
-    if (minValue == maxValue) {
-        minValue -= kAxisPadding;
-        maxValue += kAxisPadding;
-    }
-    graphPoints.reserve(frames.size());
-    for (const auto& frame : frames) {
-        const float timeAlpha = (frame.time - minTime) / (maxTime - minTime);
-        const float valueAlpha = (metricValue(frame) - minValue) / (maxValue - minValue);
-        const qreal x = rect.left() + timeAlpha * rect.width();
-        const qreal y = rect.bottom() - valueAlpha * rect.height();
+
+    const int m = static_cast<int>(currentMetric);
+    if (m < 0 || m >= static_cast<int>(kPlottableMetricCount)) return;
+    const float minTime = tMin;
+    const float maxTime = tMax;
+    const float minValue = valueMinMaxPerMetric[static_cast<size_t>(m)].first;
+    const float maxValue = valueMinMaxPerMetric[static_cast<size_t>(m)].second;
+
+    graphPoints.reserve(framesRef->size());
+    const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
+    const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
+
+    for (const auto& frame : *framesRef) {
+        const float timeAlpha = (frame.time - minTime) * invTime;
+        const float valueAlpha = (objectSnapshotValue(currentMetric, frame) - minValue) * invValue;
+        const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
+        const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
         graphPoints.emplace_back(x, y);
     }
 }

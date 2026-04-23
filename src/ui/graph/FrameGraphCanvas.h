@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <array>
 #include <vector>
 #include <QPointF>
 
@@ -11,7 +12,8 @@ class FrameGraphCanvas : public QWidget {
     Q_OBJECT
 public:
     explicit FrameGraphCanvas(QWidget* parent = nullptr);
-    void setSnapshots(const std::vector<ObjectSnapshot>& snapshots);
+    void setSharedData(const std::vector<ObjectSnapshot>* frames,
+        const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMin, float tMax);
     void clear();
     void setMetric(Metric metric);
 protected:
@@ -20,12 +22,14 @@ protected:
     void leaveEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 private:
-    float metricValue(const ObjectSnapshot& snapshot) const;
     int bottomLabelHeight() const;
     QRect plotRect() const;
     void rebuildPoints();
     Metric currentMetric = Metric::PositionX;
-    std::vector<ObjectSnapshot> frames;
+    const std::vector<ObjectSnapshot>* framesRef = nullptr;
+    std::array<std::pair<float, float>, kPlottableMetricCount> valueMinMaxPerMetric{};
+    float tMin = 0.0f;
+    float tMax = 0.0f;
     std::vector<QPointF> graphPoints;
     int hoverIndex = -1;
 };
