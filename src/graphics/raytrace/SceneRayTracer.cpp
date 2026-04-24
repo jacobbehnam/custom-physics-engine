@@ -512,7 +512,7 @@ void SceneRayTracer::ensureComputeProgram() {
     m_lNumT = m_g->glGetUniformLocation(m_compute, "uNumTris");
     m_lNumBvh = m_g->glGetUniformLocation(m_compute, "uNumBvh");
     m_lAccumFrames = m_g->glGetUniformLocation(m_compute, "uAccumFrames");
-    m_lEnableSun = m_g->glGetUniformLocation(m_compute, "uEnableSun");
+    m_lEnableGlobalLight = m_g->glGetUniformLocation(m_compute, "uEnableGlobalLight");
     m_computeOk = true;
 }
 
@@ -884,7 +884,7 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     m_g->glUniform1ui(m_lAccumFrames, m_accumulatedFrames);
 
     auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
-    m_g->glUniform1i(m_lEnableSun, vs.enableSun ? 1 : 0);
+    m_g->glUniform1i(m_lEnableGlobalLight, vs.enableGlobalLight ? 1 : 0);
 
     const unsigned int groupsX = (static_cast<unsigned int>(w) + 7u) / 8u;
     const unsigned int groupsY = (static_cast<unsigned int>(h) + 7u) / 8u;
@@ -1045,12 +1045,12 @@ void SceneRayTracer::render(
     ensureOutputSize(traceW, traceH);
 
     const uint64_t currentViewHash = viewHash(traceW, traceH, scale, camera);
-    const bool currentSunState = AppSettings::getInstance().getGroup<GraphicsSettings>().enableSun;
+    const bool currentSunState = AppSettings::getInstance().getGroup<GraphicsSettings>().enableGlobalLight;
     
-    if (currentViewHash != m_lastViewHash || currentSunState != m_lastEnableSun) {
+    if (currentViewHash != m_lastViewHash || currentSunState != m_lastEnableGlobalLight) {
         resetAccumulation();
         m_lastViewHash = currentViewHash;
-        m_lastEnableSun = currentSunState;
+        m_lastEnableGlobalLight = currentSunState;
     }
 
     switch (backend) {

@@ -31,7 +31,7 @@ uniform uint uRoot;
 uniform uint uNumTris;
 uniform uint uNumBvh;
 uniform uint uAccumFrames;
-uniform int uEnableSun;
+uniform int uEnableGlobalLight;
 
 const uint LEAF = 0x80000000u;
 const uint LEAF_START_MASK = 0x0FFFFFFFu;
@@ -125,6 +125,10 @@ vec3 evaluateMaterial(Tri tri, vec3 pos) {
 }
 
 vec3 skyRadiance(vec3 dir) {
+    if (uEnableGlobalLight == 0) {
+        return vec3(0.0);
+    }
+    
     float up = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);
     vec3 sky = mix(vec3(0.80, 0.84, 0.92), vec3(0.20, 0.38, 0.78), pow(up, 0.55));
     if (dir.y < 0.0) {
@@ -132,10 +136,8 @@ vec3 skyRadiance(vec3 dir) {
     }
 
     float sun = max(dot(dir, SUN_DIR), 0.0);
-    if (uEnableSun != 0) {
-        sky += vec3(7.5, 6.4, 5.2) * pow(sun, 1024.0);
-        sky += vec3(1.8, 1.3, 0.9) * pow(sun, 48.0);
-    }
+    sky += vec3(7.5, 6.4, 5.2) * pow(sun, 1024.0);
+    sky += vec3(1.8, 1.3, 0.9) * pow(sun, 48.0);
     return sky;
 }
 
@@ -301,7 +303,7 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
 
         vec3 albedo = evaluateMaterial(tri, hitPos);
         float nDotL = max(dot(normal, SUN_DIR), 0.0);
-        if (uEnableSun != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
+        if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
             radiance += throughput * albedo * SUN_RADIANCE * nDotL;
         }
 
