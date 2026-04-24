@@ -23,11 +23,13 @@
 #include "graphics/core/Camera.h"
 #include "ui/settings/CameraSettingsGroup.h"
 #include "ui/settings/DebugSettings.h"
+#include "ui/settings/GraphicsSettings.h"
 #include "ui/settings/SettingsDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     AppSettings::getInstance().registerGroup<CameraSettingsGroup>();
     AppSettings::getInstance().registerGroup<DebugSettings>();
+    AppSettings::getInstance().registerGroup<GraphicsSettings>();
 
     glWindow = new OpenGLWindow(nullptr, this);
 

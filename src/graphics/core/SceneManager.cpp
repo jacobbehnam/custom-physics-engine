@@ -13,6 +13,7 @@
 #include "graphics/debug/Colliders.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+#include "ui/settings/GraphicsSettings.h"
 #include "graphics/raytrace/SceneRayTracer.h"
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
@@ -396,9 +397,9 @@ void SceneManager::initDebugDrawables() {
     scene->addDrawable(colliders.get());
 
     sceneRayTracer = std::make_unique<SceneRayTracer>(this, window);
-    auto& d = AppSettings::getInstance().getGroup<DebugSettings>();
-    sceneRayTracer->setEnabled(d.useRayTraced);
-    sceneRayTracer->setRequireGpu(d.rayTraceRequireGpu);
+    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
+    sceneRayTracer->setEnabled(vs.useRayTraced);
+    sceneRayTracer->setRequireGpu(vs.rayTraceRequireGpu);
 }
 
 void SceneManager::removeDebugDrawables() {
@@ -430,10 +431,11 @@ void SceneManager::removeDebugDrawables() {
 
 void SceneManager::applyDebugSettings() {
     auto& dbg = AppSettings::getInstance().getGroup<DebugSettings>();
+    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
 
     if (sceneRayTracer) {
-        sceneRayTracer->setEnabled(dbg.useRayTraced);
-        sceneRayTracer->setRequireGpu(dbg.rayTraceRequireGpu);
+        sceneRayTracer->setEnabled(vs.useRayTraced);
+        sceneRayTracer->setRequireGpu(vs.rayTraceRequireGpu);
     }
     if (pathTraces) {
         pathTraces->setEnabled(dbg.showAllPathTrails);

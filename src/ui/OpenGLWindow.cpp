@@ -7,6 +7,7 @@
 #include "graphics/core/SceneManager.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+#include "ui/settings/GraphicsSettings.h"
 #include "graphics/raytrace/SceneRayTracer.h"
 
 #include "graphics/components/Gizmo.h"
@@ -73,10 +74,10 @@ void OpenGLWindow::paintGL() {
 
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
-    auto& dbgRt = AppSettings::getInstance().getGroup<DebugSettings>();
-    if (dbgRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
+    auto& visRt = AppSettings::getInstance().getGroup<GraphicsSettings>();
+    if (visRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
         scene->applyPhysicsSnapshots(snaps);
-        float sc = dbgRt.rayTraceResolutionScale;
+        float sc = visRt.rayTraceResolutionScale;
         if (sc < 0.25f) {
             sc = 0.25f;
         }

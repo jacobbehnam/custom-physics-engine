@@ -121,6 +121,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/settings/CameraTab.cpp
         src/ui/settings/DebugTab.h
         src/ui/settings/DebugTab.cpp
+        src/ui/settings/GraphicsSettings.h
+        src/ui/settings/GraphicsSettings.cpp
+        src/ui/settings/GraphicsTab.h
+        src/ui/settings/GraphicsTab.cpp
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
         src/ui/inspector/InspectorWidget.cpp
