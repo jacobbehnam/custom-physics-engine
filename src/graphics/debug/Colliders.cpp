@@ -13,9 +13,6 @@ constexpr glm::vec3 kColliderColor(0.2f, 0.9f, 1.0f);
 Colliders::Colliders(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) 
     : sceneManager(sceneManager), gl(glFuncs) {
     basicShader = ResourceManager::getShader("basic");
-    if (!basicShader) {
-        basicShader = ResourceManager::loadShader("assets/shaders/primitive/primitive.vert", "assets/shaders/primitive/primitive.frag", "basic");
-    }
     cubeMesh = ResourceManager::getMesh("prim_cube");
 }
 

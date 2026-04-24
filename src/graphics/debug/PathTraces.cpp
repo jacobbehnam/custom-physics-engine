@@ -14,9 +14,6 @@ PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* gl
     gl->glBindVertexArray(0);
 
     traceShader = ResourceManager::getShader("pathtrace");
-    if (!traceShader) {
-        traceShader = ResourceManager::loadShader("assets/shaders/debug/pathtrace.vert", "assets/shaders/debug/pathtrace.frag", "pathtrace");
-    }
 }
 
 PathTraces::~PathTraces() {

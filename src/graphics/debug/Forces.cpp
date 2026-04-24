@@ -34,9 +34,6 @@ glm::mat4 rotateFromYToDir(const glm::vec3& dir) {
 
 Forces::Forces(SceneManager* sceneManager) : sceneManager(sceneManager) {
     basicShader = ResourceManager::getShader("basic");
-    if (!basicShader) {
-        basicShader = ResourceManager::loadShader("assets/shaders/primitive/primitive.vert", "assets/shaders/primitive/primitive.frag", "basic");
-    }
 }
 
 void Forces::draw() const {
