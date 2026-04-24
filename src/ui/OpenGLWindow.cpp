@@ -69,13 +69,13 @@ void OpenGLWindow::paintGL() {
     auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(renderSimTime);
 
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
+    scene->getCamera()->update();
 
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
     auto& dbgRt = AppSettings::getInstance().getGroup<DebugSettings>();
     if (dbgRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
         scene->applyPhysicsSnapshots(snaps);
-        scene->getCamera()->update();
         float sc = dbgRt.rayTraceResolutionScale;
         if (sc < 0.25f) {
             sc = 0.25f;
@@ -85,6 +85,8 @@ void OpenGLWindow::paintGL() {
         }
         const QSize fb = getFramebufferSize();
         sceneManager->getRayTracer()->render(fb.width(), fb.height(), scene->getCamera(), snaps, sc);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        scene->drawCustomDrawables(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
     } else {
         scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
     }

@@ -544,7 +544,7 @@ vec3 aces(vec3 x) {
 }
 
 void main() {
-    vec3 col = texture(t, vTex * 0.5).rgb;
+    vec3 col = texture(t, vTex).rgb;
     col = aces(col);
     col = pow(col, vec3(1.0 / 2.2));
     o = vec4(col, 1.0);

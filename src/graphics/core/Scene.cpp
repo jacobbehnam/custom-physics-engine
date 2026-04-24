@@ -49,6 +49,28 @@ void Scene::applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot
     }
 }
 
+void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
+    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
+
+    std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
+    for (uint32_t id : hoveredIDs) {
+        if (id < hoverVec.size()) {
+            hoverVec[id] = glm::ivec4(1);
+        }
+    }
+
+    std::vector<glm::ivec4> selectVec(1024, glm::ivec4(0));
+    for (uint32_t id : selectedIDs) {
+        if (id < selectVec.size()) {
+            selectVec[id] = glm::ivec4(1);
+        }
+    }
+
+    hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
+    selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
+}
+
 void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     applyPhysicsSnapshots(snaps);
 
@@ -59,26 +81,10 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
             tmpMap[s.body] = s.position;
     }
 
-    camera.update();
-
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
-    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
-
-    std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
-    for (uint32_t id : hoveredIDs) {
-        hoverVec[id] = glm::ivec4(1);
-    }
-
-    std::vector<glm::ivec4> selectVec(1024, glm::ivec4(0));
-    for (uint32_t id : selectedIDs) {
-        selectVec[id] = glm::ivec4(1);
-    }
-
-    hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
-    selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
+    updateFrameUniforms(hoveredIDs, selectedIDs);
 
     // --- instanced ---
     std::map<BatchKey, std::vector<Rendering::InstanceData>> batches;
@@ -94,6 +100,15 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     // --- custom ---
+    for (auto* obj : customDrawables) {
+        obj->draw();
+    }
+}
+
+void Scene::drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    applyPhysicsSnapshots(snaps);
+    updateFrameUniforms(hoveredIDs, selectedIDs);
+
     for (auto* obj : customDrawables) {
         obj->draw();
     }

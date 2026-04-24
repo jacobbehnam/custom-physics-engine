@@ -18,6 +18,7 @@ public:
     void applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snapshots);
 
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
+    void drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
 
     void addDrawable(IDrawable* drawable);
     void removeDrawable(IDrawable* drawable);
@@ -38,6 +39,8 @@ private:
     UniformBuffer cameraUBO;
     UniformBuffer hoverUBO;
     UniformBuffer selectUBO;
+
+    void updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs);
 
     uint32_t nextID = 0;
     std::deque<uint32_t> freeIDs;
