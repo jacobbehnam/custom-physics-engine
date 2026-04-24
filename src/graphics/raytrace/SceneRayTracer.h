@@ -35,8 +35,10 @@ private:
     void ensureOutputSize(int w, int h);
     void ensureSSBOs(size_t nTri, size_t nNode);
     void buildAndUpload();
+    void refitAndUpload();
     void gather(std::vector<Raytrace::WorldTriangle>& out);
     size_t quickTriCount() const;
+    uint64_t structureHash() const;
     uint64_t geometryHash() const;
     uint64_t viewHash(int w, int h, float internalScale, const Camera* camera) const;
     void maybeRebuildAccel();
@@ -79,6 +81,7 @@ private:
     unsigned m_fsqVao{0};
 
     uint64_t m_lastGeomHash{0};
+    uint64_t m_lastStructureHash{0};
     size_t m_lastTriCount{static_cast<size_t>(-1)};
     uint64_t m_lastViewHash{0};
     uint32_t m_accumulatedFrames{0};

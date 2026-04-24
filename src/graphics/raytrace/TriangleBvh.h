@@ -4,7 +4,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <vector>
-#include <atomic>
 
 namespace Raytrace {
 
@@ -40,6 +39,8 @@ struct WorldTriangle {
 class TriangleBvh {
 public:
     void build(const std::vector<WorldTriangle>& in);
+    void refit(const std::vector<WorldTriangle>& in);
+    bool canRefit(size_t triCount) const { return !m_nodes.empty() && !m_order.empty() && m_order.size() == triCount; }
 
     const std::vector<GpuBvhNode>& getNodes() const { return m_nodes; }
     const std::vector<GpuTri>& getGpuTris() const { return m_gpu; }
@@ -48,17 +49,29 @@ public:
 
 private:
     static constexpr uint32_t kLeaf = 0x80000000u;
-    std::atomic<int> m_nodeCount{0};
+    static constexpr int kMaxLeafTris = 7;
+    struct RangeBounds {
+        glm::vec3 bmin{};
+        glm::vec3 bmax{};
+        glm::vec3 cmin{};
+        glm::vec3 cmax{};
+    };
+
+    int m_nodeCount{0};
     int allocNode();
-    void boundsByOrder(const std::vector<WorldTriangle>& t, const std::vector<int>& order, int oLo, int oHi,
-        glm::vec3& bmin, glm::vec3& bmax) const;
+    RangeBounds computeRangeBounds(
+        const std::vector<WorldTriangle>& tris, const std::vector<glm::vec3>& centroids, const std::vector<int>& order,
+        int oLo, int oHi) const;
     int longestAxis(const glm::vec3& e) const;
-    void mergeAabb(
-        const glm::vec3& a0, const glm::vec3& a1, const glm::vec3& b0, const glm::vec3& b1, glm::vec3& o0, glm::vec3& o1) const;
-    uint32_t buildRange(const std::vector<WorldTriangle>& tris, const std::vector<glm::vec3>& centroids, std::vector<int>& order, int oLo, int oHi, int depth = 0);
+    void refitNodes();
+    uint32_t buildRange(
+        const std::vector<WorldTriangle>& tris, const std::vector<glm::vec3>& centroids, std::vector<int>& order,
+        int oLo, int oHi);
+    static GpuTri packTriangle(const WorldTriangle& tri);
 
     std::vector<GpuBvhNode> m_nodes;
     std::vector<GpuTri> m_gpu;
+    std::vector<int> m_order;
     uint32_t m_root{0};
 
     static glm::vec3 centroidOf(const WorldTriangle& a);

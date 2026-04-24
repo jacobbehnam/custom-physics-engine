@@ -38,6 +38,7 @@ const uint HIT_NONE = 0xFFFFFFFFu;
 const int STACKN = 64;
 const float RAY_BIAS = 1.0e-3;
 const float FAR_CLIP = 300000.0;
+const float SUN_ANGULAR_RADIUS = 0.0125;
 const vec3 SUN_DIR = normalize(vec3(0.35, 0.9, 0.22));
 const vec3 SUN_RADIANCE = vec3(4.6, 4.2, 3.8);
 
@@ -230,6 +231,41 @@ bool traceShadow(vec3 origin, vec3 dir, float maxDistance) {
     return traceClosest(origin, dir, maxDistance, tHit, triIndex, bary);
 }
 
+float softShadowVisibility(vec3 origin, vec3 lightDir) {
+    vec3 tangent;
+    vec3 bitangent;
+    buildBasis(lightDir, tangent, bitangent);
+
+    const vec2 sunSamples[4] = vec2[](
+        vec2(0.0, 0.0),
+        vec2(0.65, 0.2),
+        vec2(-0.55, 0.45),
+        vec2(0.15, -0.7)
+    );
+
+    float visible = 0.0;
+    for (int i = 0; i < 4; ++i) {
+        vec3 sampleDir = normalize(
+            lightDir + tangent * (sunSamples[i].x * SUN_ANGULAR_RADIUS) + bitangent * (sunSamples[i].y * SUN_ANGULAR_RADIUS)
+        );
+        if (!traceShadow(origin, sampleDir, FAR_CLIP)) {
+            visible += 1.0;
+        }
+    }
+    return visible * 0.25;
+}
+
+vec3 tracePath(vec3 origin, vec3 dir, inout uint state);
+
+vec3 shadePreview(vec3 origin, vec3 dir, uint seedBase) {
+    vec3 accum = vec3(0.0);
+    for (uint i = 0u; i < 2u; ++i) {
+        uint localState = seedBase + 0x9E3779B9u * (i + 1u);
+        accum += tracePath(origin, dir, localState);
+    }
+    return accum * 0.5;
+}
+
 vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
     vec3 throughput = vec3(1.0);
     vec3 radiance = vec3(0.0);
@@ -245,17 +281,24 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
 
         Tri tri = tbuf.t[triIndex];
         vec3 hitPos = origin + dir * tHit;
+        vec3 geomN = geometricNormal(tri);
+        if (dot(geomN, dir) > 0.0) {
+            geomN = -geomN;
+        }
         vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
         if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
-            normal = geometricNormal(tri);
+            normal = geomN;
         }
         if (dot(normal, dir) > 0.0) {
             normal = -normal;
         }
+        if (dot(normal, geomN) < 0.0) {
+            normal = geomN;
+        }
 
         vec3 albedo = evaluateMaterial(tri, hitPos);
         float nDotL = max(dot(normal, SUN_DIR), 0.0);
-        if (nDotL > 0.0 && !traceShadow(hitPos + normal * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
+        if (nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
             radiance += throughput * albedo * SUN_RADIANCE * nDotL;
         }
 
@@ -270,7 +313,7 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
             throughput /= keep;
         }
 
-        origin = hitPos + normal * RAY_BIAS;
+        origin = hitPos + geomN * RAY_BIAS;
         dir = cosineHemisphere(normal, state);
     }
 
@@ -278,7 +321,10 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
 }
 
 vec3 primaryRay(vec2 pixel, inout uint state) {
-    vec2 jitter = vec2(rand01(state), rand01(state)) - vec2(0.5);
+    vec2 jitter = vec2(0.0);
+    if (uAccumFrames != 0u) {
+        jitter = vec2(rand01(state), rand01(state)) - vec2(0.5);
+    }
     vec2 samplePos = pixel + jitter;
     float ndcX = 2.0 * samplePos.x / float(uSize.x) - 1.0;
     float ndcY = 2.0 * samplePos.y / float(uSize.y) - 1.0;
@@ -301,7 +347,7 @@ void main() {
 
     uint state = pixel.x * 1973u + pixel.y * 9277u + uAccumFrames * 26699u + 0x68BC21EBu;
     vec3 rayDir = primaryRay(vec2(pixel) + vec2(0.5), state);
-    vec3 sampleColor = tracePath(uCamPos, rayDir, state);
+    vec3 sampleColor = uAccumFrames == 0u ? shadePreview(uCamPos, rayDir, state) : tracePath(uCamPos, rayDir, state);
 
     vec3 average = sampleColor;
     if (uAccumFrames != 0u) {

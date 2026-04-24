@@ -39,6 +39,7 @@ constexpr int kBvhStackSize = 64;
 constexpr float kRayBias = 1.0e-3f;
 constexpr float kFarClip = 300000.0f;
 constexpr float kCpuFallbackMaxScale = 0.5f;
+constexpr float kGpuInteractiveMaxScale = 0.6f;
 const glm::vec3 kSunDir = glm::normalize(glm::vec3(0.35f, 0.9f, 0.22f));
 const glm::vec3 kSunRadiance = glm::vec3(4.6f, 4.2f, 3.8f);
 
@@ -48,6 +49,7 @@ struct CpuHit {
     glm::vec3 bary{0.0f};
     glm::vec3 position{0.0f};
     glm::vec3 normal{0.0f};
+    glm::vec3 geomNormal{0.0f};
     glm::vec3 albedo{0.0f};
     bool hit{false};
 };
@@ -335,15 +337,23 @@ static bool traceClosest(
 
     const GpuTri& tri = tris[hit.triIndex];
     hit.position = origin + dir * hit.t;
+    glm::vec3 geomN = geometricNormal(tri);
+    if (glm::dot(geomN, dir) > 0.0f) {
+        geomN = -geomN;
+    }
     glm::vec3 n = glm::normalize(
         hit.bary.x * glm::vec3(tri.n0) + hit.bary.y * glm::vec3(tri.n1) + hit.bary.z * glm::vec3(tri.n2));
     if (!isFiniteVec3(n) || glm::dot(n, n) < 1.0e-8f) {
-        n = geometricNormal(tri);
+        n = geomN;
     }
     if (glm::dot(n, dir) > 0.0f) {
         n = -n;
     }
+    if (glm::dot(n, geomN) < 0.0f) {
+        n = geomN;
+    }
     hit.normal = n;
+    hit.geomNormal = geomN;
     hit.albedo = evaluateMaterial(tri, hit.position);
     outHit = hit;
     return true;
@@ -366,6 +376,29 @@ static glm::vec3 tracePath(
     uint32_t root,
     const glm::vec3& origin,
     const glm::vec3& dir,
+    PcgRng& rng);
+
+static glm::vec3 shadePreview(
+    const std::vector<GpuBvhNode>& nodes,
+    const std::vector<GpuTri>& tris,
+    uint32_t root,
+    const glm::vec3& origin,
+    const glm::vec3& dir,
+    uint32_t seedBase) {
+    glm::vec3 accum(0.0f);
+    for (uint32_t i = 0; i < 2u; ++i) {
+        PcgRng rng(seedBase + 0x9e3779b9u * (i + 1u));
+        accum += tracePath(nodes, tris, root, origin, dir, rng);
+    }
+    return accum * 0.5f;
+}
+
+static glm::vec3 tracePath(
+    const std::vector<GpuBvhNode>& nodes,
+    const std::vector<GpuTri>& tris,
+    uint32_t root,
+    const glm::vec3& origin,
+    const glm::vec3& dir,
     PcgRng& rng) {
     glm::vec3 throughput(1.0f);
     glm::vec3 radiance(0.0f);
@@ -380,7 +413,7 @@ static glm::vec3 tracePath(
         }
 
         const float nDotL = std::max(glm::dot(hit.normal, kSunDir), 0.0f);
-        if (nDotL > 0.0f && !traceShadow(nodes, tris, root, hit.position + hit.normal * kRayBias, kSunDir, kFarClip)) {
+        if (nDotL > 0.0f && !traceShadow(nodes, tris, root, hit.position + hit.geomNormal * kRayBias, kSunDir, kFarClip)) {
             radiance += throughput * hit.albedo * kSunRadiance * nDotL;
         }
 
@@ -396,7 +429,7 @@ static glm::vec3 tracePath(
             throughput /= keep;
         }
 
-        rayOrigin = hit.position + hit.normal * kRayBias;
+        rayOrigin = hit.position + hit.geomNormal * kRayBias;
         rayDir = cosineHemisphere(hit.normal, rng);
     }
 
@@ -682,18 +715,33 @@ size_t SceneRayTracer::quickTriCount() const {
     return total;
 }
 
-uint64_t SceneRayTracer::geometryHash() const {
+uint64_t SceneRayTracer::structureHash() const {
     uint64_t h = 14695981039346656037ull;
     for (const auto& owned : m_sm->getObjectStorage()) {
         const SceneObject* object = owned.get();
-        const uintptr_t meshPtr = reinterpret_cast<uintptr_t>(object->getMesh());
-        const uintptr_t shaderPtr = reinterpret_cast<uintptr_t>(object->getShader());
+        const Mesh* mesh = object->getMesh();
+        const Shader* shader = object->getShader();
+        const uintptr_t meshPtr = reinterpret_cast<uintptr_t>(mesh);
+        const uintptr_t shaderPtr = reinterpret_cast<uintptr_t>(shader);
         h = fnvAppend(h, static_cast<uint32_t>(meshPtr));
         h = fnvAppend(h, static_cast<uint32_t>(shaderPtr));
         if constexpr (sizeof(uintptr_t) > sizeof(uint32_t)) {
             h = fnvAppend(h, static_cast<uint32_t>(meshPtr >> 32u));
             h = fnvAppend(h, static_cast<uint32_t>(shaderPtr >> 32u));
         }
+        h = fnvAppend(h, object->getObjectID());
+        if (mesh) {
+            h = fnvAppend(h, static_cast<uint32_t>(mesh->getIndices().size()));
+            h = fnvAppend(h, static_cast<uint32_t>(mesh->getVertices().size()));
+        }
+    }
+    return h;
+}
+
+uint64_t SceneRayTracer::geometryHash() const {
+    uint64_t h = 14695981039346656037ull;
+    for (const auto& owned : m_sm->getObjectStorage()) {
+        const SceneObject* object = owned.get();
         h = fnvAppend(h, object->getObjectID());
 
         const glm::mat4 model = object->getModelMatrix();
@@ -735,23 +783,32 @@ void SceneRayTracer::resetAccumulation() {
 void SceneRayTracer::maybeRebuildAccel() {
     const size_t triCount = quickTriCount();
     if (triCount == 0) {
-        if (m_lastTriCount != 0 || m_lastGeomHash != 0) {
+        if (m_lastTriCount != 0 || m_lastGeomHash != 0 || m_lastStructureHash != 0) {
             resetAccumulation();
         }
         m_lastGeomHash = 0;
+        m_lastStructureHash = 0;
         m_lastTriCount = 0;
         buildAndUpload();
         return;
     }
 
+    const uint64_t accelStructureHash = structureHash();
     const uint64_t geomHash = geometryHash();
-    if (geomHash == m_lastGeomHash && triCount == m_lastTriCount) {
+    if (accelStructureHash == m_lastStructureHash && geomHash == m_lastGeomHash && triCount == m_lastTriCount) {
         return;
     }
 
+    const bool needsRebuild =
+        accelStructureHash != m_lastStructureHash || triCount != m_lastTriCount || !m_bvh.canRefit(triCount);
+    m_lastStructureHash = accelStructureHash;
     m_lastGeomHash = geomHash;
     m_lastTriCount = triCount;
-    buildAndUpload();
+    if (needsRebuild) {
+        buildAndUpload();
+    } else {
+        refitAndUpload();
+    }
     resetAccumulation();
 }
 
@@ -759,6 +816,29 @@ void SceneRayTracer::buildAndUpload() {
     std::vector<Raytrace::WorldTriangle> triangles;
     gather(triangles);
     m_bvh.build(triangles);
+    if (m_bvh.isEmpty()) {
+        return;
+    }
+
+    const auto& gpuTriangles = m_bvh.getGpuTris();
+    const auto& gpuNodes = m_bvh.getNodes();
+    ensureSSBOs(gpuTriangles.size(), gpuNodes.size());
+
+    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
+    m_g->glBufferSubData(
+        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuTriangles.size() * sizeof(GpuTri)), gpuTriangles.data());
+
+    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
+    m_g->glBufferSubData(
+        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuNodes.size() * sizeof(GpuBvhNode)), gpuNodes.data());
+
+    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void SceneRayTracer::refitAndUpload() {
+    std::vector<Raytrace::WorldTriangle> triangles;
+    gather(triangles);
+    m_bvh.refit(triangles);
     if (m_bvh.isEmpty()) {
         return;
     }
@@ -834,11 +914,18 @@ void SceneRayTracer::renderCpu(int w, int h, const Camera* camera) {
                 const uint32_t seed =
                     static_cast<uint32_t>(x * 1973 + y * 9277 + frameIndex * 26699u + workerId * 3181u + 0x68bc21ebu);
                 PcgRng rng(seed);
-                const float jx = rng.nextFloat() - 0.5f;
-                const float jy = rng.nextFloat() - 0.5f;
-                const glm::vec3 rayDir = primaryRayDirection(
-                    invView, invProj, w, h, static_cast<float>(x) + 0.5f + jx, static_cast<float>(y) + 0.5f + jy);
-                const glm::vec3 sample = tracePath(nodes, tris, m_bvh.getRoot(), camera->position, rayDir, rng);
+                glm::vec3 sample(0.0f);
+                if (frameIndex == 0u) {
+                    const glm::vec3 rayDir = primaryRayDirection(
+                        invView, invProj, w, h, static_cast<float>(x) + 0.5f, static_cast<float>(y) + 0.5f);
+                    sample = shadePreview(nodes, tris, m_bvh.getRoot(), camera->position, rayDir, seed);
+                } else {
+                    const float jx = rng.nextFloat() - 0.5f;
+                    const float jy = rng.nextFloat() - 0.5f;
+                    const glm::vec3 rayDir = primaryRayDirection(
+                        invView, invProj, w, h, static_cast<float>(x) + 0.5f + jx, static_cast<float>(y) + 0.5f + jy);
+                    sample = tracePath(nodes, tris, m_bvh.getRoot(), camera->position, rayDir, rng);
+                }
 
                 const size_t idx = static_cast<size_t>(y) * static_cast<size_t>(w) + static_cast<size_t>(x);
                 glm::vec3 average = glm::vec3(m_cpuPixels[idx]);
@@ -943,6 +1030,8 @@ void SceneRayTracer::render(
     float scale = std::clamp(internalScale, 0.25f, 1.0f);
     if (backend == Backend::Cpu) {
         scale = std::min(scale, kCpuFallbackMaxScale);
+    } else if (m_accumulatedFrames == 0u) {
+        scale = std::min(scale, kGpuInteractiveMaxScale);
     }
 
     const int traceW = std::max(1, static_cast<int>(std::lround(static_cast<float>(fbWidth) * scale)));
