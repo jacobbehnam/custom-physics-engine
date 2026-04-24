@@ -27,7 +27,8 @@ public:
 
     QPointF getMousePos() const { return mapFromGlobal(QCursor::pos()); }
 
-    QSize getFramebufferSize() const { return size(); }
+    /// Device pixels for GL viewport / RT (not QWidget::size(), which is DPR-scaled logical).
+    QSize getFramebufferSize() const;
 
     void setScene(Scene* sc) { scene = sc; }
     void setSceneManager(SceneManager* scm) { sceneManager = scm; }

@@ -2,6 +2,7 @@
 #include <graphics/core/Camera.h>
 #include <graphics/components/Gizmo.h>
 #include <math/MathUtils.h>
+#include "physics/PhysicsBody.h"
 #include <graphics/core/UniformBuffer.h>
 #include <vector>
 #include <deque>
@@ -12,6 +13,10 @@ class Scene {
 public:
     Scene(QOpenGLFunctions_4_5_Core* glFuncs);
     ~Scene() = default;
+
+    // Same snapshot sync as the start of draw; call before a ray-trace pass when not calling draw.
+    void applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snapshots);
+
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
 
     void addDrawable(IDrawable* drawable);

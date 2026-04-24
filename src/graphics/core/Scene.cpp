@@ -38,7 +38,7 @@ void Scene::freeObjectID(uint32_t objID) {
     freeIDs.push_back(objID);
 }
 
-void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+void Scene::applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snaps) {
     if (snaps) {
         SceneObject::PosMap posMap;
         posMap.reserve(snaps->size());
@@ -47,6 +47,10 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         }
         SceneObject::setPhysicsPosMap(posMap);
     }
+}
+
+void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    applyPhysicsSnapshots(snaps);
 
     std::unordered_map<Physics::PhysicsBody*, glm::vec3> tmpMap;
     if (snaps) {

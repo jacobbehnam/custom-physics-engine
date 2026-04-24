@@ -10,6 +10,7 @@
 class PathTraces;
 class Forces;
 class Colliders;
+class SceneRayTracer;
 
 enum class Primitive {
     CUBE,
@@ -37,6 +38,7 @@ public:
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
     std::vector<SceneObject*> getObjects() const;
+    const std::vector<std::unique_ptr<SceneObject>>& getObjectStorage() const { return sceneObjects; }
     bool isNameUnique(const std::string& name, SceneObject* self) const;
     void setObjectName(SceneObject* obj, const std::string& newName);
     std::string makeUniqueName(const std::string& baseName) const;
@@ -67,6 +69,8 @@ public:
     void deleteCurrentGizmo();
 
     void applyDebugSettings();
+
+    SceneRayTracer* getRayTracer() { return sceneRayTracer.get(); }
 
     bool saveScene(const QString &file);
     bool loadScene(const QString &file);
@@ -103,6 +107,7 @@ private:
     void initDebugDrawables();
     void removeDebugDrawables();
 
+    std::unique_ptr<SceneRayTracer> sceneRayTracer;
     std::unique_ptr<PathTraces> pathTraces;
     std::unique_ptr<Forces> forces;
     std::unique_ptr<Colliders> colliders;

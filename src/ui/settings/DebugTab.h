@@ -16,4 +16,7 @@ private:
     QDoubleSpinBox* m_trailTimeBox;
     QCheckBox* m_showForcesBox;
     QCheckBox* m_showCollidersBox;
+    QCheckBox* m_rayTracedBox;
+    QCheckBox* m_rayRequireGpuBox;
+    QDoubleSpinBox* m_rayResScaleBox;
 };

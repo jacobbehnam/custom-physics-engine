@@ -46,6 +46,8 @@ public:
     const std::string& getName() const { return objectName; }
     const std::string& getMeshName() const { return meshName; }
     void setName(std::string name) { objectName = std::move(name); }
+    /// World model matrix (physics snapshot applied when active).
+    glm::mat4 getModelMatrix() const;
     CreationOptions getCreationOptions() const { return creationOptions; }
 
     using PosMap = std::unordered_map<Physics::PhysicsBody*, glm::vec3>;
@@ -77,8 +79,6 @@ private:
 
     uint32_t objectID;
     std::string objectName;
-
-    glm::mat4 getModelMatrix() const;
 
     std::optional<float> intersectsAABB(const Math::Ray& ray) const;
     std::optional<float> intersectsMesh(const Math::Ray& ray) const;

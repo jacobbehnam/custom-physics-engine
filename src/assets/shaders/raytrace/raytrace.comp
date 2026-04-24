@@ -1,0 +1,313 @@
+#version 430 core
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+layout(rgba16f, binding = 0) uniform image2D accumImage;
+
+struct Tri {
+    vec4 v0;
+    vec4 v1;
+    vec4 v2;
+    vec4 n0;
+    vec4 n1;
+    vec4 n2;
+    vec4 material;
+};
+
+struct BvhNode {
+    vec3 bmin;
+    uint c0;
+    vec3 bmax;
+    uint c1;
+};
+
+layout(std430, binding = 0) buffer TBuf { Tri t[]; } tbuf;
+layout(std430, binding = 1) buffer BBuf { BvhNode n[]; } bbuf;
+
+uniform vec3 uCamPos;
+uniform mat4 uInvView;
+uniform mat4 uInvProj;
+uniform uvec2 uSize;
+uniform uint uRoot;
+uniform uint uNumTris;
+uniform uint uNumBvh;
+uniform uint uAccumFrames;
+
+const uint LEAF = 0x80000000u;
+const uint LEAF_START_MASK = 0x0FFFFFFFu;
+const uint HIT_NONE = 0xFFFFFFFFu;
+const int STACKN = 64;
+const float RAY_BIAS = 1.0e-3;
+const float FAR_CLIP = 300000.0;
+const vec3 SUN_DIR = normalize(vec3(0.35, 0.9, 0.22));
+const vec3 SUN_RADIANCE = vec3(4.6, 4.2, 3.8);
+
+vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
+    vec3 t0 = (bmin - o) * invD;
+    vec3 t1 = (bmax - o) * invD;
+    vec3 tMin = min(t0, t1);
+    vec3 tMax = max(t0, t1);
+    return vec2(max(tMin.x, max(tMin.y, tMin.z)), min(tMax.x, min(tMax.y, tMax.z)));
+}
+
+uint pcg(inout uint state) {
+    state = state * 747796405u + 2891336453u;
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    return (word >> 22u) ^ word;
+}
+
+float rand01(inout uint state) {
+    return float(pcg(state) & 0x00FFFFFFu) * (1.0 / 16777216.0);
+}
+
+vec3 geometricNormal(Tri tri) {
+    return normalize(cross(tri.v1.xyz - tri.v0.xyz, tri.v2.xyz - tri.v0.xyz));
+}
+
+bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMax, out float tHit, out vec3 bary) {
+    Tri tri = tbuf.t[triIndex];
+    vec3 e1 = tri.v1.xyz - tri.v0.xyz;
+    vec3 e2 = tri.v2.xyz - tri.v0.xyz;
+    vec3 p = cross(dir, e2);
+    float det = dot(e1, p);
+    if (abs(det) < 1.0e-6) {
+        return false;
+    }
+
+    float invDet = 1.0 / det;
+    vec3 t = origin - tri.v0.xyz;
+    float u = dot(t, p) * invDet;
+    if (u < 0.0 || u > 1.0) {
+        return false;
+    }
+
+    vec3 q = cross(t, e1);
+    float v = dot(dir, q) * invDet;
+    if (v < 0.0 || u + v > 1.0) {
+        return false;
+    }
+
+    float hit = dot(e2, q) * invDet;
+    if (hit < 1.0e-4 || hit >= tMax) {
+        return false;
+    }
+
+    tHit = hit;
+    bary = vec3(1.0 - u - v, u, v);
+    return true;
+}
+
+uint decodeLeafCount(uint leafData) {
+    return (leafData >> 28u) & 0x7u;
+}
+
+uint decodeLeafStart(uint leafData) {
+    return leafData & LEAF_START_MASK;
+}
+
+uint materialKind(Tri tri) {
+    return uint(tri.material.w + 0.5);
+}
+
+vec3 evaluateMaterial(Tri tri, vec3 pos) {
+    vec3 base = clamp(tri.material.rgb, vec3(0.02), vec3(0.98));
+    if (materialKind(tri) != 1u) {
+        return base;
+    }
+
+    float tx = floor(pos.x / 100.0);
+    float tz = floor(pos.z / 100.0);
+    bool dark = mod(tx + tz, 2.0) == 0.0;
+    vec3 a = clamp(base * 0.7, vec3(0.02), vec3(0.95));
+    vec3 b = clamp(base * 1.25 + vec3(0.03), vec3(0.02), vec3(0.95));
+    return dark ? a : b;
+}
+
+vec3 skyRadiance(vec3 dir) {
+    float up = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);
+    vec3 sky = mix(vec3(0.80, 0.84, 0.92), vec3(0.20, 0.38, 0.78), pow(up, 0.55));
+    if (dir.y < 0.0) {
+        sky = mix(vec3(0.12, 0.13, 0.15), sky, clamp(dir.y + 1.0, 0.0, 1.0));
+    }
+
+    float sun = max(dot(dir, SUN_DIR), 0.0);
+    sky += vec3(7.5, 6.4, 5.2) * pow(sun, 1024.0);
+    sky += vec3(1.8, 1.3, 0.9) * pow(sun, 48.0);
+    return sky;
+}
+
+void buildBasis(vec3 n, out vec3 tangent, out vec3 bitangent) {
+    if (abs(n.z) < 0.999) {
+        tangent = normalize(cross(vec3(0.0, 0.0, 1.0), n));
+    } else {
+        tangent = normalize(cross(vec3(0.0, 1.0, 0.0), n));
+    }
+    bitangent = cross(n, tangent);
+}
+
+vec3 cosineHemisphere(vec3 n, inout uint state) {
+    float u1 = rand01(state);
+    float u2 = rand01(state);
+    float r = sqrt(u1);
+    float phi = 6.28318530718 * u2;
+    float x = r * cos(phi);
+    float y = r * sin(phi);
+    float z = sqrt(max(0.0, 1.0 - u1));
+
+    vec3 tangent;
+    vec3 bitangent;
+    buildBasis(n, tangent, bitangent);
+    return normalize(tangent * x + bitangent * y + n * z);
+}
+
+bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint triIndex, out vec3 bary) {
+    vec3 invDir = 1.0 / dir;
+    uint stack[STACKN];
+    int sp = 0;
+
+    vec2 rootRange = aabbT(origin, invDir, bbuf.n[uRoot].bmin, bbuf.n[uRoot].bmax);
+    if (rootRange.x > rootRange.y || rootRange.y < 0.0 || rootRange.x >= tMax) {
+        return false;
+    }
+    stack[sp++] = uRoot;
+
+    tHit = tMax;
+    triIndex = HIT_NONE;
+    bary = vec3(0.0);
+
+    while (sp > 0) {
+        uint nodeIndex = stack[--sp];
+        BvhNode node = bbuf.n[nodeIndex];
+
+        if ((node.c0 & LEAF) != 0u) {
+            uint count = decodeLeafCount(node.c0);
+            uint start = decodeLeafStart(node.c0);
+            for (uint i = 0u; i < count; ++i) {
+                float triT;
+                vec3 triBary;
+                uint currentIndex = start + i;
+                if (!tryTri(currentIndex, origin, dir, tHit, triT, triBary)) {
+                    continue;
+                }
+                tHit = triT;
+                triIndex = currentIndex;
+                bary = triBary;
+            }
+            continue;
+        }
+
+        uint left = node.c0;
+        uint right = node.c1;
+        vec2 leftRange = aabbT(origin, invDir, bbuf.n[left].bmin, bbuf.n[left].bmax);
+        vec2 rightRange = aabbT(origin, invDir, bbuf.n[right].bmin, bbuf.n[right].bmax);
+
+        bool hitLeft = leftRange.x <= leftRange.y && leftRange.y >= 0.0 && leftRange.x < tHit;
+        bool hitRight = rightRange.x <= rightRange.y && rightRange.y >= 0.0 && rightRange.x < tHit;
+
+        if (hitLeft && hitRight) {
+            bool leftFirst = leftRange.x <= rightRange.x;
+            if (sp + 2 <= STACKN) {
+                stack[sp++] = leftFirst ? right : left;
+                stack[sp++] = leftFirst ? left : right;
+            }
+        } else if (hitLeft) {
+            if (sp + 1 <= STACKN) {
+                stack[sp++] = left;
+            }
+        } else if (hitRight) {
+            if (sp + 1 <= STACKN) {
+                stack[sp++] = right;
+            }
+        }
+    }
+
+    return triIndex != HIT_NONE;
+}
+
+bool traceShadow(vec3 origin, vec3 dir, float maxDistance) {
+    float tHit;
+    uint triIndex;
+    vec3 bary;
+    return traceClosest(origin, dir, maxDistance, tHit, triIndex, bary);
+}
+
+vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
+    vec3 throughput = vec3(1.0);
+    vec3 radiance = vec3(0.0);
+
+    for (int bounce = 0; bounce < 2; ++bounce) {
+        float tHit;
+        uint triIndex;
+        vec3 bary;
+        if (!traceClosest(origin, dir, 1.0e30, tHit, triIndex, bary)) {
+            radiance += throughput * skyRadiance(dir);
+            break;
+        }
+
+        Tri tri = tbuf.t[triIndex];
+        vec3 hitPos = origin + dir * tHit;
+        vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
+        if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
+            normal = geometricNormal(tri);
+        }
+        if (dot(normal, dir) > 0.0) {
+            normal = -normal;
+        }
+
+        vec3 albedo = evaluateMaterial(tri, hitPos);
+        float nDotL = max(dot(normal, SUN_DIR), 0.0);
+        if (nDotL > 0.0 && !traceShadow(hitPos + normal * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
+            radiance += throughput * albedo * SUN_RADIANCE * nDotL;
+        }
+
+        radiance += throughput * albedo * skyRadiance(normal) * 0.08;
+        throughput *= albedo;
+
+        if (bounce > 0) {
+            float keep = clamp(max(throughput.x, max(throughput.y, throughput.z)), 0.1, 0.95);
+            if (rand01(state) > keep) {
+                break;
+            }
+            throughput /= keep;
+        }
+
+        origin = hitPos + normal * RAY_BIAS;
+        dir = cosineHemisphere(normal, state);
+    }
+
+    return radiance;
+}
+
+vec3 primaryRay(vec2 pixel, inout uint state) {
+    vec2 jitter = vec2(rand01(state), rand01(state)) - vec2(0.5);
+    vec2 samplePos = pixel + jitter;
+    float ndcX = 2.0 * samplePos.x / float(uSize.x) - 1.0;
+    float ndcY = 2.0 * samplePos.y / float(uSize.y) - 1.0;
+    vec4 clip = vec4(ndcX, ndcY, -1.0, 1.0);
+    vec4 view = uInvProj * clip;
+    view /= view.w;
+    return normalize((uInvView * vec4(normalize(view.xyz), 0.0)).xyz);
+}
+
+void main() {
+    uvec2 pixel = gl_GlobalInvocationID.xy;
+    if (pixel.x >= uSize.x || pixel.y >= uSize.y) {
+        return;
+    }
+
+    if (uNumTris == 0u || uNumBvh == 0u) {
+        imageStore(accumImage, ivec2(pixel), vec4(0.0));
+        return;
+    }
+
+    uint state = pixel.x * 1973u + pixel.y * 9277u + uAccumFrames * 26699u + 0x68BC21EBu;
+    vec3 rayDir = primaryRay(vec2(pixel) + vec2(0.5), state);
+    vec3 sampleColor = tracePath(uCamPos, rayDir, state);
+
+    vec3 average = sampleColor;
+    if (uAccumFrames != 0u) {
+        vec3 previous = imageLoad(accumImage, ivec2(pixel)).rgb;
+        average = previous + (sampleColor - previous) * (1.0 / float(uAccumFrames + 1u));
+    }
+
+    imageStore(accumImage, ivec2(pixel), vec4(average, 1.0));
+}

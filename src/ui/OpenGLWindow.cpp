@@ -1,14 +1,25 @@
 #include "ui/OpenGLWindow.h"
 #include <QMouseEvent>
+#include <cmath>
 #include <QElapsedTimer>
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneManager.h"
+#include "ui/AppSettings.h"
+#include "ui/settings/DebugSettings.h"
+#include "graphics/raytrace/SceneRayTracer.h"
 
 #include "graphics/components/Gizmo.h"
 #include "graphics/core/ResourceManager.h"
 
 OpenGLWindow::OpenGLWindow(Scene* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}
+
+QSize OpenGLWindow::getFramebufferSize() const {
+    const qreal dpr = devicePixelRatioF();
+    return QSize(
+        static_cast<int>(std::lround(static_cast<qreal>(width()) * dpr)),
+        static_cast<int>(std::lround(static_cast<qreal>(height()) * dpr)));
+}
 
 OpenGLWindow::~OpenGLWindow() {
     delete scene;
@@ -32,9 +43,15 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::resizeGL(int w, int h) {
-    // TODO: camera should be in SceneManager
-    glViewport(0, 0, w, h);
-    scene->getCamera()->setAspectRatio(static_cast<float>(w) / h);
+    if (w <= 0 || h <= 0 || !scene) {
+        return;
+    }
+    // Match device-pixel framebuffer (same as getFramebufferSize + Qt paintGL viewport).
+    const qreal dpr = devicePixelRatioF();
+    const int pw = static_cast<int>(std::lround(static_cast<qreal>(w) * dpr));
+    const int ph = static_cast<int>(std::lround(static_cast<qreal>(h) * dpr));
+    glViewport(0, 0, pw, ph);
+    scene->getCamera()->setAspectRatio(static_cast<float>(pw) / static_cast<float>(ph));
 }
 
 void OpenGLWindow::paintGL() {
@@ -55,7 +72,22 @@ void OpenGLWindow::paintGL() {
 
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
-    scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    auto& dbgRt = AppSettings::getInstance().getGroup<DebugSettings>();
+    if (dbgRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
+        scene->applyPhysicsSnapshots(snaps);
+        scene->getCamera()->update();
+        float sc = dbgRt.rayTraceResolutionScale;
+        if (sc < 0.25f) {
+            sc = 0.25f;
+        }
+        if (sc > 1.0f) {
+            sc = 1.0f;
+        }
+        const QSize fb = getFramebufferSize();
+        sceneManager->getRayTracer()->render(fb.width(), fb.height(), scene->getCamera(), snaps, sc);
+    } else {
+        scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    }
 
     calculateFPS();
 
@@ -64,12 +96,15 @@ void OpenGLWindow::paintGL() {
 
 Math::Ray OpenGLWindow::getMouseRay() {
     QPointF mousePos = getMousePos();
-    QSize fbSize = getFramebufferSize();
+    const qreal dpr = devicePixelRatioF();
+    const double mxd = mousePos.x() * dpr;
+    const double myd = mousePos.y() * dpr;
+    const QSize fbSize = getFramebufferSize();
 
     return {
         scene->getCamera()->position,
         Math::screenToWorldRayDirection(
-            mousePos.x(), mousePos.y(),
+            mxd, myd,
             fbSize.width(), fbSize.height(),
             scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
     };

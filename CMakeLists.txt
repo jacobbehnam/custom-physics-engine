@@ -148,6 +148,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/GlobalsInspectorWidget.cpp
         src/ui/inspector/GlobalsInspectorWidget.h
         src/graphics/core/InstanceData.h
+        src/graphics/raytrace/TriangleBvh.cpp
+        src/graphics/raytrace/TriangleBvh.h
+        src/graphics/raytrace/SceneRayTracer.cpp
+        src/graphics/raytrace/SceneRayTracer.h
 )
 
 # Include directories

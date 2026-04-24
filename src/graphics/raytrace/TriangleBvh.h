@@ -1,0 +1,67 @@
+#pragma once
+
+#include <cstdint>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <vector>
+#include <atomic>
+
+namespace Raytrace {
+
+enum class MaterialKind : uint32_t {
+    Matte = 0u,
+    Checkerboard = 1u,
+};
+
+struct alignas(16) GpuBvhNode {
+    glm::vec3 bmin{};
+    uint32_t c0{0};
+    glm::vec3 bmax{};
+    uint32_t c1{0};
+};
+
+struct alignas(16) GpuTri {
+    glm::vec4 v0{};
+    glm::vec4 v1{};
+    glm::vec4 v2{};
+    glm::vec4 n0{};
+    glm::vec4 n1{};
+    glm::vec4 n2{};
+    glm::vec4 material{};
+};
+
+struct WorldTriangle {
+    glm::vec3 p0, p1, p2;
+    glm::vec3 s0, s1, s2;
+    glm::vec3 albedo{0.0f};
+    MaterialKind materialKind{MaterialKind::Matte};
+};
+
+class TriangleBvh {
+public:
+    void build(const std::vector<WorldTriangle>& in);
+
+    const std::vector<GpuBvhNode>& getNodes() const { return m_nodes; }
+    const std::vector<GpuTri>& getGpuTris() const { return m_gpu; }
+    uint32_t getRoot() const { return m_root; }
+    bool isEmpty() const { return m_gpu.empty(); }
+
+private:
+    static constexpr uint32_t kLeaf = 0x80000000u;
+    std::atomic<int> m_nodeCount{0};
+    int allocNode();
+    void boundsByOrder(const std::vector<WorldTriangle>& t, const std::vector<int>& order, int oLo, int oHi,
+        glm::vec3& bmin, glm::vec3& bmax) const;
+    int longestAxis(const glm::vec3& e) const;
+    void mergeAabb(
+        const glm::vec3& a0, const glm::vec3& a1, const glm::vec3& b0, const glm::vec3& b1, glm::vec3& o0, glm::vec3& o1) const;
+    uint32_t buildRange(const std::vector<WorldTriangle>& tris, const std::vector<glm::vec3>& centroids, std::vector<int>& order, int oLo, int oHi, int depth = 0);
+
+    std::vector<GpuBvhNode> m_nodes;
+    std::vector<GpuTri> m_gpu;
+    uint32_t m_root{0};
+
+    static glm::vec3 centroidOf(const WorldTriangle& a);
+};
+
+} // namespace Raytrace

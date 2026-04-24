@@ -13,6 +13,7 @@
 #include "graphics/debug/Colliders.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+#include "graphics/raytrace/SceneRayTracer.h"
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
@@ -193,12 +194,15 @@ void SceneManager::clearCameraTarget() {
 
 Math::Ray SceneManager::getMouseRay() {
     QPointF mousePos = window->getMousePos();
-    QSize fbSize = window->getFramebufferSize();
+    const qreal dpr = window->devicePixelRatioF();
+    const double mxd = mousePos.x() * dpr;
+    const double myd = mousePos.y() * dpr;
+    const QSize fbSize = window->getFramebufferSize();
 
     return {
         scene->getCamera()->position,
         Math::screenToWorldRayDirection(
-            mousePos.x(), mousePos.y(),
+            mxd, myd,
             fbSize.width(), fbSize.height(),
             scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
     };
@@ -390,10 +394,16 @@ void SceneManager::initDebugDrawables() {
     scene->addDrawable(pathTraces.get());
     scene->addDrawable(forces.get());
     scene->addDrawable(colliders.get());
+
+    sceneRayTracer = std::make_unique<SceneRayTracer>(this, window);
+    auto& d = AppSettings::getInstance().getGroup<DebugSettings>();
+    sceneRayTracer->setEnabled(d.useRayTraced);
+    sceneRayTracer->setRequireGpu(d.rayTraceRequireGpu);
 }
 
 void SceneManager::removeDebugDrawables() {
     if (!scene) {
+        sceneRayTracer.reset();
         pathTraces.reset();
         forces.reset();
         colliders.reset();
@@ -414,11 +424,17 @@ void SceneManager::removeDebugDrawables() {
         scene->removeDrawable(colliders.get());
         colliders.reset();
     }
+
+    sceneRayTracer.reset();
 }
 
 void SceneManager::applyDebugSettings() {
     auto& dbg = AppSettings::getInstance().getGroup<DebugSettings>();
 
+    if (sceneRayTracer) {
+        sceneRayTracer->setEnabled(dbg.useRayTraced);
+        sceneRayTracer->setRequireGpu(dbg.rayTraceRequireGpu);
+    }
     if (pathTraces) {
         pathTraces->setEnabled(dbg.showAllPathTrails);
         pathTraces->setTimeWindow(dbg.pathTrailTime);
