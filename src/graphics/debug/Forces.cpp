@@ -44,17 +44,16 @@ void Forces::draw() const {
 
     const auto& objects = sceneManager->getObjects();
 
-    m_arrowScratch.clear();
-    const std::size_t n = objects.size();
-    if (m_arrowScratch.capacity() < n) {
-        m_arrowScratch.reserve(n);
+    m_instanceScratch.clear();
+    if (m_instanceScratch.capacity() < objects.size()) {
+        m_instanceScratch.reserve(objects.size());
     }
 
     float minMag = 0.0f;
     float maxMag = 0.0f;
     bool haveSpan = false;
 
-    for (SceneObject* obj : objects) {
+    for (const SceneObject* obj : objects) {
         auto* body = obj->getPhysicsBody();
         if (!body) continue;
 
@@ -69,35 +68,30 @@ void Forces::draw() const {
             minMag = std::min(minMag, netMag);
             maxMag = std::max(maxMag, netMag);
         }
-
-        m_arrowScratch.push_back({obj->getObjectID(), net, netMag, body->getPosition(BodyLock::LOCK)});
     }
-
-    if (m_arrowScratch.empty()) return;
-
     basicShader->use();
 
     const float magSpan = maxMag - minMag;
-
-    m_instanceScratch.clear();
-    if (m_instanceScratch.capacity() < m_arrowScratch.size()) {
-        m_instanceScratch.reserve(m_arrowScratch.size());
-    }
-
-    for (const ArrowCpu& e : m_arrowScratch) {
-        glm::mat4 model(1.0f);
-        model = glm::translate(model, e.startPos);
-        model = model * rotateFromYToDir(e.net);
+    for (SceneObject* obj : objects) {
+        auto* body = obj->getPhysicsBody();
+        if (!body) continue;
+        const glm::vec3 net = body->getNetForce(BodyLock::LOCK);
+        const float mag = glm::length(net);
+        if (mag < kForceEpsilon) continue;
 
         float t = 0.5f;
-        if (magSpan > kMagSpanEpsilon) {
-            t = (e.netMag - minMag) / magSpan;
-        }
+        if (magSpan > kMagSpanEpsilon)
+            t = (mag - minMag) / magSpan;
         const float lengthFactor = kArrowStemMin + t * (kArrowStemMax - kArrowStemMin);
 
+        glm::mat4 model(1.0f);
+        model = glm::translate(model, body->getPosition(BodyLock::LOCK));
+        model = model * rotateFromYToDir(net);
         model = glm::scale(model, glm::vec3(1.0f, 1.5f * lengthFactor, 1.0f));
-        m_instanceScratch.emplace_back(model, e.objectID, kArrowColor);
+
+        m_instanceScratch.emplace_back(model, obj->getObjectID(), kArrowColor);
     }
 
+    if (m_instanceScratch.empty()) return;
     arrowMesh->drawInstanced(m_instanceScratch);
 }

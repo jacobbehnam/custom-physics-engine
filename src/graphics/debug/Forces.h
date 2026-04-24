@@ -35,6 +35,5 @@ private:
     bool enabled = true;
 
     /** Reused each draw to avoid per-frame heap allocations when forces overlay is on. */
-    mutable std::vector<ArrowCpu> m_arrowScratch;
     mutable std::vector<Rendering::InstanceData> m_instanceScratch;
 };
