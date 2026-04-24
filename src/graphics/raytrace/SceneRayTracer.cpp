@@ -1,5 +1,7 @@
 #include "SceneRayTracer.h"
 
+#include "ui/AppSettings.h"
+#include "ui/settings/GraphicsSettings.h"
 #include "graphics/components/Mesh.h"
 #include "graphics/core/Camera.h"
 #include "graphics/core/ResourceManager.h"
@@ -510,6 +512,7 @@ void SceneRayTracer::ensureComputeProgram() {
     m_lNumT = m_g->glGetUniformLocation(m_compute, "uNumTris");
     m_lNumBvh = m_g->glGetUniformLocation(m_compute, "uNumBvh");
     m_lAccumFrames = m_g->glGetUniformLocation(m_compute, "uAccumFrames");
+    m_lEnableSun = m_g->glGetUniformLocation(m_compute, "uEnableSun");
     m_computeOk = true;
 }
 
@@ -880,6 +883,9 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     m_g->glUniform1ui(m_lNumBvh, static_cast<unsigned int>(m_bvh.getNodes().size()));
     m_g->glUniform1ui(m_lAccumFrames, m_accumulatedFrames);
 
+    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
+    m_g->glUniform1i(m_lEnableSun, vs.enableSun ? 1 : 0);
+
     const unsigned int groupsX = (static_cast<unsigned int>(w) + 7u) / 8u;
     const unsigned int groupsY = (static_cast<unsigned int>(h) + 7u) / 8u;
     m_g->glDispatchCompute(groupsX, groupsY, 1u);
@@ -1039,9 +1045,12 @@ void SceneRayTracer::render(
     ensureOutputSize(traceW, traceH);
 
     const uint64_t currentViewHash = viewHash(traceW, traceH, scale, camera);
-    if (currentViewHash != m_lastViewHash) {
+    const bool currentSunState = AppSettings::getInstance().getGroup<GraphicsSettings>().enableSun;
+    
+    if (currentViewHash != m_lastViewHash || currentSunState != m_lastEnableSun) {
         resetAccumulation();
         m_lastViewHash = currentViewHash;
+        m_lastEnableSun = currentSunState;
     }
 
     switch (backend) {

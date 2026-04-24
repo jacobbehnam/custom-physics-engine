@@ -62,7 +62,7 @@ private:
     unsigned m_compute{0};
 
     int m_lCam{-1}, m_lInvV{-1}, m_lInvP{-1}, m_lSize{-1}, m_lRoot{-1}, m_lNumT{-1}, m_lNumBvh{-1},
-        m_lAccumFrames{-1};
+        m_lAccumFrames{-1}, m_lEnableSun{-1};
 
     unsigned m_present{0};
 
@@ -85,6 +85,7 @@ private:
     size_t m_lastTriCount{static_cast<size_t>(-1)};
     uint64_t m_lastViewHash{0};
     uint32_t m_accumulatedFrames{0};
+    bool m_lastEnableSun{true};
 
     void ensureComputeProgram();
     void ensurePresentProgram();

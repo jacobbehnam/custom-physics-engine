@@ -15,4 +15,5 @@ private:
     QCheckBox* m_rayTracedBox;
     QCheckBox* m_rayRequireGpuBox;
     QDoubleSpinBox* m_rayResScaleBox;
+    QCheckBox* m_enableSunBox;
 };
