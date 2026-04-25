@@ -77,10 +77,11 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
         const auto &B = currentSnapshots[i];
 
         ObjectSnapshot C;
-        C.body     = A.body;                  // same pointer/ID
-        C.time     = renderSimTime;           // stamped with the render time
-        C.position = glm::mix(A.position, B.position, alpha);
-        C.velocity = glm::mix(A.velocity, B.velocity, alpha);
+        C.body          = A.body;                  // same pointer/ID
+        C.time          = renderSimTime;           // stamped with the render time
+        C.position      = glm::mix(A.position, B.position, alpha);
+        C.velocity      = glm::mix(A.velocity, B.velocity, alpha);
+        C.temperature   = glm::mix(A.temperature, B.temperature, alpha);
 
         out.push_back(C);
     }
@@ -127,7 +128,13 @@ void Physics::PhysicsSystem::physicsLoop() {
         {
             std::lock_guard<std::mutex> lk(snapshotMutex);
             for (auto* body : localBodies) {
-                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK) });
+                localSnaps.push_back({ 
+                    body,
+                    simTime, 
+                    body->getPosition(BodyLock::LOCK),
+                    body->getVelocity(BodyLock::LOCK),
+                    body->getTemperature(BodyLock::LOCK)
+                });
             }
 
             currentSnapshots = std::move(localSnaps);

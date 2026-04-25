@@ -34,6 +34,7 @@ struct ObjectSnapshot {
     float time;
     glm::vec3 position;
     glm::vec3 velocity;
+    float temperature;
 };
 
 namespace Physics {
