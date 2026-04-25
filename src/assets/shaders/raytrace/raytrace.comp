@@ -11,6 +11,7 @@ struct Tri {
     vec4 n1;
     vec4 n2;
     vec4 material;
+    vec4 emissive;
 };
 
 struct BvhNode {
@@ -302,6 +303,7 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
         }
 
         vec3 albedo = evaluateMaterial(tri, hitPos);
+        radiance += throughput * tri.emissive.rgb;
         float nDotL = max(dot(normal, SUN_DIR), 0.0);
         if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
             radiance += throughput * albedo * SUN_RADIANCE * nDotL;

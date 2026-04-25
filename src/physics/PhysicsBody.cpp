@@ -160,3 +160,51 @@ void Physics::PhysicsBody::clearAllFrames(BodyLock lock) {
 
     frames.clear();
 }
+
+void Physics::PhysicsBody::setTemperature(float kelvin, BodyLock lock) {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    m_temperature = std::max(0.0f, kelvin);
+}
+
+float Physics::PhysicsBody::getTemperature(BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    return m_temperature;
+}
+
+glm::vec3 Physics::PhysicsBody::blackbodyRGB(float t) {
+    if (t <= 0.0f) return glm::vec3(0.0f);
+    float k = t / 100.0f;
+    glm::vec3 col;
+
+    col.r = k <= 66.0f
+        ? 1.0f
+        : glm::clamp(1.2929f * std::pow(k - 60.0f, -0.1332f), 0.0f, 1.0f);
+
+    col.g = k <= 66.0f
+        ? glm::clamp(0.3900f * std::log(k) - 0.6318f, 0.0f, 1.0f)
+        : glm::clamp(1.1298f * std::pow(k - 60.0f, -0.0755f), 0.0f, 1.0f);
+
+    col.b = k >= 66.0f ? 1.0f
+          : k <= 19.0f ? 0.0f
+          : glm::clamp(0.5432f * std::log(k - 10.0f) - 1.1963f, 0.0f, 1.0f);
+
+    return col;
+}
+
+float Physics::PhysicsBody::temperatureToIntensity(float tempKelvin) {
+    // Scaled-down Stefan-Boltzmann
+    constexpr float kScale = 1.0f / (1000.0f * 1000.0f);
+    return std::pow(tempKelvin, 4.0f) * kScale;
+}
+
+glm::vec3 Physics::PhysicsBody::getEmission(BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    if (m_temperature <= 0.0f) return glm::vec3(0.0f);
+    return blackbodyRGB(m_temperature) * temperatureToIntensity(m_temperature);
+}

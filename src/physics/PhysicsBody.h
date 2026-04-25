@@ -65,6 +65,9 @@ namespace Physics {
         void setMass(float newMass, BodyLock lock);
         bool getIsStatic(BodyLock lock) const;
         void setIsStatic(bool newStatic, BodyLock lock);
+        float getTemperature(BodyLock lock) const;
+        void setTemperature(float newTemp, BodyLock lock);
+        glm::vec3 getEmission(BodyLock lock) const;
 
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
@@ -104,6 +107,10 @@ namespace Physics {
         std::atomic<glm::vec3>* globalAccelPtr = nullptr;
 
         float mass = 1.0f;
+        float m_temperature = 0.0f;
+
+        static glm::vec3 blackbodyRGB(float tempKelvin);
+        static float temperatureToIntensity(float tempKelvin);
     };
 
     template <typename F>

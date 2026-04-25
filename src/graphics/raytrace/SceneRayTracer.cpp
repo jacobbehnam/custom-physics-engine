@@ -53,6 +53,7 @@ struct CpuHit {
     glm::vec3 normal{0.0f};
     glm::vec3 geomNormal{0.0f};
     glm::vec3 albedo{0.0f};
+    glm::vec3 emissive{0.0f};
     bool hit{false};
 };
 
@@ -357,6 +358,7 @@ static bool traceClosest(
     hit.normal = n;
     hit.geomNormal = geomN;
     hit.albedo = evaluateMaterial(tri, hit.position);
+    hit.emissive = glm::vec3(tris[hit.triIndex].emissive);
     outHit = hit;
     return true;
 }
@@ -413,6 +415,7 @@ static glm::vec3 tracePath(
             radiance += throughput * skyRadiance(rayDir);
             break;
         }
+        radiance += throughput * hit.emissive;
 
         const float nDotL = std::max(glm::dot(hit.normal, kSunDir), 0.0f);
         if (nDotL > 0.0f && !traceShadow(nodes, tris, root, hit.position + hit.geomNormal * kRayBias, kSunDir, kFarClip)) {
@@ -669,6 +672,11 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
                 n2 = faceN;
             }
 
+            glm::vec3 emission{0.0f};
+            if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
+                emission = body->getEmission(BodyLock::NOLOCK);
+            }
+
             out.push_back({
                 w0,
                 w1,
@@ -678,6 +686,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
                 glm::normalize(n2),
                 albedo,
                 materialKind,
+                emission,
             });
         }
     }

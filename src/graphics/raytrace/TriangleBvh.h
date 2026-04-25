@@ -27,6 +27,7 @@ struct alignas(16) GpuTri {
     glm::vec4 n1{};
     glm::vec4 n2{};
     glm::vec4 material{};
+    glm::vec4 emissive{};
 };
 
 struct WorldTriangle {
@@ -34,6 +35,7 @@ struct WorldTriangle {
     glm::vec3 s0, s1, s2;
     glm::vec3 albedo{0.0f};
     MaterialKind materialKind{MaterialKind::Matte};
+    glm::vec3 emissive{0.0f};
 };
 
 class TriangleBvh {

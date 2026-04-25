@@ -197,3 +197,25 @@ target_link_libraries(PhysicsCore PUBLIC
         glm::glm
         atomic
 )
+
+# Detect changes in shader files and trigger asset copying if needed
+file(GLOB_RECURSE SHADER_FILES
+    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.comp"
+    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.vert"
+    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.frag"
+)
+
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
+set(ASSETS_DEST "${CMAKE_BINARY_DIR}/assets")
+set(ASSETS_STAMP "${CMAKE_BINARY_DIR}/assets_copied.stamp")
+
+add_custom_command(
+    OUTPUT ${ASSETS_STAMP}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE} ${ASSETS_DEST}
+    COMMAND ${CMAKE_COMMAND} -E touch ${ASSETS_STAMP}
+    DEPENDS ${SHADER_FILES}
+    COMMENT "Copying changed assets..."
+)
+
+add_custom_target(copy_assets ALL DEPENDS ${ASSETS_STAMP})
+add_dependencies(PhysicsEngine copy_assets)
