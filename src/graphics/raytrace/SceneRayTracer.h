@@ -1,9 +1,11 @@
 #pragma once
 
 #include "TriangleBvh.h"
+#include "graphics/components/ComputeShader.h"
 #include "physics/PhysicsBody.h"
 
 #include <glm/vec4.hpp>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <cstdint>
@@ -32,6 +34,8 @@ private:
         Cpu,
     };
 
+    std::unique_ptr<ComputeShader> m_shader;
+
     void ensureOutputSize(int w, int h);
     void ensureSSBOs(size_t nTri, size_t nNode);
     void buildAndUpload();
@@ -58,11 +62,6 @@ private:
     bool m_presentOk{false};
     bool m_computeAttempted{false};
     bool m_presentAttempted{false};
-
-    unsigned m_compute{0};
-
-    int m_lCam{-1}, m_lInvV{-1}, m_lInvP{-1}, m_lSize{-1}, m_lRoot{-1}, m_lNumT{-1}, m_lNumBvh{-1},
-        m_lAccumFrames{-1}, m_lEnableGlobalLight{-1};
 
     unsigned m_present{0};
 

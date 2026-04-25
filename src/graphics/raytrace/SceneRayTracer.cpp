@@ -459,60 +459,37 @@ void SceneRayTracer::setRequireGpu(bool requireGpu) {
 }
 
 void SceneRayTracer::ensureComputeProgram() {
-    if (m_computeAttempted || m_compute) {
+    if (m_computeAttempted || m_shader) {
         return;
     }
     m_computeAttempted = true;
 
     auto* ctx = QOpenGLContext::currentContext();
     if (!ctx) {
+        std::cerr << "[raytrace] no current OpenGL context" << std::endl;
         return;
     }
+
     const auto fmt = ctx->format();
     const bool supportsCompute =
         (fmt.majorVersion() > 4 || (fmt.majorVersion() == 4 && fmt.minorVersion() >= 3))
         || ctx->hasExtension(QByteArrayLiteral("GL_ARB_compute_shader"));
+
     if (!supportsCompute) {
         std::cerr << "[raytrace] compute shaders unavailable, CPU fallback will be used." << std::endl;
         return;
     }
 
-    const std::string source = readAll("assets/shaders/raytrace/raytrace.comp");
-    if (source.empty()) {
-        std::cerr << "[raytrace] missing assets/shaders/raytrace/raytrace.comp" << std::endl;
+    const std::string shaderPath = "assets/shaders/raytrace/raytrace.comp";
+
+    m_shader = std::make_unique<ComputeShader>(shaderPath, m_g);
+
+    if (m_shader->id() == 0) {
+        std::cerr << "[raytrace] compute program failed to build." << std::endl;
+        m_shader.reset();
         return;
     }
 
-    const GLuint compute = compileShader(GL_COMPUTE_SHADER, source, "raytrace.comp", m_g);
-    if (!compute) {
-        return;
-    }
-
-    m_compute = m_g->glCreateProgram();
-    m_g->glAttachShader(m_compute, compute);
-    m_g->glLinkProgram(m_compute);
-    m_g->glDeleteShader(compute);
-
-    GLint linked = 0;
-    m_g->glGetProgramiv(m_compute, GL_LINK_STATUS, &linked);
-    if (linked != GL_TRUE) {
-        char log[2048];
-        m_g->glGetProgramInfoLog(m_compute, sizeof(log) - 1, nullptr, log);
-        std::cerr << "[raytrace] compute link failure\n" << log << std::endl;
-        m_g->glDeleteProgram(m_compute);
-        m_compute = 0;
-        return;
-    }
-
-    m_lCam = m_g->glGetUniformLocation(m_compute, "uCamPos");
-    m_lInvV = m_g->glGetUniformLocation(m_compute, "uInvView");
-    m_lInvP = m_g->glGetUniformLocation(m_compute, "uInvProj");
-    m_lSize = m_g->glGetUniformLocation(m_compute, "uSize");
-    m_lRoot = m_g->glGetUniformLocation(m_compute, "uRoot");
-    m_lNumT = m_g->glGetUniformLocation(m_compute, "uNumTris");
-    m_lNumBvh = m_g->glGetUniformLocation(m_compute, "uNumBvh");
-    m_lAccumFrames = m_g->glGetUniformLocation(m_compute, "uAccumFrames");
-    m_lEnableGlobalLight = m_g->glGetUniformLocation(m_compute, "uEnableGlobalLight");
     m_computeOk = true;
 }
 
@@ -866,30 +843,57 @@ SceneRayTracer::Backend SceneRayTracer::chooseBackend() const {
 }
 
 void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
+    const float aspect      = static_cast<float>(w) / static_cast<float>(h);
+    const glm::mat4 proj    = glm::perspective(glm::radians(camera->fov), aspect, 0.1f, kFarClip);
     const glm::mat4 invView = glm::inverse(camera->getViewMatrix());
-    const glm::mat4 invProj = glm::inverse(glm::perspective(glm::radians(camera->fov), static_cast<float>(w) / static_cast<float>(h), 0.1f, kFarClip));
+    const glm::mat4 invProj = glm::inverse(proj);
 
-    m_g->glUseProgram(m_compute);
-    m_g->glBindImageTexture(0, m_outTex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA16F);
+    m_shader->use();
+
+    m_g->glBindImageTexture(
+        0,           // image unit
+        m_outTex,    // texture object
+        0,           // mip level
+        GL_FALSE,    // layered
+        0,           // layer
+        GL_READ_WRITE,
+        GL_RGBA16F
+    );
+
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_triSsb);
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_nodeSsb);
 
-    m_g->glUniform3f(m_lCam, camera->position.x, camera->position.y, camera->position.z);
-    m_g->glUniformMatrix4fv(m_lInvV, 1, GL_FALSE, glm::value_ptr(invView));
-    m_g->glUniformMatrix4fv(m_lInvP, 1, GL_FALSE, glm::value_ptr(invProj));
-    m_g->glUniform2ui(m_lSize, static_cast<unsigned int>(w), static_cast<unsigned int>(h));
-    m_g->glUniform1ui(m_lRoot, m_bvh.getRoot());
-    m_g->glUniform1ui(m_lNumT, static_cast<unsigned int>(m_bvh.getGpuTris().size()));
-    m_g->glUniform1ui(m_lNumBvh, static_cast<unsigned int>(m_bvh.getNodes().size()));
-    m_g->glUniform1ui(m_lAccumFrames, m_accumulatedFrames);
+    m_shader->setVec3("uCamPos", camera->position);
+    m_shader->setMat4("uInvView", invView);
+    m_shader->setMat4("uInvProj", invProj);
 
-    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
-    m_g->glUniform1i(m_lEnableGlobalLight, vs.enableGlobalLight ? 1 : 0);
+    m_shader->setUVec2("uSize",
+        static_cast<unsigned int>(w),
+        static_cast<unsigned int>(h));
+
+    m_shader->setUInt("uRoot",
+        m_bvh.getRoot());
+
+    m_shader->setUInt("uNumTris",
+        static_cast<unsigned int>(m_bvh.getGpuTris().size()));
+
+    m_shader->setUInt("uNumBvh",
+        static_cast<unsigned int>(m_bvh.getNodes().size()));
+
+    m_shader->setUInt("uAccumFrames",
+        static_cast<unsigned int>(m_accumulatedFrames));
+
+    const bool globalLight =
+        AppSettings::getInstance().getGroup<GraphicsSettings>().enableGlobalLight;
+    m_shader->setInt("uEnableGlobalLight", globalLight ? 1 : 0);
 
     const unsigned int groupsX = (static_cast<unsigned int>(w) + 7u) / 8u;
     const unsigned int groupsY = (static_cast<unsigned int>(h) + 7u) / 8u;
-    m_g->glDispatchCompute(groupsX, groupsY, 1u);
-    m_g->glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
+    m_shader->dispatch(
+        groupsX, groupsY, 1,
+        GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT
+    );
 }
 
 void SceneRayTracer::uploadCpuTexture() {
@@ -987,9 +991,6 @@ SceneRayTracer::SceneRayTracer(SceneManager* sm, QOpenGLFunctions_4_5_Core* gl) 
 SceneRayTracer::~SceneRayTracer() {
     if (!m_g) {
         return;
-    }
-    if (m_compute) {
-        m_g->glDeleteProgram(m_compute);
     }
     if (m_present) {
         m_g->glDeleteProgram(m_present);

@@ -16,6 +16,8 @@ public:
     void setFloat(const std::string& name, float value) const;
     void setMat4(const std::string& name, const glm::mat4& mat) const;
     void setVec3(const std::string& name, const glm::vec3& vec) const;
+    void setUInt(const std::string& name, unsigned int value) const;
+    void setUVec2(const std::string& name, unsigned int x, unsigned int y) const;
 
     unsigned int createSSBO(const void* data, unsigned int size, unsigned int bindingPoint);
     template<typename T>
@@ -33,8 +35,18 @@ public:
         }
         return result;
     }
+    void updateSSBO(unsigned int ssboID, const void* data, size_t size) const {
+        funcs->glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboID);
+        funcs->glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, size, data);
+        funcs->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    }
 
-    void dispatch(unsigned int groupsX, unsigned int groupsY = 1, unsigned int groupsZ = 1) const;
+    void dispatch(
+        unsigned int groupsX,
+        unsigned int groupsY = 1,
+        unsigned int groupsZ = 1,
+        GLbitfield barrier = GL_SHADER_STORAGE_BARRIER_BIT
+    ) const;
 
     unsigned int id() const { return ID; }
 

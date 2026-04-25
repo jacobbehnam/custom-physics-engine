@@ -64,9 +64,9 @@ unsigned int ComputeShader::createSSBO(const void *data, unsigned int size, unsi
     return ssbo;
 }
 
-void ComputeShader::dispatch(GLuint groupsX, GLuint groupsY, GLuint groupsZ) const {
+void ComputeShader::dispatch(GLuint groupsX, GLuint groupsY, GLuint groupsZ, GLbitfield barrier) const {
     funcs->glDispatchCompute(groupsX, groupsY, groupsZ);
-    funcs->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    funcs->glMemoryBarrier(barrier);
 }
 
 void ComputeShader::setBool(const std::string& name, bool value) const {
@@ -87,4 +87,12 @@ void ComputeShader::setMat4(const std::string& name, const glm::mat4& mat) const
 
 void ComputeShader::setVec3(const std::string& name, const glm::vec3& vec) const {
     funcs->glUniform3fv(funcs->glGetUniformLocation(ID, name.c_str()), 1, &vec[0]);
+}
+
+void ComputeShader::setUInt(const std::string& name, unsigned int value) const {
+    funcs->glUniform1ui(funcs->glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void ComputeShader::setUVec2(const std::string& name, unsigned int x, unsigned int y) const {
+    funcs->glUniform2ui(funcs->glGetUniformLocation(ID, name.c_str()), x, y);
 }
