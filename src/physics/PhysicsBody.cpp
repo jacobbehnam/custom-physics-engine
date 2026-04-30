@@ -161,20 +161,18 @@ void Physics::PhysicsBody::clearAllFrames(BodyLock lock) {
     frames.clear();
 }
 
-double Physics::PhysicsBody::setTempK(double newK, BodyLock lock) {
+void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps, BodyLock lock) {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    double oldK = tempK;
-    tempK = newK;
-    return oldK;
+    thermalProps = newProps;
 }
 
-void Physics::PhysicsBody::getTempK(double &outK, BodyLock lock) const {
+ThermalProperties Physics::PhysicsBody::getThermalProperties(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    outK = tempK;
+    return thermalProps;
 }

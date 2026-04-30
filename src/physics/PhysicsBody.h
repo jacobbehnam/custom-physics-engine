@@ -8,6 +8,8 @@
 #include <mutex>
 #include <unordered_set>
 
+#include "physics/ThermalProperties.h"
+
 class ICollider;
 
 namespace Physics {
@@ -63,8 +65,8 @@ namespace Physics {
         void setVelocity(const glm::vec3& vel, BodyLock lock);
         float getMass(BodyLock lock) const;
         void setMass(float newMass, BodyLock lock);
-        double setTempK(double newK, BodyLock lock);
-        void getTempK(double& outK, BodyLock lock) const;
+        ThermalProperties getThermalProperties(BodyLock lock) const;
+        void setThermalProperty(const ThermalProperties& newProps, BodyLock lock);
         bool getIsStatic(BodyLock lock) const;
         void setIsStatic(bool newStatic, BodyLock lock);
 
@@ -106,7 +108,7 @@ namespace Physics {
         std::atomic<glm::vec3>* globalAccelPtr = nullptr;
 
         float mass = 1.0f;
-        double tempK = 0.0;
+        ThermalProperties thermalProps;
     };
 
     template <typename F>
