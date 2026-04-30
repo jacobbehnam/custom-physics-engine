@@ -63,6 +63,8 @@ namespace Physics {
         void setVelocity(const glm::vec3& vel, BodyLock lock);
         float getMass(BodyLock lock) const;
         void setMass(float newMass, BodyLock lock);
+        double setTempK(double newK, BodyLock lock);
+        void getTempK(double& outK, BodyLock lock) const;
         bool getIsStatic(BodyLock lock) const;
         void setIsStatic(bool newStatic, BodyLock lock);
 
@@ -104,6 +106,7 @@ namespace Physics {
         std::atomic<glm::vec3>* globalAccelPtr = nullptr;
 
         float mass = 1.0f;
+        double tempK = 0.0;
     };
 
     template <typename F>
