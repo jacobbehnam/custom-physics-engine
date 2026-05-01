@@ -9,6 +9,11 @@
 #include "graphics/core/SceneObject.h"
 
 namespace JsonUtils {
+    inline double numberOr(const QJsonObject& obj, const char* key, double fallback) {
+        const QJsonValue value = obj.value(key);
+        return value.isDouble() ? value.toDouble(fallback) : fallback;
+    }
+
     inline QJsonArray vec3ToJson(const glm::vec3 &v) {
         QJsonArray arr;
         arr.append(v.x);
@@ -28,6 +33,30 @@ namespace JsonUtils {
         }
         return {arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()};
     }
+
+    inline QJsonObject thermalToJson(const ThermalProperties& props) {
+        QJsonObject obj;
+        obj["tempK"] = props.tempK;
+        obj["specificHeat"] = props.specificHeat;
+        obj["emissivity"] = props.emissivity;
+        obj["heatTransferCoeff"] = props.heatTransferCoeff;
+        obj["conductivity"] = props.conductivity;
+        obj["density"] = props.density;
+        obj["meltingPoint"] = props.meltingPoint;
+        return obj;
+    }
+
+    inline ThermalProperties jsonToThermal(const QJsonObject& obj, const ThermalProperties& fallback) {
+        ThermalProperties props = fallback;
+        props.tempK = numberOr(obj, "tempK", props.tempK);
+        props.specificHeat = static_cast<float>(numberOr(obj, "specificHeat", props.specificHeat));
+        props.emissivity = static_cast<float>(numberOr(obj, "emissivity", props.emissivity));
+        props.heatTransferCoeff = static_cast<float>(numberOr(obj, "heatTransferCoeff", props.heatTransferCoeff));
+        props.conductivity = static_cast<float>(numberOr(obj, "conductivity", props.conductivity));
+        props.density = static_cast<float>(numberOr(obj, "density", props.density));
+        props.meltingPoint = static_cast<float>(numberOr(obj, "meltingPoint", props.meltingPoint));
+        return props;
+    }
 }
 
 SceneSerializer::SceneSerializer(SceneManager *sceneMgr) : sceneManager(sceneMgr) {}
@@ -42,6 +71,7 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     settings["gravity"] = JsonUtils::vec3ToJson(sceneManager->getGlobalAcceleration());
     settings["gravitationalConstant"] = sceneManager->getGravitationalConstant();
     settings["simSpeed"] = sceneManager->getSimSpeed();
+    settings["ambientTemperature"] = sceneManager->getAmbientTemperature();
     root["settings"] = settings;
 
     QJsonArray objectsArray;
@@ -62,6 +92,7 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
             data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
             data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
             data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
+            data["thermal"] = JsonUtils::thermalToJson(obj->getPhysicsBody()->getThermalProperties(BodyLock::LOCK));
 
             if constexpr (std::is_same_v<T, PointMassOptions>) {
                 optionsJson["type"] = "PointMassOptions";
@@ -112,9 +143,12 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
 
     if (root.contains("settings") && root["settings"].isObject()) {
         QJsonObject settings = root["settings"].toObject();
-        sceneManager->setGlobalAcceleration(JsonUtils::jsonToVec3(settings["gravity"].toArray()));
-        sceneManager->setSimSpeed(settings["simSpeed"].toDouble());
-        sceneManager->setGravitationalConstant(settings["gravitationalConstant"].toDouble());
+        if (settings["gravity"].isArray()) {
+            sceneManager->setGlobalAcceleration(JsonUtils::jsonToVec3(settings["gravity"].toArray()));
+        }
+        sceneManager->setSimSpeed(JsonUtils::numberOr(settings, "simSpeed", sceneManager->getSimSpeed()));
+        sceneManager->setGravitationalConstant(JsonUtils::numberOr(settings, "gravitationalConstant", sceneManager->getGravitationalConstant()));
+        sceneManager->setAmbientTemperature(static_cast<float>(JsonUtils::numberOr(settings, "ambientTemperature", sceneManager->getAmbientTemperature())));
     }
 
     sceneManager->deleteAllObjects();
@@ -166,6 +200,14 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
             Shader* shader = ResourceManager::getShader(shaderName);
             SceneObject* createObj = sceneManager->createObject(meshName, shader, options);
             sceneManager->setObjectName(createObj, objName);
+            if (createObj->getPhysicsBody() && objJson["options"].isObject()) {
+                QJsonObject optionsJson = objJson["options"].toObject();
+                QJsonObject data = optionsJson["data"].toObject();
+                if (data["thermal"].isObject()) {
+                    ThermalProperties fallback = createObj->getPhysicsBody()->getThermalProperties(BodyLock::LOCK);
+                    createObj->getPhysicsBody()->setThermalProperty(JsonUtils::jsonToThermal(data["thermal"].toObject(), fallback), BodyLock::LOCK);
+                }
+            }
         }
     }
     return true;

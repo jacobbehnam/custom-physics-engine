@@ -60,6 +60,8 @@ public:
     void stopSimulation() const { physicsSystem->disablePhysics(); window->setRenderClockRunning(false); }
     double getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
     void setGravitationalConstant(double newG) const { physicsSystem->setGravitationalConstant(newG); }
+    float getAmbientTemperature() const { return physicsSystem->getAmbientTemperature(); }
+    void setAmbientTemperature(float newTemp) const { physicsSystem->setAmbientTemperature(newTemp); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }

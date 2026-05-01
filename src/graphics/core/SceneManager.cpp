@@ -38,18 +38,18 @@ void SceneManager::defaultSetup() {
         double radiusKm;
         double distanceMillionKm;
         double orbitalVelocityKmS;
-        double meanTempK;
-        float densityKgM3;
+        ThermalProperties thermal;
     };
 
-    auto makeThermal = [](double tempK, float density) {
+    auto makeThermal = [](double tempK, float density, float emissivity, float specificHeat, float conductivity, float meltingPoint) {
         ThermalProperties thermal;
         thermal.tempK = tempK;
-        thermal.emissivity = 0.95f;
+        thermal.emissivity = emissivity;
         thermal.heatTransferCoeff = 0.0f;
-        thermal.specificHeat = 1000.0f;
-        thermal.conductivity = 0.0f;
+        thermal.specificHeat = specificHeat;
+        thermal.conductivity = conductivity;
         thermal.density = density;
+        thermal.meltingPoint = meltingPoint;
         return thermal;
     };
 
@@ -62,7 +62,7 @@ void SceneManager::defaultSetup() {
 
         SceneObject* body = createObject("prim_sphere", ResourceManager::getShader("basic"), options);
         setObjectName(body, spec.name);
-        body->getPhysicsBody()->setThermalProperty(makeThermal(spec.meanTempK, spec.densityKgM3), BodyLock::NOLOCK);
+        body->getPhysicsBody()->setThermalProperty(spec.thermal, BodyLock::NOLOCK);
         return body;
     };
 
@@ -77,17 +77,17 @@ void SceneManager::defaultSetup() {
     sunOptions.mass = 1.9891e30;
     SceneObject* sun = createObject("prim_sphere", ResourceManager::getShader("basic"), sunOptions);
     setObjectName(sun, "Sun");
-    sun->getPhysicsBody()->setThermalProperty(makeThermal(5778.0, 1408.0f), BodyLock::NOLOCK);
+    sun->getPhysicsBody()->setThermalProperty(makeThermal(5778.0, 1408.0f, 1.0f, 20780.0f, 1.0e4f, 0.0f), BodyLock::NOLOCK);
 
     const std::array<BodySpec, 8> planets{{
-        {"Mercury", 0.330e24, 4879.0 / 2.0, 57.9, 47.4, 167.0 + 273.15, 5429.0f},
-        {"Venus",   4.87e24, 12104.0 / 2.0, 108.2, 35.0, 464.0 + 273.15, 5243.0f},
-        {"Earth",   5.97e24, 12756.0 / 2.0, 149.6, 29.8, 15.0 + 273.15, 5514.0f},
-        {"Mars",    0.642e24, 6792.0 / 2.0, 227.9, 24.1, -65.0 + 273.15, 3934.0f},
-        {"Jupiter", 1898.0e24, 142984.0 / 2.0, 778.6, 13.1, -110.0 + 273.15, 1326.0f},
-        {"Saturn",  568.0e24, 120536.0 / 2.0, 1433.5, 9.7, -140.0 + 273.15, 687.0f},
-        {"Uranus",  86.8e24, 51118.0 / 2.0, 2872.5, 6.8, -195.0 + 273.15, 1270.0f},
-        {"Neptune", 102.0e24, 49528.0 / 2.0, 4495.1, 5.4, -200.0 + 273.15, 1638.0f},
+        {"Mercury", 0.330e24, 4879.0 / 2.0, 57.9, 47.4, makeThermal(440.15, 5429.0f, 0.90f, 800.0f, 2.0f, 1700.0f)},
+        {"Venus",   4.87e24, 12104.0 / 2.0, 108.2, 35.0, makeThermal(737.15, 5243.0f, 0.95f, 850.0f, 2.0f, 1700.0f)},
+        {"Earth",   5.97e24, 12756.0 / 2.0, 149.6, 29.8, makeThermal(288.15, 5514.0f, 0.96f, 1000.0f, 2.5f, 1700.0f)},
+        {"Mars",    0.642e24, 6792.0 / 2.0, 228.0, 24.1, makeThermal(208.15, 3934.0f, 0.95f, 750.0f, 0.08f, 1700.0f)},
+        {"Jupiter", 1898.0e24, 142984.0 / 2.0, 778.5, 13.1, makeThermal(163.15, 1326.0f, 0.99f, 13000.0f, 0.18f, 0.0f)},
+        {"Saturn",  568.0e24, 120536.0 / 2.0, 1432.0, 9.7, makeThermal(133.15, 687.0f, 0.99f, 13000.0f, 0.18f, 0.0f)},
+        {"Uranus",  86.8e24, 51118.0 / 2.0, 2867.0, 6.8, makeThermal(78.15, 1270.0f, 0.99f, 9000.0f, 0.6f, 0.0f)},
+        {"Neptune", 102.0e24, 49528.0 / 2.0, 4515.0, 5.4, makeThermal(73.15, 1638.0f, 0.99f, 9000.0f, 0.6f, 0.0f)},
     }};
 
     SceneObject* earth = nullptr;
@@ -104,7 +104,7 @@ void SceneManager::defaultSetup() {
     moonOptions.velocity = glm::vec3(0.0f, 0.0f, static_cast<float>((29.8 + 1.022) * metersPerKm));
     SceneObject* moon = createObject("prim_sphere", ResourceManager::getShader("basic"), moonOptions);
     setObjectName(moon, "Moon");
-    moon->getPhysicsBody()->setThermalProperty(makeThermal(270.4, 3344.0f), BodyLock::NOLOCK);
+    moon->getPhysicsBody()->setThermalProperty(makeThermal(253.15, 3340.0f, 0.95f, 741.0f, 0.001f, 1700.0f), BodyLock::NOLOCK);
 
     focusObject(earth);
 }
