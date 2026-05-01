@@ -1,8 +1,15 @@
+#include <algorithm>
+#include <iterator>
+
 #include "PathTraces.h"
 #include "physics/PhysicsBody.h"
 #include "graphics/core/ResourceManager.h"
 #include "graphics/core/SceneManager.h"
 #include "graphics/core/SceneObject.h"
+
+namespace {
+constexpr int kMaxTrailPointsPerObject = 4096;
+}
 
 PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
     gl->glGenVertexArrays(1, &vao);
@@ -54,16 +61,22 @@ void PathTraces::draw() const {
 
         points.clear();
 
-        int startIdx = static_cast<int>(snapshots.size() - 1);
-        while (startIdx > 0 && snapshots[static_cast<size_t>(startIdx)].time >= startTime) {
-            startIdx--;
-        }
+        const auto startIt = std::lower_bound(snapshots.begin(), snapshots.end(), startTime,
+            [](const ObjectSnapshot& snapshot, float time) {
+                return snapshot.time < time;
+            });
+        const int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
+        const int totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
+        points.reserve(static_cast<size_t>(std::min(totalCount, kMaxTrailPointsPerObject + 1)));
 
-        const int count = static_cast<int>(snapshots.size()) - startIdx;
-        points.reserve(static_cast<size_t>(count));
-
-        for (int i = startIdx; i < static_cast<int>(snapshots.size()); ++i) {
+        int lastDrawnIndex = -1;
+        for (int i = startIdx; i < static_cast<int>(snapshots.size()); i += stride) {
             points.push_back(snapshots[static_cast<size_t>(i)].position - renderOrigin);
+            lastDrawnIndex = i;
+        }
+        if (lastDrawnIndex != static_cast<int>(snapshots.size()) - 1) {
+            points.push_back(snapshots.back().position - renderOrigin);
         }
 
         if (points.size() < 2) return;

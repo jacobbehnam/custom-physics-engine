@@ -68,7 +68,7 @@ void SceneManager::defaultSetup() {
     physicsSystem->setGlobalAcceleration(glm::vec3(0.0f));
     physicsSystem->setAmbientTemperature(2.725f);
     physicsSystem->setGravitationalConstant(Constants::G);
-    setSimSpeed(10e6f);
+    setSimSpeed(10e5f);
 
     PointMassOptions sunOptions;
     sunOptions.base.position = glm::vec3(0.0f);

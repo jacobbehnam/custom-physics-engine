@@ -96,8 +96,8 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
 
 void Physics::PhysicsSystem::physicsLoop() {
     constexpr float kBaseDt = 1.0f / 1000.0f;
-    constexpr int kMaxCatchUpSteps = 256;
-    constexpr float kMaxAdaptiveDt = 60.0f;
+    constexpr int kMaxCatchUpSteps = 8;
+    constexpr float kMaxAdaptiveDt = 86400.0f;
 
     float accumulator = 0.0f;
     auto lastTime = std::chrono::high_resolution_clock::now();
