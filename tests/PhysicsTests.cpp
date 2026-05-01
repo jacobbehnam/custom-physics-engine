@@ -2,6 +2,8 @@
 #include <cmath>
 #include "physics/PhysicsSystem.h"
 #include "physics/PointMass.h"
+#include "physics/RigidBody.h"
+#include "physics/bounding/BoxCollider.h"
 #include "physics/utils/ThermalUtils.h"
 
 // Helper Macros for concise GLM comparisons
@@ -249,6 +251,75 @@ TEST(PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition) {
 
     EXPECT_VEC3_EXACT(pm.getPosition(BodyLock::LOCK), glm::vec3(1.0f, 2.0f, 3.0f));
     EXPECT_LT(pm.getThermalProperties(BodyLock::LOCK).tempK, 400.0);
+}
+
+TEST(PhysicsBody, LoadFrame_RestoresTemperature) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 500.0;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    ObjectSnapshot snapshot{&pm, 0.0f, glm::vec3(1.0f), glm::vec3(2.0f), 275.0f};
+    pm.loadFrame(snapshot, BodyLock::LOCK);
+
+    EXPECT_FLOAT_EQ(pm.getThermalProperties(BodyLock::LOCK).tempK, 275.0f);
+}
+
+TEST(RigidBody, SurfaceArea_UsesAllScaleAxes) {
+    auto collider = std::make_unique<Physics::Bounding::BoxCollider>(
+        glm::vec3(0.0f),
+        glm::vec3(1.0f),
+        glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
+    );
+    Physics::RigidBody body(0, 1.0, std::move(collider));
+
+    std::vector<glm::vec3> vertices = {
+        {-0.5f, -0.5f, -0.5f},
+        { 0.5f, -0.5f, -0.5f},
+        { 0.5f,  0.5f, -0.5f},
+        {-0.5f,  0.5f, -0.5f},
+        {-0.5f, -0.5f,  0.5f},
+        { 0.5f, -0.5f,  0.5f},
+        { 0.5f,  0.5f,  0.5f},
+        {-0.5f,  0.5f,  0.5f},
+    };
+    std::vector<unsigned int> indices = {
+        0, 1, 2, 0, 2, 3,
+        4, 6, 5, 4, 7, 6,
+        0, 4, 5, 0, 5, 1,
+        3, 2, 6, 3, 6, 7,
+        1, 5, 6, 1, 6, 2,
+        0, 3, 7, 0, 7, 4,
+    };
+
+    body.setGeometry(vertices, indices);
+    body.setScale(glm::vec3(2.0f, 3.0f, 4.0f));
+
+    EXPECT_NEAR(body.getSurfaceArea(), 52.0f, 1.0e-5f);
+}
+
+TEST(RigidBody, CollisionHeat_ZeroSpecificHeat_DoesNotCreateNaN) {
+    auto collider = std::make_unique<Physics::Bounding::BoxCollider>(
+        glm::vec3(0.0f),
+        glm::vec3(1.0f),
+        glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
+    );
+    Physics::RigidBody body(0, 1.0, std::move(collider), glm::vec3(0.0f), true);
+    Physics::PointMass pm(1, 1.0, glm::vec3(0.0f), false);
+    pm.setVelocity(glm::vec3(0.0f, -1.0f, 0.0f), BodyLock::LOCK);
+
+    ThermalProperties bodyProps;
+    bodyProps.specificHeat = 0.0f;
+    body.setThermalProperty(bodyProps, BodyLock::LOCK);
+
+    ThermalProperties pmProps;
+    pmProps.specificHeat = 0.0f;
+    pm.setThermalProperty(pmProps, BodyLock::LOCK);
+
+    body.resolveCollisionWithPointMass(0.01f, pm);
+
+    EXPECT_TRUE(std::isfinite(body.getThermalProperties(BodyLock::LOCK).tempK));
+    EXPECT_TRUE(std::isfinite(pm.getThermalProperties(BodyLock::LOCK).tempK));
 }
 
 // Simulation tests

@@ -175,6 +175,7 @@ void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps,
     thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);
     thermalProps.conductivity = std::max(thermalProps.conductivity, 0.0f);
     thermalProps.density = std::max(thermalProps.density, 0.0f);
+    thermalProps.meltingPoint = std::max(thermalProps.meltingPoint, 0.0f);
 }
 
 ThermalProperties Physics::PhysicsBody::getThermalProperties(BodyLock lock) const {

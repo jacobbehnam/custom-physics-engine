@@ -196,7 +196,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
     return totalForce;
 }
 
-double Octree::computeHeat(Physics::PhysicsBody* body) {
+double Octree::computeHeat(Physics::PhysicsBody* body, double bodyTemperatureK) {
     if (nodes.empty() || body == nullptr) {
         return 0.0;
     }
@@ -205,7 +205,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
     glm::vec3 bodyPos = body->getPosition(BodyLock::NOLOCK);
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
     double area = body->getSurfaceArea();
-    double t_obj_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(props.tempK));
+    double t_obj_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(bodyTemperatureK));
 
     std::vector<NodeIndex> stack;
     stack.reserve(512);

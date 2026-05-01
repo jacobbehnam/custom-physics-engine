@@ -71,6 +71,9 @@ void Physics::PointMass::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock
 
     setPosition(snapshot.position, BodyLock::NOLOCK);
     setVelocity(snapshot.velocity, BodyLock::NOLOCK);
+    ThermalProperties props = getThermalProperties(BodyLock::NOLOCK);
+    props.tempK = snapshot.temperature;
+    setThermalProperty(props, BodyLock::NOLOCK);
 }
 
 void Physics::PointMass::step(float dt, BodyLock lock) {

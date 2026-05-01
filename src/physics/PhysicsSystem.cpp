@@ -198,14 +198,13 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         const double area = body->getSurfaceArea();
         const double mass = body->getMass(BodyLock::NOLOCK);
         const double ambientTemp = getAmbientTemperature();
-        const double proximityRadiation = PhysicsSystem::octree.computeHeat(body);
 
         Physics::Thermal::integrateTemperature(props, mass, dt, [&](double tempK) {
             ThermalProperties tmp = props;
             tmp.tempK = tempK;
             return Physics::Thermal::convectionHeatRate(tmp, area, ambientTemp)
                 + Physics::Thermal::ambientRadiationHeatRate(tmp, area, ambientTemp)
-                + proximityRadiation;
+                + PhysicsSystem::octree.computeHeat(body, tempK);
         });
         if (std::isfinite(props.tempK)) {
             body->setThermalProperty(props, BodyLock::NOLOCK);

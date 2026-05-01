@@ -25,13 +25,13 @@ void Physics::RigidBody::recomputeGeometry() {
     float area = 0.0f;
 
     for (size_t i = 0; i < meshIndices.size(); i += 3) {
-        glm::vec3 a = meshVertices[meshIndices[i]];
-        glm::vec3 b = meshVertices[meshIndices[i+1]];
-        glm::vec3 c = meshVertices[meshIndices[i+2]];
+        glm::vec3 a = meshVertices[meshIndices[i]] * scale;
+        glm::vec3 b = meshVertices[meshIndices[i+1]] * scale;
+        glm::vec3 c = meshVertices[meshIndices[i+2]] * scale;
         area += 0.5f * glm::length(glm::cross(b - a, c - a));
     }
 
-    surfaceArea = area * scale.x * scale.y;
+    surfaceArea = area;
 }
 
 Physics::RigidBody::RigidBody(uint32_t id, double m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
@@ -65,6 +65,9 @@ void Physics::RigidBody::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock
 
     setPosition(snapshot.position, BodyLock::NOLOCK);
     setVelocity(snapshot.velocity, BodyLock::NOLOCK);
+    ThermalProperties props = getThermalProperties(BodyLock::NOLOCK);
+    props.tempK = snapshot.temperature;
+    setThermalProperty(props, BodyLock::NOLOCK);
 }
 
 void Physics::RigidBody::step(float dt, BodyLock lock) {
@@ -122,11 +125,15 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     ThermalProperties rbProps = getThermalProperties(BodyLock::NOLOCK);
     ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
 
-    float keLost = 0.5f * static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * vRel * vRel;
-    float rbDeltaT = (keLost * 0.5f) / (static_cast<float>(getMass(BodyLock::NOLOCK)) * rbProps.specificHeat);
-    float pmDeltaT = (keLost * 0.5f) / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
-    rbProps.tempK += rbDeltaT;
-    pmProps.tempK += pmDeltaT;
+    const double keLost = 0.5 * pm.getMass(BodyLock::NOLOCK) * static_cast<double>(vRel) * static_cast<double>(vRel);
+    const double rbHeatCapacity = Physics::Thermal::heatCapacity(getMass(BodyLock::NOLOCK), rbProps);
+    const double pmHeatCapacity = Physics::Thermal::heatCapacity(pm.getMass(BodyLock::NOLOCK), pmProps);
+    if (rbHeatCapacity > 0.0) {
+        rbProps.tempK += (keLost * 0.5) / rbHeatCapacity;
+    }
+    if (pmHeatCapacity > 0.0) {
+        pmProps.tempK += (keLost * 0.5) / pmHeatCapacity;
+    }
 
     const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
     const double distance = 0.01;
