@@ -40,6 +40,7 @@ private:
     QLabel* selectedObjectDistanceLabel;
     QLabel* simulationStateLabel;
     QLabel* renderClockStateLabel;
+    QLabel* cameraFollowLabel;
     SceneObject* selectedInfoObject = nullptr;
 
     InspectorWidget* inspector;

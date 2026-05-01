@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -41,6 +42,13 @@ FrameGraphCanvas::FrameGraphCanvas(QWidget* parent)
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumHeight(kMinCanvasHeight);
+    resizeRebuildTimer.setSingleShot(true);
+    resizeRebuildTimer.setInterval(120);
+    connect(&resizeRebuildTimer, &QTimer::timeout, this, [this]() {
+        rebuildPoints();
+        invalidateCache();
+        update();
+    });
 }
 
 void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
@@ -56,6 +64,7 @@ void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
         tMax = 0.0f;
     }
     rebuildPoints();
+    invalidateCache();
     update();
 }
 
@@ -65,7 +74,9 @@ void FrameGraphCanvas::clear() {
     tMin = 0.0f;
     tMax = 0.0f;
     graphPoints.clear();
+    graphPointFrameIndices.clear();
     hoverIndex = -1;
+    invalidateCache();
     QToolTip::hideText();
     update();
 }
@@ -73,22 +84,49 @@ void FrameGraphCanvas::clear() {
 void FrameGraphCanvas::setMetric(Metric metric) {
     currentMetric = metric;
     rebuildPoints();
+    invalidateCache();
     update();
 }
 
 void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     QWidget::paintEvent(event);
+    if (cacheDirty || baseCache.isNull()) {
+        rebuildBaseCache();
+    }
+
     QPainter painter(this);
+    painter.drawPixmap(0, 0, baseCache);
+
+    if (hoverIndex >= 0 && hoverIndex < static_cast<int>(graphPoints.size())) {
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        const QPalette pal = palette();
+        const QRect rect = plotRect();
+        const QColor hoverColor = pal.color(QPalette::Highlight);
+        const QPointF point = graphPoints[hoverIndex];
+        painter.setPen(QPen(hoverColor, kHoverLineWidth, Qt::DashLine));
+        painter.drawLine(QPointF(point.x(), rect.top()), QPointF(point.x(), rect.bottom()));
+        painter.setBrush(hoverColor);
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(point, kHoverPointRadius, kHoverPointRadius);
+    }
+}
+
+void FrameGraphCanvas::rebuildBaseCache() {
+    const qreal ratio = devicePixelRatioF();
+    baseCache = QPixmap(size() * ratio);
+    baseCache.setDevicePixelRatio(ratio);
+    baseCache.fill(Qt::transparent);
+
+    QPainter painter(&baseCache);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    const QPalette pal = palette();
     const QRect rect = plotRect();
+    const QPalette pal = palette();
     const QColor panelColor = pal.color(QPalette::Window);
     const QColor plotColor = pal.color(QPalette::Base);
     const QColor borderColor = pal.color(QPalette::Mid);
     const QColor textColor = pal.color(QPalette::Text);
     const QColor mutedText = pal.color(QPalette::Midlight);
     const QColor lineColor = pal.color(QPalette::Highlight);
-    const QColor hoverColor = pal.color(QPalette::Highlight);
     painter.fillRect(this->rect(), panelColor);
     painter.fillRect(rect, plotColor);
     painter.setPen(borderColor);
@@ -105,8 +143,10 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     if (graphPoints.empty() || !framesRef) {
         painter.setPen(mutedText);
         painter.drawText(rect, Qt::AlignCenter, tr("Select a simulated object to view its history."));
+        cacheDirty = false;
         return;
     }
+
     QPainterPath path;
     path.moveTo(graphPoints.front());
     for (size_t i = 1; i < graphPoints.size(); ++i) {
@@ -114,14 +154,7 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     }
     painter.setPen(QPen(lineColor, kLineWidth));
     painter.drawPath(path);
-    if (hoverIndex >= 0 && hoverIndex < static_cast<int>(graphPoints.size())) {
-        const QPointF point = graphPoints[hoverIndex];
-        painter.setPen(QPen(hoverColor, kHoverLineWidth, Qt::DashLine));
-        painter.drawLine(QPointF(point.x(), rect.top()), QPointF(point.x(), rect.bottom()));
-        painter.setBrush(hoverColor);
-        painter.setPen(Qt::NoPen);
-        painter.drawEllipse(point, kHoverPointRadius, kHoverPointRadius);
-    }
+    cacheDirty = false;
 }
 
 void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
@@ -136,8 +169,10 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
     }
     const int nearestIndex = nearestIndexByX(graphPoints, event->position().x());
     if (nearestIndex < 0) return;
+    if (nearestIndex == hoverIndex) return;
+
     hoverIndex = nearestIndex;
-    const ObjectSnapshot& sample = (*framesRef)[static_cast<size_t>(nearestIndex)];
+    const ObjectSnapshot& sample = (*framesRef)[graphPointFrameIndices[static_cast<size_t>(nearestIndex)]];
     const float value = objectSnapshotValue(currentMetric, sample);
     QToolTip::showText(event->globalPosition().toPoint(),
                        tr("t=%1 s\n%2=%3")
@@ -158,7 +193,9 @@ void FrameGraphCanvas::leaveEvent(QEvent* event) {
 
 void FrameGraphCanvas::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
-    rebuildPoints();
+    hoverIndex = -1;
+    QToolTip::hideText();
+    resizeRebuildTimer.start();
 }
 
 int FrameGraphCanvas::bottomLabelHeight() const {
@@ -172,6 +209,7 @@ QRect FrameGraphCanvas::plotRect() const {
 
 void FrameGraphCanvas::rebuildPoints() {
     graphPoints.clear();
+    graphPointFrameIndices.clear();
     hoverIndex = -1;
     if (!framesRef || framesRef->empty()) return;
     const QRect rect = plotRect();
@@ -185,14 +223,25 @@ void FrameGraphCanvas::rebuildPoints() {
     const float maxValue = valueMinMaxPerMetric[static_cast<size_t>(m)].second;
 
     graphPoints.reserve(framesRef->size());
+    graphPointFrameIndices.reserve(framesRef->size());
     const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
     const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
 
-    for (const auto& frame : *framesRef) {
+    for (size_t i = 0; i < framesRef->size(); ++i) {
+        const auto& frame = (*framesRef)[i];
         const float timeAlpha = (frame.time - minTime) * invTime;
         const float valueAlpha = (objectSnapshotValue(currentMetric, frame) - minValue) * invValue;
+        if (!std::isfinite(timeAlpha) || !std::isfinite(valueAlpha)) continue;
+
         const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
         const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
+        if (!std::isfinite(x) || !std::isfinite(y)) continue;
+
         graphPoints.emplace_back(x, y);
+        graphPointFrameIndices.push_back(i);
     }
+}
+
+void FrameGraphCanvas::invalidateCache() {
+    cacheDirty = true;
 }

@@ -95,7 +95,9 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
 }
 
 void Physics::PhysicsSystem::physicsLoop() {
-    constexpr float dt = 1.0f / 1000.0f;
+    constexpr float kBaseDt = 1.0f / 1000.0f;
+    constexpr int kMaxCatchUpSteps = 256;
+    constexpr float kMaxAdaptiveDt = 60.0f;
 
     float accumulator = 0.0f;
     auto lastTime = std::chrono::high_resolution_clock::now();
@@ -116,12 +118,22 @@ void Physics::PhysicsSystem::physicsLoop() {
         std::vector<PhysicsBody*> localBodies;
         {
             std::lock_guard<std::mutex> lock(bodiesMutex);
-            while (accumulator >= dt) {
-                if (step(dt)) {
-                    accumulator = 0.0f;
-                    break;
+            if (accumulator >= kBaseDt) {
+                const int neededSteps = static_cast<int>(std::ceil(accumulator / kBaseDt));
+                const int stepsToRun = std::max(1, std::min(neededSteps, kMaxCatchUpSteps));
+                const float dt = std::min(std::max(accumulator / static_cast<float>(stepsToRun), kBaseDt), kMaxAdaptiveDt);
+
+                for (int i = 0; i < stepsToRun && accumulator >= kBaseDt; ++i) {
+                    if (step(dt)) {
+                        accumulator = 0.0f;
+                        break;
+                    }
+                    accumulator -= std::min(dt, accumulator);
                 }
-                accumulator -= dt;
+
+                if (dt >= kMaxAdaptiveDt && accumulator >= kMaxAdaptiveDt * kMaxCatchUpSteps) {
+                    accumulator = 0.0f;
+                }
             }
             localBodies = bodies;
         }
@@ -158,7 +170,7 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
 }
 
 void Physics::PhysicsSystem::advancePhysics(float dt) {
-    float targetTime = stepCount.load() * dt + dt; // the time we will be at after this step
+    float targetTime = simTime + dt;
     std::vector<PhysicsBody*> collidableBodies;
 
     PhysicsSystem::octree.build(bodies);

@@ -86,8 +86,6 @@ void Camera::update() {
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-    targetObject = nullptr;
-
     yaw += xoffset * this->mouseSensitivity;
     pitch += yoffset * this->mouseSensitivity;
 
@@ -100,8 +98,6 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
-    targetObject = nullptr;
-
     float velocity = this->movementSpeed * deltaTime;
     switch (direction) {
         case Movement::FORWARD:

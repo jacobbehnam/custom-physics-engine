@@ -60,7 +60,10 @@ void GlobalsInspectorWidget::createUiComponents() {
         row.addScalar(
             [this]() { return sceneManager->getSimSpeed(); },
             [this](float s) { sceneManager->setSimSpeed(s); },
-            "x"
+            "x",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0e12);
+            }
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));

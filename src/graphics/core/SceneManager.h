@@ -45,6 +45,8 @@ public:
     void setCameraTarget(SceneObject* target);
     void focusObject(SceneObject* target);
     void clearCameraTarget();
+    bool isCameraFollowing() const { return scene && scene->getCamera() && scene->getCamera()->hasTarget(); }
+    const SceneObject* getCameraTarget() const { return scene && scene->getCamera() ? scene->getCamera()->getTarget() : nullptr; }
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
@@ -53,6 +55,8 @@ public:
     bool isPhysicsRunning() const { return physicsSystem->isPhysicsEnabled(); }
     float getSimSpeed() const { return window->getSimSpeed(); }
     void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
+    void startSimulation() const { window->setRenderClockRunning(true); physicsSystem->enablePhysics(); }
+    void stopSimulation() const { physicsSystem->disablePhysics(); window->setRenderClockRunning(false); }
     double getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
     void setGravitationalConstant(double newG) const { physicsSystem->setGravitationalConstant(newG); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }

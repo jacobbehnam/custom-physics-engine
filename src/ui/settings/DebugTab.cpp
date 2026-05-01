@@ -10,7 +10,7 @@ DebugTab::DebugTab(QWidget* parent) : QWidget(parent) {
 
     m_showTrailsBox = new QCheckBox();
     m_trailTimeBox = new QDoubleSpinBox();
-    m_trailTimeBox->setRange(0.1, 60.0);
+    m_trailTimeBox->setRange(0.1, 10e7);
     m_trailTimeBox->setSingleStep(0.5);
 
     m_showForcesBox = new QCheckBox();

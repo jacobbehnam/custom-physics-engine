@@ -20,6 +20,8 @@ signals:
     void renameObjectRequested(SceneObject* obj, const QString& newName);
     void deleteObjectRequested(SceneObject* obj);
     void focusObjectRequested(SceneObject* obj);
+    void followObjectRequested(SceneObject* obj);
+    void clearCameraFollowRequested();
 
 public slots:
     void onItemNameChanged(QTreeWidgetItem* item, int column);

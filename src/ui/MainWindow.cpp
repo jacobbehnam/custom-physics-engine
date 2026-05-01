@@ -77,11 +77,13 @@ void MainWindow::setupDockWidgets() {
     selectedObjectDistanceLabel = new QLabel("-", infoPanel);
     simulationStateLabel = new QLabel("Paused", infoPanel);
     renderClockStateLabel = new QLabel("Idle", infoPanel);
+    cameraFollowLabel = new QLabel("Off", infoPanel);
 
     infoLayout->addRow("Camera position", cameraPositionLabel);
     infoLayout->addRow("Selected", selectedObjectLabel);
     infoLayout->addRow("Selected position", selectedObjectPositionLabel);
     infoLayout->addRow("Camera distance", selectedObjectDistanceLabel);
+    infoLayout->addRow("Camera follow", cameraFollowLabel);
     infoLayout->addRow("Physics", simulationStateLabel);
     infoLayout->addRow("Render clock", renderClockStateLabel);
     infoDock->setWidget(infoPanel);
@@ -98,6 +100,16 @@ void MainWindow::setupDockWidgets() {
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
     connect(hierarchy, &HierarchyWidget::focusObjectRequested, this, [this](SceneObject* obj) {
         sceneManager->focusObject(obj);
+        glWindow->setFocus();
+    });
+    connect(hierarchy, &HierarchyWidget::followObjectRequested, this, [this](SceneObject* obj) {
+        sceneManager->setCameraTarget(obj);
+        updateStatusPanel();
+        glWindow->setFocus();
+    });
+    connect(hierarchy, &HierarchyWidget::clearCameraFollowRequested, this, [this]() {
+        sceneManager->clearCameraTarget();
+        updateStatusPanel();
         glWindow->setFocus();
     });
     connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [=](const CreationOptions& options) {
@@ -297,6 +309,11 @@ void MainWindow::updateStatusPanel() {
 
     simulationStateLabel->setText(sceneManager->isPhysicsRunning() ? QString("Running") : QString("Paused"));
     renderClockStateLabel->setText(glWindow->isRenderClockRunning() ? QString("Running") : QString("Idle"));
+    if (const SceneObject* followed = sceneManager->getCameraTarget()) {
+        cameraFollowLabel->setText(QString::fromStdString(followed->getName()));
+    } else {
+        cameraFollowLabel->setText("Off");
+    }
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
@@ -304,6 +321,8 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
 
     QMenu contextMenu;
     QAction* solveAction = contextMenu.addAction("Open Solver...");
+    QAction* followAction = contextMenu.addAction("Follow Camera");
+    QAction* clearFollowAction = contextMenu.addAction("Stop Camera Follow");
 
     connect(solveAction, &QAction::triggered, [this, obj]() {
         Physics::PhysicsBody* body = obj->getPhysicsBody();
@@ -321,6 +340,14 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
         } else {
             qDebug() << "Selected object has no physics body attached.";
         }
+    });
+    connect(followAction, &QAction::triggered, [this, obj]() {
+        sceneManager->setCameraTarget(obj);
+        updateStatusPanel();
+    });
+    connect(clearFollowAction, &QAction::triggered, [this]() {
+        sceneManager->clearCameraTarget();
+        updateStatusPanel();
     });
 
     contextMenu.exec(pos);

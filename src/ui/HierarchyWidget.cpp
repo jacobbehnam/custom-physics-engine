@@ -78,6 +78,16 @@ void HierarchyWidget::showContextMenu(const QPoint& pos) {
             emit focusObjectRequested(obj);
         });
 
+        QAction* followAction = contextMenu.addAction("Follow Camera");
+        connect(followAction, &QAction::triggered, [this, obj]() {
+            emit followObjectRequested(obj);
+        });
+
+        QAction* clearFollowAction = contextMenu.addAction("Stop Camera Follow");
+        connect(clearFollowAction, &QAction::triggered, [this]() {
+            emit clearCameraFollowRequested();
+        });
+
         QAction* renameAction = contextMenu.addAction("Rename");
         connect(renameAction, &QAction::triggered, [this, pos]() {
             if (QTreeWidgetItem* item = tree->itemAt(pos)) {

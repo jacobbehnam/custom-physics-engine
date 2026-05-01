@@ -44,6 +44,7 @@ public:
 
     void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
     float getSimSpeed() const { return simSpeed.load(); }
+    void setRenderClockRunning(bool running) { simulating = running; }
     bool isRenderClockRunning() const { return simulating; }
 
 protected:

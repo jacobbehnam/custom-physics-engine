@@ -104,7 +104,6 @@ void OpenGLWindow::calculateFPS() {
 
 
 void OpenGLWindow::keyPressEvent(QKeyEvent* event) {
-    simulating = true;
     pressedKeys.insert(event->key());
 }
 

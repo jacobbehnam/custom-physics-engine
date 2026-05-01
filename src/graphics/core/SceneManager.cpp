@@ -68,6 +68,7 @@ void SceneManager::defaultSetup() {
     physicsSystem->setGlobalAcceleration(glm::vec3(0.0f));
     physicsSystem->setAmbientTemperature(2.725f);
     physicsSystem->setGravitationalConstant(Constants::G);
+    setSimSpeed(10e6f);
 
     PointMassOptions sunOptions;
     sunOptions.base.position = glm::vec3(0.0f);
@@ -146,6 +147,10 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
 
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
+
+    if (getCameraTarget() == obj) {
+        clearCameraTarget();
+    }
 
     // Destructor already handle this
     // if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
@@ -254,6 +259,12 @@ std::string SceneManager::makeUniqueName(const std::string &baseName) const {
 void SceneManager::setCameraTarget(SceneObject* target) {
     if (scene && scene->getCamera()) {
         scene->getCamera()->setTarget(target);
+    }
+    if (target) {
+        setSelectFor(nullptr);
+        setSelectFor(target);
+        setGizmoFor(target, true);
+        emit selectedItem(target);
     }
 }
 
@@ -394,10 +405,10 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
     // TODO: Z,X,P,O should be processed by press once
     // It currently triggers every frame (caused bugs)
     if (heldKeys.contains(Qt::Key_Z)) {
-        physicsSystem->enablePhysics();
+        startSimulation();
     }
     if (heldKeys.contains(Qt::Key_X)) {
-        physicsSystem->disablePhysics();
+        stopSimulation();
     }
     if (heldKeys.contains(Qt::Key_P)) {
         if (saveScene("scene.json"))

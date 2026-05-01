@@ -41,6 +41,8 @@ public: // TODO: make these not public
     void setTarget(SceneObject* obj);
     void focusOn(SceneObject* obj);
     void clearTarget();
+    bool hasTarget() const { return targetObject != nullptr; }
+    const SceneObject* getTarget() const { return targetObject; }
     void update();
 
     void resetMouse();
