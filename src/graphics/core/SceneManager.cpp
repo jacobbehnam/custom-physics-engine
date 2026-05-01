@@ -15,6 +15,7 @@
 #include "ui/settings/DebugSettings.h"
 
 #include <array>
+#include <algorithm>
 #include <string_view>
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
@@ -121,6 +122,8 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();
 
+    sceneObjectPtrs.push_back(ptr);
+    sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -136,6 +139,8 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
     SceneObject* ptr = primitive.get();
 
     setObjectName(primitive.get(), makeUniqueName(generateDefaultName(options)));
+    sceneObjectPtrs.push_back(ptr);
+    sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -162,6 +167,17 @@ void SceneManager::deleteObject(SceneObject *obj) {
         pickableObjects.end()
     );
     scene->removeDrawable(obj);
+    sceneObjectPtrs.erase(
+        std::remove(sceneObjectPtrs.begin(), sceneObjectPtrs.end(), obj),
+        sceneObjectPtrs.end()
+    );
+    sceneObjectsByID.erase(obj->getObjectID());
+    const std::string& objectName = obj->getName();
+    auto nameIt = usedNames.find(objectName);
+    if (nameIt != usedNames.end() && nameIt->second == obj) {
+        usedNames.erase(nameIt);
+    }
+    emit objectRemoved(obj);
 
     auto it = std::find_if(sceneObjects.begin(), sceneObjects.end(),
     [obj](const std::unique_ptr<SceneObject>& ptr) {
@@ -171,7 +187,6 @@ void SceneManager::deleteObject(SceneObject *obj) {
     if (it != sceneObjects.end()) {
         sceneObjects.erase(it);
     }
-    emit objectRemoved(obj);
 }
 
 void SceneManager::deleteAllObjects() {
@@ -180,22 +195,17 @@ void SceneManager::deleteAllObjects() {
         deleteObject(sceneObjects.back().get());
     }
     usedNames.clear();
+    sceneObjectPtrs.clear();
+    sceneObjectsByID.clear();
 }
 
-std::vector<SceneObject*> SceneManager::getObjects() const {
-    std::vector<SceneObject*> ptrs;
-    ptrs.reserve(sceneObjects.size());
-    for (const auto& obj : sceneObjects)
-        ptrs.push_back(obj.get());
-    return ptrs;
+const std::vector<SceneObject*>& SceneManager::getObjects() const {
+    return sceneObjectPtrs;
 }
 
 SceneObject* SceneManager::getObjectByID(uint32_t objectID) const {
-    for (const auto& obj : sceneObjects) {
-        if (obj->getObjectID() == objectID)
-            return obj.get();
-    }
-    return nullptr;
+    auto it = sceneObjectsByID.find(objectID);
+    return it != sceneObjectsByID.end() ? it->second : nullptr;
 }
 
 std::string SceneManager::generateDefaultName(const CreationOptions& options) {

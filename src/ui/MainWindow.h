@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTreeWidget>
 #include <QTableWidget>
+#include <memory>
 
 #include "SnapshotTableModel.h"
 #include "graphics/core/SceneManager.h"
@@ -30,7 +31,7 @@ private slots:
 
 private:
     OpenGLWindow* glWindow;
-    SceneManager* sceneManager;
+    std::unique_ptr<SceneManager> sceneManager;
 
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;

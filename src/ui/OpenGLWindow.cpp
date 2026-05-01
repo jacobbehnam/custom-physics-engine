@@ -15,13 +15,10 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
-OpenGLWindow::OpenGLWindow(Scene* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}
-
-OpenGLWindow::~OpenGLWindow() {
-    delete scene;
-}
+OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent) {}
 
 void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
@@ -163,7 +160,7 @@ void OpenGLWindow::updateObjectLabels() {
         return;
     }
 
-    const auto objects = sceneManager->getObjects();
+    const auto& objects = sceneManager->getObjects();
     while (objectLabelButtons.size() < objects.size()) {
         auto* button = new QPushButton(this);
         button->setFocusPolicy(Qt::NoFocus);
@@ -184,7 +181,41 @@ void OpenGLWindow::updateObjectLabels() {
     const glm::mat4 proj = scene->getCamera()->getProjMatrix();
     const float w = static_cast<float>(width());
     const float h = static_cast<float>(height());
-    std::vector<QRect> occupiedLabelRects;
+
+    constexpr int kLabelGridCellPx = 32;
+    const int labelGridCols = std::max(1, (width() + kLabelGridCellPx - 1) / kLabelGridCellPx);
+    const int labelGridRows = std::max(1, (height() + kLabelGridCellPx - 1) / kLabelGridCellPx);
+    std::vector<unsigned char> occupiedLabelCells(static_cast<size_t>(labelGridCols * labelGridRows), 0);
+
+    auto visitLabelCells = [&](const QRect& rect, auto&& visitor) {
+        const int left = std::clamp(rect.left() / kLabelGridCellPx, 0, labelGridCols - 1);
+        const int right = std::clamp(rect.right() / kLabelGridCellPx, 0, labelGridCols - 1);
+        const int top = std::clamp(rect.top() / kLabelGridCellPx, 0, labelGridRows - 1);
+        const int bottom = std::clamp(rect.bottom() / kLabelGridCellPx, 0, labelGridRows - 1);
+
+        for (int yCell = top; yCell <= bottom; ++yCell) {
+            for (int xCell = left; xCell <= right; ++xCell) {
+                if (visitor(xCell, yCell))
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto overlapsOccupiedLabel = [&](const QRect& rect) {
+        const QRect padded = rect.adjusted(-2, -2, 2, 2);
+        return visitLabelCells(padded, [&](int xCell, int yCell) {
+            return occupiedLabelCells[static_cast<size_t>(yCell * labelGridCols + xCell)] != 0;
+        });
+    };
+
+    auto occupyLabel = [&](const QRect& rect) {
+        const QRect padded = rect.adjusted(-2, -2, 2, 2);
+        visitLabelCells(padded, [&](int xCell, int yCell) {
+            occupiedLabelCells[static_cast<size_t>(yCell * labelGridCols + xCell)] = 1;
+            return false;
+        });
+    };
 
     for (size_t i = 0; i < objectLabelButtons.size(); ++i) {
         QPushButton* button = objectLabelButtons[i];
@@ -216,13 +247,27 @@ void OpenGLWindow::updateObjectLabels() {
         ndc.x = std::clamp(ndc.x, -0.98f, 0.98f);
         ndc.y = std::clamp(ndc.y, -0.95f, 0.95f);
 
-        button->setText(QString::fromStdString(obj->getName()));
+        bool metricsDirty = false;
+        const QString labelText = QString::fromStdString(obj->getName());
+        if (button->text() != labelText) {
+            button->setText(labelText);
+            metricsDirty = true;
+        }
         button->setProperty("objectID", obj->getObjectID());
-        button->setStyleSheet(offscreen
-            ? "QPushButton { background: rgba(38, 30, 12, 215); border: 1px solid rgba(255, 210, 120, 235); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(95, 68, 18, 230); border-color: rgba(255, 235, 170, 255); }"
-            : "QPushButton { background: rgba(18, 22, 28, 190); border: 1px solid rgba(160, 210, 255, 210); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(35, 85, 130, 220); border-color: rgba(220, 240, 255, 240); }"
-        );
-        button->adjustSize();
+        const QVariant oldOffscreen = button->property("offscreen");
+        if (!oldOffscreen.isValid() || oldOffscreen.toBool() != offscreen) {
+            button->setProperty("offscreen", offscreen);
+            button->setStyleSheet(offscreen
+                ? "QPushButton { background: rgba(38, 30, 12, 215); border: 1px solid rgba(255, 210, 120, 235); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(95, 68, 18, 230); border-color: rgba(255, 235, 170, 255); }"
+                : "QPushButton { background: rgba(18, 22, 28, 190); border: 1px solid rgba(160, 210, 255, 210); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(35, 85, 130, 220); border-color: rgba(220, 240, 255, 240); }"
+            );
+            metricsDirty = true;
+        }
+        const QVariant metricsReady = button->property("metricsReady");
+        if (metricsDirty || !metricsReady.isValid() || !metricsReady.toBool()) {
+            button->adjustSize();
+            button->setProperty("metricsReady", true);
+        }
 
         const int maxX = std::max(0, width() - button->width());
         const int maxY = std::max(0, height() - button->height());
@@ -234,13 +279,6 @@ void OpenGLWindow::updateObjectLabels() {
         int bestY = baseY;
         int bestScore = std::numeric_limits<int>::max();
 
-        auto overlaps = [&](const QRect& rect) {
-            const QRect padded = rect.adjusted(-2, -2, 2, 2);
-            return std::any_of(occupiedLabelRects.begin(), occupiedLabelRects.end(), [&](const QRect& other) {
-                return padded.intersects(other);
-            });
-        };
-
         for (int ring = 0; ring <= 12; ++ring) {
             for (int dySign : {1, -1}) {
                 const int dy = ring == 0 ? 0 : dySign * ring * stepY;
@@ -249,7 +287,7 @@ void OpenGLWindow::updateObjectLabels() {
                     const int candidateX = std::clamp(baseX + dx, 0, maxX);
                     const int candidateY = std::clamp(baseY + dy, 0, maxY);
                     const QRect candidate(candidateX, candidateY, button->width(), button->height());
-                    if (overlaps(candidate)) continue;
+                    if (overlapsOccupiedLabel(candidate)) continue;
 
                     const int score = (candidateX - baseX) * (candidateX - baseX) + (candidateY - baseY) * (candidateY - baseY);
                     if (score < bestScore) {
@@ -263,7 +301,7 @@ void OpenGLWindow::updateObjectLabels() {
         }
 
         const QRect placed(bestX, bestY, button->width(), button->height());
-        occupiedLabelRects.push_back(placed.adjusted(-2, -2, 2, 2));
+        occupyLabel(placed);
         button->move(bestX, bestY);
         button->show();
         button->raise();

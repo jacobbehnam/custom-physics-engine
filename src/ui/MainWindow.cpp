@@ -15,6 +15,7 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QFormLayout>
+#include <memory>
 
 #include "HierarchyWidget.h"
 #include "graph/FrameGraphPanel.h"
@@ -30,7 +31,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     AppSettings::getInstance().registerGroup<CameraSettingsGroup>();
     AppSettings::getInstance().registerGroup<DebugSettings>();
 
-    glWindow = new OpenGLWindow(nullptr, this);
+    glWindow = new OpenGLWindow(this);
 
     setWindowTitle("Physics Engine");
 
@@ -50,15 +51,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 void MainWindow::onGLInitialized() {
-    auto* scene = new Scene(glWindow);
-    sceneManager = new SceneManager(glWindow, scene);
-    glWindow->setScene(scene);
-    glWindow->setSceneManager(sceneManager);
+    auto scene = std::make_unique<Scene>(glWindow);
+    Scene* scenePtr = scene.get();
+    sceneManager = std::make_unique<SceneManager>(glWindow, scenePtr);
+    glWindow->setScene(std::move(scene));
+    glWindow->setSceneManager(sceneManager.get());
     setupMenuBar();
     setupDockWidgets();
     sceneManager->defaultSetup();
     loadAppSettings();
-    connect(sceneManager, &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
+    connect(sceneManager.get(), &SceneManager::contextMenuRequested, this, &MainWindow::showObjectContextMenu);
 }
 
 void MainWindow::setupDockWidgets() {
@@ -133,18 +135,18 @@ void MainWindow::setupDockWidgets() {
     connect(hierarchy, &HierarchyWidget::deleteObjectRequested, this, [this](SceneObject* obj) {
         sceneManager->deleteObject(obj);
     });
-    connect(sceneManager, &SceneManager::objectAdded, this, [this](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
-    connect(sceneManager, &SceneManager::objectRemoved, this, [this](SceneObject* obj) {
+    connect(sceneManager.get(), &SceneManager::objectAdded, this, [this](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
+    connect(sceneManager.get(), &SceneManager::objectRemoved, this, [this](SceneObject* obj) {
         if (selectedInfoObject == obj)
             selectedInfoObject = nullptr;
         hierarchy->removeObject(obj);
         inspector->unloadObject();
         updateStatusPanel();
     });
-    connect(sceneManager, &SceneManager::objectRenamed, this, [this](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });
-    connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
+    connect(sceneManager.get(), &SceneManager::objectRenamed, this, [this](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });
+    connect(sceneManager.get(), &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
-    inspector = new InspectorWidget(sceneManager, this);
+    inspector = new InspectorWidget(sceneManager.get(), this);
     auto* inspectorDock = new QDockWidget(tr("Inspector"), this);
     inspectorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     QScrollArea* scrollArea = new QScrollArea;

@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <unordered_map>
 
 #include "ResourceManager.h"
 #include "graphics/core/Scene.h"
@@ -36,7 +37,7 @@ public:
     SceneObject* createObject(const std::string &meshName, Shader* shader = ResourceManager::getShader("basic"), const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
-    std::vector<SceneObject*> getObjects() const;
+    const std::vector<SceneObject*>& getObjects() const;
     SceneObject* getObjectByID(uint32_t objectID) const;
     bool isNameUnique(const std::string& name, SceneObject* self) const;
     void setObjectName(SceneObject* obj, const std::string& newName);
@@ -97,6 +98,8 @@ private:
     OpenGLWindow* window;
 
     std::vector<std::unique_ptr<SceneObject>> sceneObjects;
+    std::vector<SceneObject*> sceneObjectPtrs;
+    std::unordered_map<uint32_t, SceneObject*> sceneObjectsByID;
     std::vector<IPickable*> pickableObjects;
 
     GizmoType selectedGizmoType = GizmoType::TRANSLATE;
