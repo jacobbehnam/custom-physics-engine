@@ -43,10 +43,11 @@ public: // TODO: make these not public
     void clearTarget();
     bool hasTarget() const { return targetObject != nullptr; }
     const SceneObject* getTarget() const { return targetObject; }
-    void update();
+    void update(const glm::vec3* renderTargetPosition = nullptr);
 
     void resetMouse();
     void processMouseMovement(float xoffset, float yoffset);
+    void processScroll(float wheelSteps);
 
     void processKeyboard(Movement direction, float deltaTime);
 
@@ -59,4 +60,5 @@ private:
     float farClip = 300000.0f;
     SceneObject* targetObject = nullptr;
     glm::vec3 followOffset{20.0f, 15.0f, 30.0f};
+    glm::vec3 followPivot{0.0f};
 };

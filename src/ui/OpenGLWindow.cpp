@@ -124,6 +124,16 @@ void OpenGLWindow::mouseReleaseEvent(QMouseEvent* event) {
     update();
 }
 
+void OpenGLWindow::wheelEvent(QWheelEvent* event) {
+    if (!scene) return;
+
+    const QPoint numDegrees = event->angleDelta() / 8;
+    const float wheelSteps = static_cast<float>(numDegrees.y()) / 15.0f;
+    scene->getCamera()->processScroll(wheelSteps);
+    event->accept();
+    update();
+}
+
 void OpenGLWindow::setMouseCaptured(bool captured) {
     mouseCaptured = captured;
     if (captured) {

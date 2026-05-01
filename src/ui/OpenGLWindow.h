@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QSet>
 #include <QCursor>
 #include <QPushButton>
@@ -57,6 +58,7 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     std::chrono::steady_clock::time_point lastFrame;

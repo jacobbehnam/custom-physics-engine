@@ -39,6 +39,13 @@ void Camera::setClipRange(float nearPlane, float farPlane) {
 
 void Camera::setTarget(SceneObject* obj) {
     targetObject = obj;
+    if (targetObject) {
+        followPivot = targetObject->getPosition();
+        followOffset = position - followPivot;
+        if (glm::length2(followOffset) <= 0.000001f) {
+            followOffset = -front * 1.0f;
+        }
+    }
 }
 
 void Camera::focusOn(SceneObject* obj) {
@@ -55,6 +62,7 @@ void Camera::focusOn(SceneObject* obj) {
     followOffset = glm::normalize(glm::vec3(1.0f, 0.55f, 1.0f)) * distance;
 
     const glm::vec3 targetPos = obj->getPosition();
+    followPivot = targetPos;
     position = targetPos + followOffset;
     front = glm::normalize(targetPos - position);
     right = glm::normalize(glm::cross(front, worldUp));
@@ -68,15 +76,16 @@ void Camera::clearTarget() {
     targetObject = nullptr;
     nearClip = 0.1f;
     farClip = 300000.0f;
-    yaw = -90.0f;
-    pitch = 0.0f;
-    updateCameraVectors();
 }
 
-void Camera::update() {
+void Camera::update(const glm::vec3* renderTargetPosition) {
     if (targetObject) {
-        glm::vec3 targetPos = targetObject->getPosition();
+        glm::vec3 targetPos = renderTargetPosition ? *renderTargetPosition : targetObject->getPosition();
+        if (!std::isfinite(targetPos.x) || !std::isfinite(targetPos.y) || !std::isfinite(targetPos.z)) {
+            return;
+        }
 
+        followPivot = targetPos;
         position = targetPos + followOffset;
 
         front = glm::normalize(targetPos - position);
@@ -86,6 +95,29 @@ void Camera::update() {
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
+    if (targetObject) {
+        glm::vec3 toCamera = followOffset;
+        const float radius = std::max(glm::length(toCamera), 0.000001f);
+        glm::vec3 direction = glm::normalize(toCamera);
+        float orbitYaw = std::atan2(direction.z, direction.x);
+        float orbitPitch = std::asin(std::clamp(direction.y, -1.0f, 1.0f));
+        orbitYaw -= glm::radians(xoffset * mouseSensitivity);
+        orbitPitch -= glm::radians(yoffset * mouseSensitivity);
+        orbitPitch = std::clamp(orbitPitch, glm::radians(-89.0f), glm::radians(89.0f));
+
+        direction.x = std::cos(orbitYaw) * std::cos(orbitPitch);
+        direction.y = std::sin(orbitPitch);
+        direction.z = std::sin(orbitYaw) * std::cos(orbitPitch);
+        followOffset = glm::normalize(direction) * radius;
+        position = followPivot + followOffset;
+        front = glm::normalize(followPivot - position);
+        right = glm::normalize(glm::cross(front, worldUp));
+        up = glm::normalize(glm::cross(right, front));
+        yaw = glm::degrees(std::atan2(front.z, front.x));
+        pitch = glm::degrees(std::asin(std::clamp(front.y, -1.0f, 1.0f)));
+        return;
+    }
+
     yaw += xoffset * this->mouseSensitivity;
     pitch += yoffset * this->mouseSensitivity;
 
@@ -97,8 +129,37 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     updateCameraVectors();
 }
 
+void Camera::processScroll(float wheelSteps) {
+    if (wheelSteps == 0.0f) return;
+
+    if (targetObject) {
+        const float targetRadius = std::max(glm::compMax(glm::abs(targetObject->getScale())) * 0.5f, 0.01f);
+        const float minDistance = targetRadius * 1.05f;
+        const float maxDistance = std::max(targetRadius * 1000000.0f, minDistance + 1.0f);
+        const float currentDistance = std::max(glm::length(followOffset), minDistance);
+        const float zoomFactor = std::pow(0.85f, wheelSteps);
+        const float newDistance = std::clamp(currentDistance * zoomFactor, minDistance, maxDistance);
+
+        glm::vec3 direction = glm::length2(followOffset) > 0.000001f ? glm::normalize(followOffset) : -front;
+        followOffset = direction * newDistance;
+        position = followPivot + followOffset;
+        front = glm::normalize(followPivot - position);
+        right = glm::normalize(glm::cross(front, worldUp));
+        up = glm::normalize(glm::cross(right, front));
+        return;
+    }
+
+    position += front * movementSpeed * wheelSteps;
+}
+
 void Camera::processKeyboard(Movement direction, float deltaTime) {
     float velocity = this->movementSpeed * deltaTime;
+    if (targetObject) {
+        (void)direction;
+        (void)velocity;
+        return;
+    }
+
     switch (direction) {
         case Movement::FORWARD:
             position += front * velocity;

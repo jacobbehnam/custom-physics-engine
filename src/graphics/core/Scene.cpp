@@ -51,14 +51,21 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         SceneObject::setPhysicsPosMap(posMap);
     }
 
-    std::unordered_map<Physics::PhysicsBody*, glm::vec3> tmpMap;
-    if (snaps) {
-        tmpMap.reserve(snaps->size());
-        for (auto &s : *snaps)
-            tmpMap[s.body] = s.position;
+    glm::vec3 renderTargetPosition;
+    const glm::vec3* renderTargetPositionPtr = nullptr;
+    if (snaps && camera.hasTarget()) {
+        const SceneObject* target = camera.getTarget();
+        const Physics::PhysicsBody* targetBody = target ? target->getPhysicsBody() : nullptr;
+        for (const auto& snapshot : *snaps) {
+            if (snapshot.body == targetBody) {
+                renderTargetPosition = snapshot.position;
+                renderTargetPositionPtr = &renderTargetPosition;
+                break;
+            }
+        }
     }
 
-    camera.update();
+    camera.update(renderTargetPositionPtr);
     SceneObject::setRenderOrigin(camera.position);
 
     float nearestSurface = std::numeric_limits<float>::max();
