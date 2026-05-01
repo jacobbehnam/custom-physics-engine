@@ -37,6 +37,7 @@ public:
     Rendering::InstanceData getInstanceData() const override;
     Physics::PhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
     std::optional<float> intersectsRay(const Math::Ray& ray) const override;
+    glm::mat4 getModelMatrix() const override;
 
     void handleClick(const Math::Ray& ray, float distance) override;
     void setHovered(bool hovered) override;
@@ -55,9 +56,15 @@ public:
         posMap = m;
     }
 
+    static void setRenderOrigin(const glm::vec3& origin) {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        renderOrigin = origin;
+    }
+
 private:
     inline static std::mutex posMapMutex;
     inline static PosMap posMap{};
+    inline static glm::vec3 renderOrigin{0.0f};
 
     QObject* parent;
     Mesh* mesh;
@@ -78,7 +85,8 @@ private:
     uint32_t objectID;
     std::string objectName;
 
-    glm::mat4 getModelMatrix() const;
+    glm::mat4 getRenderModelMatrix() const;
+    glm::mat4 buildModelMatrix(bool relativeToRenderOrigin) const;
 
     std::optional<float> intersectsAABB(const Math::Ray& ray) const;
     std::optional<float> intersectsMesh(const Math::Ray& ray) const;

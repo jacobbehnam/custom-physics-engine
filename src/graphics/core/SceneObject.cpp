@@ -72,13 +72,26 @@ SceneObject::~SceneObject() {
     }
 }
 
-glm::mat4 SceneObject::getModelMatrix() const{
+glm::mat4 SceneObject::getModelMatrix() const {
+    return buildModelMatrix(false);
+}
+
+glm::mat4 SceneObject::getRenderModelMatrix() const {
+    return buildModelMatrix(true);
+}
+
+glm::mat4 SceneObject::buildModelMatrix(bool relativeToRenderOrigin) const{
     glm::vec3 currentPosition = position;
     if (physicsBody) {
         std::lock_guard<std::mutex> lk(posMapMutex);
         auto it = posMap.find(physicsBody.get());
         if (it != posMap.end())
             currentPosition = it->second;
+        if (relativeToRenderOrigin)
+            currentPosition -= renderOrigin;
+    } else if (relativeToRenderOrigin) {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        currentPosition -= renderOrigin;
     }
     glm::mat4 model(1.0f);
     model = glm::translate(model, currentPosition);
@@ -220,5 +233,5 @@ uint32_t SceneObject::getObjectID() const {
 }
 
 Rendering::InstanceData SceneObject::getInstanceData() const {
-    return {getModelMatrix(), getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f)};
+    return {getRenderModelMatrix(), getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f)};
 }

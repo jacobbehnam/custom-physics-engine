@@ -5,6 +5,10 @@
 #include <glm/gtx/component_wise.hpp>
 #include <cstdint>
 
+namespace {
+constexpr float kMinNodeHalfSize = 0.001f;
+}
+
 void Octree::clear() {
     nodes.clear();
 }
@@ -40,6 +44,7 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     // Node is empty, put the body here
     if (node->body == nullptr && node->totalMass == 0.0) {
         node->body       = body;
+        node->bodies.push_back(body);
         node->massCenter = bodyPos;
         node->totalMass  = bodyMass;
         node->totalEffectiveArea = epsArea;
@@ -49,15 +54,10 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
 
     // Since this node now contains this body, update
     double newMass       = node->totalMass + bodyMass;
-    node->massCenter    = (
-        node->massCenter    * static_cast<float>(node->totalMass) + 
-        bodyPos             * static_cast<float>(bodyMass)
-    ) / static_cast<float>(newMass);
+    node->massCenter += (bodyPos - node->massCenter) * static_cast<float>(bodyMass / newMass);
     node->totalMass     = newMass;
     node->totalEffectiveArea += epsArea;
     node->totalEmission += emission;
-
-    Physics::PhysicsBody* existingBody = node->body;
 
     auto insertBody = [&](Physics::PhysicsBody* b) {
         glm::vec3 bPos = b->getPosition(BodyLock::NOLOCK);
@@ -79,12 +79,32 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
         insert(node->children[bOct.val], b);
     };
 
-    if (existingBody != nullptr) {
-        // Clear and Push the existing body down the tree
+    Physics::PhysicsBody* existingBody = node->body;
+    if (node->isLeaf() && !node->bodies.empty()) {
+        if (childHalfSize <= kMinNodeHalfSize || (existingBody != nullptr && existingBody->getPosition(BodyLock::NOLOCK) == bodyPos)) {
+            node->bodies.push_back(body);
+            node->body = node->bodies.size() == 1 ? node->bodies.front() : nullptr;
+            return;
+        }
+
+        std::vector<Physics::PhysicsBody*> existingBodies = std::move(node->bodies);
+        node->bodies.clear();
         node->body = nullptr;
-        insertBody(existingBody);
+        for (Physics::PhysicsBody* existing : existingBodies) {
+            insertBody(existing);
+        }
+        insertBody(body);
+        return;
     }
-    // Insert the new body
+
+    if (existingBody != nullptr) {
+        std::vector<Physics::PhysicsBody*> existingBodies = std::move(node->bodies);
+        node->bodies.clear();
+        node->body = nullptr;
+        for (Physics::PhysicsBody* existing : existingBodies) {
+            insertBody(existing);
+        }
+    }
     insertBody(body);
 }
 
@@ -143,7 +163,20 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
 
         // Only single body or sufficiently far away, treat as point mass
         if (node.isLeaf() || widthSq < Constants::THETA_SQ * distSq) {
-            if (node.body == body) continue; // Skip self
+            if (node.isLeaf() && !node.bodies.empty()) {
+                for (Physics::PhysicsBody* other : node.bodies) {
+                    if (other == body) continue;
+                    glm::vec3 pairDist = other->getPosition(BodyLock::NOLOCK) - bodyPos;
+                    float pairDistSq = glm::dot(pairDist, pairDist) + Constants::SOFTENING_SQ;
+                    float invPairDist = 1.0f / std::sqrt(pairDistSq);
+                    float invPairDist3 = invPairDist * invPairDist * invPairDist;
+                    double pairForce = (G * bodyMass * other->getMass(BodyLock::NOLOCK)) * invPairDist3;
+                    totalForce += static_cast<float>(pairForce) * pairDist;
+                }
+                continue;
+            }
+
+            if (node.body == body) continue;
 
             float invDist = 1.0f / sqrt(softeningDistSq);
             float invDist3 = invDist * invDist * invDist;
@@ -193,17 +226,20 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
         float widthSq = node.halfSize * node.halfSize * 4.0f;
 
         if (node.isLeaf()) {
-            if (node.body == body) continue;
+            for (Physics::PhysicsBody* other : node.bodies) {
+                if (other == body) continue;
+                glm::vec3 pairDist = other->getPosition(BodyLock::NOLOCK) - bodyPos;
+                double pairDistSq = static_cast<double>(glm::dot(pairDist, pairDist));
+                if (pairDistSq < 0.0001) pairDistSq = 0.0001;
 
-            double otherArea = node.body->getSurfaceArea();
-            ThermalProperties otherProps = node.body->getThermalProperties(BodyLock::NOLOCK);
-            double other_t_4 = otherProps.tempK * otherProps.tempK * otherProps.tempK * otherProps.tempK;
-            
-            double viewFactorTerm = (area * otherArea) / (4.0 * glm::pi<double>() * distSq);
-            viewFactorTerm = std::min(viewFactorTerm, std::min(area, otherArea));
-            
-            double q_rad = STEFAN_BOLTZMANN * props.emissivity * otherProps.emissivity * viewFactorTerm * (other_t_4 - t_obj_4);
-            totalHeat += q_rad;
+                double otherArea = other->getSurfaceArea();
+                ThermalProperties otherProps = other->getThermalProperties(BodyLock::NOLOCK);
+                double other_t_4 = otherProps.tempK * otherProps.tempK * otherProps.tempK * otherProps.tempK;
+                double viewFactorTerm = (area * otherArea) / (4.0 * glm::pi<double>() * pairDistSq);
+                viewFactorTerm = std::min(viewFactorTerm, std::min(area, otherArea));
+                double q_rad = STEFAN_BOLTZMANN * props.emissivity * otherProps.emissivity * viewFactorTerm * (other_t_4 - t_obj_4);
+                totalHeat += q_rad;
+            }
 
         } else if (widthSq < Constants::THETA_SQ * distSq) {
             // For distant nodes, we avoid the clamping logic and distribute the Stefan-Boltzmann equation.

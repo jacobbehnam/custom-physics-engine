@@ -32,9 +32,11 @@ public: // TODO: make these not public
     Camera(glm::vec3 initPosition);
 
     glm::mat4 getViewMatrix() const;
+    glm::mat4 getRenderViewMatrix() const;
     glm::mat4 getProjMatrix() const;
 
     void setAspectRatio(float ratio) { aspectRatio = ratio; }
+    void setClipRange(float nearPlane, float farPlane);
 
     void setTarget(SceneObject* obj);
     void focusOn(SceneObject* obj);
@@ -50,7 +52,7 @@ public: // TODO: make these not public
 private:
     void updateCameraVectors();
 
-    float aspectRatio;
+    float aspectRatio = 16.0f / 9.0f;
     float nearClip = 0.1f;
     float farClip = 300000.0f;
     SceneObject* targetObject = nullptr;

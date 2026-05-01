@@ -2,6 +2,7 @@
 
 #include "SceneObject.h"
 #include <algorithm>
+#include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/component_wise.hpp>
 
@@ -17,6 +18,10 @@ glm::mat4 Camera::getViewMatrix() const {
     return glm::lookAt(position, position + front, up);
 }
 
+glm::mat4 Camera::getRenderViewMatrix() const {
+    return glm::lookAt(glm::vec3(0.0f), front, up);
+}
+
 glm::mat4 Camera::getProjMatrix() const {
     return glm::perspective(
         glm::radians(fov),
@@ -27,20 +32,36 @@ glm::mat4 Camera::getProjMatrix() const {
 
 }
 
+void Camera::setClipRange(float nearPlane, float farPlane) {
+    nearClip = std::max(nearPlane, 0.01f);
+    farClip = std::max(farPlane, nearClip + 1.0f);
+}
+
 void Camera::setTarget(SceneObject* obj) {
     targetObject = obj;
 }
 
 void Camera::focusOn(SceneObject* obj) {
-    targetObject = obj;
-    if (!targetObject) return;
+    if (!obj) return;
 
-    const float visualRadius = glm::compMax(glm::abs(targetObject->getScale())) * 0.5f;
-    const float distance = std::max(visualRadius * 1.25f, 0.35f);
-    nearClip = std::max(std::min(visualRadius * 0.01f, distance * 0.1f), 0.01f);
-    farClip = std::max(distance + visualRadius * 6.0f, 300000.0f);
+    const float visualRadius = glm::compMax(glm::abs(obj->getScale())) * 0.5f;
+    const float padding = 1.25f;
+    const float verticalHalfFov = glm::radians(fov) * 0.5f;
+    const float horizontalHalfFov = std::atan(std::tan(verticalHalfFov) * std::max(aspectRatio, 0.01f));
+    const float framingHalfFov = std::max(std::min(verticalHalfFov, horizontalHalfFov), glm::radians(1.0f));
+    const float distance = std::max((visualRadius * padding) / std::sin(framingHalfFov), 0.35f);
+    nearClip = std::max(distance - visualRadius * 2.0f, 0.01f);
+    farClip = std::max(distance + visualRadius * 4.0f, 300000.0f);
     followOffset = glm::normalize(glm::vec3(1.0f, 0.55f, 1.0f)) * distance;
-    update();
+
+    const glm::vec3 targetPos = obj->getPosition();
+    position = targetPos + followOffset;
+    front = glm::normalize(targetPos - position);
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right, front));
+    yaw = glm::degrees(std::atan2(front.z, front.x));
+    pitch = glm::degrees(std::asin(std::clamp(front.y, -1.0f, 1.0f)));
+    targetObject = nullptr;
 }
 
 void Camera::clearTarget() {
@@ -65,7 +86,7 @@ void Camera::update() {
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset) {
-
+    targetObject = nullptr;
 
     yaw += xoffset * this->mouseSensitivity;
     pitch += yoffset * this->mouseSensitivity;
@@ -79,7 +100,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 }
 
 void Camera::processKeyboard(Movement direction, float deltaTime) {
-
+    targetObject = nullptr;
 
     float velocity = this->movementSpeed * deltaTime;
     switch (direction) {

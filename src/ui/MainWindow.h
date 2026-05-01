@@ -35,8 +35,12 @@ private:
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
     QLabel* cameraPositionLabel;
+    QLabel* selectedObjectLabel;
+    QLabel* selectedObjectPositionLabel;
+    QLabel* selectedObjectDistanceLabel;
     QLabel* simulationStateLabel;
     QLabel* renderClockStateLabel;
+    SceneObject* selectedInfoObject = nullptr;
 
     InspectorWidget* inspector;
     HierarchyWidget* hierarchy;

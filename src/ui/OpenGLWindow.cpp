@@ -1,6 +1,7 @@
 #include "ui/OpenGLWindow.h"
 #include <QMouseEvent>
 #include <QElapsedTimer>
+#include <QRect>
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneManager.h"
@@ -13,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <glm/gtc/matrix_transform.hpp>
 
 OpenGLWindow::OpenGLWindow(Scene* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}
@@ -151,7 +153,7 @@ void OpenGLWindow::hideObjectLabels() {
 }
 
 void OpenGLWindow::updateObjectLabels() {
-    if (!scene || !sceneManager || mouseCaptured) {
+    if (!scene || !sceneManager) {
         hideObjectLabels();
         return;
     }
@@ -167,19 +169,6 @@ void OpenGLWindow::updateObjectLabels() {
         auto* button = new QPushButton(this);
         button->setFocusPolicy(Qt::NoFocus);
         button->setCursor(Qt::PointingHandCursor);
-        button->setStyleSheet(
-            "QPushButton {"
-            " background: rgba(18, 22, 28, 190);"
-            " border: 1px solid rgba(160, 210, 255, 210);"
-            " color: white;"
-            " padding: 2px 6px;"
-            " font-size: 11px;"
-            "}"
-            "QPushButton:hover {"
-            " background: rgba(35, 85, 130, 220);"
-            " border-color: rgba(220, 240, 255, 240);"
-            "}"
-        );
         connect(button, &QPushButton::clicked, this, [this, button]() {
             if (!sceneManager) return;
             const uint32_t objectID = button->property("objectID").toUInt();
@@ -191,10 +180,12 @@ void OpenGLWindow::updateObjectLabels() {
         objectLabelButtons.push_back(button);
     }
 
-    const glm::mat4 view = scene->getCamera()->getViewMatrix();
+    const glm::vec3 renderOrigin = scene->getCamera()->position;
+    const glm::mat4 view = scene->getCamera()->getRenderViewMatrix();
     const glm::mat4 proj = scene->getCamera()->getProjMatrix();
     const float w = static_cast<float>(width());
     const float h = static_cast<float>(height());
+    std::vector<QRect> occupiedLabelRects;
 
     for (size_t i = 0; i < objectLabelButtons.size(); ++i) {
         QPushButton* button = objectLabelButtons[i];
@@ -204,27 +195,77 @@ void OpenGLWindow::updateObjectLabels() {
         }
 
         SceneObject* obj = objects[i];
-        const glm::vec4 clip = proj * view * glm::vec4(obj->getPosition(), 1.0f);
-        if (!std::isfinite(clip.x) || !std::isfinite(clip.y) || !std::isfinite(clip.z) || !std::isfinite(clip.w) || clip.w <= 0.0f) {
+        glm::vec4 clip = proj * view * glm::vec4(obj->getPosition() - renderOrigin, 1.0f);
+        if (!std::isfinite(clip.x) || !std::isfinite(clip.y) || !std::isfinite(clip.z) || !std::isfinite(clip.w)) {
             button->hide();
             continue;
         }
 
-        const glm::vec3 ndc = glm::vec3(clip) / clip.w;
-        if (!std::isfinite(ndc.x) || !std::isfinite(ndc.y) || !std::isfinite(ndc.z) ||
-            ndc.x < -1.1f || ndc.x > 1.1f || ndc.y < -1.1f || ndc.y > 1.1f || ndc.z < -1.0f || ndc.z > 1.0f) {
+        if (clip.w < 0.0f) {
+            clip.x = -clip.x;
+            clip.y = -clip.y;
+            clip.w = -clip.w;
+        }
+
+        glm::vec3 ndc = glm::vec3(clip) / std::max(clip.w, 0.000001f);
+        if (!std::isfinite(ndc.x) || !std::isfinite(ndc.y) || !std::isfinite(ndc.z)) {
             button->hide();
             continue;
         }
+
+        const bool offscreen = ndc.x < -1.0f || ndc.x > 1.0f || ndc.y < -1.0f || ndc.y > 1.0f || ndc.z < -1.0f || ndc.z > 1.0f;
+        ndc.x = std::clamp(ndc.x, -0.98f, 0.98f);
+        ndc.y = std::clamp(ndc.y, -0.95f, 0.95f);
 
         button->setText(QString::fromStdString(obj->getName()));
         button->setProperty("objectID", obj->getObjectID());
+        button->setStyleSheet(offscreen
+            ? "QPushButton { background: rgba(38, 30, 12, 215); border: 1px solid rgba(255, 210, 120, 235); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(95, 68, 18, 230); border-color: rgba(255, 235, 170, 255); }"
+            : "QPushButton { background: rgba(18, 22, 28, 190); border: 1px solid rgba(160, 210, 255, 210); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(35, 85, 130, 220); border-color: rgba(220, 240, 255, 240); }"
+        );
         button->adjustSize();
 
-        const int x = static_cast<int>((ndc.x * 0.5f + 0.5f) * w) - button->width() / 2;
-        const int y = static_cast<int>((1.0f - (ndc.y * 0.5f + 0.5f)) * h) - button->height() - 8;
-        button->move(std::clamp(x, 0, std::max(0, width() - button->width())),
-                     std::clamp(y, 0, std::max(0, height() - button->height())));
+        const int maxX = std::max(0, width() - button->width());
+        const int maxY = std::max(0, height() - button->height());
+        const int baseX = std::clamp(static_cast<int>((ndc.x * 0.5f + 0.5f) * w) - button->width() / 2, 0, maxX);
+        const int baseY = std::clamp(static_cast<int>((1.0f - (ndc.y * 0.5f + 0.5f)) * h) - button->height() - 8, 0, maxY);
+        const int stepY = button->height() + 4;
+        const int stepX = std::max(button->width() / 2, 36);
+        int bestX = baseX;
+        int bestY = baseY;
+        int bestScore = std::numeric_limits<int>::max();
+
+        auto overlaps = [&](const QRect& rect) {
+            const QRect padded = rect.adjusted(-2, -2, 2, 2);
+            return std::any_of(occupiedLabelRects.begin(), occupiedLabelRects.end(), [&](const QRect& other) {
+                return padded.intersects(other);
+            });
+        };
+
+        for (int ring = 0; ring <= 12; ++ring) {
+            for (int dySign : {1, -1}) {
+                const int dy = ring == 0 ? 0 : dySign * ring * stepY;
+                for (int dxSign : {0, 1, -1}) {
+                    const int dx = dxSign * ring * stepX;
+                    const int candidateX = std::clamp(baseX + dx, 0, maxX);
+                    const int candidateY = std::clamp(baseY + dy, 0, maxY);
+                    const QRect candidate(candidateX, candidateY, button->width(), button->height());
+                    if (overlaps(candidate)) continue;
+
+                    const int score = (candidateX - baseX) * (candidateX - baseX) + (candidateY - baseY) * (candidateY - baseY);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestX = candidateX;
+                        bestY = candidateY;
+                    }
+                }
+            }
+            if (bestScore != std::numeric_limits<int>::max()) break;
+        }
+
+        const QRect placed(bestX, bestY, button->width(), button->height());
+        occupiedLabelRects.push_back(placed.adjusted(-2, -2, 2, 2));
+        button->move(bestX, bestY);
         button->show();
         button->raise();
     }

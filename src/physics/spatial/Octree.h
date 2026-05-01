@@ -22,6 +22,7 @@ struct OctreeNode {
 
     // Leaf nodes only
     Physics::PhysicsBody* body = nullptr;
+    std::vector<Physics::PhysicsBody*> bodies;
 
     // Aggregated properties (center, mass)
     glm::vec3 massCenter;

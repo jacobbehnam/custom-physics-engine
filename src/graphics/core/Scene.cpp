@@ -1,10 +1,13 @@
 #include "Scene.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 #include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/component_wise.hpp>
 #include <graphics/core/SceneObject.h>
 
 #include "ui/OpenGLWindow.h"
@@ -56,12 +59,31 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     camera.update();
+    SceneObject::setRenderOrigin(camera.position);
+
+    float nearestSurface = std::numeric_limits<float>::max();
+    float farthestSurface = 300000.0f;
+    for (auto* drawable : instancedDrawables) {
+        auto* obj = dynamic_cast<SceneObject*>(drawable);
+        if (!obj) continue;
+
+        const float radius = glm::compMax(glm::abs(obj->getScale())) * 0.5f;
+        const float distance = glm::length(obj->getPosition() - camera.position);
+        if (!std::isfinite(distance) || !std::isfinite(radius)) continue;
+
+        nearestSurface = std::min(nearestSurface, std::max(distance - radius, 0.01f));
+        farthestSurface = std::max(farthestSurface, distance + radius);
+    }
+
+    if (nearestSurface != std::numeric_limits<float>::max()) {
+        camera.setClipRange(std::max(nearestSurface * 0.5f, 0.01f), farthestSurface * 1.25f);
+    }
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
-    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
+    cameraUBO.updateData(glm::value_ptr(camera.getRenderViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
@@ -89,7 +111,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         key.mesh->drawInstanced(instances);
     }
 
-    // --- custom ---
+    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
     for (auto* obj : customDrawables) {
         obj->draw();
     }

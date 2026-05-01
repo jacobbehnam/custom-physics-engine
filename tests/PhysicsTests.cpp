@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <cmath>
 #include "physics/PhysicsSystem.h"
 #include "physics/PointMass.h"
 
@@ -177,6 +178,21 @@ TEST(PhysicsSystem, Parameters_GlobalSettings) {
 
     system.setSimSpeed(0.5f);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.5f);
+}
+
+TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    Physics::PointMass a(0, 1.0e6);
+    Physics::PointMass b(1, 1.0e6);
+
+    a.setPosition(glm::vec3(0.0f), BodyLock::LOCK);
+    b.setPosition(glm::vec3(0.0f), BodyLock::LOCK);
+    system.addBody(&a);
+    system.addBody(&b);
+
+    ASSERT_NO_FATAL_FAILURE(system.step(0.001f));
+    EXPECT_TRUE(std::isfinite(a.getPosition(BodyLock::LOCK).x));
+    EXPECT_TRUE(std::isfinite(b.getPosition(BodyLock::LOCK).x));
 }
 
 // Simulation tests

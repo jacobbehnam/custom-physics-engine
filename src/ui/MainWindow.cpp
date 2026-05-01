@@ -71,10 +71,17 @@ void MainWindow::setupDockWidgets() {
 
     cameraPositionLabel = new QLabel("0, 0, 0", infoPanel);
     cameraPositionLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    selectedObjectLabel = new QLabel("None", infoPanel);
+    selectedObjectPositionLabel = new QLabel("-", infoPanel);
+    selectedObjectPositionLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    selectedObjectDistanceLabel = new QLabel("-", infoPanel);
     simulationStateLabel = new QLabel("Paused", infoPanel);
     renderClockStateLabel = new QLabel("Idle", infoPanel);
 
-    infoLayout->addRow("Camera", cameraPositionLabel);
+    infoLayout->addRow("Camera position", cameraPositionLabel);
+    infoLayout->addRow("Selected", selectedObjectLabel);
+    infoLayout->addRow("Selected position", selectedObjectPositionLabel);
+    infoLayout->addRow("Camera distance", selectedObjectDistanceLabel);
     infoLayout->addRow("Physics", simulationStateLabel);
     infoLayout->addRow("Render clock", renderClockStateLabel);
     infoDock->setWidget(infoPanel);
@@ -115,7 +122,13 @@ void MainWindow::setupDockWidgets() {
         sceneManager->deleteObject(obj);
     });
     connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
-    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) { hierarchy->removeObject(obj); inspector->unloadObject(); });
+    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) {
+        if (selectedInfoObject == obj)
+            selectedInfoObject = nullptr;
+        hierarchy->removeObject(obj);
+        inspector->unloadObject();
+        updateStatusPanel();
+    });
     connect(sceneManager, &SceneManager::objectRenamed, this, [=](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
@@ -268,6 +281,20 @@ void MainWindow::updateStatusPanel() {
         .arg(pos.y, 0, 'g', 6)
         .arg(pos.z, 0, 'g', 6));
 
+    if (selectedInfoObject) {
+        const glm::vec3 selectedPos = selectedInfoObject->getPosition();
+        selectedObjectLabel->setText(QString::fromStdString(selectedInfoObject->getName()));
+        selectedObjectPositionLabel->setText(QString("x %1, y %2, z %3")
+            .arg(selectedPos.x, 0, 'g', 6)
+            .arg(selectedPos.y, 0, 'g', 6)
+            .arg(selectedPos.z, 0, 'g', 6));
+        selectedObjectDistanceLabel->setText(QString("%1 m").arg(glm::distance(pos, selectedPos), 0, 'g', 6));
+    } else {
+        selectedObjectLabel->setText("None");
+        selectedObjectPositionLabel->setText("-");
+        selectedObjectDistanceLabel->setText("-");
+    }
+
     simulationStateLabel->setText(sceneManager->isPhysicsRunning() ? QString("Running") : QString("Paused"));
     renderClockStateLabel->setText(glWindow->isRenderClockRunning() ? QString("Running") : QString("Idle"));
 }
@@ -299,6 +326,9 @@ void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {
     contextMenu.exec(pos);
 }
 void MainWindow::onHierarchySelectionChanged(SceneObject *previous, SceneObject *current) {
+    selectedInfoObject = current;
+    updateStatusPanel();
+
     if (previous) {
         sceneManager->setSelectFor(previous, false);
     }
