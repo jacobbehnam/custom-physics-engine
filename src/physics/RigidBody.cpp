@@ -32,7 +32,7 @@ void Physics::RigidBody::recomputeGeometry() {
     surfaceArea = area * scale.x * scale.y;
 }
 
-Physics::RigidBody::RigidBody(uint32_t id, float m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
+Physics::RigidBody::RigidBody(uint32_t id, double m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setMass(m, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
@@ -53,7 +53,7 @@ void Physics::RigidBody::recordFrame(float t, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK), getThermalProperties(BodyLock::NOLOCK).tempK} );
+    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK), static_cast<float>(getThermalProperties(BodyLock::NOLOCK).tempK)} );
 }
 
 void Physics::RigidBody::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock) {
@@ -70,11 +70,11 @@ void Physics::RigidBody::step(float dt, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK);
+    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK));
     glm::vec3 posIncrement = getVelocity(BodyLock::NOLOCK) * dt + 0.5f * acceleration * dt * dt;
     setPosition(getPosition(BodyLock::NOLOCK) + posIncrement, BodyLock::NOLOCK);
     setWorldTransform(glm::translate(getWorldTransform(BodyLock::NOLOCK), posIncrement), BodyLock::NOLOCK);
-    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK); // if netForce changed during the step
+    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK)); // if netForce changed during the step
     setVelocity(getVelocity(BodyLock::NOLOCK) + 0.5f * (acceleration + newAcceleration) * dt, BodyLock::NOLOCK);
 }
 
@@ -106,7 +106,7 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     if (vRel >= 0.0f) return false; // moving apart or resting
 
     float e = 0.0f; // restitution coefficient
-    float j = -(1.0f + e) * vRel * pm.getMass(BodyLock::NOLOCK);
+    float j = -(1.0f + e) * vRel * static_cast<float>(pm.getMass(BodyLock::NOLOCK));
 
     pm.applyImpulse(j * ci.normal, BodyLock::NOLOCK);
     glm::vec3 Fnet(0.0f);
@@ -120,9 +120,9 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     ThermalProperties rbProps = getThermalProperties(BodyLock::NOLOCK);
     ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
 
-    float keLost = 0.5f * pm.getMass(BodyLock::NOLOCK) * vRel * vRel;
-    float rbDeltaT = (keLost * 0.5f) / (getMass(BodyLock::NOLOCK) * rbProps.specificHeat);
-    float pmDeltaT = (keLost * 0.5f) / (pm.getMass(BodyLock::NOLOCK) * pmProps.specificHeat);
+    float keLost = 0.5f * static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * vRel * vRel;
+    float rbDeltaT = (keLost * 0.5f) / (static_cast<float>(getMass(BodyLock::NOLOCK)) * rbProps.specificHeat);
+    float pmDeltaT = (keLost * 0.5f) / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
     rbProps.tempK += rbDeltaT;
     pmProps.tempK += pmDeltaT;
 
@@ -131,8 +131,8 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     float distance = 0.01f;
     float qCond = k * contactArea * (rbProps.tempK - pmProps.tempK) / distance * dt;
 
-    rbProps.tempK -= qCond / (getMass(BodyLock::NOLOCK) * rbProps.specificHeat);
-    pmProps.tempK += qCond / (pm.getMass(BodyLock::NOLOCK) * pmProps.specificHeat);
+    rbProps.tempK -= qCond / (static_cast<float>(getMass(BodyLock::NOLOCK)) * rbProps.specificHeat);
+    pmProps.tempK += qCond / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
 
     setThermalProperty(rbProps, BodyLock::NOLOCK);
     pm.setThermalProperty(pmProps, BodyLock::NOLOCK);

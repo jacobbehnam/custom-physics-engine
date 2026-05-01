@@ -14,6 +14,9 @@
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
 
+#include <array>
+#include <string_view>
+
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
     physicsSystem->start();
@@ -25,22 +28,83 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::defaultSetup() {
-    SceneObject* ball = createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
-    setObjectName(ball, "Ball");
-    ball->getPhysicsBody()->setVelocity(glm::vec3(0.0f, 15.0f, 0.0f), BodyLock::LOCK);
+    constexpr double metersPerKm = 1000.0;
+    constexpr double metersPerMillionKm = 1.0e9;
 
-    ObjectOptions floorOpts;
-    floorOpts.position = glm::vec3(0.0f, -0.5f, 0.0f);
-    floorOpts.scale = glm::vec3(2000.0f, 1.0f, 300000.0f);
+    struct BodySpec {
+        const char* name;
+        double massKg;
+        double radiusKm;
+        double distanceMillionKm;
+        double orbitalVelocityKmS;
+        double meanTempK;
+        float densityKgM3;
+    };
 
-    SceneObject* floor = createObject("prim_cube", ResourceManager::getShader("checkerboard"), RigidBodyOptions::Box(floorOpts, true));
-    removePickable(floor);
-    setObjectName(floor, "Ground");
+    auto makeThermal = [](double tempK, float density) {
+        ThermalProperties thermal;
+        thermal.tempK = tempK;
+        thermal.emissivity = 0.95f;
+        thermal.heatTransferCoeff = 0.0f;
+        thermal.specificHeat = 1000.0f;
+        thermal.conductivity = 0.0f;
+        thermal.density = density;
+        return thermal;
+    };
 
-    PointMassOptions keysOptions{};
-    keysOptions.base.position = glm::vec3(0.0f, 20.0f, 0.0f);
-    SceneObject* keys = createObject("prim_sphere", ResourceManager::getShader("basic"), keysOptions);
-    setObjectName(keys, "Keys");
+    auto createSolarBody = [&](const BodySpec& spec) {
+        PointMassOptions options;
+        options.base.position = glm::vec3(static_cast<float>(spec.distanceMillionKm * metersPerMillionKm), 0.0f, 0.0f);
+        options.base.scale = glm::vec3(static_cast<float>(spec.radiusKm * 2.0 * metersPerKm));
+        options.mass = spec.massKg;
+        options.velocity = glm::vec3(0.0f, 0.0f, static_cast<float>(spec.orbitalVelocityKmS * metersPerKm));
+
+        SceneObject* body = createObject("prim_sphere", ResourceManager::getShader("basic"), options);
+        setObjectName(body, spec.name);
+        body->getPhysicsBody()->setThermalProperty(makeThermal(spec.meanTempK, spec.densityKgM3), BodyLock::NOLOCK);
+        return body;
+    };
+
+    physicsSystem->setGlobalAcceleration(glm::vec3(0.0f));
+    physicsSystem->setAmbientTemperature(2.725f);
+    physicsSystem->setGravitationalConstant(Constants::G);
+
+    PointMassOptions sunOptions;
+    sunOptions.base.position = glm::vec3(0.0f);
+    sunOptions.base.scale = glm::vec3(696000.0f * 2.0f * static_cast<float>(metersPerKm));
+    sunOptions.mass = 1.9891e30;
+    SceneObject* sun = createObject("prim_sphere", ResourceManager::getShader("basic"), sunOptions);
+    setObjectName(sun, "Sun");
+    sun->getPhysicsBody()->setThermalProperty(makeThermal(5778.0, 1408.0f), BodyLock::NOLOCK);
+
+    const std::array<BodySpec, 8> planets{{
+        {"Mercury", 0.330e24, 4879.0 / 2.0, 57.9, 47.4, 167.0 + 273.15, 5429.0f},
+        {"Venus",   4.87e24, 12104.0 / 2.0, 108.2, 35.0, 464.0 + 273.15, 5243.0f},
+        {"Earth",   5.97e24, 12756.0 / 2.0, 149.6, 29.8, 15.0 + 273.15, 5514.0f},
+        {"Mars",    0.642e24, 6792.0 / 2.0, 227.9, 24.1, -65.0 + 273.15, 3934.0f},
+        {"Jupiter", 1898.0e24, 142984.0 / 2.0, 778.6, 13.1, -110.0 + 273.15, 1326.0f},
+        {"Saturn",  568.0e24, 120536.0 / 2.0, 1433.5, 9.7, -140.0 + 273.15, 687.0f},
+        {"Uranus",  86.8e24, 51118.0 / 2.0, 2872.5, 6.8, -195.0 + 273.15, 1270.0f},
+        {"Neptune", 102.0e24, 49528.0 / 2.0, 4495.1, 5.4, -200.0 + 273.15, 1638.0f},
+    }};
+
+    SceneObject* earth = nullptr;
+    for (const BodySpec& planet : planets) {
+        SceneObject* body = createSolarBody(planet);
+        if (std::string_view(planet.name) == "Earth")
+            earth = body;
+    }
+
+    PointMassOptions moonOptions;
+    moonOptions.base.position = glm::vec3(static_cast<float>((149.6 + 0.3844) * metersPerMillionKm), 0.0f, 0.0f);
+    moonOptions.base.scale = glm::vec3(1737.4f * 2.0f * static_cast<float>(metersPerKm));
+    moonOptions.mass = 0.07346e24;
+    moonOptions.velocity = glm::vec3(0.0f, 0.0f, static_cast<float>((29.8 + 1.022) * metersPerKm));
+    SceneObject* moon = createObject("prim_sphere", ResourceManager::getShader("basic"), moonOptions);
+    setObjectName(moon, "Moon");
+    moon->getPhysicsBody()->setThermalProperty(makeThermal(270.4, 3344.0f), BodyLock::NOLOCK);
+
+    focusObject(earth);
 }
 
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
@@ -121,6 +185,14 @@ std::vector<SceneObject*> SceneManager::getObjects() const {
     return ptrs;
 }
 
+SceneObject* SceneManager::getObjectByID(uint32_t objectID) const {
+    for (const auto& obj : sceneObjects) {
+        if (obj->getObjectID() == objectID)
+            return obj.get();
+    }
+    return nullptr;
+}
+
 std::string SceneManager::generateDefaultName(const CreationOptions& options) {
     return std::visit([&](auto&& opt) -> std::string {
         using T = std::decay_t<decltype(opt)>;
@@ -183,6 +255,19 @@ void SceneManager::setCameraTarget(SceneObject* target) {
     if (scene && scene->getCamera()) {
         scene->getCamera()->setTarget(target);
     }
+}
+
+void SceneManager::focusObject(SceneObject* target) {
+    if (!target) return;
+
+    setSelectFor(nullptr);
+    setSelectFor(target);
+    setGizmoFor(target, true);
+
+    if (scene && scene->getCamera()) {
+        scene->getCamera()->focusOn(target);
+    }
+    emit selectedItem(target);
 }
 
 void SceneManager::clearCameraTarget() {
@@ -351,7 +436,7 @@ void SceneManager::setSelectFor(SceneObject *obj, bool flag) {
     }
     uint32_t objID = obj->getObjectID();
     if (flag) {
-        if (selectedIDs.find(objID) == hoveredIDs.end())
+        if (selectedIDs.find(objID) == selectedIDs.end())
             selectedIDs.insert(objID);
     } else {
         selectedIDs.erase(objID);

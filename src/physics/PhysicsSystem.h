@@ -33,13 +33,14 @@ namespace Physics {
 
         void enablePhysics();
         void disablePhysics();
+        bool isPhysicsEnabled() const { return physicsEnabled.load(); }
 
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration.load(); }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration.store(newAcceleration); }
         float getSimSpeed() const { return simSpeed.load(); }
         void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
-        float getGravitationalConstant() const { return gravitationalConstant.load(); }
-        void setGravitationalConstant(float newG) { gravitationalConstant.store(newG); }
+        double getGravitationalConstant() const { return gravitationalConstant.load(); }
+        void setGravitationalConstant(double newG) { gravitationalConstant.store(newG); }
 
         float getAmbientTemperature() const { return ambientTemperature.load(); }
         void setAmbientTemperature(float newTemp) { ambientTemperature.store(newTemp); }
@@ -65,7 +66,7 @@ namespace Physics {
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};
-        std::atomic<float> gravitationalConstant{Constants::G};
+        std::atomic<double> gravitationalConstant{Constants::G};
         std::atomic<float> ambientTemperature{293.15f};
         std::atomic<long long> stepCount{0};
         std::vector<PhysicsBody*> bodies;

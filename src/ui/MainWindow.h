@@ -34,6 +34,9 @@ private:
 
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
+    QLabel* cameraPositionLabel;
+    QLabel* simulationStateLabel;
+    QLabel* renderClockStateLabel;
 
     InspectorWidget* inspector;
     HierarchyWidget* hierarchy;
@@ -45,4 +48,5 @@ private:
     void setupSettingMenu();
     void setupMenuBar();
     void loadAppSettings();
+    void updateStatusPanel();
 };

@@ -101,7 +101,7 @@ void Physics::PhysicsBody::setVelocity(const glm::vec3 &vel, BodyLock lock) {
     velocity = vel;
 }
 
-float Physics::PhysicsBody::getMass(BodyLock lock) const {
+double Physics::PhysicsBody::getMass(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
@@ -109,8 +109,8 @@ float Physics::PhysicsBody::getMass(BodyLock lock) const {
     return mass;
 }
 
-void Physics::PhysicsBody::setMass(float newMass, BodyLock lock) {
-    if (newMass <= 0.0001f) {
+void Physics::PhysicsBody::setMass(double newMass, BodyLock lock) {
+    if (newMass <= 0.0) {
         std::cerr << "Warning: Invalid mass " << newMass << ". Ignoring." << std::endl;
         return;
     }

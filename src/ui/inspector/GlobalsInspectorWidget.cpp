@@ -39,7 +39,7 @@ void GlobalsInspectorWidget::createUiComponents() {
         Physics::PhysicsSystem* physicSystem = sceneManager->physicsSystem.get();
         row.addScalar(
             [physicSystem]() { return physicSystem->getGravitationalConstant(); },
-            [physicSystem](float g) { physicSystem->setGravitationalConstant(g); },
+            [physicSystem](double g) { physicSystem->setGravitationalConstant(g); },
             "N·m²/kg²",
             [](ScalarWidget* widget) {
                 widget->setDecimals(15);

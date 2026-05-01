@@ -16,7 +16,7 @@ struct ObjectOptions {
 struct PointMassOptions {
     ObjectOptions base;
     bool isStatic = false;
-    float mass = 1.0f;
+    double mass = 1.0;
     glm::vec3 velocity = glm::vec3(0.0f);
 
     PointMassOptions() = default;
@@ -26,11 +26,11 @@ struct RigidBodyOptions {
     ObjectOptions base;
     std::function<std::unique_ptr<Physics::Bounding::ICollider>(const ObjectOptions&)> createCollider;
     bool isStatic = false;
-    float mass = 1.0f;
+    double mass = 1.0;
     glm::vec3 velocity = glm::vec3(0.0f);
 
     // Helpers for making colliders
-    static RigidBodyOptions Box(ObjectOptions base, bool isStatic = false, float mass = 1.0f, glm::vec3 velocity = glm::vec3(0.0f)) {
+    static RigidBodyOptions Box(ObjectOptions base, bool isStatic = false, double mass = 1.0, glm::vec3 velocity = glm::vec3(0.0f)) {
         RigidBodyOptions o;
         o.base = base;
         o.mass = mass;

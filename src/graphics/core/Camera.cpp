@@ -1,7 +1,9 @@
 #include "Camera.h"
 
 #include "SceneObject.h"
+#include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 Camera::Camera(glm::vec3 initPosition) {
     position = initPosition;
@@ -19,8 +21,8 @@ glm::mat4 Camera::getProjMatrix() const {
     return glm::perspective(
         glm::radians(fov),
         aspectRatio,
-        0.1f,
-        300000.0f
+        nearClip,
+        farClip
     );
 
 }
@@ -29,8 +31,22 @@ void Camera::setTarget(SceneObject* obj) {
     targetObject = obj;
 }
 
+void Camera::focusOn(SceneObject* obj) {
+    targetObject = obj;
+    if (!targetObject) return;
+
+    const float visualRadius = glm::compMax(glm::abs(targetObject->getScale())) * 0.5f;
+    const float distance = std::max(visualRadius * 1.25f, 0.35f);
+    nearClip = std::max(std::min(visualRadius * 0.01f, distance * 0.1f), 0.01f);
+    farClip = std::max(distance + visualRadius * 6.0f, 300000.0f);
+    followOffset = glm::normalize(glm::vec3(1.0f, 0.55f, 1.0f)) * distance;
+    update();
+}
+
 void Camera::clearTarget() {
     targetObject = nullptr;
+    nearClip = 0.1f;
+    farClip = 300000.0f;
     yaw = -90.0f;
     pitch = 0.0f;
     updateCameraVectors();

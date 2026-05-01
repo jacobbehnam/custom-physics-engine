@@ -25,7 +25,7 @@ struct OctreeNode {
 
     // Aggregated properties (center, mass)
     glm::vec3 massCenter;
-    float totalMass = 0.0f;
+    double totalMass = 0.0;
 
     // Aggregated thermal properties
     float totalEffectiveArea = 0.0f; // sum of (epsilon * Area)
@@ -45,7 +45,7 @@ private:
     Octant getOctant(NodeIndex nodeIdx, const glm::vec3& pos) const;
 public:
     Octree() = default;
-    glm::vec3 computeForce(Physics::PhysicsBody* body, float G);
-    float computeHeat(Physics::PhysicsBody* body);
+    glm::vec3 computeForce(Physics::PhysicsBody* body, double G);
+    double computeHeat(Physics::PhysicsBody* body);
     void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };

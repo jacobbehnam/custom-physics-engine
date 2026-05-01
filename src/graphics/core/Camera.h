@@ -37,6 +37,7 @@ public: // TODO: make these not public
     void setAspectRatio(float ratio) { aspectRatio = ratio; }
 
     void setTarget(SceneObject* obj);
+    void focusOn(SceneObject* obj);
     void clearTarget();
     void update();
 
@@ -50,6 +51,8 @@ private:
     void updateCameraVectors();
 
     float aspectRatio;
+    float nearClip = 0.1f;
+    float farClip = 300000.0f;
     SceneObject* targetObject = nullptr;
     glm::vec3 followOffset{20.0f, 15.0f, 30.0f};
 };

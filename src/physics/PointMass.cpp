@@ -3,7 +3,7 @@
 
 #include "RigidBody.h"
 
-Physics::PointMass::PointMass(uint32_t id, float m, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
+Physics::PointMass::PointMass(uint32_t id, double m, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setPosition(pos, BodyLock::NOLOCK);
     setMass(m, BodyLock::NOLOCK);
@@ -20,7 +20,7 @@ Physics::PointMass::PointMass(uint32_t id, glm::vec3 pos, bool bodyStatic) : Phy
     recomputeSurfaceArea();
 }
 
-void Physics::PointMass::setMass(float newMass, BodyLock lock) {
+void Physics::PointMass::setMass(double newMass, BodyLock lock) {
     PhysicsBody::setMass(newMass, lock);
     recomputeSurfaceArea();
 }
@@ -31,10 +31,10 @@ void Physics::PointMass::setThermalProperty(const ThermalProperties& newProps, B
 }
 
 void Physics::PointMass::recomputeSurfaceArea() {
-    float curMass = getMass(BodyLock::NOLOCK);
+    double curMass = getMass(BodyLock::NOLOCK);
     float density = getThermalProperties(BodyLock::NOLOCK).density;
     if (density > 0.0f) {
-        float volume = curMass / density;
+        double volume = curMass / density;
         float radius = std::cbrt((3.0f * volume) / (4.0f * glm::pi<float>()));
         surfaceArea = 4.0f * glm::pi<float>() * radius * radius;
     }
@@ -42,7 +42,7 @@ void Physics::PointMass::recomputeSurfaceArea() {
 
 void Physics::PointMass::applyImpulse(const glm::vec3 &impulse, BodyLock lock) {
     glm::vec3 curVel;
-    float curMass;
+    double curMass;
 
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
@@ -51,7 +51,7 @@ void Physics::PointMass::applyImpulse(const glm::vec3 &impulse, BodyLock lock) {
     curVel = getVelocity(BodyLock::NOLOCK);
     curMass = getMass(BodyLock::NOLOCK);
 
-    setVelocity(curVel + impulse * (1.0f / curMass), BodyLock::NOLOCK);
+    setVelocity(curVel + impulse * static_cast<float>(1.0 / curMass), BodyLock::NOLOCK);
 }
 
 void Physics::PointMass::recordFrame(float t, BodyLock lock) {
@@ -59,7 +59,7 @@ void Physics::PointMass::recordFrame(float t, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK), getThermalProperties(BodyLock::NOLOCK).tempK} );
+    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK), static_cast<float>(getThermalProperties(BodyLock::NOLOCK).tempK)} );
 }
 
 void Physics::PointMass::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock) {
@@ -76,9 +76,9 @@ void Physics::PointMass::step(float dt, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK);
+    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK));
     setPosition(getPosition(BodyLock::NOLOCK) + (getVelocity(BodyLock::NOLOCK) * dt + 0.5f * acceleration * dt * dt), BodyLock::NOLOCK);
-    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK); // if netForce changed during the step
+    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK)); // if netForce changed during the step
     setVelocity(getVelocity(BodyLock::NOLOCK) + 0.5f * (acceleration + newAcceleration) * dt, BodyLock::NOLOCK);
 }
 
@@ -110,7 +110,7 @@ bool Physics::PointMass::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     if (velNorm <= 0.0f)
         return false; // moving apart, nothing applied
 
-    float j = (2.0f * velNorm) / (getMass(BodyLock::NOLOCK) + pm.getMass(BodyLock::NOLOCK)); // collision‐impulse scalar
+    float j = (2.0f * velNorm) / static_cast<float>(getMass(BodyLock::NOLOCK) + pm.getMass(BodyLock::NOLOCK)); // collision impulse scalar
     glm::vec3 impulse = j * normal;
 
     // newton's third law
@@ -125,8 +125,8 @@ bool Physics::PointMass::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     float distance = 0.01f;
     float qCond = k * contactArea * (myProps.tempK - pmProps.tempK) / distance * dt;
     
-    myProps.tempK -= qCond / (getMass(BodyLock::NOLOCK) * myProps.specificHeat);
-    pmProps.tempK += qCond / (pm.getMass(BodyLock::NOLOCK) * pmProps.specificHeat);
+    myProps.tempK -= qCond / (static_cast<float>(getMass(BodyLock::NOLOCK)) * myProps.specificHeat);
+    pmProps.tempK += qCond / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
     
     setThermalProperty(myProps, BodyLock::NOLOCK);
     pm.setThermalProperty(pmProps, BodyLock::NOLOCK);

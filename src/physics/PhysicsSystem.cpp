@@ -1,6 +1,7 @@
 #include "PhysicsSystem.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include "PointMass.h"
 #include "math/MathUtils.h"
 #include "solver/OneUnknownSolver.h"
@@ -141,7 +142,7 @@ void Physics::PhysicsSystem::physicsLoop() {
 
 void Physics::PhysicsSystem::addBody(PhysicsBody *body) {
     std::lock_guard<std::mutex> lock(bodiesMutex);
-    body->setForce("Gravity", body->getMass(BodyLock::LOCK) * getGlobalAcceleration(), BodyLock::LOCK);
+    body->setForce("Gravity", static_cast<float>(body->getMass(BodyLock::LOCK)) * getGlobalAcceleration(), BodyLock::LOCK);
     body->setForce("Normal", glm::vec3(0.0f), BodyLock::LOCK);
     bodies.push_back(body);
 }
@@ -168,7 +169,7 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         }
 
         glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());
-        glm::vec3 globalGravity = body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration();
+        glm::vec3 globalGravity = static_cast<float>(body->getMass(BodyLock::NOLOCK)) * getGlobalAcceleration();
         glm::vec3 totalGravity  = nBodyGravity + globalGravity;
         
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
@@ -179,28 +180,30 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
 
         // Thermal updates (ambient convection & radiation)
         ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
-        float area = body->getSurfaceArea();
-        float mass = body->getMass(BodyLock::NOLOCK);
-        float t_amb = getAmbientTemperature();
+        const double area = body->getSurfaceArea();
+        const double mass = body->getMass(BodyLock::NOLOCK);
+        const double t_amb = getAmbientTemperature();
         
         // Q_conv = h * A * (T_amb - T)
-        float q_conv = props.heatTransferCoeff * area * (t_amb - props.tempK);
+        double q_conv = props.heatTransferCoeff * area * (t_amb - props.tempK);
         // Q_rad = e * sigma * A * (T_amb^4 - T^4)
-        constexpr float STEFAN_BOLTZMANN = 5.670374419e-8f;
-        float t_amb_4 = t_amb * t_amb * t_amb * t_amb;
-        float t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
-        float q_rad = props.emissivity * STEFAN_BOLTZMANN * area * (t_amb_4 - t_obj_4);
+        constexpr double STEFAN_BOLTZMANN = 5.670374419e-8;
+        double t_amb_4 = t_amb * t_amb * t_amb * t_amb;
+        double t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
+        double q_rad = props.emissivity * STEFAN_BOLTZMANN * area * (t_amb_4 - t_obj_4);
         
-        float q_total = q_conv + q_rad;
+        double q_total = q_conv + q_rad;
 
         // Proximity radiation from all other bodies (O(N log N) using Octree)
-        float q_rad_proximity = PhysicsSystem::octree.computeHeat(body);
+        double q_rad_proximity = PhysicsSystem::octree.computeHeat(body);
         q_total += q_rad_proximity;
 
         // dT = Q * dt / (m * c)
-        float deltaT = (q_total * dt) / (mass * props.specificHeat);
-        props.tempK += deltaT;
-        body->setThermalProperty(props, BodyLock::NOLOCK);
+        if (mass > 0.0 && props.specificHeat > 0.0f && std::isfinite(props.tempK) && std::isfinite(q_total)) {
+            const double deltaT = (q_total * dt) / (mass * props.specificHeat);
+            props.tempK = std::clamp(props.tempK + deltaT, 0.0, 1.0e8);
+            body->setThermalProperty(props, BodyLock::NOLOCK);
+        }
 
         if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
@@ -292,4 +295,3 @@ void Physics::PhysicsSystem::enablePhysics() {
 void Physics::PhysicsSystem::disablePhysics() {
     physicsEnabled.store(false);
 }
-

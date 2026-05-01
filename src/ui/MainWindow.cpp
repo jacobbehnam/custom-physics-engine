@@ -14,6 +14,7 @@
 #include <QTableView>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#include <QFormLayout>
 
 #include "HierarchyWidget.h"
 #include "graph/FrameGraphPanel.h"
@@ -38,11 +39,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
     fpsLabel = new QLabel(this);
     fpsLabel->setText("FPS: 0.0");
-
     statusBar()->addPermanentWidget(fpsLabel);
 
     connect(glWindow, &OpenGLWindow::fpsUpdated, this, [this](double fps) {
         fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 1));
+        updateStatusPanel();
     });
 
     connect(glWindow, &OpenGLWindow::glInitialized, this, &MainWindow::onGLInitialized);
@@ -61,13 +62,37 @@ void MainWindow::onGLInitialized() {
 }
 
 void MainWindow::setupDockWidgets() {
+    auto* infoDock = new QDockWidget(tr("Scene Info"), this);
+    infoDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    auto* infoPanel = new QWidget(infoDock);
+    auto* infoLayout = new QFormLayout(infoPanel);
+    infoLayout->setContentsMargins(8, 8, 8, 8);
+    infoLayout->setSpacing(6);
+
+    cameraPositionLabel = new QLabel("0, 0, 0", infoPanel);
+    cameraPositionLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    simulationStateLabel = new QLabel("Paused", infoPanel);
+    renderClockStateLabel = new QLabel("Idle", infoPanel);
+
+    infoLayout->addRow("Camera", cameraPositionLabel);
+    infoLayout->addRow("Physics", simulationStateLabel);
+    infoLayout->addRow("Render clock", renderClockStateLabel);
+    infoDock->setWidget(infoPanel);
+    infoDock->setMinimumHeight(110);
+    addDockWidget(Qt::LeftDockWidgetArea, infoDock);
+
     auto* hierarchyDock = new QDockWidget(tr("Objects"), this);
     hierarchyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     hierarchy = new HierarchyWidget(this);
     hierarchyDock->setWidget(hierarchy);
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
+    splitDockWidget(infoDock, hierarchyDock, Qt::Vertical);
 
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
+    connect(hierarchy, &HierarchyWidget::focusObjectRequested, this, [this](SceneObject* obj) {
+        sceneManager->focusObject(obj);
+        glWindow->setFocus();
+    });
     connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [=](const CreationOptions& options) {
         SceneObject* createdObj = sceneManager->createObject("prim_sphere", ResourceManager::getShader("basic"), options);
         hierarchy->selectObject(createdObj);
@@ -230,6 +255,21 @@ void MainWindow::loadAppSettings() {
 
     // Push loaded settings down to debug drawables
     sceneManager->applyDebugSettings();
+    updateStatusPanel();
+}
+
+void MainWindow::updateStatusPanel() {
+    if (!sceneManager || !sceneManager->scene || !sceneManager->scene->getCamera())
+        return;
+
+    const glm::vec3 pos = sceneManager->scene->getCamera()->position;
+    cameraPositionLabel->setText(QString("x %1, y %2, z %3")
+        .arg(pos.x, 0, 'g', 6)
+        .arg(pos.y, 0, 'g', 6)
+        .arg(pos.z, 0, 'g', 6));
+
+    simulationStateLabel->setText(sceneManager->isPhysicsRunning() ? QString("Running") : QString("Paused"));
+    renderClockStateLabel->setText(glWindow->isRenderClockRunning() ? QString("Running") : QString("Idle"));
 }
 
 void MainWindow::showObjectContextMenu(const QPoint &pos, SceneObject *obj) {

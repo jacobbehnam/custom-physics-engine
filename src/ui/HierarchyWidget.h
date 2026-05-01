@@ -19,6 +19,7 @@ signals:
     void createObjectRequested(const CreationOptions& options);
     void renameObjectRequested(SceneObject* obj, const QString& newName);
     void deleteObjectRequested(SceneObject* obj);
+    void focusObjectRequested(SceneObject* obj);
 
 public slots:
     void onItemNameChanged(QTreeWidgetItem* item, int column);

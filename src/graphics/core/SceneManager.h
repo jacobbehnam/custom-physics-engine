@@ -37,21 +37,24 @@ public:
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
     std::vector<SceneObject*> getObjects() const;
+    SceneObject* getObjectByID(uint32_t objectID) const;
     bool isNameUnique(const std::string& name, SceneObject* self) const;
     void setObjectName(SceneObject* obj, const std::string& newName);
     std::string makeUniqueName(const std::string& baseName) const;
 
     void setCameraTarget(SceneObject* target);
+    void focusObject(SceneObject* target);
     void clearCameraTarget();
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
     void setGlobalAcceleration(const glm::vec3& newAcceleration) const { physicsSystem->setGlobalAcceleration(newAcceleration); }
+    bool isPhysicsRunning() const { return physicsSystem->isPhysicsEnabled(); }
     float getSimSpeed() const { return window->getSimSpeed(); }
     void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
-    float getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
-    void setGravitationalConstant(float newG) const { physicsSystem->setGravitationalConstant(newG); }
+    double getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
+    void setGravitationalConstant(double newG) const { physicsSystem->setGravitationalConstant(newG); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }

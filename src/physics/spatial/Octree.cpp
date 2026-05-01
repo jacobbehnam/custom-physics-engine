@@ -28,17 +28,17 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     OctreeNode* node        = &nodes[nodeIndex.val];
     glm::vec3 nodeCenter    = node->center;
     glm::vec3 bodyPos       = body->getPosition(BodyLock::NOLOCK);
-    float bodyMass          = body->getMass(BodyLock::NOLOCK);
+    double bodyMass          = body->getMass(BodyLock::NOLOCK);
     float childHalfSize     = node->halfSize * 0.5f;
 
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
     float area = body->getSurfaceArea();
     float epsArea = props.emissivity * area;
-    float t4 = props.tempK * props.tempK * props.tempK * props.tempK;
-    float emission = epsArea * t4;
+    double t4 = props.tempK * props.tempK * props.tempK * props.tempK;
+    float emission = static_cast<float>(epsArea * t4);
 
     // Node is empty, put the body here
-    if (node->body == nullptr && node->totalMass == 0.0f) {
+    if (node->body == nullptr && node->totalMass == 0.0) {
         node->body       = body;
         node->massCenter = bodyPos;
         node->totalMass  = bodyMass;
@@ -48,11 +48,11 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     }
 
     // Since this node now contains this body, update
-    float newMass       = node->totalMass + bodyMass;
+    double newMass       = node->totalMass + bodyMass;
     node->massCenter    = (
-        node->massCenter    * node->totalMass + 
-        bodyPos             * bodyMass
-    ) / newMass;
+        node->massCenter    * static_cast<float>(node->totalMass) + 
+        bodyPos             * static_cast<float>(bodyMass)
+    ) / static_cast<float>(newMass);
     node->totalMass     = newMass;
     node->totalEffectiveArea += epsArea;
     node->totalEmission += emission;
@@ -113,14 +113,14 @@ void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
     }
 }
 
-glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
+glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
     if (nodes.empty() || body == nullptr) {
         return glm::vec3(0.0f);
     }
 
     glm::vec3 totalForce(0.0f);
     glm::vec3 bodyPos   = body->getPosition(BodyLock::NOLOCK);
-    float bodyMass      = body->getMass(BodyLock::NOLOCK);
+    double bodyMass      = body->getMass(BodyLock::NOLOCK);
 
     // Use vector incase overflow
     // I was planning for 512 elements but not sure
@@ -134,7 +134,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
         const OctreeNode& node = nodes[currentIdx.val];
 
         // Empty region
-        if (node.totalMass == 0.0f) continue;
+        if (node.totalMass == 0.0) continue;
         
         glm::vec3 dist = node.massCenter - body->getPosition(BodyLock::NOLOCK);
         float distSq = glm::dot(dist, dist);
@@ -148,8 +148,8 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
             float invDist = 1.0f / sqrt(softeningDistSq);
             float invDist3 = invDist * invDist * invDist;
 
-            float force = (G * bodyMass * node.totalMass) * invDist3;
-            totalForce += force * dist;
+            double force = (G * bodyMass * node.totalMass) * invDist3;
+            totalForce += static_cast<float>(force) * dist;
         } else {
             // Add valid children to stack
             std::uint8_t childMask = node.childMask;
@@ -163,17 +163,17 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
     return totalForce;
 }
 
-float Octree::computeHeat(Physics::PhysicsBody* body) {
+double Octree::computeHeat(Physics::PhysicsBody* body) {
     if (nodes.empty() || body == nullptr) {
-        return 0.0f;
+        return 0.0;
     }
 
-    float totalHeat = 0.0f;
+    double totalHeat = 0.0;
     glm::vec3 bodyPos = body->getPosition(BodyLock::NOLOCK);
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
-    float area = body->getSurfaceArea();
-    float t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
-    constexpr float STEFAN_BOLTZMANN = 5.670374419e-8f;
+    double area = body->getSurfaceArea();
+    double t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
+    constexpr double STEFAN_BOLTZMANN = 5.670374419e-8;
 
     std::vector<NodeIndex> stack;
     stack.reserve(512);
@@ -187,29 +187,29 @@ float Octree::computeHeat(Physics::PhysicsBody* body) {
         if (node.totalEffectiveArea == 0.0f) continue;
         
         glm::vec3 dist = node.massCenter - bodyPos;
-        float distSq = glm::dot(dist, dist);
-        if (distSq < 0.0001f) distSq = 0.0001f;
+        double distSq = static_cast<double>(glm::dot(dist, dist));
+        if (distSq < 0.0001) distSq = 0.0001;
 
         float widthSq = node.halfSize * node.halfSize * 4.0f;
 
         if (node.isLeaf()) {
             if (node.body == body) continue;
 
-            float otherArea = node.body->getSurfaceArea();
+            double otherArea = node.body->getSurfaceArea();
             ThermalProperties otherProps = node.body->getThermalProperties(BodyLock::NOLOCK);
-            float other_t_4 = otherProps.tempK * otherProps.tempK * otherProps.tempK * otherProps.tempK;
+            double other_t_4 = otherProps.tempK * otherProps.tempK * otherProps.tempK * otherProps.tempK;
             
-            float viewFactorTerm = (area * otherArea) / (4.0f * glm::pi<float>() * distSq);
+            double viewFactorTerm = (area * otherArea) / (4.0 * glm::pi<double>() * distSq);
             viewFactorTerm = std::min(viewFactorTerm, std::min(area, otherArea));
             
-            float q_rad = STEFAN_BOLTZMANN * props.emissivity * otherProps.emissivity * viewFactorTerm * (other_t_4 - t_obj_4);
+            double q_rad = STEFAN_BOLTZMANN * props.emissivity * otherProps.emissivity * viewFactorTerm * (other_t_4 - t_obj_4);
             totalHeat += q_rad;
 
         } else if (widthSq < Constants::THETA_SQ * distSq) {
             // For distant nodes, we avoid the clamping logic and distribute the Stefan-Boltzmann equation.
             // Q = sigma * eps_1 * [ (A_1 / 4 pi r^2) * totalEmission - T_1^4 * (A_1 / 4 pi r^2) * totalEpsArea ]
-            float solidAngleFactor = area / (4.0f * glm::pi<float>() * distSq);
-            float q_rad = STEFAN_BOLTZMANN * props.emissivity * solidAngleFactor * (node.totalEmission - t_obj_4 * node.totalEffectiveArea);
+            double solidAngleFactor = area / (4.0 * glm::pi<double>() * distSq);
+            double q_rad = STEFAN_BOLTZMANN * props.emissivity * solidAngleFactor * (node.totalEmission - t_obj_4 * node.totalEffectiveArea);
             totalHeat += q_rad;
 
         } else {

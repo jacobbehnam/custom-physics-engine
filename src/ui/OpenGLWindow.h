@@ -6,7 +6,9 @@
 #include <QMouseEvent>
 #include <QSet>
 #include <QCursor>
+#include <QPushButton>
 #include <chrono>
+#include <vector>
 #include "math/Ray.h"
 
 class Scene;
@@ -42,6 +44,7 @@ public:
 
     void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
     float getSimSpeed() const { return simSpeed.load(); }
+    bool isRenderClockRunning() const { return simulating; }
 
 protected:
     void initializeGL() override;
@@ -71,7 +74,10 @@ private:
 
     Scene* scene = nullptr;
     SceneManager* sceneManager = nullptr;
+    std::vector<QPushButton*> objectLabelButtons;
 
     void calculateFPS();
     Math::Ray getMouseRay();
+    void updateObjectLabels();
+    void hideObjectLabels();
 };

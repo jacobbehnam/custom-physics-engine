@@ -12,7 +12,7 @@ CameraTab::CameraTab(QWidget* parent) : QWidget(parent) {
     m_sensBox->setSingleStep(0.01);
     
     m_speedBox = new QDoubleSpinBox();
-    m_speedBox->setRange(0.1, 100.0);
+    m_speedBox->setRange(0.1, 100000000.0);
     m_speedBox->setSingleStep(0.5);
     
     m_fovBox = new QDoubleSpinBox();

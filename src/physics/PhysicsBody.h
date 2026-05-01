@@ -64,8 +64,8 @@ namespace Physics {
         void setPosition(const glm::vec3& pos, BodyLock lock);
         glm::vec3 getVelocity(BodyLock lock) const;
         void setVelocity(const glm::vec3& vel, BodyLock lock);
-        virtual float getMass(BodyLock lock) const;
-        virtual void setMass(float newMass, BodyLock lock);
+        virtual double getMass(BodyLock lock) const;
+        virtual void setMass(double newMass, BodyLock lock);
         virtual ThermalProperties getThermalProperties(BodyLock lock) const;
         virtual void setThermalProperty(const ThermalProperties& newProps, BodyLock lock);
         float getSurfaceArea() const { return surfaceArea; }
@@ -110,7 +110,7 @@ namespace Physics {
         glm::mat4 worldMatrix = glm::mat4(1.0f);
         std::atomic<glm::vec3>* globalAccelPtr = nullptr;
 
-        float mass = 1.0f;
+        double mass = 1.0;
         ThermalProperties thermalProps;
     };
 
