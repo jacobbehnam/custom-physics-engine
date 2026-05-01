@@ -60,6 +60,10 @@ public:
         std::lock_guard<std::mutex> lk(posMapMutex);
         renderOrigin = origin;
     }
+    static glm::vec3 getRenderOrigin() {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        return renderOrigin;
+    }
 
 private:
     inline static std::mutex posMapMutex;

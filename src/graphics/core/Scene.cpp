@@ -111,7 +111,6 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         key.mesh->drawInstanced(instances);
     }
 
-    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
     for (auto* obj : customDrawables) {
         obj->draw();
     }

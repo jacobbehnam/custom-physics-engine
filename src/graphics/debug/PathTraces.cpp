@@ -2,6 +2,7 @@
 #include "physics/PhysicsBody.h"
 #include "graphics/core/ResourceManager.h"
 #include "graphics/core/SceneManager.h"
+#include "graphics/core/SceneObject.h"
 
 PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
     gl->glGenVertexArrays(1, &vao);
@@ -44,7 +45,8 @@ void PathTraces::draw() const {
         Physics::PhysicsBody* body = obj->getPhysicsBody();
         if (!body) continue;
 
-        body->withFrames(BodyLock::LOCK, [this, &points](const std::vector<ObjectSnapshot>& snapshots) {
+        const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
+        body->withFrames(BodyLock::LOCK, [this, &points, renderOrigin](const std::vector<ObjectSnapshot>& snapshots) {
         if (snapshots.size() < 2) return;
 
         const float latestTime = snapshots.back().time;
@@ -61,7 +63,7 @@ void PathTraces::draw() const {
         points.reserve(static_cast<size_t>(count));
 
         for (int i = startIdx; i < static_cast<int>(snapshots.size()); ++i) {
-            points.push_back(snapshots[static_cast<size_t>(i)].position);
+            points.push_back(snapshots[static_cast<size_t>(i)].position - renderOrigin);
         }
 
         if (points.size() < 2) return;
