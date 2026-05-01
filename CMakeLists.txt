@@ -132,6 +132,8 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/IInspectorSection.h
         src/ui/inspector/TransformInspectorWidget.h
         src/ui/inspector/TransformInspectorWidget.cpp
+        src/ui/inspector/ThermalInspectorWidget.h
+        src/ui/inspector/ThermalInspectorWidget.cpp
         src/ui/inspector/InspectorRow.h
         src/ui/SnapshotTableModel.cpp
         src/ui/SnapshotTableModel.h

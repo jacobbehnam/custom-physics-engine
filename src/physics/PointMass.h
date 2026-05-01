@@ -14,6 +14,9 @@ namespace Physics {
 
         void applyImpulse(const glm::vec3& impulse, BodyLock lock);
 
+        void setMass(float newMass, BodyLock lock) override;
+        void setThermalProperty(const ThermalProperties& newProps, BodyLock lock) override;
+
         void step(float dt, BodyLock lock) override;
 
         void recordFrame(float t, BodyLock lock) override;
@@ -23,9 +26,11 @@ namespace Physics {
         bool collidesWithPointMass(const PointMass& pm) const override;
         bool collidesWithRigidBody(const RigidBody &rb) const override;
 
-        bool resolveCollisionWith(PhysicsBody &other) override;
-        bool resolveCollisionWithPointMass(PointMass &pm) override;
-        bool resolveCollisionWithRigidBody(RigidBody &rb) override;
+        bool resolveCollisionWith(float dt, PhysicsBody &other) override;
+        bool resolveCollisionWithPointMass(float dt, PointMass &pm) override;
+        bool resolveCollisionWithRigidBody(float dt, RigidBody &rb) override;
+    private:
+        void recomputeSurfaceArea();
     };
 
 }

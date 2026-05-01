@@ -10,6 +10,7 @@
 #include "ui/ScalarWidget.h"
 #include "ui/inspector/TransformInspectorWidget.h"
 #include "ui/inspector/PhysicsInspectorWidget.h"
+#include "ui/inspector/ThermalInspectorWidget.h"
 #include "ui/inspector/ForcesInspectorWidget.h"
 #include "ui/inspector/GlobalsInspectorWidget.h"
 
@@ -22,11 +23,13 @@ InspectorWidget::InspectorWidget(SceneManager* sceneMgr, QWidget* parent) : QWid
 
     transformWidget = new TransformInspectorWidget(this);
     physicsWidget = new PhysicsInspectorWidget(this);
+    thermalWidget = new ThermalInspectorWidget(this);
     forcesWidget = new ForcesInspectorWidget(this);
     globalsWidget = new GlobalsInspectorWidget(sceneMgr, this);
 
     mainLayout->addWidget(transformWidget);
     mainLayout->addWidget(physicsWidget);
+    mainLayout->addWidget(thermalWidget);
     mainLayout->addWidget(forcesWidget);
     mainLayout->addWidget(globalsWidget);
     mainLayout->addStretch();
@@ -45,10 +48,12 @@ void InspectorWidget::loadObject(SceneObject* obj) {
 
     transformWidget->load(obj);
     physicsWidget->load(obj);
+    thermalWidget->load(obj);
     forcesWidget->load(obj);
 
     transformWidget->setVisible(true);
     physicsWidget->setVisible(obj && obj->getPhysicsBody());
+    thermalWidget->setVisible(obj && obj->getPhysicsBody());
     forcesWidget->setVisible(obj && obj->getPhysicsBody());
 
     globalsWidget->setVisible(false);
@@ -59,10 +64,12 @@ void InspectorWidget::unloadObject() {
 
     transformWidget->unload();
     physicsWidget->unload();
+    thermalWidget->unload();
     forcesWidget->unload();
 
     transformWidget->setVisible(false);
     physicsWidget->setVisible(false);
+    thermalWidget->setVisible(false);
     forcesWidget->setVisible(false);
 
     globalsWidget->setVisible(true);
@@ -76,5 +83,6 @@ void InspectorWidget::refresh() {
 
     transformWidget->refresh();
     physicsWidget->refresh();
+    thermalWidget->refresh();
     forcesWidget->refresh();
 }

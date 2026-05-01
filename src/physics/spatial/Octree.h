@@ -27,6 +27,10 @@ struct OctreeNode {
     glm::vec3 massCenter;
     float totalMass = 0.0f;
 
+    // Aggregated thermal properties
+    float totalEffectiveArea = 0.0f; // sum of (epsilon * Area)
+    float totalEmission = 0.0f;      // sum of (epsilon * Area * T^4)
+
     bool isLeaf() const {
         return childMask == 0;
     }
@@ -42,5 +46,6 @@ private:
 public:
     Octree() = default;
     glm::vec3 computeForce(Physics::PhysicsBody* body, float G);
+    float computeHeat(Physics::PhysicsBody* body);
     void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };

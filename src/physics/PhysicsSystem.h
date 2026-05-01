@@ -41,6 +41,9 @@ namespace Physics {
         float getGravitationalConstant() const { return gravitationalConstant.load(); }
         void setGravitationalConstant(float newG) { gravitationalConstant.store(newG); }
 
+        float getAmbientTemperature() const { return ambientTemperature.load(); }
+        void setAmbientTemperature(float newTemp) { ambientTemperature.store(newTemp); }
+
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
         const ProblemRouter* getRouter() const { return &router; }
@@ -63,6 +66,7 @@ namespace Physics {
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};
         std::atomic<float> gravitationalConstant{Constants::G};
+        std::atomic<float> ambientTemperature{293.15f};
         std::atomic<long long> stepCount{0};
         std::vector<PhysicsBody*> bodies;
 

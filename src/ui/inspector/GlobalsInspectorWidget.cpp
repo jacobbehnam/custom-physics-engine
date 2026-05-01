@@ -66,6 +66,21 @@ void GlobalsInspectorWidget::createUiComponents() {
         rows.push_back(std::move(row));
     }
 
+    {
+        InspectorRow row("Ambient Temp", this);
+        Physics::PhysicsSystem* physicSystem = sceneManager->physicsSystem.get();
+        row.addScalar(
+            [physicSystem]() { return physicSystem->getAmbientTemperature(); },
+            [physicSystem](float t) { physicSystem->setAmbientTemperature(t); },
+            "K"
+        ).addButton("Room Temp", [this, physicSystem]() {
+            physicSystem->setAmbientTemperature(293.15f);
+            refresh();
+        });
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+
     createStopConditionUi();
 
     // {

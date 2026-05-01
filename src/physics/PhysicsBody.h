@@ -36,6 +36,7 @@ struct ObjectSnapshot {
     float time;
     glm::vec3 position;
     glm::vec3 velocity;
+    float temperature;
 };
 
 namespace Physics {
@@ -63,10 +64,11 @@ namespace Physics {
         void setPosition(const glm::vec3& pos, BodyLock lock);
         glm::vec3 getVelocity(BodyLock lock) const;
         void setVelocity(const glm::vec3& vel, BodyLock lock);
-        float getMass(BodyLock lock) const;
-        void setMass(float newMass, BodyLock lock);
-        ThermalProperties getThermalProperties(BodyLock lock) const;
-        void setThermalProperty(const ThermalProperties& newProps, BodyLock lock);
+        virtual float getMass(BodyLock lock) const;
+        virtual void setMass(float newMass, BodyLock lock);
+        virtual ThermalProperties getThermalProperties(BodyLock lock) const;
+        virtual void setThermalProperty(const ThermalProperties& newProps, BodyLock lock);
+        float getSurfaceArea() const { return surfaceArea; }
         bool getIsStatic(BodyLock lock) const;
         void setIsStatic(bool newStatic, BodyLock lock);
 
@@ -85,14 +87,15 @@ namespace Physics {
         virtual bool collidesWithPointMass(const PointMass& pm) const = 0;
         virtual bool collidesWithRigidBody(const RigidBody& rb) const = 0;
 
-        virtual bool resolveCollisionWith(PhysicsBody& other) = 0;
-        virtual bool resolveCollisionWithPointMass(PointMass& pm) = 0;
-        virtual bool resolveCollisionWithRigidBody(RigidBody& rb) = 0;
+        virtual bool resolveCollisionWith(float dt, PhysicsBody& other) = 0;
+        virtual bool resolveCollisionWithPointMass(float dt, PointMass& pm) = 0;
+        virtual bool resolveCollisionWithRigidBody(float dt, RigidBody& rb) = 0;
     protected:
         explicit PhysicsBody(uint32_t _id) : id(_id) {}
 
         mutable std::mutex stateMutex;
         std::vector<ObjectSnapshot> frames;
+        float surfaceArea = 1.0f;
     private:
         bool isStatic = false;
         uint32_t id;

@@ -8,6 +8,7 @@ class SceneObject;
 
 class TransformInspectorWidget;
 class PhysicsInspectorWidget;
+class ThermalInspectorWidget;
 class ForcesInspectorWidget;
 class GlobalsInspectorWidget;
 
@@ -31,6 +32,7 @@ private:
 
     TransformInspectorWidget* transformWidget;
     PhysicsInspectorWidget* physicsWidget;
+    ThermalInspectorWidget* thermalWidget;
     ForcesInspectorWidget* forcesWidget;
     GlobalsInspectorWidget* globalsWidget;
 };

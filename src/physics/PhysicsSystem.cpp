@@ -5,6 +5,8 @@
 #include "math/MathUtils.h"
 #include "solver/OneUnknownSolver.h"
 
+#include <glm/gtc/constants.hpp>
+
 namespace Physics {
     class PointMass;
 }
@@ -81,6 +83,7 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
         C.time     = renderSimTime;           // stamped with the render time
         C.position = glm::mix(A.position, B.position, alpha);
         C.velocity = glm::mix(A.velocity, B.velocity, alpha);
+        C.temperature = glm::mix(A.temperature, B.temperature, alpha);
 
         out.push_back(C);
     }
@@ -127,7 +130,7 @@ void Physics::PhysicsSystem::physicsLoop() {
         {
             std::lock_guard<std::mutex> lk(snapshotMutex);
             for (auto* body : localBodies) {
-                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK) });
+                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK), static_cast<float>(body->getThermalProperties(BodyLock::LOCK).tempK) });
             }
 
             currentSnapshots = std::move(localSnaps);
@@ -174,6 +177,31 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         if (body->getIsStatic(BodyLock::NOLOCK))
             continue;
 
+        // Thermal updates (ambient convection & radiation)
+        ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+        float area = body->getSurfaceArea();
+        float mass = body->getMass(BodyLock::NOLOCK);
+        float t_amb = getAmbientTemperature();
+        
+        // Q_conv = h * A * (T_amb - T)
+        float q_conv = props.heatTransferCoeff * area * (t_amb - props.tempK);
+        // Q_rad = e * sigma * A * (T_amb^4 - T^4)
+        constexpr float STEFAN_BOLTZMANN = 5.670374419e-8f;
+        float t_amb_4 = t_amb * t_amb * t_amb * t_amb;
+        float t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
+        float q_rad = props.emissivity * STEFAN_BOLTZMANN * area * (t_amb_4 - t_obj_4);
+        
+        float q_total = q_conv + q_rad;
+
+        // Proximity radiation from all other bodies (O(N log N) using Octree)
+        float q_rad_proximity = PhysicsSystem::octree.computeHeat(body);
+        q_total += q_rad_proximity;
+
+        // dT = Q * dt / (m * c)
+        float deltaT = (q_total * dt) / (mass * props.specificHeat);
+        props.tempK += deltaT;
+        body->setThermalProperty(props, BodyLock::NOLOCK);
+
         if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
 
@@ -196,7 +224,7 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         if (a->getIsStatic(BodyLock::LOCK) && b->getIsStatic(BodyLock::LOCK)) continue;
 
         if (a->collidesWith(*b)) {
-            a->resolveCollisionWith(*b);
+            a->resolveCollisionWith(dt, *b);
         }
     }
 
