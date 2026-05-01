@@ -8,11 +8,9 @@
 
 #include "RigidBody.h"
 #include "physics/Constants.h"
-#include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
 #include "spatial/Octree.h"
 #include "spatial/BVH.h"
-#include "solver/VectorRootSolver.h"
 
 namespace Physics {
     class PhysicsSystem {

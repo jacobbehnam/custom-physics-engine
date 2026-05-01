@@ -30,6 +30,9 @@ add_library(PhysicsCore STATIC
         src/physics/RigidBody.cpp
         src/physics/PointMass.h
         src/physics/PointMass.cpp
+        src/physics/ThermalProperties.h
+        src/physics/utils/ThermalUtils.h
+        src/physics/utils/ThermalUtils.cpp
 
         # Bounding Box Logic
         src/physics/bounding/AABB.h

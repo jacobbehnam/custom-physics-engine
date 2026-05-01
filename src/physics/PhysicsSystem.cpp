@@ -3,10 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include "PointMass.h"
-#include "math/MathUtils.h"
-#include "solver/OneUnknownSolver.h"
-
-#include <glm/gtc/constants.hpp>
+#include "physics/utils/ThermalUtils.h"
 
 namespace Physics {
     class PointMass;
@@ -187,36 +184,6 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
         body->setForce("Gravity", totalGravity, BodyLock::NOLOCK);
 
-        if (body->getIsStatic(BodyLock::NOLOCK))
-            continue;
-
-        // Thermal updates (ambient convection & radiation)
-        ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
-        const double area = body->getSurfaceArea();
-        const double mass = body->getMass(BodyLock::NOLOCK);
-        const double t_amb = getAmbientTemperature();
-        
-        // Q_conv = h * A * (T_amb - T)
-        double q_conv = props.heatTransferCoeff * area * (t_amb - props.tempK);
-        // Q_rad = e * sigma * A * (T_amb^4 - T^4)
-        constexpr double STEFAN_BOLTZMANN = 5.670374419e-8;
-        double t_amb_4 = t_amb * t_amb * t_amb * t_amb;
-        double t_obj_4 = props.tempK * props.tempK * props.tempK * props.tempK;
-        double q_rad = props.emissivity * STEFAN_BOLTZMANN * area * (t_amb_4 - t_obj_4);
-        
-        double q_total = q_conv + q_rad;
-
-        // Proximity radiation from all other bodies (O(N log N) using Octree)
-        double q_rad_proximity = PhysicsSystem::octree.computeHeat(body);
-        q_total += q_rad_proximity;
-
-        // dT = Q * dt / (m * c)
-        if (mass > 0.0 && props.specificHeat > 0.0f && std::isfinite(props.tempK) && std::isfinite(q_total)) {
-            const double deltaT = (q_total * dt) / (mass * props.specificHeat);
-            props.tempK = std::clamp(props.tempK + deltaT, 0.0, 1.0e8);
-            body->setThermalProperty(props, BodyLock::NOLOCK);
-        }
-
         if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
 
@@ -227,7 +194,26 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
             }
         }
 
-        body->step(dt, BodyLock::NOLOCK);
+        ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+        const double area = body->getSurfaceArea();
+        const double mass = body->getMass(BodyLock::NOLOCK);
+        const double ambientTemp = getAmbientTemperature();
+        const double proximityRadiation = PhysicsSystem::octree.computeHeat(body);
+
+        Physics::Thermal::integrateTemperature(props, mass, dt, [&](double tempK) {
+            ThermalProperties tmp = props;
+            tmp.tempK = tempK;
+            return Physics::Thermal::convectionHeatRate(tmp, area, ambientTemp)
+                + Physics::Thermal::ambientRadiationHeatRate(tmp, area, ambientTemp)
+                + proximityRadiation;
+        });
+        if (std::isfinite(props.tempK)) {
+            body->setThermalProperty(props, BodyLock::NOLOCK);
+        }
+
+        if (!body->getIsStatic(BodyLock::NOLOCK)) {
+            body->step(dt, BodyLock::NOLOCK);
+        }
         body->recordFrame(targetTime, BodyLock::NOLOCK);
     }
 

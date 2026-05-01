@@ -2,6 +2,7 @@
 #include <cmath>
 #include "physics/PhysicsSystem.h"
 #include "physics/PointMass.h"
+#include "physics/utils/ThermalUtils.h"
 
 // Helper Macros for concise GLM comparisons
 #define EXPECT_VEC3_EXACT(actual, expected) \
@@ -193,6 +194,61 @@ TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {
     ASSERT_NO_FATAL_FAILURE(system.step(0.001f));
     EXPECT_TRUE(std::isfinite(a.getPosition(BodyLock::LOCK).x));
     EXPECT_TRUE(std::isfinite(b.getPosition(BodyLock::LOCK).x));
+}
+
+TEST(ThermalUtils, ConductiveExchange_ConservesEnergyAndDoesNotOvershoot) {
+    ThermalProperties hot;
+    hot.tempK = 400.0;
+    hot.specificHeat = 1000.0f;
+    hot.conductivity = 1000.0f;
+
+    ThermalProperties cold;
+    cold.tempK = 300.0;
+    cold.specificHeat = 1000.0f;
+    cold.conductivity = 1000.0f;
+
+    const double massHot = 1.0;
+    const double massCold = 1.0;
+    const double initialEnergy = massHot * hot.specificHeat * hot.tempK + massCold * cold.specificHeat * cold.tempK;
+
+    Physics::Thermal::applyConductiveExchange(hot, massHot, cold, massCold, 1.0, 0.01, 1000.0);
+
+    const double finalEnergy = massHot * hot.specificHeat * hot.tempK + massCold * cold.specificHeat * cold.tempK;
+    EXPECT_NEAR(finalEnergy, initialEnergy, 1.0e-6);
+    EXPECT_DOUBLE_EQ(hot.tempK, 350.0);
+    EXPECT_DOUBLE_EQ(cold.tempK, 350.0);
+}
+
+TEST(ThermalUtils, AmbientRadiation_UsesStefanBoltzmannSignConvention) {
+    ThermalProperties props;
+    props.tempK = 400.0;
+    props.emissivity = 1.0f;
+
+    const double cooling = Physics::Thermal::ambientRadiationHeatRate(props, 1.0, 300.0);
+    const double heating = Physics::Thermal::ambientRadiationHeatRate(props, 1.0, 500.0);
+
+    EXPECT_LT(cooling, 0.0);
+    EXPECT_GT(heating, 0.0);
+}
+
+TEST(PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    system.setAmbientTemperature(300.0f);
+
+    Physics::PointMass pm(0, 10.0, glm::vec3(1.0f, 2.0f, 3.0f), true);
+    ThermalProperties props;
+    props.tempK = 400.0;
+    props.specificHeat = 1000.0f;
+    props.heatTransferCoeff = 10.0f;
+    props.emissivity = 0.0f;
+    props.density = 1000.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    system.addBody(&pm);
+    system.step(10.0f);
+
+    EXPECT_VEC3_EXACT(pm.getPosition(BodyLock::LOCK), glm::vec3(1.0f, 2.0f, 3.0f));
+    EXPECT_LT(pm.getThermalProperties(BodyLock::LOCK).tempK, 400.0);
 }
 
 // Simulation tests

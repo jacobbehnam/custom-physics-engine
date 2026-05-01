@@ -38,7 +38,7 @@ namespace Physics {
         glm::vec3 scale = glm::vec3(1.0f);
         std::vector<glm::vec3> meshVertices;
         std::vector<unsigned int> meshIndices;
-        
+
         void recomputeGeometry();
     };
 

@@ -1,6 +1,8 @@
 #include "physics/PhysicsBody.h"
 
+#include <algorithm>
 #include <iostream>
+#include "physics/utils/ThermalUtils.h"
 
 bool Physics::PhysicsBody::isUnknown(const std::string &key, BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
@@ -167,6 +169,12 @@ void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps,
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
     thermalProps = newProps;
+    thermalProps.tempK = Physics::Thermal::clampTemperature(thermalProps.tempK);
+    thermalProps.specificHeat = std::max(thermalProps.specificHeat, 0.0f);
+    thermalProps.emissivity = std::clamp(thermalProps.emissivity, 0.0f, 1.0f);
+    thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);
+    thermalProps.conductivity = std::max(thermalProps.conductivity, 0.0f);
+    thermalProps.density = std::max(thermalProps.density, 0.0f);
 }
 
 ThermalProperties Physics::PhysicsBody::getThermalProperties(BodyLock lock) const {

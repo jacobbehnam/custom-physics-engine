@@ -1,9 +1,11 @@
 #include "RigidBody.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
+#include "physics/utils/ThermalUtils.h"
 
 void Physics::RigidBody::setScale(const glm::vec3& newScale) {
     std::lock_guard<std::mutex> lock(stateMutex);
@@ -21,14 +23,14 @@ void Physics::RigidBody::setGeometry(const std::vector<glm::vec3>& vertices, con
 void Physics::RigidBody::recomputeGeometry() {
     if (meshIndices.empty()) return;
     float area = 0.0f;
-    
+
     for (size_t i = 0; i < meshIndices.size(); i += 3) {
         glm::vec3 a = meshVertices[meshIndices[i]];
         glm::vec3 b = meshVertices[meshIndices[i+1]];
         glm::vec3 c = meshVertices[meshIndices[i+2]];
         area += 0.5f * glm::length(glm::cross(b - a, c - a));
     }
-    
+
     surfaceArea = area * scale.x * scale.y;
 }
 
@@ -126,13 +128,13 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     rbProps.tempK += rbDeltaT;
     pmProps.tempK += pmDeltaT;
 
-    float k = (rbProps.conductivity + pmProps.conductivity) * 0.5f;
-    float contactArea = 0.01f * getSurfaceArea(); // approximate contact area
-    float distance = 0.01f;
-    float qCond = k * contactArea * (rbProps.tempK - pmProps.tempK) / distance * dt;
-
-    rbProps.tempK -= qCond / (static_cast<float>(getMass(BodyLock::NOLOCK)) * rbProps.specificHeat);
-    pmProps.tempK += qCond / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
+    const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
+    const double distance = 0.01;
+    Physics::Thermal::applyConductiveExchange(
+        rbProps, getMass(BodyLock::NOLOCK),
+        pmProps, pm.getMass(BodyLock::NOLOCK),
+        contactArea, distance, dt
+    );
 
     setThermalProperty(rbProps, BodyLock::NOLOCK);
     pm.setThermalProperty(pmProps, BodyLock::NOLOCK);

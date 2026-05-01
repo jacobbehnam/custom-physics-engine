@@ -29,8 +29,8 @@ struct OctreeNode {
     double totalMass = 0.0;
 
     // Aggregated thermal properties
-    float totalEffectiveArea = 0.0f; // sum of (epsilon * Area)
-    float totalEmission = 0.0f;      // sum of (epsilon * Area * T^4)
+    double totalEffectiveArea = 0.0; // sum of (epsilon * Area)
+    double totalEmission = 0.0;      // sum of (epsilon * Area * T^4)
 
     bool isLeaf() const {
         return childMask == 0;

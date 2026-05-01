@@ -43,16 +43,16 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             rotation = o.base.rotation;
             physicsBody = std::make_unique<Physics::RigidBody>(objectID, o.mass, o.createCollider(o.base), o.base.position, o.isStatic);
             auto rb = static_cast<Physics::RigidBody*>(physicsBody.get());
-            
+
             std::span<const Vertex> meshVerts = mesh->getVertices();
             std::vector<glm::vec3> verts(meshVerts.size());
             for (size_t i = 0; i < meshVerts.size(); ++i) {
                 verts[i] = meshVerts[i].pos;
             }
-            
+
             std::span<const unsigned int> meshInds = mesh->getIndices();
             std::vector<unsigned int> inds(meshInds.data(), meshInds.data() + meshInds.size());
-            
+
             rb->setGeometry(verts, inds);
             rb->setScale(o.base.scale);
             physicsBody->setVelocity(o.velocity, BodyLock::LOCK);

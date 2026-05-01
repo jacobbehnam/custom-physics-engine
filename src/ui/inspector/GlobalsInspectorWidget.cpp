@@ -180,7 +180,7 @@ void GlobalsInspectorWidget::createStopConditionUi() {
     mainContainerLayout->addWidget(equationRow);
     mainContainerLayout->addWidget(parameterStack);
 
-    auto updateLogic = [=]() {
+    auto updateLogic = [this, subjectCombo, propCombo, opCombo, thresholdWidget, parameterStack, targetObjCombo, targetVecWidget]() {
         int subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
         const QSignalBlocker b1(subjectCombo);
         subjectCombo->setCurrentIndex(subjIdx != -1 ? subjIdx : 0);

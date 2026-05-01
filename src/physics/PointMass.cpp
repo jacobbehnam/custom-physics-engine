@@ -1,7 +1,9 @@
 #include "PointMass.h"
+#include <algorithm>
 #include <iostream>
 
 #include "RigidBody.h"
+#include "physics/utils/ThermalUtils.h"
 
 Physics::PointMass::PointMass(uint32_t id, double m, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
@@ -120,14 +122,14 @@ bool Physics::PointMass::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     // Contact conduction
     ThermalProperties myProps = getThermalProperties(BodyLock::NOLOCK);
     ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
-    float k = (myProps.conductivity + pmProps.conductivity) * 0.5f;
-    float contactArea = 0.01f * getSurfaceArea();
-    float distance = 0.01f;
-    float qCond = k * contactArea * (myProps.tempK - pmProps.tempK) / distance * dt;
-    
-    myProps.tempK -= qCond / (static_cast<float>(getMass(BodyLock::NOLOCK)) * myProps.specificHeat);
-    pmProps.tempK += qCond / (static_cast<float>(pm.getMass(BodyLock::NOLOCK)) * pmProps.specificHeat);
-    
+    const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
+    const double distance = 0.01;
+    Physics::Thermal::applyConductiveExchange(
+        myProps, getMass(BodyLock::NOLOCK),
+        pmProps, pm.getMass(BodyLock::NOLOCK),
+        contactArea, distance, dt
+    );
+
     setThermalProperty(myProps, BodyLock::NOLOCK);
     pm.setThermalProperty(pmProps, BodyLock::NOLOCK);
 

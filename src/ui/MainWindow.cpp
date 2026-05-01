@@ -112,7 +112,7 @@ void MainWindow::setupDockWidgets() {
         updateStatusPanel();
         glWindow->setFocus();
     });
-    connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [=](const CreationOptions& options) {
+    connect(hierarchy, &HierarchyWidget::createObjectRequested, this, [this](const CreationOptions& options) {
         SceneObject* createdObj = sceneManager->createObject("prim_sphere", ResourceManager::getShader("basic"), options);
         hierarchy->selectObject(createdObj);
     });
@@ -133,15 +133,15 @@ void MainWindow::setupDockWidgets() {
     connect(hierarchy, &HierarchyWidget::deleteObjectRequested, this, [this](SceneObject* obj) {
         sceneManager->deleteObject(obj);
     });
-    connect(sceneManager, &SceneManager::objectAdded, this, [=](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
-    connect(sceneManager, &SceneManager::objectRemoved, this, [=](SceneObject* obj) {
+    connect(sceneManager, &SceneManager::objectAdded, this, [this](SceneObject* obj) { hierarchy->addObject(obj); inspector->unloadObject(); });
+    connect(sceneManager, &SceneManager::objectRemoved, this, [this](SceneObject* obj) {
         if (selectedInfoObject == obj)
             selectedInfoObject = nullptr;
         hierarchy->removeObject(obj);
         inspector->unloadObject();
         updateStatusPanel();
     });
-    connect(sceneManager, &SceneManager::objectRenamed, this, [=](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });
+    connect(sceneManager, &SceneManager::objectRenamed, this, [this](SceneObject* obj, const QString& newName) { hierarchy->setObjectName(obj, newName); });
     connect(sceneManager, &SceneManager::selectedItem, hierarchy, &HierarchyWidget::selectObject);
 
     inspector = new InspectorWidget(sceneManager, this);
