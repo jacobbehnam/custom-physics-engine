@@ -1,8 +1,11 @@
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#include <thread>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPointer>
 #include <QToolTip>
 
 #include "FrameGraphCanvas.h"
@@ -18,6 +21,7 @@ namespace {
     constexpr int   kPlotMarginBottomOffset = 4;
     constexpr int   kLabelOffset            = 2;
     constexpr int   kGridLines              = 3;
+    constexpr int   kGraphBucketsPerPixel   = 2;
 
     int nearestIndexByX(const std::vector<QPointF>& pts, qreal mx) {
         if (pts.empty()) return -1;
@@ -43,18 +47,16 @@ FrameGraphCanvas::FrameGraphCanvas(QWidget* parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumHeight(kMinCanvasHeight);
     resizeRebuildTimer.setSingleShot(true);
-    resizeRebuildTimer.setInterval(120);
+    resizeRebuildTimer.setInterval(250);
     connect(&resizeRebuildTimer, &QTimer::timeout, this, [this]() {
-        rebuildPoints();
-        invalidateCache();
-        update();
+        requestPointRebuild();
     });
 }
 
 void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
     const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMinP, float tMaxP) {
-    framesRef = (frames && !frames->empty()) ? frames : nullptr;
-    if (framesRef) {
+    framesData = (frames && !frames->empty()) ? std::make_shared<std::vector<ObjectSnapshot>>(*frames) : nullptr;
+    if (framesData) {
         valueMinMaxPerMetric = valueMinMax;
         tMin = tMinP;
         tMax = tMaxP;
@@ -63,19 +65,18 @@ void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
         tMin = 0.0f;
         tMax = 0.0f;
     }
-    rebuildPoints();
-    invalidateCache();
-    update();
+    requestPointRebuild();
 }
 
 void FrameGraphCanvas::clear() {
-    framesRef = nullptr;
+    framesData.reset();
     valueMinMaxPerMetric = {};
     tMin = 0.0f;
     tMax = 0.0f;
     graphPoints.clear();
     graphPointFrameIndices.clear();
     hoverIndex = -1;
+    rebuildGeneration.fetch_add(1, std::memory_order_relaxed);
     invalidateCache();
     QToolTip::hideText();
     update();
@@ -83,9 +84,7 @@ void FrameGraphCanvas::clear() {
 
 void FrameGraphCanvas::setMetric(Metric metric) {
     currentMetric = metric;
-    rebuildPoints();
-    invalidateCache();
-    update();
+    requestPointRebuild();
 }
 
 void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
@@ -140,7 +139,7 @@ void FrameGraphCanvas::rebuildBaseCache() {
     painter.drawText(QRect(rect.left(), rect.bottom() + kLabelOffset, rect.width(), bottomLabelHeight()),
                      Qt::AlignRight | Qt::AlignVCenter,
                      tr("Time (s)"));
-    if (graphPoints.empty() || !framesRef) {
+    if (graphPoints.empty() || !framesData) {
         painter.setPen(mutedText);
         painter.drawText(rect, Qt::AlignCenter, tr("Select a simulated object to view its history."));
         cacheDirty = false;
@@ -172,7 +171,7 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
     if (nearestIndex == hoverIndex) return;
 
     hoverIndex = nearestIndex;
-    const ObjectSnapshot& sample = (*framesRef)[graphPointFrameIndices[static_cast<size_t>(nearestIndex)]];
+    const ObjectSnapshot& sample = (*framesData)[graphPointFrameIndices[static_cast<size_t>(nearestIndex)]];
     const float value = objectSnapshotValue(currentMetric, sample);
     QToolTip::showText(event->globalPosition().toPoint(),
                        tr("t=%1 s\n%2=%3")
@@ -207,41 +206,111 @@ QRect FrameGraphCanvas::plotRect() const {
     return rect().adjusted(kPlotMarginLeft, kPlotMarginTop, -kPlotMarginRight, -bottom);
 }
 
-void FrameGraphCanvas::rebuildPoints() {
-    graphPoints.clear();
-    graphPointFrameIndices.clear();
+void FrameGraphCanvas::requestPointRebuild() {
     hoverIndex = -1;
-    if (!framesRef || framesRef->empty()) return;
+    const auto frames = framesData;
+    const uint64_t generation = rebuildGeneration.fetch_add(1, std::memory_order_relaxed) + 1;
     const QRect rect = plotRect();
-    if (rect.width() <= 1 || rect.height() <= 1) return;
+    if (!frames || frames->empty() || rect.width() <= 1 || rect.height() <= 1) {
+        applyRebuiltPoints(generation, {}, {});
+        return;
+    }
 
     const int m = static_cast<int>(currentMetric);
-    if (m < 0 || m >= static_cast<int>(kPlottableMetricCount)) return;
+    if (m < 0 || m >= static_cast<int>(kPlottableMetricCount)) {
+        applyRebuiltPoints(generation, {}, {});
+        return;
+    }
+
+    const auto valueRange = valueMinMaxPerMetric;
     const float minTime = tMin;
     const float maxTime = tMax;
-    const float minValue = valueMinMaxPerMetric[static_cast<size_t>(m)].first;
-    const float maxValue = valueMinMaxPerMetric[static_cast<size_t>(m)].second;
+    const Metric metric = currentMetric;
+    const QPointer<FrameGraphCanvas> self(this);
 
-    graphPoints.reserve(framesRef->size());
-    graphPointFrameIndices.reserve(framesRef->size());
-    const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
-    const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
+    std::thread([self, frames, valueRange, minTime, maxTime, metric, m, rect, generation]() {
+        std::vector<QPointF> points;
+        std::vector<size_t> frameIndices;
 
-    for (size_t i = 0; i < framesRef->size(); ++i) {
-        const auto& frame = (*framesRef)[i];
-        const float timeAlpha = (frame.time - minTime) * invTime;
-        const float valueAlpha = (objectSnapshotValue(currentMetric, frame) - minValue) * invValue;
-        if (!std::isfinite(timeAlpha) || !std::isfinite(valueAlpha)) continue;
+        const float minValue = valueRange[static_cast<size_t>(m)].first;
+        const float maxValue = valueRange[static_cast<size_t>(m)].second;
+        const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
+        const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
+        struct Bucket {
+            bool used = false;
+            qreal x = 0.0;
+            qreal minY = std::numeric_limits<qreal>::max();
+            qreal maxY = std::numeric_limits<qreal>::lowest();
+            size_t minIndex = 0;
+            size_t maxIndex = 0;
+        };
 
-        const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
-        const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
-        if (!std::isfinite(x) || !std::isfinite(y)) continue;
+        const int bucketCount = std::max(1, rect.width() * kGraphBucketsPerPixel);
+        std::vector<Bucket> buckets(static_cast<size_t>(bucketCount));
 
-        graphPoints.emplace_back(x, y);
-        graphPointFrameIndices.push_back(i);
-    }
+        for (size_t i = 0; i < frames->size(); ++i) {
+            const auto& frame = (*frames)[i];
+            const float timeAlpha = (frame.time - minTime) * invTime;
+            const float valueAlpha = (objectSnapshotValue(metric, frame) - minValue) * invValue;
+            if (!std::isfinite(timeAlpha) || !std::isfinite(valueAlpha)) continue;
+
+            const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
+            const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
+            if (!std::isfinite(x) || !std::isfinite(y)) continue;
+
+            const int bucketIndex = std::clamp(static_cast<int>(timeAlpha * static_cast<float>(bucketCount - 1)), 0, bucketCount - 1);
+            Bucket& bucket = buckets[static_cast<size_t>(bucketIndex)];
+            bucket.used = true;
+            bucket.x = x;
+            if (y < bucket.minY) {
+                bucket.minY = y;
+                bucket.minIndex = i;
+            }
+            if (y > bucket.maxY) {
+                bucket.maxY = y;
+                bucket.maxIndex = i;
+            }
+        }
+
+        points.reserve(static_cast<size_t>(bucketCount * 2));
+        frameIndices.reserve(points.capacity());
+
+        for (const Bucket& bucket : buckets) {
+            if (!bucket.used) continue;
+            if (bucket.minIndex <= bucket.maxIndex) {
+                points.emplace_back(bucket.x, bucket.minY);
+                frameIndices.push_back(bucket.minIndex);
+                if (bucket.maxY != bucket.minY) {
+                    points.emplace_back(bucket.x, bucket.maxY);
+                    frameIndices.push_back(bucket.maxIndex);
+                }
+            } else {
+                points.emplace_back(bucket.x, bucket.maxY);
+                frameIndices.push_back(bucket.maxIndex);
+                if (bucket.maxY != bucket.minY) {
+                    points.emplace_back(bucket.x, bucket.minY);
+                    frameIndices.push_back(bucket.minIndex);
+                }
+            }
+        }
+
+        if (!self) return;
+        QMetaObject::invokeMethod(self.data(), [self, generation, points = std::move(points), frameIndices = std::move(frameIndices)]() mutable {
+            if (!self) return;
+            self->applyRebuiltPoints(generation, std::move(points), std::move(frameIndices));
+        }, Qt::QueuedConnection);
+    }).detach();
 }
 
 void FrameGraphCanvas::invalidateCache() {
     cacheDirty = true;
+}
+
+void FrameGraphCanvas::applyRebuiltPoints(uint64_t generation, std::vector<QPointF> points, std::vector<size_t> frameIndices) {
+    if (generation != rebuildGeneration.load(std::memory_order_relaxed)) return;
+    graphPoints = std::move(points);
+    graphPointFrameIndices = std::move(frameIndices);
+    hoverIndex = -1;
+    invalidateCache();
+    update();
 }
