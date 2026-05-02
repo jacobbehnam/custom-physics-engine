@@ -101,7 +101,7 @@ void MainWindow::setupDockWidgets() {
 
     infoDock->setWidget(sceneInfoScrollArea);
     infoDock->setMinimumHeight(80);
-    infoDock->resize(300, 120);
+    infoDock->resize(300, 80);
     addDockWidget(Qt::LeftDockWidgetArea, infoDock);
     viewMenu->addAction(infoDock->toggleViewAction());
 

@@ -280,7 +280,18 @@ void OpenGLWindow::updateObjectLabels() {
         }
 
         bool metricsDirty = false;
-        const QString labelText = QString::fromStdString(obj->getName());
+        QString labelText = QString::fromStdString(obj->getName());
+        if (offscreen) {
+            if (std::abs(ndc.x) > std::abs(ndc.y)) {
+                labelText = ndc.x < 0.0f
+                    ? "← " + labelText
+                    : labelText + " →";
+            } else {
+                labelText = ndc.y < 0.0f
+                    ? labelText + " ↓"
+                    : "↑ " + labelText;
+            }
+        }
         if (button->text() != labelText) {
             button->setText(labelText);
             metricsDirty = true;
