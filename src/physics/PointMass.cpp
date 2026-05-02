@@ -34,7 +34,8 @@ void Physics::PointMass::setThermalProperty(const ThermalProperties& newProps, B
 
 void Physics::PointMass::recomputeSurfaceArea() {
     double curMass = getMass(BodyLock::NOLOCK);
-    float density = getThermalProperties(BodyLock::NOLOCK).density;
+    const ThermalProperties props = getThermalProperties(BodyLock::NOLOCK);
+    double density = Physics::Thermal::effectiveDensity(props, props.tempK);
     if (density > 0.0f) {
         double volume = curMass / density;
         float radius = std::cbrt((3.0f * volume) / (4.0f * glm::pi<float>()));

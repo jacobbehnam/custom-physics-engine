@@ -248,6 +248,26 @@ TEST(ThermalUtils, ExternalHeatFluxRate_UsesSurfaceArea) {
     EXPECT_DOUBLE_EQ(Physics::Thermal::externalHeatFluxRate(props, 4.0), 1000.0);
 }
 
+TEST(ThermalUtils, EffectiveProperties_UseTemperatureCoefficients) {
+    ThermalProperties props;
+    props.referenceTempK = 300.0f;
+    props.specificHeat = 1000.0f;
+    props.specificHeatTempCoeff = 0.01f;
+    props.conductivity = 10.0f;
+    props.conductivityTempCoeff = -0.01f;
+    props.density = 1000.0f;
+    props.linearExpansionCoeff = 1.0e-4f;
+
+    EXPECT_NEAR(Physics::Thermal::effectiveSpecificHeat(props, 310.0), 1100.0, 1.0e-4);
+    EXPECT_NEAR(Physics::Thermal::effectiveConductivity(props, 310.0), 9.0, 1.0e-5);
+    EXPECT_NEAR(Physics::Thermal::effectiveDensity(props, 310.0), 997.008973, 1.0e-5);
+}
+
+TEST(ThermalUtils, CarnotEfficiency_UsesAbsoluteTemperatures) {
+    EXPECT_DOUBLE_EQ(Physics::Thermal::carnotEfficiency(600.0, 300.0), 0.5);
+    EXPECT_DOUBLE_EQ(Physics::Thermal::carnotEfficiency(300.0, 600.0), 0.0);
+}
+
 TEST(ThermalUtils, ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint) {
     ThermalProperties props;
     props.tempK = 300.0;
@@ -258,6 +278,7 @@ TEST(ThermalUtils, ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint) {
     Physics::Thermal::applyThermalEnergy(props, 1.0, 1500.0);
     EXPECT_DOUBLE_EQ(props.tempK, 310.0);
     EXPECT_FLOAT_EQ(props.fusionProgress, 0.5f);
+    EXPECT_GT(props.entropyJPerK, 0.0);
 
     Physics::Thermal::applyThermalEnergy(props, 1.0, 500.0);
     EXPECT_DOUBLE_EQ(props.tempK, 310.0);

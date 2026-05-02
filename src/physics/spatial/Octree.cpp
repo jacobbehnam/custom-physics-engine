@@ -38,7 +38,7 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
 
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
     double area = body->getSurfaceArea();
-    double epsArea = static_cast<double>(props.emissivity) * area;
+    double epsArea = Physics::Thermal::effectiveEmissivity(props, props.tempK) * area;
     double emission = epsArea * Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(props.tempK));
 
     // Node is empty, put the body here
@@ -204,6 +204,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
     double totalHeat = 0.0;
     glm::vec3 bodyPos = body->getPosition(BodyLock::NOLOCK);
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+    const double absorptivity = Physics::Thermal::effectiveAbsorptivity(props, props.tempK);
     double area = body->getSurfaceArea();
     double projectedArea = area * 0.25;
 
@@ -236,13 +237,13 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
                 double other_t_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(otherProps.tempK));
                 double viewFactorTerm = (projectedArea * otherArea) / (4.0 * glm::pi<double>() * pairDistSq);
                 viewFactorTerm = std::min(viewFactorTerm, projectedArea);
-                double q_rad = Constants::STEFAN_BOLTZMANN * props.absorptivity * otherProps.emissivity * viewFactorTerm * other_t_4;
+                double q_rad = Constants::STEFAN_BOLTZMANN * absorptivity * Physics::Thermal::effectiveEmissivity(otherProps, otherProps.tempK) * viewFactorTerm * other_t_4;
                 totalHeat += q_rad;
             }
 
         } else if (widthSq < Constants::THETA_SQ * distSq) {
             double solidAngleFactor = projectedArea / (4.0 * glm::pi<double>() * distSq);
-            double q_rad = Constants::STEFAN_BOLTZMANN * props.absorptivity * solidAngleFactor * node.totalEmission;
+            double q_rad = Constants::STEFAN_BOLTZMANN * absorptivity * solidAngleFactor * node.totalEmission;
             totalHeat += q_rad;
 
         } else {

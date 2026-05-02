@@ -16,6 +16,41 @@ double clampTemperature(double tempK) {
     return std::clamp(tempK, kMinTemperatureK, kMaxTemperatureK);
 }
 
+double linearTemperatureFactor(double coeffPerK, double tempK, double referenceTempK) {
+    if (!std::isfinite(coeffPerK) || !std::isfinite(tempK) || !std::isfinite(referenceTempK)) return 1.0;
+    return std::max(0.0, 1.0 + coeffPerK * (tempK - referenceTempK));
+}
+
+double effectiveSpecificHeat(const ThermalProperties& props, double tempK) {
+    return static_cast<double>(std::max(props.specificHeat, 0.0f))
+        * linearTemperatureFactor(props.specificHeatTempCoeff, tempK, props.referenceTempK);
+}
+
+double effectiveConductivity(const ThermalProperties& props, double tempK) {
+    return static_cast<double>(std::max(props.conductivity, 0.0f))
+        * linearTemperatureFactor(props.conductivityTempCoeff, tempK, props.referenceTempK);
+}
+
+double effectiveEmissivity(const ThermalProperties& props, double tempK) {
+    const double value = static_cast<double>(std::clamp(props.emissivity, 0.0f, 1.0f))
+        * linearTemperatureFactor(props.emissivityTempCoeff, tempK, props.referenceTempK);
+    return std::clamp(value, 0.0, 1.0);
+}
+
+double effectiveAbsorptivity(const ThermalProperties& props, double tempK) {
+    const double value = static_cast<double>(std::clamp(props.absorptivity, 0.0f, 1.0f))
+        * linearTemperatureFactor(props.absorptivityTempCoeff, tempK, props.referenceTempK);
+    return std::clamp(value, 0.0, 1.0);
+}
+
+double effectiveDensity(const ThermalProperties& props, double tempK) {
+    const double density = static_cast<double>(std::max(props.density, 0.0f));
+    if (density <= 0.0) return 0.0;
+
+    const double expansion = 1.0 + 3.0 * static_cast<double>(props.linearExpansionCoeff) * (tempK - props.referenceTempK);
+    return expansion > 0.0 ? density / expansion : density;
+}
+
 double activeThermalMass(double massKg, const ThermalProperties& props) {
     if (massKg <= 0.0) return 0.0;
     const double activeMassFraction = std::clamp(static_cast<double>(props.thermalMassFraction), 0.0, 1.0);
@@ -23,8 +58,41 @@ double activeThermalMass(double massKg, const ThermalProperties& props) {
 }
 
 double heatCapacity(double massKg, const ThermalProperties& props) {
-    if (props.specificHeat <= 0.0f) return 0.0;
-    return activeThermalMass(massKg, props) * static_cast<double>(props.specificHeat);
+    const double specificHeat = effectiveSpecificHeat(props, props.tempK);
+    if (specificHeat <= 0.0) return 0.0;
+    return activeThermalMass(massKg, props) * specificHeat;
+}
+
+double thermalDiffusivity(const ThermalProperties& props, double tempK) {
+    const double density = effectiveDensity(props, tempK);
+    const double specificHeat = effectiveSpecificHeat(props, tempK);
+    if (density <= 0.0 || specificHeat <= 0.0) return 0.0;
+    return effectiveConductivity(props, tempK) / (density * specificHeat);
+}
+
+double biotNumber(const ThermalProperties& props, double characteristicLengthM) {
+    const double conductivity = effectiveConductivity(props, props.tempK);
+    if (characteristicLengthM <= 0.0 || conductivity <= 0.0) return 0.0;
+    return static_cast<double>(props.heatTransferCoeff) * characteristicLengthM / conductivity;
+}
+
+double fourierNumber(const ThermalProperties& props, double characteristicLengthM, double elapsedSeconds) {
+    if (characteristicLengthM <= 0.0 || elapsedSeconds <= 0.0) return 0.0;
+    return thermalDiffusivity(props, props.tempK) * elapsedSeconds / (characteristicLengthM * characteristicLengthM);
+}
+
+double carnotEfficiency(double hotTempK, double coldTempK) {
+    hotTempK = clampTemperature(hotTempK);
+    coldTempK = clampTemperature(coldTempK);
+    if (hotTempK <= 0.0 || coldTempK >= hotTempK) return 0.0;
+    return 1.0 - coldTempK / hotTempK;
+}
+
+double specificEntropyChange(double specificHeatJPerKgK, double fromTempK, double toTempK) {
+    fromTempK = clampTemperature(fromTempK);
+    toTempK = clampTemperature(toTempK);
+    if (specificHeatJPerKgK <= 0.0 || fromTempK <= 0.0 || toTempK <= 0.0) return 0.0;
+    return specificHeatJPerKgK * std::log(toTempK / fromTempK);
 }
 
 double convectionHeatRate(const ThermalProperties& props, double areaM2, double ambientTempK) {
@@ -33,10 +101,11 @@ double convectionHeatRate(const ThermalProperties& props, double areaM2, double 
 }
 
 double ambientRadiationHeatRate(const ThermalProperties& props, double areaM2, double ambientTempK) {
-    if (areaM2 <= 0.0 || props.emissivity <= 0.0f) return 0.0;
     const double tObj = clampTemperature(props.tempK);
     const double tAmb = clampTemperature(ambientTempK);
-    return static_cast<double>(props.emissivity) * Constants::STEFAN_BOLTZMANN * areaM2 * (fourthPower(tAmb) - fourthPower(tObj));
+    const double emissivity = effectiveEmissivity(props, tObj);
+    if (areaM2 <= 0.0 || emissivity <= 0.0) return 0.0;
+    return emissivity * Constants::STEFAN_BOLTZMANN * areaM2 * (fourthPower(tAmb) - fourthPower(tObj));
 }
 
 double externalHeatFluxRate(const ThermalProperties& props, double areaM2) {
@@ -61,28 +130,35 @@ void applyThermalEnergy(ThermalProperties& props, double massKg, double energyJ)
     const double boilingPoint = static_cast<double>(std::max(props.boilingPoint, 0.0f));
 
     auto applySensibleHeatToward = [&](double targetTemp, double& energy) {
+        const double initialTemp = props.tempK;
+        const double specificHeat = effectiveSpecificHeat(props, initialTemp);
         const double required = (targetTemp - props.tempK) * capacity;
         if ((energy > 0.0 && required <= 0.0) || (energy < 0.0 && required >= 0.0)) return false;
         if (std::abs(energy) < std::abs(required)) {
             props.tempK = clampTemperature(props.tempK + energy / capacity);
+            props.entropyJPerK += activeMass * specificEntropyChange(specificHeat, initialTemp, props.tempK);
             energy = 0.0;
             return true;
         }
         props.tempK = clampTemperature(targetTemp);
+        props.entropyJPerK += activeMass * specificEntropyChange(specificHeat, initialTemp, props.tempK);
         energy -= required;
         return false;
     };
 
-    auto applyLatentHeat = [](double latentCapacity, float& progress, double& energy) {
+    auto applyLatentHeat = [&](double latentCapacity, float& progress, double& energy) {
         if (latentCapacity <= 0.0 || energy == 0.0) return;
+        const double phaseTemp = std::max(props.tempK, 1.0e-9);
 
         if (energy > 0.0) {
             const double required = (1.0 - static_cast<double>(progress)) * latentCapacity;
             if (energy < required) {
                 progress = static_cast<float>(std::clamp(static_cast<double>(progress) + energy / latentCapacity, 0.0, 1.0));
+                props.entropyJPerK += energy / phaseTemp;
                 energy = 0.0;
             } else {
                 progress = 1.0f;
+                props.entropyJPerK += required / phaseTemp;
                 energy -= required;
             }
         } else {
@@ -90,9 +166,11 @@ void applyThermalEnergy(ThermalProperties& props, double massKg, double energyJ)
             const double cooling = -energy;
             if (cooling < released) {
                 progress = static_cast<float>(std::clamp(static_cast<double>(progress) - cooling / latentCapacity, 0.0, 1.0));
+                props.entropyJPerK += energy / phaseTemp;
                 energy = 0.0;
             } else {
                 progress = 0.0f;
+                props.entropyJPerK -= released / phaseTemp;
                 energy += released;
             }
         }
@@ -113,7 +191,9 @@ void applyThermalEnergy(ThermalProperties& props, double massKg, double energyJ)
             if (energyJ == 0.0) return;
         }
 
+        const double initialTemp = props.tempK;
         props.tempK = clampTemperature(props.tempK + energyJ / capacity);
+        props.entropyJPerK += activeMass * specificEntropyChange(effectiveSpecificHeat(props, initialTemp), initialTemp, props.tempK);
         return;
     }
 
@@ -131,7 +211,9 @@ void applyThermalEnergy(ThermalProperties& props, double massKg, double energyJ)
         if (energyJ == 0.0) return;
     }
 
+    const double initialTemp = props.tempK;
     props.tempK = clampTemperature(props.tempK + energyJ / capacity);
+    props.entropyJPerK += activeMass * specificEntropyChange(effectiveSpecificHeat(props, initialTemp), initialTemp, props.tempK);
 }
 
 void applyConductiveExchange(ThermalProperties& a, double massA, ThermalProperties& b, double massB, double areaM2, double distanceM, double dt) {
@@ -140,7 +222,7 @@ void applyConductiveExchange(ThermalProperties& a, double massA, ThermalProperti
     const double capB = heatCapacity(massB, b);
     if (capA <= 0.0 || capB <= 0.0) return;
 
-    const double rateToA = conductiveHeatRate(a.conductivity, b.conductivity, areaM2, distanceM, a.tempK, b.tempK);
+    const double rateToA = conductiveHeatRate(effectiveConductivity(a, a.tempK), effectiveConductivity(b, b.tempK), areaM2, distanceM, a.tempK, b.tempK);
     if (!std::isfinite(rateToA) || rateToA == 0.0) return;
 
     const double equilibriumEnergy = (b.tempK - a.tempK) * capA * capB / (capA + capB);
