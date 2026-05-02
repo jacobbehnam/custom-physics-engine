@@ -37,24 +37,42 @@ namespace JsonUtils {
     inline QJsonObject thermalToJson(const ThermalProperties& props) {
         QJsonObject obj;
         obj["tempK"] = props.tempK;
+        obj["internalHeatPower"] = props.internalHeatPower;
+        obj["externalHeatFlux"] = props.externalHeatFlux;
         obj["specificHeat"] = props.specificHeat;
+        obj["thermalMassFraction"] = props.thermalMassFraction;
         obj["emissivity"] = props.emissivity;
+        obj["absorptivity"] = props.absorptivity;
         obj["heatTransferCoeff"] = props.heatTransferCoeff;
         obj["conductivity"] = props.conductivity;
         obj["density"] = props.density;
         obj["meltingPoint"] = props.meltingPoint;
+        obj["latentHeatFusion"] = props.latentHeatFusion;
+        obj["fusionProgress"] = props.fusionProgress;
+        obj["boilingPoint"] = props.boilingPoint;
+        obj["latentHeatVaporization"] = props.latentHeatVaporization;
+        obj["vaporizationProgress"] = props.vaporizationProgress;
         return obj;
     }
 
     inline ThermalProperties jsonToThermal(const QJsonObject& obj, const ThermalProperties& fallback) {
         ThermalProperties props = fallback;
         props.tempK = numberOr(obj, "tempK", props.tempK);
+        props.internalHeatPower = numberOr(obj, "internalHeatPower", props.internalHeatPower);
+        props.externalHeatFlux = numberOr(obj, "externalHeatFlux", props.externalHeatFlux);
         props.specificHeat = static_cast<float>(numberOr(obj, "specificHeat", props.specificHeat));
+        props.thermalMassFraction = static_cast<float>(numberOr(obj, "thermalMassFraction", props.thermalMassFraction));
         props.emissivity = static_cast<float>(numberOr(obj, "emissivity", props.emissivity));
+        props.absorptivity = static_cast<float>(numberOr(obj, "absorptivity", props.absorptivity));
         props.heatTransferCoeff = static_cast<float>(numberOr(obj, "heatTransferCoeff", props.heatTransferCoeff));
         props.conductivity = static_cast<float>(numberOr(obj, "conductivity", props.conductivity));
         props.density = static_cast<float>(numberOr(obj, "density", props.density));
         props.meltingPoint = static_cast<float>(numberOr(obj, "meltingPoint", props.meltingPoint));
+        props.latentHeatFusion = static_cast<float>(numberOr(obj, "latentHeatFusion", props.latentHeatFusion));
+        props.fusionProgress = static_cast<float>(numberOr(obj, "fusionProgress", props.fusionProgress));
+        props.boilingPoint = static_cast<float>(numberOr(obj, "boilingPoint", props.boilingPoint));
+        props.latentHeatVaporization = static_cast<float>(numberOr(obj, "latentHeatVaporization", props.latentHeatVaporization));
+        props.vaporizationProgress = static_cast<float>(numberOr(obj, "vaporizationProgress", props.vaporizationProgress));
         return props;
     }
 }

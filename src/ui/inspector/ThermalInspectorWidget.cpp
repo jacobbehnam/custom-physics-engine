@@ -2,6 +2,7 @@
 #include "graphics/core/SceneObject.h"
 #include "physics/PhysicsBody.h"
 #include "physics/ThermalProperties.h"
+#include "ui/ScalarWidget.h"
 
 ThermalInspectorWidget::ThermalInspectorWidget(QWidget* parent) : IInspectorSection(parent) {
     layout = new QFormLayout(this);
@@ -38,6 +39,52 @@ void ThermalInspectorWidget::createUiComponents() {
         rows.push_back(std::move(row));
     }
     {
+        InspectorRow row("Heat Generation", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).internalHeatPower : 0.0;
+            },
+            [this](double val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.internalHeatPower = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "W",
+            [](ScalarWidget* widget) {
+                widget->setRange(-1.0e30, 1.0e30);
+                widget->setDecimals(3);
+            }
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("External Flux", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).externalHeatFlux : 0.0;
+            },
+            [this](double val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.externalHeatFlux = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "W/m2",
+            [](ScalarWidget* widget) {
+                widget->setRange(-1.0e18, 1.0e18);
+                widget->setDecimals(3);
+            }
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
         InspectorRow row("Specific Heat", this);
         row.addScalar(
             [this]() {
@@ -57,6 +104,25 @@ void ThermalInspectorWidget::createUiComponents() {
         rows.push_back(std::move(row));
     }
     {
+        InspectorRow row("Thermal Mass", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).thermalMassFraction : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.thermalMassFraction = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            ""
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
         InspectorRow row("Emissivity", this);
         row.addScalar(
             [this]() {
@@ -67,6 +133,25 @@ void ThermalInspectorWidget::createUiComponents() {
                 if (auto* b = getBody()) {
                     auto props = b->getThermalProperties(BodyLock::NOLOCK);
                     props.emissivity = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            ""
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Absorptivity", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).absorptivity : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.absorptivity = val;
                     b->setThermalProperty(props, BodyLock::NOLOCK);
                 }
             },
@@ -109,6 +194,136 @@ void ThermalInspectorWidget::createUiComponents() {
                 }
             },
             "W/(mK)"
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Melting Point", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).meltingPoint : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.meltingPoint = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "K"
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Latent Fusion", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).latentHeatFusion : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.latentHeatFusion = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "J/kg",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0e12);
+                widget->setDecimals(3);
+            }
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Fusion", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).fusionProgress : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.fusionProgress = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0);
+                widget->setDecimals(4);
+            }
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Boiling Point", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).boilingPoint : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.boilingPoint = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "K"
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Latent Vaporization", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).latentHeatVaporization : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.latentHeatVaporization = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "J/kg",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0e12);
+                widget->setDecimals(3);
+            }
+        );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+    {
+        InspectorRow row("Vaporization", this);
+        row.addScalar(
+            [this]() {
+                auto* b = getBody();
+                return b ? b->getThermalProperties(BodyLock::NOLOCK).vaporizationProgress : 0.0f;
+            },
+            [this](float val) {
+                if (auto* b = getBody()) {
+                    auto props = b->getThermalProperties(BodyLock::NOLOCK);
+                    props.vaporizationProgress = val;
+                    b->setThermalProperty(props, BodyLock::NOLOCK);
+                }
+            },
+            "",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0);
+                widget->setDecimals(4);
+            }
         );
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));

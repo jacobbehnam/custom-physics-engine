@@ -66,16 +66,45 @@ void SceneManager::defaultSetup() {
         OrbitalElements orbit;
     };
 
-    auto makeThermal = [](double tempK, float density, float emissivity, float specificHeat, float conductivity, float meltingPoint) {
+    constexpr double sunMassKg = 1.9885e30;
+    constexpr double sunRadiusKm = 695700.0;
+    constexpr double sunTempK = 5772.0;
+
+    auto makeThermal = [](double tempK, float density, float emissivity, float absorptivity, float specificHeat, float thermalMassFraction, float conductivity, float meltingPoint, double internalHeatPower = 0.0) {
         ThermalProperties thermal;
         thermal.tempK = tempK;
+        thermal.internalHeatPower = internalHeatPower;
         thermal.emissivity = emissivity;
+        thermal.absorptivity = absorptivity;
         thermal.heatTransferCoeff = 0.0f;
         thermal.specificHeat = specificHeat;
+        thermal.thermalMassFraction = thermalMassFraction;
         thermal.conductivity = conductivity;
         thermal.density = density;
         thermal.meltingPoint = meltingPoint;
         return thermal;
+    };
+
+    auto emittedRadiationPower = [](double radiusKm, double tempK, double emissivity) {
+        const double radiusM = radiusKm * 1000.0;
+        const double surfaceArea = 4.0 * pi * radiusM * radiusM;
+        return emissivity * Constants::STEFAN_BOLTZMANN * surfaceArea * std::pow(tempK, 4.0);
+    };
+
+    const double sunLuminosity = emittedRadiationPower(sunRadiusKm, sunTempK, 1.0);
+
+    auto absorbedSolarPower = [&](double radiusKm, double orbitDistanceAu, double absorptivity) {
+        const double radiusM = radiusKm * 1000.0;
+        const double projectedArea = pi * radiusM * radiusM;
+        const double orbitDistanceM = orbitDistanceAu * metersPerAu;
+        const double irradiance = sunLuminosity / (4.0 * pi * orbitDistanceM * orbitDistanceM);
+        return absorptivity * irradiance * projectedArea;
+    };
+
+    auto equilibriumInternalHeatPower = [&](double radiusKm, double orbitDistanceAu, double tempK, double emissivity, double absorptivity) {
+        const double emitted = emittedRadiationPower(radiusKm, tempK, emissivity);
+        const double absorbed = absorbedSolarPower(radiusKm, orbitDistanceAu, absorptivity);
+        return std::max(0.0, emitted - absorbed);
     };
 
     auto normalizeRadians = [](double angle) {
@@ -143,7 +172,7 @@ void SceneManager::defaultSetup() {
     };
 
     auto createSolarBody = [&](const BodySpec& spec) {
-        const OrbitalState state = stateFromElements(spec.orbit, 1.9891e30, defaultEpochJd);
+        const OrbitalState state = stateFromElements(spec.orbit, sunMassKg, defaultEpochJd);
         PointMassOptions options;
         options.base.position = state.position;
         options.base.scale = glm::vec3(static_cast<float>(spec.radiusKm * 2.0 * metersPerKm));
@@ -163,21 +192,21 @@ void SceneManager::defaultSetup() {
 
     PointMassOptions sunOptions;
     sunOptions.base.position = glm::vec3(0.0f);
-    sunOptions.base.scale = glm::vec3(696000.0f * 2.0f * static_cast<float>(metersPerKm));
-    sunOptions.mass = 1.9891e30;
+    sunOptions.base.scale = glm::vec3(static_cast<float>(sunRadiusKm * 2.0 * metersPerKm));
+    sunOptions.mass = sunMassKg;
     SceneObject* sun = createObject("prim_sphere", ResourceManager::getShader("basic"), sunOptions);
     setObjectName(sun, "Sun");
-    sun->getPhysicsBody()->setThermalProperty(makeThermal(5778.0, 1408.0f, 1.0f, 20780.0f, 1.0e4f, 0.0f), BodyLock::NOLOCK);
+    sun->getPhysicsBody()->setThermalProperty(makeThermal(sunTempK, 1408.0f, 1.0f, 1.0f, 20780.0f, 1.0f, 1.0e4f, 0.0f, sunLuminosity), BodyLock::NOLOCK);
 
     const std::array<BodySpec, 8> planets{{
-        {"Mercury", 0.330e24, 4879.0 / 2.0, makeThermal(440.15, 5429.0f, 0.90f, 800.0f, 2.0f, 1700.0f), {0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081}},
-        {"Venus",   4.87e24, 12104.0 / 2.0, makeThermal(737.15, 5243.0f, 0.95f, 850.0f, 2.0f, 1700.0f), {0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418}},
-        {"Earth",   5.97e24, 12756.0 / 2.0, makeThermal(288.15, 5514.0f, 0.96f, 1000.0f, 2.5f, 1700.0f), {1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0.0, 0.0}},
-        {"Mars",    0.642e24, 6792.0 / 2.0, makeThermal(208.15, 3934.0f, 0.95f, 750.0f, 0.08f, 1700.0f), {1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343}},
-        {"Jupiter", 1898.0e24, 142984.0 / 2.0, makeThermal(163.15, 1326.0f, 0.99f, 13000.0f, 0.18f, 0.0f), {5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106}},
-        {"Saturn",  568.0e24, 120536.0 / 2.0, makeThermal(133.15, 687.0f, 0.99f, 13000.0f, 0.18f, 0.0f), {9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794}},
-        {"Uranus",  86.8e24, 51118.0 / 2.0, makeThermal(78.15, 1270.0f, 0.99f, 9000.0f, 0.6f, 0.0f), {19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589}},
-        {"Neptune", 102.0e24, 49528.0 / 2.0, makeThermal(73.15, 1638.0f, 0.99f, 9000.0f, 0.6f, 0.0f), {30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664}},
+        {"Mercury", 0.33010e24, 2439.7, makeThermal(440.15, 5429.0f, 0.90f, 0.91f, 800.0f, 1.0e-8f, 2.0f, 1700.0f), {0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081}},
+        {"Venus",   4.8673e24, 6051.8, makeThermal(737.15, 5243.0f, 0.01f, 0.25f, 850.0f, 5.0e-6f, 2.0f, 1700.0f, equilibriumInternalHeatPower(6051.8, 0.72333566, 737.15, 0.01, 0.25)), {0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418}},
+        {"Earth",   5.9724e24, 6371.0, makeThermal(288.15, 5514.0f, 0.61f, 0.70f, 1000.0f, 1.0e-5f, 2.5f, 1700.0f), {1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0.0, 0.0}},
+        {"Mars",    0.64169e24, 3389.5, makeThermal(208.15, 3934.0f, 0.85f, 0.75f, 750.0f, 1.0e-7f, 0.08f, 1700.0f), {1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343}},
+        {"Jupiter", 1898.13e24, 69911.0, makeThermal(163.15, 1326.0f, 0.55f, 0.50f, 13000.0f, 1.0e-6f, 0.18f, 0.0f, equilibriumInternalHeatPower(69911.0, 5.20288700, 163.15, 0.55, 0.50)), {5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106}},
+        {"Saturn",  568.32e24, 58232.0, makeThermal(133.15, 687.0f, 0.45f, 0.66f, 13000.0f, 1.0e-6f, 0.18f, 0.0f, equilibriumInternalHeatPower(58232.0, 9.53667594, 133.15, 0.45, 0.66)), {9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794}},
+        {"Uranus",  86.811e24, 25362.0, makeThermal(78.15, 1270.0f, 0.50f, 0.70f, 9000.0f, 1.0e-6f, 0.6f, 0.0f, equilibriumInternalHeatPower(25362.0, 19.18916464, 78.15, 0.50, 0.70)), {19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589}},
+        {"Neptune", 102.409e24, 24622.0, makeThermal(73.15, 1638.0f, 0.65f, 0.70f, 9000.0f, 1.0e-6f, 0.6f, 0.0f, equilibriumInternalHeatPower(24622.0, 30.06992276, 73.15, 0.65, 0.70)), {30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664}},
     }};
 
     SceneObject* earth = nullptr;
@@ -193,7 +222,7 @@ void SceneManager::defaultSetup() {
 
     const OrbitalState moonRelativeState = stateFromElements(
         {0.002569555, 0.0, 0.0549, 0.0, 5.1454, 0.0, 558.5516, 481267.88088047254, 443.1862, 4069.01334885, 125.1228, -1934.1378481575},
-        5.972e24,
+        5.9724e24,
         defaultEpochJd
     );
     PointMassOptions moonOptions;
@@ -203,7 +232,7 @@ void SceneManager::defaultSetup() {
     moonOptions.velocity = earthState.velocity + moonRelativeState.velocity;
     SceneObject* moon = createObject("prim_sphere", ResourceManager::getShader("basic"), moonOptions);
     setObjectName(moon, "Moon");
-    moon->getPhysicsBody()->setThermalProperty(makeThermal(253.15, 3340.0f, 0.95f, 741.0f, 0.001f, 1700.0f), BodyLock::NOLOCK);
+    moon->getPhysicsBody()->setThermalProperty(makeThermal(270.4, 3344.0f, 0.95f, 0.88f, 741.0f, 1.0e-8f, 0.001f, 1700.0f), BodyLock::NOLOCK);
 
     focusObject(earth);
 }
@@ -502,14 +531,15 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
         currentGizmo->handleDrag(ray);
     }
 
+    const float cameraDt = heldKeys.contains(Qt::Key_Shift) ? dt * 0.1f : dt;
     if (heldKeys.contains(Qt::Key_A))
-        camera->processKeyboard(Movement::LEFT, dt);
+        camera->processKeyboard(Movement::LEFT, cameraDt);
     if (heldKeys.contains(Qt::Key_D))
-        camera->processKeyboard(Movement::RIGHT, dt);
+        camera->processKeyboard(Movement::RIGHT, cameraDt);
     if (heldKeys.contains(Qt::Key_W))
-        camera->processKeyboard(Movement::FORWARD, dt);
+        camera->processKeyboard(Movement::FORWARD, cameraDt);
     if (heldKeys.contains(Qt::Key_S))
-        camera->processKeyboard(Movement::BACKWARD, dt);
+        camera->processKeyboard(Movement::BACKWARD, cameraDt);
 
     // TODO: Z,X,P,O should be processed by press once
     // It currently triggers every frame (caused bugs)

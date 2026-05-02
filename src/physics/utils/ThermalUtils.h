@@ -15,10 +15,13 @@ constexpr double kMaxTemperatureStepFraction = 0.02;
 
 double fourthPower(double value);
 double clampTemperature(double tempK);
+double activeThermalMass(double massKg, const ThermalProperties& props);
 double heatCapacity(double massKg, const ThermalProperties& props);
 double convectionHeatRate(const ThermalProperties& props, double areaM2, double ambientTempK);
 double ambientRadiationHeatRate(const ThermalProperties& props, double areaM2, double ambientTempK);
+double externalHeatFluxRate(const ThermalProperties& props, double areaM2);
 double conductiveHeatRate(double conductivityA, double conductivityB, double areaM2, double distanceM, double tempAK, double tempBK);
+void applyThermalEnergy(ThermalProperties& props, double massKg, double energyJ);
 void applyConductiveExchange(ThermalProperties& a, double massA, ThermalProperties& b, double massB, double areaM2, double distanceM, double dt);
 
 template <typename HeatRateFn>
@@ -38,7 +41,7 @@ void integrateTemperature(ThermalProperties& props, double massKg, double dt, He
         const double subDt = std::min({remaining, kMaxThermalStepSeconds, stepByTemp});
         if (subDt <= 0.0 || !std::isfinite(subDt)) break;
 
-        props.tempK = clampTemperature(props.tempK + (rate * subDt) / capacity);
+        applyThermalEnergy(props, massKg, rate * subDt);
         remaining -= subDt;
     }
 }

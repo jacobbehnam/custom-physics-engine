@@ -14,6 +14,7 @@ class OpenGLWindow;
 class InspectorWidget;
 class HierarchyWidget;
 class FrameGraphPanel;
+class QMenu;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -42,6 +43,7 @@ private:
     QLabel* simulationStateLabel;
     QLabel* renderClockStateLabel;
     QLabel* cameraFollowLabel;
+    QMenu* viewMenu = nullptr;
     SceneObject* selectedInfoObject = nullptr;
 
     InspectorWidget* inspector;

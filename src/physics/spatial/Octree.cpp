@@ -196,7 +196,7 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
     return totalForce;
 }
 
-double Octree::computeHeat(Physics::PhysicsBody* body, double bodyTemperatureK) {
+double Octree::computeHeat(Physics::PhysicsBody* body) {
     if (nodes.empty() || body == nullptr) {
         return 0.0;
     }
@@ -205,7 +205,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body, double bodyTemperatureK) 
     glm::vec3 bodyPos = body->getPosition(BodyLock::NOLOCK);
     ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
     double area = body->getSurfaceArea();
-    double t_obj_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(bodyTemperatureK));
+    double projectedArea = area * 0.25;
 
     std::vector<NodeIndex> stack;
     stack.reserve(512);
@@ -234,17 +234,15 @@ double Octree::computeHeat(Physics::PhysicsBody* body, double bodyTemperatureK) 
                 double otherArea = other->getSurfaceArea();
                 ThermalProperties otherProps = other->getThermalProperties(BodyLock::NOLOCK);
                 double other_t_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(otherProps.tempK));
-                double viewFactorTerm = (area * otherArea) / (4.0 * glm::pi<double>() * pairDistSq);
-                viewFactorTerm = std::min(viewFactorTerm, std::min(area, otherArea));
-                double q_rad = Constants::STEFAN_BOLTZMANN * props.emissivity * otherProps.emissivity * viewFactorTerm * (other_t_4 - t_obj_4);
+                double viewFactorTerm = (projectedArea * otherArea) / (4.0 * glm::pi<double>() * pairDistSq);
+                viewFactorTerm = std::min(viewFactorTerm, projectedArea);
+                double q_rad = Constants::STEFAN_BOLTZMANN * props.absorptivity * otherProps.emissivity * viewFactorTerm * other_t_4;
                 totalHeat += q_rad;
             }
 
         } else if (widthSq < Constants::THETA_SQ * distSq) {
-            // For distant nodes, we avoid the clamping logic and distribute the Stefan-Boltzmann equation.
-            // Q = sigma * eps_1 * [ (A_1 / 4 pi r^2) * totalEmission - T_1^4 * (A_1 / 4 pi r^2) * totalEpsArea ]
-            double solidAngleFactor = area / (4.0 * glm::pi<double>() * distSq);
-            double q_rad = Constants::STEFAN_BOLTZMANN * props.emissivity * solidAngleFactor * (node.totalEmission - t_obj_4 * node.totalEffectiveArea);
+            double solidAngleFactor = projectedArea / (4.0 * glm::pi<double>() * distSq);
+            double q_rad = Constants::STEFAN_BOLTZMANN * props.absorptivity * solidAngleFactor * node.totalEmission;
             totalHeat += q_rad;
 
         } else {

@@ -10,6 +10,7 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QDir> 
+#include <QFrame>
 #include <QHeaderView>
 #include <QTableView>
 #include <QTabWidget>
@@ -66,6 +67,8 @@ void MainWindow::onGLInitialized() {
 void MainWindow::setupDockWidgets() {
     auto* infoDock = new QDockWidget(tr("Scene Info"), this);
     infoDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    infoDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable);
+
     auto* infoPanel = new QWidget(infoDock);
     auto* infoLayout = new QFormLayout(infoPanel);
     infoLayout->setContentsMargins(8, 8, 8, 8);
@@ -88,9 +91,19 @@ void MainWindow::setupDockWidgets() {
     infoLayout->addRow("Camera follow", cameraFollowLabel);
     infoLayout->addRow("Physics", simulationStateLabel);
     infoLayout->addRow("Render clock", renderClockStateLabel);
-    infoDock->setWidget(infoPanel);
-    infoDock->setMinimumHeight(110);
+
+    auto* sceneInfoScrollArea = new QScrollArea(infoDock);
+    sceneInfoScrollArea->setWidgetResizable(true);
+    sceneInfoScrollArea->setFrameShape(QFrame::NoFrame);
+    sceneInfoScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    sceneInfoScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    sceneInfoScrollArea->setWidget(infoPanel);
+
+    infoDock->setWidget(sceneInfoScrollArea);
+    infoDock->setMinimumHeight(80);
+    infoDock->resize(300, 120);
     addDockWidget(Qt::LeftDockWidgetArea, infoDock);
+    viewMenu->addAction(infoDock->toggleViewAction());
 
     auto* hierarchyDock = new QDockWidget(tr("Objects"), this);
     hierarchyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -98,6 +111,8 @@ void MainWindow::setupDockWidgets() {
     hierarchyDock->setWidget(hierarchy);
     addDockWidget(Qt::LeftDockWidgetArea, hierarchyDock);
     splitDockWidget(infoDock, hierarchyDock, Qt::Vertical);
+    resizeDocks({infoDock, hierarchyDock}, {120, 600}, Qt::Vertical);
+    viewMenu->addAction(hierarchyDock->toggleViewAction());
 
     connect(hierarchy, &HierarchyWidget::selectionChanged, this, &MainWindow::onHierarchySelectionChanged);
     connect(hierarchy, &HierarchyWidget::focusObjectRequested, this, [this](SceneObject* obj) {
@@ -159,6 +174,7 @@ void MainWindow::setupDockWidgets() {
 
     inspectorDock->setWidget(scrollArea);
     addDockWidget(Qt::LeftDockWidgetArea, inspectorDock);
+    viewMenu->addAction(inspectorDock->toggleViewAction());
 
     auto* historyDock = new QDockWidget(tr("Frame History"), this);
     historyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -177,6 +193,7 @@ void MainWindow::setupDockWidgets() {
 
     historyDock->setWidget(tabs);
     addDockWidget(Qt::RightDockWidgetArea, historyDock);
+    viewMenu->addAction(historyDock->toggleViewAction());
 }
 
 void MainWindow::setupFileMenu() {
@@ -266,6 +283,7 @@ void MainWindow::setupSettingMenu() {
 
 void MainWindow::setupMenuBar() {
     MainWindow::setupFileMenu();
+    viewMenu = menuBar()->addMenu("View");
     MainWindow::setupSettingMenu();
 }
 

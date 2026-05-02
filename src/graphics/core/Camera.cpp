@@ -101,7 +101,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
         glm::vec3 direction = glm::normalize(toCamera);
         float orbitYaw = std::atan2(direction.z, direction.x);
         float orbitPitch = std::asin(std::clamp(direction.y, -1.0f, 1.0f));
-        orbitYaw -= glm::radians(xoffset * mouseSensitivity);
+        orbitYaw += glm::radians(xoffset * mouseSensitivity);
         orbitPitch -= glm::radians(yoffset * mouseSensitivity);
         orbitPitch = std::clamp(orbitPitch, glm::radians(-89.0f), glm::radians(89.0f));
 

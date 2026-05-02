@@ -233,6 +233,40 @@ TEST(ThermalUtils, AmbientRadiation_UsesStefanBoltzmannSignConvention) {
     EXPECT_GT(heating, 0.0);
 }
 
+TEST(ThermalUtils, HeatCapacity_UsesThermalMassFraction) {
+    ThermalProperties props;
+    props.specificHeat = 1000.0f;
+    props.thermalMassFraction = 0.25f;
+
+    EXPECT_DOUBLE_EQ(Physics::Thermal::heatCapacity(8.0, props), 2000.0);
+}
+
+TEST(ThermalUtils, ExternalHeatFluxRate_UsesSurfaceArea) {
+    ThermalProperties props;
+    props.externalHeatFlux = 250.0;
+
+    EXPECT_DOUBLE_EQ(Physics::Thermal::externalHeatFluxRate(props, 4.0), 1000.0);
+}
+
+TEST(ThermalUtils, ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint) {
+    ThermalProperties props;
+    props.tempK = 300.0;
+    props.specificHeat = 100.0f;
+    props.meltingPoint = 310.0f;
+    props.latentHeatFusion = 1000.0f;
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 1500.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 310.0);
+    EXPECT_FLOAT_EQ(props.fusionProgress, 0.5f);
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 500.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 310.0);
+    EXPECT_FLOAT_EQ(props.fusionProgress, 1.0f);
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 100.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 311.0);
+}
+
 TEST(PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition) {
     Physics::PhysicsSystem system(glm::vec3(0.0f));
     system.setAmbientTemperature(300.0f);
@@ -251,6 +285,24 @@ TEST(PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition) {
 
     EXPECT_VEC3_EXACT(pm.getPosition(BodyLock::LOCK), glm::vec3(1.0f, 2.0f, 3.0f));
     EXPECT_LT(pm.getThermalProperties(BodyLock::LOCK).tempK, 400.0);
+}
+
+TEST(PhysicsSystem, Step_InternalHeatPower_ChangesTemperature) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    Physics::PointMass pm(0, 10.0, glm::vec3(0.0f), true);
+
+    ThermalProperties props;
+    props.tempK = 300.0;
+    props.specificHeat = 1000.0f;
+    props.heatTransferCoeff = 0.0f;
+    props.emissivity = 0.0f;
+    props.internalHeatPower = 1000.0;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    system.addBody(&pm);
+    system.step(10.0f);
+
+    EXPECT_NEAR(pm.getThermalProperties(BodyLock::LOCK).tempK, 301.0, 1.0e-6);
 }
 
 TEST(PhysicsBody, LoadFrame_RestoresTemperature) {

@@ -47,6 +47,6 @@ private:
 public:
     Octree() = default;
     glm::vec3 computeForce(Physics::PhysicsBody* body, double G);
-    double computeHeat(Physics::PhysicsBody* body, double bodyTemperatureK);
+    double computeHeat(Physics::PhysicsBody* body);
     void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };

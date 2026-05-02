@@ -1,6 +1,7 @@
 #include "physics/PhysicsBody.h"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include "physics/utils/ThermalUtils.h"
 
@@ -170,12 +171,21 @@ void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps,
 
     thermalProps = newProps;
     thermalProps.tempK = Physics::Thermal::clampTemperature(thermalProps.tempK);
+    if (!std::isfinite(thermalProps.internalHeatPower)) thermalProps.internalHeatPower = 0.0;
+    if (!std::isfinite(thermalProps.externalHeatFlux)) thermalProps.externalHeatFlux = 0.0;
     thermalProps.specificHeat = std::max(thermalProps.specificHeat, 0.0f);
+    thermalProps.thermalMassFraction = std::clamp(thermalProps.thermalMassFraction, 0.0f, 1.0f);
     thermalProps.emissivity = std::clamp(thermalProps.emissivity, 0.0f, 1.0f);
+    thermalProps.absorptivity = std::clamp(thermalProps.absorptivity, 0.0f, 1.0f);
     thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);
     thermalProps.conductivity = std::max(thermalProps.conductivity, 0.0f);
     thermalProps.density = std::max(thermalProps.density, 0.0f);
     thermalProps.meltingPoint = std::max(thermalProps.meltingPoint, 0.0f);
+    thermalProps.latentHeatFusion = std::max(thermalProps.latentHeatFusion, 0.0f);
+    thermalProps.fusionProgress = std::clamp(thermalProps.fusionProgress, 0.0f, 1.0f);
+    thermalProps.boilingPoint = std::max(thermalProps.boilingPoint, 0.0f);
+    thermalProps.latentHeatVaporization = std::max(thermalProps.latentHeatVaporization, 0.0f);
+    thermalProps.vaporizationProgress = std::clamp(thermalProps.vaporizationProgress, 0.0f, 1.0f);
 }
 
 ThermalProperties Physics::PhysicsBody::getThermalProperties(BodyLock lock) const {

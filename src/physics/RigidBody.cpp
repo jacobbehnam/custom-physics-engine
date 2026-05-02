@@ -126,14 +126,8 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
 
     const double keLost = 0.5 * pm.getMass(BodyLock::NOLOCK) * static_cast<double>(vRel) * static_cast<double>(vRel);
-    const double rbHeatCapacity = Physics::Thermal::heatCapacity(getMass(BodyLock::NOLOCK), rbProps);
-    const double pmHeatCapacity = Physics::Thermal::heatCapacity(pm.getMass(BodyLock::NOLOCK), pmProps);
-    if (rbHeatCapacity > 0.0) {
-        rbProps.tempK += (keLost * 0.5) / rbHeatCapacity;
-    }
-    if (pmHeatCapacity > 0.0) {
-        pmProps.tempK += (keLost * 0.5) / pmHeatCapacity;
-    }
+    Physics::Thermal::applyThermalEnergy(rbProps, getMass(BodyLock::NOLOCK), keLost * 0.5);
+    Physics::Thermal::applyThermalEnergy(pmProps, pm.getMass(BodyLock::NOLOCK), keLost * 0.5);
 
     const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
     const double distance = 0.01;
