@@ -290,8 +290,34 @@ void OpenGLWindow::updateObjectLabels() {
         if (!oldOffscreen.isValid() || oldOffscreen.toBool() != offscreen) {
             button->setProperty("offscreen", offscreen);
             button->setStyleSheet(offscreen
-                ? "QPushButton { background: rgba(38, 30, 12, 215); border: 1px solid rgba(255, 210, 120, 235); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(95, 68, 18, 230); border-color: rgba(255, 235, 170, 255); }"
-                : "QPushButton { background: rgba(18, 22, 28, 190); border: 1px solid rgba(160, 210, 255, 210); color: white; padding: 2px 6px; font-size: 11px; } QPushButton:hover { background: rgba(35, 85, 130, 220); border-color: rgba(220, 240, 255, 240); }"
+                ? "QPushButton {"
+                " background: rgba(20, 22, 24, 120);"
+                " border: 1px dashed rgba(20, 22, 24, 120);"
+                " color: rgba(210, 210, 210, 170);"
+                " padding: 1px 5px;"
+                " font-size: 12px;"
+                " border-radius: 2px;"
+                " min-height: 0px;"
+                "}"
+                "QPushButton:hover {"
+                " background: rgba(35, 38, 42, 170);"
+                " border-color: rgba(220, 220, 220, 180);"
+                " color: rgba(235, 235, 235, 220);"
+                "}"
+
+                : "QPushButton {"
+                " background: rgba(28, 32, 35, 190);"
+                " border: 1px solid rgba(115, 130, 135, 150);"
+                " color: rgba(235, 235, 235, 235);"
+                " padding: 1px 5px;"
+                " font-size: 12px;"
+                " border-radius: 2px;"
+                " min-height: 0px;"
+                "}"
+                "QPushButton:hover {"
+                " background: rgba(44, 50, 54, 225);"
+                " border-color: rgba(150, 170, 175, 190);"
+                "}"
             );
             metricsDirty = true;
         }
