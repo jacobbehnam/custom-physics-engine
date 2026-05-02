@@ -48,6 +48,7 @@ public:
     float getSimSpeed() const { return simSpeed.load(); }
     void setRenderClockRunning(bool running) { simulating = running; }
     bool isRenderClockRunning() const { return simulating; }
+    void resetRenderClock(float simTime = 0.0f) { renderSimTime = simTime; }
 
 protected:
     void initializeGL() override;

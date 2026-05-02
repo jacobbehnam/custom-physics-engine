@@ -18,7 +18,7 @@
 
 InspectorWidget::InspectorWidget(SceneManager* sceneMgr, QWidget* parent) : QWidget(parent), sceneManager(sceneMgr) {
     mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(5, 0, 15, 0);
+    mainLayout->setContentsMargins(5, 0, 5, 0);
     mainLayout->setSpacing(6);
 
     setMinimumWidth(350);

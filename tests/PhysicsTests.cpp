@@ -198,6 +198,29 @@ TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {
     EXPECT_TRUE(std::isfinite(b.getPosition(BodyLock::LOCK).x));
 }
 
+TEST(PhysicsSystem, SampleSolverGravity_DoesNotDriftSideways) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
+    system.setGravitationalConstant(Constants::G);
+
+    Physics::PointMass ball(0, 1.0, glm::vec3(0.0f, 0.0f, 0.0f), false);
+    ball.setVelocity(glm::vec3(0.0f, 15.0f, 0.0f), BodyLock::LOCK);
+
+    Physics::PointMass keys(1, 1.0, glm::vec3(0.0f, 20.0f, 0.0f), false);
+
+    system.addBody(&ball);
+    system.addBody(&keys);
+
+    constexpr float dt = 1.0f / 120.0f;
+    for (int i = 0; i < 120; ++i) {
+        system.step(dt);
+    }
+
+    EXPECT_NEAR(ball.getPosition(BodyLock::LOCK).x, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(ball.getPosition(BodyLock::LOCK).z, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(keys.getPosition(BodyLock::LOCK).x, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(keys.getPosition(BodyLock::LOCK).z, 0.0f, 1.0e-6f);
+}
+
 TEST(ThermalUtils, ConductiveExchange_ConservesEnergyAndDoesNotOvershoot) {
     ThermalProperties hot;
     hot.tempK = 400.0;

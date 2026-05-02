@@ -46,39 +46,44 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
 
-    // first call ever: no previous to interpolate against
-    if (previousSnapshots.empty()) {
-        previousSnapshots = currentSnapshots;
+    if (currentSnapshots.empty()) {
+        return std::nullopt;
+    }
+
+    if (previousSnapshots.empty() || previousSnapshots.size() != currentSnapshots.size()) {
         return currentSnapshots;
     }
 
-    // grab the two timestamps (they’re all the same within each frame)
     float t0 = previousSnapshots[0].time;
     float t1 = currentSnapshots[0].time;
 
-    // outside the bracket → just clamp
-    if (renderSimTime <= t0) {
-        previousSnapshots = currentSnapshots;
-        return previousSnapshots;
-    }
-    if (renderSimTime >= t1) {
-        previousSnapshots = currentSnapshots;
+    if (!std::isfinite(t0) || !std::isfinite(t1) || t1 <= t0) {
         return currentSnapshots;
     }
 
-    // compute blend factor α in (0,1)
+    if (renderSimTime <= t0) {
+        return previousSnapshots;
+    }
+    if (renderSimTime >= t1) {
+        return currentSnapshots;
+    }
+
     float alpha = (renderSimTime - t0) / (t1 - t0);
 
-    // interpolate each ObjectSnapshot
     std::vector<ObjectSnapshot> out;
     out.reserve(currentSnapshots.size());
     for (size_t i = 0; i < currentSnapshots.size(); ++i) {
         const auto &A = previousSnapshots[i];
         const auto &B = currentSnapshots[i];
 
+        if (A.body != B.body) {
+            out.push_back(B);
+            continue;
+        }
+
         ObjectSnapshot C;
-        C.body     = A.body;                  // same pointer/ID
-        C.time     = renderSimTime;           // stamped with the render time
+        C.body     = A.body;
+        C.time     = renderSimTime;
         C.position = glm::mix(A.position, B.position, alpha);
         C.velocity = glm::mix(A.velocity, B.velocity, alpha);
         C.temperature = glm::mix(A.temperature, B.temperature, alpha);
@@ -86,8 +91,6 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
         out.push_back(C);
     }
 
-    // slide window: next time, previous = what we just returned
-    previousSnapshots = currentSnapshots;
     return out;
 }
 
@@ -139,6 +142,7 @@ void Physics::PhysicsSystem::physicsLoop() {
             }
 
             std::lock_guard<std::mutex> lk(snapshotMutex);
+            previousSnapshots = std::move(currentSnapshots);
             currentSnapshots = std::move(localSnaps);
             snapshotReady.store(true, std::memory_order_release);
         }

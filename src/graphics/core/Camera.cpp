@@ -23,13 +23,15 @@ glm::mat4 Camera::getRenderViewMatrix() const {
 }
 
 glm::mat4 Camera::getProjMatrix() const {
-    return glm::perspective(
-        glm::radians(fov),
-        aspectRatio,
-        nearClip,
-        farClip
-    );
+    const float tanHalfFov = std::tan(glm::radians(fov) * 0.5f);
+    const float safeAspect = std::max(aspectRatio, 0.0001f);
 
+    glm::mat4 projection(0.0f);
+    projection[0][0] = 1.0f / (safeAspect * tanHalfFov);
+    projection[1][1] = 1.0f / tanHalfFov;
+    projection[2][3] = -1.0f;
+    projection[3][2] = nearClip;
+    return projection;
 }
 
 void Camera::setClipRange(float nearPlane, float farPlane) {

@@ -13,6 +13,7 @@
 
 namespace {
 constexpr float kFloatingOriginThreshold = 1.0e6f;
+constexpr float kNearClipDepthFraction = 0.05f;
 
 float maxAbsComponent(const glm::vec3& v) {
     return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
@@ -49,13 +50,13 @@ void Scene::freeObjectID(uint32_t objID) {
 }
 
 void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    SceneObject::PosMap renderPositions;
     if (snaps) {
-        SceneObject::PosMap posMap;
-        posMap.reserve(snaps->size());
+        renderPositions.reserve(snaps->size());
         for (const auto &s : *snaps) {
-            posMap.emplace(s.body, s.position);
+            renderPositions.emplace(s.body, s.position);
         }
-        SceneObject::setPhysicsPosMap(posMap);
+        SceneObject::setPhysicsPosMap(renderPositions);
     }
 
     glm::vec3 renderTargetPosition;
@@ -73,28 +74,47 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     camera.update(renderTargetPositionPtr);
-    const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
-    SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
-    if (useFloatingOrigin) {
-        float nearestSurface = std::numeric_limits<float>::max();
-        float farthestSurface = Camera::kDefaultFarClip;
 
-        for (auto* drawable : instancedDrawables) {
-            auto* obj = dynamic_cast<SceneObject*>(drawable);
-            if (!obj) continue;
+    float nearestDepth = std::numeric_limits<float>::max();
+    float farthestDepth = Camera::kDefaultNearClip + 1.0f;
+    bool foundVisibleDepth = false;
 
-            const float radius = maxAbsComponent(obj->getScale()) * 0.5f;
-            const float distance = glm::length(obj->getPosition() - camera.position);
-            if (!std::isfinite(distance) || !std::isfinite(radius)) continue;
+    for (auto* drawable : instancedDrawables) {
+        auto* obj = dynamic_cast<SceneObject*>(drawable);
+        if (!obj) continue;
 
-            nearestSurface = std::min(nearestSurface, std::max(distance - radius, Camera::kDefaultNearClip));
-            farthestSurface = std::max(farthestSurface, distance + radius);
+        glm::vec3 position = obj->getPosition();
+        if (auto* body = obj->getPhysicsBody()) {
+            auto it = renderPositions.find(body);
+            if (it != renderPositions.end()) {
+                position = it->second;
+            }
         }
 
-        if (nearestSurface != std::numeric_limits<float>::max()) {
-            camera.setClipRange(nearestSurface * 0.25f, farthestSurface * 4.0f);
+        const float viewDepth = glm::dot(position - camera.position, camera.front);
+        const float radius = maxAbsComponent(obj->getScale()) * 0.5f;
+        if (!std::isfinite(viewDepth) || !std::isfinite(radius)) continue;
+        if (viewDepth + radius <= Camera::kDefaultNearClip) continue;
+
+        foundVisibleDepth = true;
+        farthestDepth = std::max(farthestDepth, viewDepth + radius);
+        if (viewDepth - radius > Camera::kDefaultNearClip) {
+            nearestDepth = std::min(nearestDepth, viewDepth - radius);
         }
     }
+
+    if (foundVisibleDepth) {
+        const float farClip = std::max(farthestDepth * 1.25f, Camera::kDefaultFarClip);
+        const float nearClip = nearestDepth == std::numeric_limits<float>::max()
+            ? Camera::kDefaultNearClip
+            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * 0.5f);
+        camera.setClipRange(nearClip, farClip);
+    } else {
+        camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
+    }
+
+    const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
+    SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

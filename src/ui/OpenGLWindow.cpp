@@ -24,6 +24,9 @@ void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
     ResourceManager::initialize(this); // inherits from QOpenGLFunctions so can be cast to it
     glEnable(GL_DEPTH_TEST);
+    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+    glClearDepth(0.0);
+    glDepthFunc(GL_GREATER);
 
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,

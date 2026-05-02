@@ -59,6 +59,10 @@ void SceneManager::resetScene() {
     SceneObject::setPhysicsPosMap(SceneObject::PosMap{});
     SceneObject::setRenderOrigin(glm::vec3(0.0f));
 
+    if (window) {
+        window->resetRenderClock();
+    }
+
     if (scene && scene->getCamera()) {
         scene->getCamera()->resetView();
     }
