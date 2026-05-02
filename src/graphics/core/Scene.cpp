@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 #include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
@@ -74,6 +75,26 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     camera.update(renderTargetPositionPtr);
     const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
     SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
+    if (useFloatingOrigin) {
+        float nearestSurface = std::numeric_limits<float>::max();
+        float farthestSurface = Camera::kDefaultFarClip;
+
+        for (auto* drawable : instancedDrawables) {
+            auto* obj = dynamic_cast<SceneObject*>(drawable);
+            if (!obj) continue;
+
+            const float radius = maxAbsComponent(obj->getScale()) * 0.5f;
+            const float distance = glm::length(obj->getPosition() - camera.position);
+            if (!std::isfinite(distance) || !std::isfinite(radius)) continue;
+
+            nearestSurface = std::min(nearestSurface, std::max(distance - radius, Camera::kDefaultNearClip));
+            farthestSurface = std::max(farthestSurface, distance + radius);
+        }
+
+        if (nearestSurface != std::numeric_limits<float>::max()) {
+            camera.setClipRange(nearestSurface * 0.25f, farthestSurface * 4.0f);
+        }
+    }
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

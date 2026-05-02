@@ -42,10 +42,15 @@ void PathTraces::draw() const {
 
     gl->glBindVertexArray(vao);
     
+    const GLboolean depthWasEnabled = gl->glIsEnabled(GL_DEPTH_TEST);
+    if (depthWasEnabled) {
+        gl->glDisable(GL_DEPTH_TEST);
+    }
+
     float oldLineWidth;
     gl->glGetFloatv(GL_LINE_WIDTH, &oldLineWidth);
     
-    gl->glLineWidth(1.0f);
+    gl->glLineWidth(2.0f);
 
     std::vector<glm::vec3> points;
     for (SceneObject* obj : objects) {
@@ -65,8 +70,12 @@ void PathTraces::draw() const {
             [](const ObjectSnapshot& snapshot, float time) {
                 return snapshot.time < time;
             });
-        const int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
-        const int totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
+        int totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        if (totalCount < 2) {
+            startIdx = std::max(0, static_cast<int>(snapshots.size()) - 2);
+            totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        }
         const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
         points.reserve(static_cast<size_t>(std::min(totalCount, kMaxTrailPointsPerObject + 1)));
 
@@ -90,4 +99,7 @@ void PathTraces::draw() const {
 
     gl->glBindVertexArray(0);
     gl->glLineWidth(oldLineWidth);
+    if (depthWasEnabled) {
+        gl->glEnable(GL_DEPTH_TEST);
+    }
 }
