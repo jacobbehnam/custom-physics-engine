@@ -346,6 +346,11 @@ void SceneManager::deleteObject(SceneObject *obj) {
     if (getCameraTarget() == obj) {
         clearCameraTarget();
     }
+    if (currentGizmo && currentGizmo->getTarget() == obj) {
+        deleteCurrentGizmo();
+    }
+    hoveredIDs.erase(obj->getObjectID());
+    selectedIDs.erase(obj->getObjectID());
 
     // Destructor already handle this
     // if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
@@ -461,24 +466,18 @@ void SceneManager::setCameraTarget(SceneObject* target) {
         scene->getCamera()->setTarget(target);
     }
     if (target) {
-        setSelectFor(nullptr);
-        setSelectFor(target);
-        setGizmoFor(target, true);
-        emit selectedItem(target);
+        selectObject(target);
     }
 }
 
 void SceneManager::focusObject(SceneObject* target) {
     if (!target) return;
 
-    setSelectFor(nullptr);
-    setSelectFor(target);
-    setGizmoFor(target, true);
+    selectObject(target);
 
     if (scene && scene->getCamera()) {
         scene->getCamera()->focusOn(target);
     }
-    emit selectedItem(target);
 }
 
 void SceneManager::clearCameraTarget() {
@@ -507,6 +506,15 @@ void SceneManager::updateHoverState(const Math::Ray &mouseRay) {
     if (hovered) {
         hoveredIDs.insert(hovered->getObjectID());
     }
+}
+
+void SceneManager::selectObject(SceneObject* obj) {
+    setSelectFor(nullptr);
+    if (!obj) return;
+
+    setSelectFor(obj);
+    setGizmoFor(obj, true);
+    emit selectedItem(obj);
 }
 
 void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods) {

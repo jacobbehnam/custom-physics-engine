@@ -60,8 +60,6 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
         } else {
             std::cout << "Problem with CreationOptions on SceneObject construction!" << std::endl;
         }
-        if (physicsBody != nullptr) {
-        }
     }, options);
 }
 

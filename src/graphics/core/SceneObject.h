@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <utility>
 #include <graphics/components/Mesh.h>
 #include "IDrawable.h"
@@ -63,6 +64,10 @@ public:
     static glm::vec3 getRenderOrigin() {
         std::lock_guard<std::mutex> lk(posMapMutex);
         return renderOrigin;
+    }
+    static glm::mat4 worldToRenderMatrix() {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        return glm::translate(glm::mat4(1.0f), -renderOrigin);
     }
 
 private:

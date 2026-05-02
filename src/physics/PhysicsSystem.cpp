@@ -112,7 +112,7 @@ void Physics::PhysicsSystem::physicsLoop() {
 
         accumulator += frameTime * getSimSpeed();
 
-        std::vector<PhysicsBody*> localBodies;
+        std::vector<ObjectSnapshot> localSnaps;
         {
             std::lock_guard<std::mutex> lock(bodiesMutex);
             if (accumulator >= kBaseDt) {
@@ -132,20 +132,16 @@ void Physics::PhysicsSystem::physicsLoop() {
                     accumulator = 0.0f;
                 }
             }
-            localBodies = bodies;
-        }
 
-        std::vector<ObjectSnapshot> localSnaps;
-        localSnaps.reserve(localBodies.size());
-        {
-            std::lock_guard<std::mutex> lk(snapshotMutex);
-            for (auto* body : localBodies) {
+            localSnaps.reserve(bodies.size());
+            for (auto* body : bodies) {
                 localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK), static_cast<float>(body->getThermalProperties(BodyLock::LOCK).tempK) });
             }
 
+            std::lock_guard<std::mutex> lk(snapshotMutex);
             currentSnapshots = std::move(localSnaps);
+            snapshotReady.store(true, std::memory_order_release);
         }
-        snapshotReady.store(true, std::memory_order_release);
     }
 }
 
@@ -161,6 +157,23 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
     auto it = std::remove(bodies.begin(), bodies.end(), body);
     if (it != bodies.end()) {
         bodies.erase(it, bodies.end());
+        resetState.erase(body);
+        {
+            std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+            auto removeSnapshotForBody = [body](std::vector<ObjectSnapshot>& snapshots) {
+                snapshots.erase(
+                    std::remove_if(snapshots.begin(), snapshots.end(), [body](const ObjectSnapshot& snapshot) {
+                        return snapshot.body == body;
+                    }),
+                    snapshots.end()
+                );
+            };
+            removeSnapshotForBody(currentSnapshots);
+            removeSnapshotForBody(previousSnapshots);
+            if (currentSnapshots.empty() && previousSnapshots.empty()) {
+                snapshotReady.store(false, std::memory_order_relaxed);
+            }
+        }
     } else {
         std::cerr << "[PhysicsSystem] Warning: Tried to remove a body not in the system.\n";
     }
@@ -285,6 +298,20 @@ void Physics::PhysicsSystem::reset() {
         body->clearAllFrames(BodyLock::LOCK);
         body->loadFrame(initialState, BodyLock::LOCK);
     }
+}
+
+void Physics::PhysicsSystem::clearRuntimeState() {
+    std::lock_guard<std::mutex> bodiesLock(bodiesMutex);
+    resetState.clear();
+    solver.reset();
+    stepCount.store(0);
+    simTime = 0.0f;
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+    }
+    snapshotReady.store(false, std::memory_order_relaxed);
 }
 
 void Physics::PhysicsSystem::enablePhysics() {

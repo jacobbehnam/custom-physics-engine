@@ -55,6 +55,11 @@ void Colliders::draw() const {
 
     basicShader->use();
 
+    const glm::mat4 worldToRender = SceneObject::worldToRenderMatrix();
+    for (auto& instance : m_instanceScratch) {
+        instance.model = worldToRender * instance.model;
+    }
+
     GLint oldPolygonMode[2];
     GLfloat oldLineWidth = 1.0f;
     gl->glGetIntegerv(GL_POLYGON_MODE, oldPolygonMode);

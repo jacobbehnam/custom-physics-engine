@@ -24,6 +24,8 @@ public: // TODO: make these not public
     static constexpr float kDefaultMovementSpeed = 3.0f;
     static constexpr float kDefaultMouseSensitivity = 0.05f;
     static constexpr float kDefaultFov = 45.0f;
+    static constexpr float kDefaultNearClip = 0.1f;
+    static constexpr float kDefaultFarClip = 300000.0f;
 
     float movementSpeed = kDefaultMovementSpeed;
     float mouseSensitivity = kDefaultMouseSensitivity;
@@ -37,6 +39,8 @@ public: // TODO: make these not public
 
     void setAspectRatio(float ratio) { aspectRatio = ratio; }
     void setClipRange(float nearPlane, float farPlane);
+    void setView(const glm::vec3& newPosition, double newYaw, double newPitch);
+    void resetView(const glm::vec3& newPosition = glm::vec3(0.0f, 10.0f, 30.0f));
 
     void setTarget(SceneObject* obj);
     void focusOn(SceneObject* obj);
@@ -56,8 +60,8 @@ private:
     void updateCameraVectors();
 
     float aspectRatio = 16.0f / 9.0f;
-    float nearClip = 0.1f;
-    float farClip = 300000.0f;
+    float nearClip = kDefaultNearClip;
+    float farClip = kDefaultFarClip;
     SceneObject* targetObject = nullptr;
     glm::vec3 followOffset{20.0f, 15.0f, 30.0f};
     glm::vec3 followPivot{0.0f};

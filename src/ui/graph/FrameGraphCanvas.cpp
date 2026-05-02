@@ -53,9 +53,9 @@ FrameGraphCanvas::FrameGraphCanvas(QWidget* parent)
     });
 }
 
-void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
+void FrameGraphCanvas::setSharedData(std::shared_ptr<const std::vector<ObjectSnapshot>> frames,
     const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMinP, float tMaxP) {
-    framesData = (frames && !frames->empty()) ? std::make_shared<std::vector<ObjectSnapshot>>(*frames) : nullptr;
+    framesData = (frames && !frames->empty()) ? std::move(frames) : nullptr;
     if (framesData) {
         valueMinMaxPerMetric = valueMinMax;
         tMin = tMinP;

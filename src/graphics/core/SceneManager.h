@@ -69,6 +69,7 @@ public:
     void removePickable(IPickable* obj);
     void removeDrawable(IDrawable* obj) const { scene->removeDrawable(obj); }
     void updateHoverState(const Math::Ray& mouseRay);
+    void selectObject(SceneObject* obj);
     void setSelectFor(SceneObject *obj, bool flag = true);
 
     void processHeldKeys(const QSet<int> &heldKeys, float dt);

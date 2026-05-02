@@ -7,6 +7,8 @@
 
 #include "ResourceManager.h"
 #include "graphics/core/SceneObject.h"
+#include "physics/Constants.h"
+#include <unordered_map>
 
 namespace JsonUtils {
     inline double numberOr(const QJsonObject& obj, const char* key, double fallback) {
@@ -22,14 +24,12 @@ namespace JsonUtils {
         return arr;
     }
 
-    inline glm::vec3 jsonToVec3(QJsonArray arr) {
+    inline glm::vec3 jsonToVec3(QJsonArray arr, const glm::vec3& fallback = glm::vec3(0.0f)) {
         if (arr.size() != 3) {
-            //qWarning << "QJsonArray does not have 3 elements to cast to vec3";
-            return glm::vec3(0.0f);
+            return fallback;
         }
-        if (!(arr[0].isDouble() || arr[1].isDouble() || arr[2].isDouble())) {
-            //qWarning << "Unable to cast to vec3: type is not double";
-            return glm::vec3(0.0f);
+        if (!arr[0].isDouble() || !arr[1].isDouble() || !arr[2].isDouble()) {
+            return fallback;
         }
         return {arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()};
     }
@@ -106,6 +106,31 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     settings["ambientTemperature"] = sceneManager->getAmbientTemperature();
     root["settings"] = settings;
 
+    if (sceneManager->scene && sceneManager->scene->getCamera()) {
+        Camera* camera = sceneManager->scene->getCamera();
+        QJsonObject cameraJson;
+        cameraJson["position"] = JsonUtils::vec3ToJson(camera->position);
+        cameraJson["yaw"] = camera->yaw;
+        cameraJson["pitch"] = camera->pitch;
+        if (const SceneObject* target = sceneManager->getCameraTarget()) {
+            cameraJson["followTargetId"] = static_cast<double>(target->getObjectID());
+            cameraJson["followTargetName"] = QString::fromStdString(target->getName());
+        }
+        root["camera"] = cameraJson;
+    }
+
+    QJsonObject selectionJson;
+    for (uint32_t selectedID : sceneManager->selectedIDs) {
+        if (SceneObject* selected = sceneManager->getObjectByID(selectedID)) {
+            selectionJson["objectId"] = static_cast<double>(selected->getObjectID());
+            selectionJson["objectName"] = QString::fromStdString(selected->getName());
+            break;
+        }
+    }
+    if (!selectionJson.isEmpty()) {
+        root["selection"] = selectionJson;
+    }
+
     QJsonArray objectsArray;
     for (auto* obj : sceneManager->getObjects()) {
         QJsonObject objJson;
@@ -121,16 +146,25 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
             data["position"] = JsonUtils::vec3ToJson(obj->getPosition());
             data["scale"] = JsonUtils::vec3ToJson(obj->getScale());
             data["rotation"] = JsonUtils::vec3ToJson(obj->getRotation());
-            data["isStatic"] = obj->getPhysicsBody()->getIsStatic(BodyLock::LOCK);
-            data["mass"] = obj->getPhysicsBody()->getMass(BodyLock::LOCK);
-            data["velocity"] = JsonUtils::vec3ToJson(obj->getPhysicsBody()->getVelocity(BodyLock::LOCK));
-            data["thermal"] = JsonUtils::thermalToJson(obj->getPhysicsBody()->getThermalProperties(BodyLock::LOCK));
+            Physics::PhysicsBody* body = obj->getPhysicsBody();
 
             if constexpr (std::is_same_v<T, PointMassOptions>) {
                 optionsJson["type"] = "PointMassOptions";
+                data["isStatic"] = body ? body->getIsStatic(BodyLock::LOCK) : opt.isStatic;
+                data["mass"] = body ? body->getMass(BodyLock::LOCK) : opt.mass;
+                data["velocity"] = JsonUtils::vec3ToJson(body ? body->getVelocity(BodyLock::LOCK) : opt.velocity);
+                if (body) {
+                    data["thermal"] = JsonUtils::thermalToJson(body->getThermalProperties(BodyLock::LOCK));
+                }
             }
             else if constexpr (std::is_same_v<T, RigidBodyOptions>) {
                 optionsJson["type"] = "RigidBodyOptions";
+                data["isStatic"] = body ? body->getIsStatic(BodyLock::LOCK) : opt.isStatic;
+                data["mass"] = body ? body->getMass(BodyLock::LOCK) : opt.mass;
+                data["velocity"] = JsonUtils::vec3ToJson(body ? body->getVelocity(BodyLock::LOCK) : opt.velocity);
+                if (body) {
+                    data["thermal"] = JsonUtils::thermalToJson(body->getThermalProperties(BodyLock::LOCK));
+                }
             }
             else {
                 optionsJson["type"] = "ObjectOptions";
@@ -173,6 +207,13 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
     QJsonObject root = doc.object();
     // Can check engine version for compatibility
 
+    sceneManager->stopSimulation();
+    sceneManager->physicsSystem->clearRuntimeState();
+    sceneManager->setGlobalAcceleration(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
+    sceneManager->setSimSpeed(1.0f);
+    sceneManager->setGravitationalConstant(Constants::G);
+    sceneManager->setAmbientTemperature(293.15f);
+
     if (root.contains("settings") && root["settings"].isObject()) {
         QJsonObject settings = root["settings"].toObject();
         if (settings["gravity"].isArray()) {
@@ -185,6 +226,14 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
 
     sceneManager->deleteAllObjects();
     sceneManager->setSelectFor(nullptr);
+    SceneObject::setPhysicsPosMap(SceneObject::PosMap{});
+    SceneObject::setRenderOrigin(glm::vec3(0.0f));
+    if (sceneManager->scene && sceneManager->scene->getCamera()) {
+        sceneManager->scene->getCamera()->resetView();
+    }
+
+    std::unordered_map<uint32_t, SceneObject*> objectsBySavedId;
+    std::unordered_map<std::string, SceneObject*> objectsByName;
 
     if (root.contains("objects") && root["objects"].isArray()) {
         QJsonArray objectsArray = root["objects"].toArray();
@@ -205,7 +254,7 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
 
                 ObjectOptions base;
                 base.position = JsonUtils::jsonToVec3(data["position"].toArray());
-                base.scale    = JsonUtils::jsonToVec3(data["scale"].toArray());
+                base.scale    = JsonUtils::jsonToVec3(data["scale"].toArray(), glm::vec3(1.0f));
                 base.rotation = JsonUtils::jsonToVec3(data["rotation"].toArray());
 
                 if (type == "PointMassOptions") {
@@ -230,8 +279,13 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
                 }
             }
             Shader* shader = ResourceManager::getShader(shaderName);
+            if (!shader) {
+                shader = ResourceManager::getShader("basic");
+            }
             SceneObject* createObj = sceneManager->createObject(meshName, shader, options);
             sceneManager->setObjectName(createObj, objName);
+            objectsBySavedId[id] = createObj;
+            objectsByName[objName] = createObj;
             if (createObj->getPhysicsBody() && objJson["options"].isObject()) {
                 QJsonObject optionsJson = objJson["options"].toObject();
                 QJsonObject data = optionsJson["data"].toObject();
@@ -242,5 +296,43 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
             }
         }
     }
+
+    auto resolveObject = [&](const QJsonObject& obj, const char* idKey, const char* nameKey) -> SceneObject* {
+        const QJsonValue idValue = obj.value(idKey);
+        if (idValue.isDouble()) {
+            const auto it = objectsBySavedId.find(static_cast<uint32_t>(idValue.toDouble()));
+            if (it != objectsBySavedId.end()) {
+                return it->second;
+            }
+        }
+
+        const std::string name = obj.value(nameKey).toString().toStdString();
+        const auto nameIt = objectsByName.find(name);
+        return nameIt != objectsByName.end() ? nameIt->second : nullptr;
+    };
+
+    bool restoredCameraTarget = false;
+    if (root["camera"].isObject() && sceneManager->scene && sceneManager->scene->getCamera()) {
+        QJsonObject cameraJson = root["camera"].toObject();
+        Camera* camera = sceneManager->scene->getCamera();
+        const glm::vec3 position = JsonUtils::jsonToVec3(cameraJson["position"].toArray(), glm::vec3(0.0f, 10.0f, 30.0f));
+        const double yaw = JsonUtils::numberOr(cameraJson, "yaw", -90.0);
+        const double pitch = JsonUtils::numberOr(cameraJson, "pitch", 0.0);
+        camera->setView(position, yaw, pitch);
+
+        if (SceneObject* target = resolveObject(cameraJson, "followTargetId", "followTargetName")) {
+            sceneManager->setCameraTarget(target);
+            restoredCameraTarget = true;
+        }
+    }
+
+    if (root["selection"].isObject()) {
+        if (SceneObject* selected = resolveObject(root["selection"].toObject(), "objectId", "objectName")) {
+            sceneManager->selectObject(selected);
+        }
+    } else if (!restoredCameraTarget) {
+        sceneManager->setSelectFor(nullptr);
+    }
+
     return true;
 }

@@ -2,15 +2,21 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 
 #include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/component_wise.hpp>
 #include <graphics/core/SceneObject.h>
 
 #include "ui/OpenGLWindow.h"
+
+namespace {
+constexpr float kFloatingOriginThreshold = 1.0e6f;
+
+float maxAbsComponent(const glm::vec3& v) {
+    return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
+}
+}
 
 struct BatchKey {
     Mesh* mesh;
@@ -66,40 +72,28 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     camera.update(renderTargetPositionPtr);
-    SceneObject::setRenderOrigin(camera.position);
-
-    float nearestSurface = std::numeric_limits<float>::max();
-    float farthestSurface = 300000.0f;
-    for (auto* drawable : instancedDrawables) {
-        auto* obj = dynamic_cast<SceneObject*>(drawable);
-        if (!obj) continue;
-
-        const float radius = glm::compMax(glm::abs(obj->getScale())) * 0.5f;
-        const float distance = glm::length(obj->getPosition() - camera.position);
-        if (!std::isfinite(distance) || !std::isfinite(radius)) continue;
-
-        nearestSurface = std::min(nearestSurface, std::max(distance - radius, 0.01f));
-        farthestSurface = std::max(farthestSurface, distance + radius);
-    }
-
-    if (nearestSurface != std::numeric_limits<float>::max()) {
-        camera.setClipRange(std::max(nearestSurface * 0.5f, 0.01f), farthestSurface * 1.25f);
-    }
+    const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
+    SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    const glm::mat4 viewMatrix = useFloatingOrigin ? camera.getRenderViewMatrix() : camera.getViewMatrix();
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
-    cameraUBO.updateData(glm::value_ptr(camera.getRenderViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
+    cameraUBO.updateData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
-        hoverVec[id] = glm::ivec4(1);
+        if (id < hoverVec.size()) {
+            hoverVec[id] = glm::ivec4(1);
+        }
     }
 
     std::vector<glm::ivec4> selectVec(1024, glm::ivec4(0));
     for (uint32_t id : selectedIDs) {
-        selectVec[id] = glm::ivec4(1);
+        if (id < selectVec.size()) {
+            selectVec[id] = glm::ivec4(1);
+        }
     }
 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
@@ -115,6 +109,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
 
     for (auto& [key, instances] : batches) {
         key.shader->use();
+        key.shader->setVec3("renderOrigin", SceneObject::getRenderOrigin());
         key.mesh->drawInstanced(instances);
     }
 

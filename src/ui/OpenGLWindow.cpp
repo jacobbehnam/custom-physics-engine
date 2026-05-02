@@ -186,8 +186,9 @@ void OpenGLWindow::updateObjectLabels() {
         objectLabelButtons.push_back(button);
     }
 
-    const glm::vec3 renderOrigin = scene->getCamera()->position;
-    const glm::mat4 view = scene->getCamera()->getRenderViewMatrix();
+    const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
+    const bool useFloatingOrigin = std::max({std::abs(renderOrigin.x), std::abs(renderOrigin.y), std::abs(renderOrigin.z)}) > 0.0f;
+    const glm::mat4 view = useFloatingOrigin ? scene->getCamera()->getRenderViewMatrix() : scene->getCamera()->getViewMatrix();
     const glm::mat4 proj = scene->getCamera()->getProjMatrix();
     const float w = static_cast<float>(width());
     const float h = static_cast<float>(height());
@@ -235,7 +236,8 @@ void OpenGLWindow::updateObjectLabels() {
         }
 
         SceneObject* obj = objects[i];
-        glm::vec4 clip = proj * view * glm::vec4(obj->getPosition() - renderOrigin, 1.0f);
+        const glm::vec3 labelPosition = useFloatingOrigin ? obj->getPosition() - renderOrigin : obj->getPosition();
+        glm::vec4 clip = proj * view * glm::vec4(labelPosition, 1.0f);
         if (!std::isfinite(clip.x) || !std::isfinite(clip.y) || !std::isfinite(clip.z) || !std::isfinite(clip.w)) {
             button->hide();
             continue;

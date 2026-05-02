@@ -33,8 +33,23 @@ glm::mat4 Camera::getProjMatrix() const {
 }
 
 void Camera::setClipRange(float nearPlane, float farPlane) {
-    nearClip = std::max(nearPlane, 0.01f);
+    nearClip = std::max(nearPlane, kDefaultNearClip);
     farClip = std::max(farPlane, nearClip + 1.0f);
+}
+
+void Camera::setView(const glm::vec3& newPosition, double newYaw, double newPitch) {
+    targetObject = nullptr;
+    position = newPosition;
+    yaw = newYaw;
+    pitch = std::clamp(newPitch, -90.0, 90.0);
+    nearClip = kDefaultNearClip;
+    farClip = kDefaultFarClip;
+    resetMouse();
+    updateCameraVectors();
+}
+
+void Camera::resetView(const glm::vec3& newPosition) {
+    setView(newPosition, -90.0, 0.0);
 }
 
 void Camera::setTarget(SceneObject* obj) {
@@ -57,8 +72,8 @@ void Camera::focusOn(SceneObject* obj) {
     const float horizontalHalfFov = std::atan(std::tan(verticalHalfFov) * std::max(aspectRatio, 0.01f));
     const float framingHalfFov = std::max(std::min(verticalHalfFov, horizontalHalfFov), glm::radians(1.0f));
     const float distance = std::max((visualRadius * padding) / std::sin(framingHalfFov), 0.35f);
-    nearClip = std::max(distance - visualRadius * 2.0f, 0.01f);
-    farClip = std::max(distance + visualRadius * 4.0f, 300000.0f);
+    nearClip = std::max(distance - visualRadius * 2.0f, kDefaultNearClip);
+    farClip = std::max(distance + visualRadius * 4.0f, kDefaultFarClip);
     followOffset = glm::normalize(glm::vec3(1.0f, 0.55f, 1.0f)) * distance;
 
     const glm::vec3 targetPos = obj->getPosition();
@@ -74,8 +89,8 @@ void Camera::focusOn(SceneObject* obj) {
 
 void Camera::clearTarget() {
     targetObject = nullptr;
-    nearClip = 0.1f;
-    farClip = 300000.0f;
+    nearClip = kDefaultNearClip;
+    farClip = kDefaultFarClip;
 }
 
 void Camera::update(const glm::vec3* renderTargetPosition) {
