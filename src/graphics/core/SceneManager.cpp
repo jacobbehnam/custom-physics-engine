@@ -58,11 +58,25 @@ void SceneManager::defaultSetup() {
         glm::vec3 velocity;
     };
 
+    struct ThermalSpec {
+        double tempK;
+        float density;
+        float bondAlbedo;
+        float specificHeat;
+        float thermalMassFraction;
+        float conductivity;
+        float linearExpansionCoeff;
+        float meltingPoint;
+        float latentHeatFusion;
+        float boilingPoint;
+        float latentHeatVaporization;
+    };
+
     struct BodySpec {
         const char* name;
         double massKg;
         double radiusKm;
-        ThermalProperties thermal;
+        ThermalSpec thermal;
         OrbitalElements orbit;
     };
 
@@ -70,18 +84,23 @@ void SceneManager::defaultSetup() {
     constexpr double sunRadiusKm = 695700.0;
     constexpr double sunTempK = 5772.0;
 
-    auto makeThermal = [](double tempK, float density, float emissivity, float absorptivity, float specificHeat, float thermalMassFraction, float conductivity, float meltingPoint, double internalHeatPower = 0.0) {
+    auto makeThermal = [](const ThermalSpec& spec, double internalHeatPower = 0.0) {
         ThermalProperties thermal;
-        thermal.tempK = tempK;
+        thermal.tempK = spec.tempK;
         thermal.internalHeatPower = internalHeatPower;
-        thermal.emissivity = emissivity;
-        thermal.absorptivity = absorptivity;
+        thermal.referenceTempK = static_cast<float>(spec.tempK);
+        thermal.emissivity = 1.0f;
+        thermal.absorptivity = std::clamp(1.0f - spec.bondAlbedo, 0.0f, 1.0f);
         thermal.heatTransferCoeff = 0.0f;
-        thermal.specificHeat = specificHeat;
-        thermal.thermalMassFraction = thermalMassFraction;
-        thermal.conductivity = conductivity;
-        thermal.density = density;
-        thermal.meltingPoint = meltingPoint;
+        thermal.specificHeat = spec.specificHeat;
+        thermal.thermalMassFraction = spec.thermalMassFraction;
+        thermal.conductivity = spec.conductivity;
+        thermal.density = spec.density;
+        thermal.linearExpansionCoeff = spec.linearExpansionCoeff;
+        thermal.meltingPoint = spec.meltingPoint;
+        thermal.latentHeatFusion = spec.latentHeatFusion;
+        thermal.boilingPoint = spec.boilingPoint;
+        thermal.latentHeatVaporization = spec.latentHeatVaporization;
         return thermal;
     };
 
@@ -101,10 +120,52 @@ void SceneManager::defaultSetup() {
         return absorptivity * irradiance * projectedArea;
     };
 
-    auto equilibriumInternalHeatPower = [&](double radiusKm, double orbitDistanceAu, double tempK, double emissivity, double absorptivity) {
-        const double emitted = emittedRadiationPower(radiusKm, tempK, emissivity);
-        const double absorbed = absorbedSolarPower(radiusKm, orbitDistanceAu, absorptivity);
+    auto equilibriumInternalHeatPower = [&](double radiusKm, double orbitDistanceAu, const ThermalSpec& spec) {
+        const double emitted = emittedRadiationPower(radiusKm, spec.tempK, 1.0);
+        const double absorbed = absorbedSolarPower(radiusKm, orbitDistanceAu, 1.0 - static_cast<double>(spec.bondAlbedo));
         return std::max(0.0, emitted - absorbed);
+    };
+
+    auto orbitalPeriodSeconds = [&](const OrbitalElements& orbit, double centralMassKg) {
+        const double semiMajorAxisM = orbit.semiMajorAxisAu * metersPerAu;
+        return 2.0 * pi * std::sqrt((semiMajorAxisM * semiMajorAxisM * semiMajorAxisM) / (Constants::G * centralMassKg));
+    };
+
+    auto thermalSkinDepthM = [&](const ThermalSpec& spec, double forcingPeriodSeconds) {
+        const double density = std::max(static_cast<double>(spec.density), 0.0);
+        const double specificHeat = std::max(static_cast<double>(spec.specificHeat), 0.0);
+        const double conductivity = std::max(static_cast<double>(spec.conductivity), 0.0);
+        if (density <= 0.0 || specificHeat <= 0.0 || conductivity <= 0.0 || forcingPeriodSeconds <= 0.0) return 0.0;
+        return std::sqrt((conductivity / (density * specificHeat)) * forcingPeriodSeconds / pi);
+    };
+
+    auto activeShellFraction = [&](double massKg, double radiusKm, const ThermalSpec& spec, double forcingPeriodSeconds) {
+        const double radiusM = radiusKm * metersPerKm;
+        const double depthM = std::min(thermalSkinDepthM(spec, forcingPeriodSeconds), radiusM);
+        if (massKg <= 0.0 || radiusM <= 0.0 || depthM <= 0.0) return 0.0f;
+
+        const double innerRadiusM = std::max(0.0, radiusM - depthM);
+        const double shellVolume = (4.0 / 3.0) * pi * (radiusM * radiusM * radiusM - innerRadiusM * innerRadiusM * innerRadiusM);
+        const double shellMass = shellVolume * static_cast<double>(spec.density);
+        return static_cast<float>(std::clamp(shellMass / massKg, 1.0e-12, 1.0));
+    };
+
+    auto makeSolarThermal = [&](double massKg, double radiusKm, double orbitDistanceAu, double forcingPeriodSeconds, const ThermalSpec& spec) {
+        ThermalSpec activeSpec = spec;
+        activeSpec.thermalMassFraction = activeShellFraction(massKg, radiusKm, spec, forcingPeriodSeconds);
+        return makeThermal(activeSpec, equilibriumInternalHeatPower(radiusKm, orbitDistanceAu, activeSpec));
+    };
+
+    auto makePlanetThermal = [&](double massKg, double radiusKm, const OrbitalElements& orbit, const ThermalSpec& spec) {
+        return makeSolarThermal(massKg, radiusKm, orbit.semiMajorAxisAu, orbitalPeriodSeconds(orbit, sunMassKg), spec);
+    };
+
+    auto makeRockySpec = [](double tempK, float density, float bondAlbedo, float specificHeat, float conductivity) {
+        return ThermalSpec{tempK, density, bondAlbedo, specificHeat, 0.0f, conductivity, 3.0e-5f, 1700.0f, 4.0e5f, 3000.0f, 1.0e7f};
+    };
+
+    auto makeFluidSpec = [](double tempK, float density, float bondAlbedo, float specificHeat, float conductivity) {
+        return ThermalSpec{tempK, density, bondAlbedo, specificHeat, 0.0f, conductivity, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     };
 
     auto normalizeRadians = [](double angle) {
@@ -181,7 +242,7 @@ void SceneManager::defaultSetup() {
 
         SceneObject* body = createObject("prim_sphere", ResourceManager::getShader("basic"), options);
         setObjectName(body, spec.name);
-        body->getPhysicsBody()->setThermalProperty(spec.thermal, BodyLock::NOLOCK);
+        body->getPhysicsBody()->setThermalProperty(makePlanetThermal(spec.massKg, spec.radiusKm, spec.orbit, spec.thermal), BodyLock::NOLOCK);
         return body;
     };
 
@@ -196,17 +257,17 @@ void SceneManager::defaultSetup() {
     sunOptions.mass = sunMassKg;
     SceneObject* sun = createObject("prim_sphere", ResourceManager::getShader("basic"), sunOptions);
     setObjectName(sun, "Sun");
-    sun->getPhysicsBody()->setThermalProperty(makeThermal(sunTempK, 1408.0f, 1.0f, 1.0f, 20780.0f, 1.0f, 1.0e4f, 0.0f, sunLuminosity), BodyLock::NOLOCK);
+    sun->getPhysicsBody()->setThermalProperty(makeThermal(makeFluidSpec(sunTempK, 1408.0f, 0.0f, 20780.0f, 1.0e4f), sunLuminosity), BodyLock::NOLOCK);
 
     const std::array<BodySpec, 8> planets{{
-        {"Mercury", 0.33010e24, 2439.7, makeThermal(440.15, 5429.0f, 0.90f, 0.91f, 800.0f, 1.0e-8f, 2.0f, 1700.0f), {0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081}},
-        {"Venus",   4.8673e24, 6051.8, makeThermal(737.15, 5243.0f, 0.01f, 0.25f, 850.0f, 5.0e-6f, 2.0f, 1700.0f, equilibriumInternalHeatPower(6051.8, 0.72333566, 737.15, 0.01, 0.25)), {0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418}},
-        {"Earth",   5.9724e24, 6371.0, makeThermal(288.15, 5514.0f, 0.61f, 0.70f, 1000.0f, 1.0e-5f, 2.5f, 1700.0f), {1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0.0, 0.0}},
-        {"Mars",    0.64169e24, 3389.5, makeThermal(208.15, 3934.0f, 0.85f, 0.75f, 750.0f, 1.0e-7f, 0.08f, 1700.0f), {1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343}},
-        {"Jupiter", 1898.13e24, 69911.0, makeThermal(163.15, 1326.0f, 0.55f, 0.50f, 13000.0f, 1.0e-6f, 0.18f, 0.0f, equilibriumInternalHeatPower(69911.0, 5.20288700, 163.15, 0.55, 0.50)), {5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106}},
-        {"Saturn",  568.32e24, 58232.0, makeThermal(133.15, 687.0f, 0.45f, 0.66f, 13000.0f, 1.0e-6f, 0.18f, 0.0f, equilibriumInternalHeatPower(58232.0, 9.53667594, 133.15, 0.45, 0.66)), {9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794}},
-        {"Uranus",  86.811e24, 25362.0, makeThermal(78.15, 1270.0f, 0.50f, 0.70f, 9000.0f, 1.0e-6f, 0.6f, 0.0f, equilibriumInternalHeatPower(25362.0, 19.18916464, 78.15, 0.50, 0.70)), {19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589}},
-        {"Neptune", 102.409e24, 24622.0, makeThermal(73.15, 1638.0f, 0.65f, 0.70f, 9000.0f, 1.0e-6f, 0.6f, 0.0f, equilibriumInternalHeatPower(24622.0, 30.06992276, 73.15, 0.65, 0.70)), {30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664}},
+        {"Mercury", 0.33010e24, 2439.7, makeRockySpec(440.15, 5429.0f, 0.068f, 800.0f, 2.0f), {0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081}},
+        {"Venus",   4.8673e24, 6051.8, makeRockySpec(737.15, 5243.0f, 0.770f, 850.0f, 2.0f), {0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418}},
+        {"Earth",   5.9722e24, 6371.0, makeRockySpec(288.15, 5513.0f, 0.294f, 1000.0f, 2.5f), {1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0.0, 0.0}},
+        {"Mars",    0.64169e24, 3389.5, makeRockySpec(208.15, 3934.0f, 0.250f, 750.0f, 0.08f), {1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343}},
+        {"Jupiter", 1898.13e24, 69911.0, makeFluidSpec(163.15, 1326.0f, 0.343f, 13000.0f, 0.18f), {5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106}},
+        {"Saturn",  568.32e24, 58232.0, makeFluidSpec(133.15, 687.0f, 0.342f, 13000.0f, 0.18f), {9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794}},
+        {"Uranus",  86.811e24, 25362.0, makeFluidSpec(78.15, 1270.0f, 0.300f, 9000.0f, 0.6f), {19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589}},
+        {"Neptune", 102.409e24, 24622.0, makeFluidSpec(73.15, 1638.0f, 0.290f, 9000.0f, 0.6f), {30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664}},
     }};
 
     SceneObject* earth = nullptr;
@@ -232,7 +293,8 @@ void SceneManager::defaultSetup() {
     moonOptions.velocity = earthState.velocity + moonRelativeState.velocity;
     SceneObject* moon = createObject("prim_sphere", ResourceManager::getShader("basic"), moonOptions);
     setObjectName(moon, "Moon");
-    moon->getPhysicsBody()->setThermalProperty(makeThermal(270.4, 3344.0f, 0.95f, 0.88f, 741.0f, 1.0e-8f, 0.001f, 1700.0f), BodyLock::NOLOCK);
+    const double earthYearSeconds = orbitalPeriodSeconds({1.00000261, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, sunMassKg);
+    moon->getPhysicsBody()->setThermalProperty(makeSolarThermal(0.07346e24, 1737.4, 1.00000261, earthYearSeconds, makeRockySpec(270.4, 3344.0f, 0.110f, 741.0f, 0.001f)), BodyLock::NOLOCK);
 
     focusObject(earth);
 }
