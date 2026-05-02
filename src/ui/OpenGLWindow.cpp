@@ -241,7 +241,8 @@ void OpenGLWindow::updateObjectLabels() {
             continue;
         }
 
-        if (clip.w < 0.0f) {
+        const bool behindCamera = clip.w < 0.0f;
+        if (behindCamera) {
             clip.x = -clip.x;
             clip.y = -clip.y;
             clip.w = -clip.w;
@@ -253,9 +254,30 @@ void OpenGLWindow::updateObjectLabels() {
             continue;
         }
 
-        const bool offscreen = ndc.x < -1.0f || ndc.x > 1.0f || ndc.y < -1.0f || ndc.y > 1.0f || ndc.z < -1.0f || ndc.z > 1.0f;
-        ndc.x = std::clamp(ndc.x, -0.98f, 0.98f);
-        ndc.y = std::clamp(ndc.y, -0.95f, 0.95f);
+        const bool outsideNdc = ndc.x < -1.0f || ndc.x > 1.0f || ndc.y < -1.0f || ndc.y > 1.0f;
+        const bool offscreen = behindCamera || outsideNdc;
+        if (offscreen) {
+            const glm::vec3 toObject = obj->getPosition() - scene->getCamera()->position;
+            const float cameraX = glm::dot(toObject, scene->getCamera()->right);
+            const float cameraY = glm::dot(toObject, scene->getCamera()->up);
+            const float cameraZ = glm::dot(toObject, scene->getCamera()->front);
+            glm::vec2 edgeDir(
+                cameraZ > 0.000001f ? cameraX / cameraZ : cameraX,
+                cameraZ > 0.000001f ? cameraY / cameraZ : cameraY
+            );
+            if (glm::dot(edgeDir, edgeDir) < 1.0e-6f) {
+                edgeDir = glm::vec2(1.0f, 0.0f);
+            }
+
+            const float scaleX = edgeDir.x != 0.0f ? 0.98f / std::abs(edgeDir.x) : std::numeric_limits<float>::infinity();
+            const float scaleY = edgeDir.y != 0.0f ? 0.95f / std::abs(edgeDir.y) : std::numeric_limits<float>::infinity();
+            const float edgeScale = std::min(scaleX, scaleY);
+            ndc.x = edgeDir.x * edgeScale;
+            ndc.y = edgeDir.y * edgeScale;
+        } else {
+            ndc.x = std::clamp(ndc.x, -0.98f, 0.98f);
+            ndc.y = std::clamp(ndc.y, -0.95f, 0.95f);
+        }
 
         bool metricsDirty = false;
         const QString labelText = QString::fromStdString(obj->getName());
