@@ -61,6 +61,11 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             std::cout << "Problem with CreationOptions on SceneObject construction!" << std::endl;
         }
     }, options);
+
+    orientation = glm::quat(rotation);
+    if (physicsBody) {
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
+    }
 }
 
 SceneObject::~SceneObject() {
@@ -80,17 +85,31 @@ glm::mat4 SceneObject::getRenderModelMatrix() const {
 
 glm::mat4 SceneObject::buildModelMatrix(bool relativeToRenderOrigin) const{
     glm::vec3 currentPosition = position;
-    if (physicsBody) {
+    glm::vec3 origin(0.0f);
+    bool hasMappedPhysicsPosition = false;
+
+    {
         std::lock_guard<std::mutex> lk(posMapMutex);
-        auto it = posMap.find(physicsBody.get());
-        if (it != posMap.end())
-            currentPosition = it->second;
-        if (relativeToRenderOrigin)
-            currentPosition -= renderOrigin;
-    } else if (relativeToRenderOrigin) {
-        std::lock_guard<std::mutex> lk(posMapMutex);
-        currentPosition -= renderOrigin;
+        origin = renderOrigin;
+        if (physicsBody) {
+            auto it = posMap.find(physicsBody.get());
+            if (it != posMap.end()) {
+                currentPosition = it->second;
+                hasMappedPhysicsPosition = true;
+            }
+        }
     }
+
+    if (physicsBody) {
+        if (!hasMappedPhysicsPosition) {
+            currentPosition = physicsBody->getPosition(BodyLock::LOCK);
+        }
+    }
+
+    if (relativeToRenderOrigin) {
+        currentPosition -= origin;
+    }
+
     glm::mat4 model(1.0f);
     model = glm::translate(model, currentPosition);
     model = model * glm::mat4_cast(orientation);

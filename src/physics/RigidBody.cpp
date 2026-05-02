@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
@@ -38,6 +39,7 @@ Physics::RigidBody::RigidBody(uint32_t id, double m, std::unique_ptr<Bounding::I
     std::lock_guard<std::mutex> lock(stateMutex);
     setMass(m, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
+    setWorldTransform(glm::translate(glm::mat4(1.0f), pos), BodyLock::NOLOCK);
     collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
 }
@@ -47,6 +49,7 @@ Physics::RigidBody::RigidBody(uint32_t id, std::unique_ptr<Bounding::ICollider> 
     collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
+    setWorldTransform(glm::translate(glm::mat4(1.0f), pos), BodyLock::NOLOCK);
     setMass(1.0f, BodyLock::NOLOCK);
 }
 

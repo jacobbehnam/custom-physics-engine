@@ -239,7 +239,8 @@ void OpenGLWindow::updateObjectLabels() {
         }
 
         SceneObject* obj = objects[i];
-        const glm::vec3 labelPosition = useFloatingOrigin ? obj->getPosition() - renderOrigin : obj->getPosition();
+        const glm::vec3 objectPosition = glm::vec3(obj->getModelMatrix()[3]);
+        const glm::vec3 labelPosition = useFloatingOrigin ? objectPosition - renderOrigin : objectPosition;
         glm::vec4 clip = proj * view * glm::vec4(labelPosition, 1.0f);
         if (!std::isfinite(clip.x) || !std::isfinite(clip.y) || !std::isfinite(clip.z) || !std::isfinite(clip.w)) {
             button->hide();
@@ -262,7 +263,7 @@ void OpenGLWindow::updateObjectLabels() {
         const bool outsideNdc = ndc.x < -1.0f || ndc.x > 1.0f || ndc.y < -1.0f || ndc.y > 1.0f;
         const bool offscreen = behindCamera || outsideNdc;
         if (offscreen) {
-            const glm::vec3 toObject = obj->getPosition() - scene->getCamera()->position;
+            const glm::vec3 toObject = objectPosition - scene->getCamera()->position;
             const float cameraX = glm::dot(toObject, scene->getCamera()->right);
             const float cameraY = glm::dot(toObject, scene->getCamera()->up);
             const float cameraZ = glm::dot(toObject, scene->getCamera()->front);

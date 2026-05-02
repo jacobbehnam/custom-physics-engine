@@ -7,6 +7,7 @@
 #include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <optional>
 #include <graphics/core/SceneObject.h>
 
 #include "ui/OpenGLWindow.h"
@@ -17,6 +18,41 @@ constexpr float kNearClipDepthFraction = 0.05f;
 
 float maxAbsComponent(const glm::vec3& v) {
     return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
+}
+
+std::optional<std::pair<float, float>> viewDepthSpan(const SceneObject& obj, const glm::vec3& cameraPosition, const glm::vec3& cameraFront) {
+    Mesh* mesh = obj.getMesh();
+    if (!mesh) return std::nullopt;
+
+    const auto& aabb = mesh->getLocalAABB();
+    const glm::vec3 min = aabb.getAABBMin();
+    const glm::vec3 max = aabb.getAABBMax();
+    const glm::mat4 model = obj.getModelMatrix();
+
+    float nearDepth = std::numeric_limits<float>::max();
+    float farDepth = -std::numeric_limits<float>::max();
+
+    for (int x = 0; x < 2; ++x) {
+        for (int y = 0; y < 2; ++y) {
+            for (int z = 0; z < 2; ++z) {
+                const glm::vec3 corner(
+                    x ? max.x : min.x,
+                    y ? max.y : min.y,
+                    z ? max.z : min.z
+                );
+                const glm::vec3 world = glm::vec3(model * glm::vec4(corner, 1.0f));
+                const float depth = glm::dot(world - cameraPosition, cameraFront);
+                nearDepth = std::min(nearDepth, depth);
+                farDepth = std::max(farDepth, depth);
+            }
+        }
+    }
+
+    if (!std::isfinite(nearDepth) || !std::isfinite(farDepth)) {
+        return std::nullopt;
+    }
+
+    return std::pair{nearDepth, farDepth};
 }
 }
 
@@ -83,24 +119,13 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
         auto* obj = dynamic_cast<SceneObject*>(drawable);
         if (!obj) continue;
 
-        glm::vec3 position = obj->getPosition();
-        if (auto* body = obj->getPhysicsBody()) {
-            auto it = renderPositions.find(body);
-            if (it != renderPositions.end()) {
-                position = it->second;
-            }
-        }
-
-        const float viewDepth = glm::dot(position - camera.position, camera.front);
-        const float radius = maxAbsComponent(obj->getScale()) * 0.5f;
-        if (!std::isfinite(viewDepth) || !std::isfinite(radius)) continue;
-        if (viewDepth + radius <= Camera::kDefaultNearClip) continue;
+        const auto depthSpan = viewDepthSpan(*obj, camera.position, camera.front);
+        if (!depthSpan) continue;
+        if (depthSpan->second <= Camera::kDefaultNearClip) continue;
 
         foundVisibleDepth = true;
-        farthestDepth = std::max(farthestDepth, viewDepth + radius);
-        if (viewDepth - radius > Camera::kDefaultNearClip) {
-            nearestDepth = std::min(nearestDepth, viewDepth - radius);
-        }
+        nearestDepth = std::min(nearestDepth, std::max(depthSpan->first, Camera::kDefaultNearClip));
+        farthestDepth = std::max(farthestDepth, depthSpan->second);
     }
 
     if (foundVisibleDepth) {

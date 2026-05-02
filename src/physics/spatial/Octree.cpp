@@ -8,6 +8,11 @@
 
 namespace {
 constexpr float kMinNodeHalfSize = 0.001f;
+
+bool containsPosition(const OctreeNode& node, const glm::vec3& position) {
+    const glm::vec3 delta = glm::abs(position - node.center);
+    return delta.x <= node.halfSize && delta.y <= node.halfSize && delta.z <= node.halfSize;
+}
 }
 
 void Octree::clear() {
@@ -160,9 +165,9 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
         float distSq = glm::dot(dist, dist);
         float softeningDistSq = distSq + Constants::SOFTENING_SQ;
         float widthSq = node.halfSize * node.halfSize * 4.0f;
+        const bool nodeContainsBody = containsPosition(node, bodyPos);
 
-        // Only single body or sufficiently far away, treat as point mass
-        if (node.isLeaf() || widthSq < Constants::THETA_SQ * distSq) {
+        if (node.isLeaf() || (!nodeContainsBody && widthSq < Constants::THETA_SQ * distSq)) {
             if (node.isLeaf() && !node.bodies.empty()) {
                 for (Physics::PhysicsBody* other : node.bodies) {
                     if (other == body) continue;
@@ -224,6 +229,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
         if (distSq < 0.0001) distSq = 0.0001;
 
         float widthSq = node.halfSize * node.halfSize * 4.0f;
+        const bool nodeContainsBody = containsPosition(node, bodyPos);
 
         if (node.isLeaf()) {
             for (Physics::PhysicsBody* other : node.bodies) {
@@ -241,7 +247,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
                 totalHeat += q_rad;
             }
 
-        } else if (widthSq < Constants::THETA_SQ * distSq) {
+        } else if (!nodeContainsBody && widthSq < Constants::THETA_SQ * distSq) {
             double solidAngleFactor = projectedArea / (4.0 * glm::pi<double>() * distSq);
             double q_rad = Constants::STEFAN_BOLTZMANN * absorptivity * solidAngleFactor * node.totalEmission;
             totalHeat += q_rad;

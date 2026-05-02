@@ -39,9 +39,10 @@ struct RigidBodyOptions {
 
         // Collider will store as local transform
         o.createCollider = [](auto const& b) -> std::unique_ptr<Physics::Bounding::ICollider>{
+            (void)b;
             return std::make_unique<Physics::Bounding::BoxCollider>(
                 glm::vec3(0.0f),
-                b.scale / 2.0f,
+                glm::vec3(0.5f),
                 glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
             );
         };

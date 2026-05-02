@@ -23,12 +23,20 @@ Physics::PointMass::PointMass(uint32_t id, glm::vec3 pos, bool bodyStatic) : Phy
 }
 
 void Physics::PointMass::setMass(double newMass, BodyLock lock) {
-    PhysicsBody::setMass(newMass, lock);
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
+    PhysicsBody::setMass(newMass, BodyLock::NOLOCK);
     recomputeSurfaceArea();
 }
 
 void Physics::PointMass::setThermalProperty(const ThermalProperties& newProps, BodyLock lock) {
-    PhysicsBody::setThermalProperty(newProps, lock);
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
+    PhysicsBody::setThermalProperty(newProps, BodyLock::NOLOCK);
     recomputeSurfaceArea();
 }
 
