@@ -11,6 +11,7 @@
 class PathTraces;
 class Forces;
 class Colliders;
+namespace ScenePresets { struct PresetDescriptor; }
 
 enum class Primitive {
     CUBE,
@@ -81,6 +82,8 @@ public:
 
     bool saveScene(const QString &file);
     bool loadScene(const QString &file);
+    bool loadPreset(const ScenePresets::PresetDescriptor& preset);
+    void resetScene();
 
     void defaultSetup(); // TODO: prob will remove later.
     std::unordered_set<uint32_t> hoveredIDs, selectedIDs; // TODO: dont make public

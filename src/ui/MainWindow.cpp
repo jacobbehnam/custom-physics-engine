@@ -16,6 +16,7 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QFormLayout>
+#include <map>
 #include <memory>
 
 #include "HierarchyWidget.h"
@@ -24,6 +25,7 @@
 #include "SolverDialog.h"
 #include "AppSettings.h"
 #include "graphics/core/Camera.h"
+#include "graphics/presets/ScenePresets.h"
 #include "ui/settings/CameraSettingsGroup.h"
 #include "ui/settings/DebugSettings.h"
 #include "ui/settings/SettingsDialog.h"
@@ -261,6 +263,33 @@ void MainWindow::setupFileMenu() {
     });
 }
 
+void MainWindow::setupPresetMenu() {
+    QMenu* presetMenu = menuBar()->addMenu("Presets");
+    std::map<QString, QMenu*> categoryMenus;
+
+    for (const auto& preset : ScenePresets::all()) {
+        const QString category = QString::fromUtf8(preset.category);
+        QMenu*& categoryMenu = categoryMenus[category];
+        if (!categoryMenu) {
+            categoryMenu = presetMenu->addMenu(category);
+        }
+
+        QAction* action = categoryMenu->addAction(QString::fromUtf8(preset.name));
+        action->setToolTip(QString::fromUtf8(preset.description));
+        const ScenePresets::PresetDescriptor* presetPtr = &preset;
+        connect(action, &QAction::triggered, this, [this, presetPtr]() {
+            if (sceneManager->loadPreset(*presetPtr)) {
+                snapshotModel->setSnapshots({});
+                frameGraphPanel->clear();
+                updateStatusPanel();
+                statusBar()->showMessage(QString("Loaded preset: %1").arg(QString::fromUtf8(presetPtr->name)), 3000);
+            } else {
+                statusBar()->showMessage(QString("Failed to load preset: %1").arg(QString::fromUtf8(presetPtr->name)), 3000);
+            }
+        });
+    }
+}
+
 void MainWindow::setupSettingMenu() {
     QMenu *settingMenu = menuBar()->addMenu("Settings");
     QAction *preferencesAction = new QAction("Preferences", this);
@@ -283,6 +312,7 @@ void MainWindow::setupSettingMenu() {
 
 void MainWindow::setupMenuBar() {
     MainWindow::setupFileMenu();
+    MainWindow::setupPresetMenu();
     viewMenu = menuBar()->addMenu("View");
     MainWindow::setupSettingMenu();
 }

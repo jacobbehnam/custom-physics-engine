@@ -7,7 +7,6 @@
 
 #include "ResourceManager.h"
 #include "graphics/core/SceneObject.h"
-#include "physics/Constants.h"
 #include <unordered_map>
 
 namespace JsonUtils {
@@ -207,12 +206,7 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
     QJsonObject root = doc.object();
     // Can check engine version for compatibility
 
-    sceneManager->stopSimulation();
-    sceneManager->physicsSystem->clearRuntimeState();
-    sceneManager->setGlobalAcceleration(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
-    sceneManager->setSimSpeed(1.0f);
-    sceneManager->setGravitationalConstant(Constants::G);
-    sceneManager->setAmbientTemperature(293.15f);
+    sceneManager->resetScene();
 
     if (root.contains("settings") && root["settings"].isObject()) {
         QJsonObject settings = root["settings"].toObject();
@@ -222,14 +216,6 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
         sceneManager->setSimSpeed(JsonUtils::numberOr(settings, "simSpeed", sceneManager->getSimSpeed()));
         sceneManager->setGravitationalConstant(JsonUtils::numberOr(settings, "gravitationalConstant", sceneManager->getGravitationalConstant()));
         sceneManager->setAmbientTemperature(static_cast<float>(JsonUtils::numberOr(settings, "ambientTemperature", sceneManager->getAmbientTemperature())));
-    }
-
-    sceneManager->deleteAllObjects();
-    sceneManager->setSelectFor(nullptr);
-    SceneObject::setPhysicsPosMap(SceneObject::PosMap{});
-    SceneObject::setRenderOrigin(glm::vec3(0.0f));
-    if (sceneManager->scene && sceneManager->scene->getCamera()) {
-        sceneManager->scene->getCamera()->resetView();
     }
 
     std::unordered_map<uint32_t, SceneObject*> objectsBySavedId;

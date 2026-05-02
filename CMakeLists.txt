@@ -83,6 +83,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/graphics/core/SceneSerializer.cpp
         src/graphics/core/SceneSerializer.h
         src/graphics/core/SceneObjectOptions.h
+        src/graphics/presets/ScenePresets.cpp
+        src/graphics/presets/ScenePresets.h
+        src/graphics/presets/AstronomyPresets.cpp
+        src/graphics/presets/AstronomyPresets.h
         src/graphics/components/Mesh.cpp
         src/graphics/components/Shader.cpp
         src/graphics/components/Shader.h

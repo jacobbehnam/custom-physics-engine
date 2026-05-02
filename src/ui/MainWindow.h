@@ -53,6 +53,7 @@ private:
 
     void setupDockWidgets();
     void setupFileMenu();
+    void setupPresetMenu();
     void setupSettingMenu();
     void setupMenuBar();
     void loadAppSettings();
