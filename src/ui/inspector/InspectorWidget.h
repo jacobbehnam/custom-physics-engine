@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
+class QTabWidget;
 class SceneManager;
 class SceneObject;
 
@@ -28,6 +29,10 @@ private:
     SceneObject* currentObject = nullptr;
 
     QVBoxLayout* mainLayout;
+    QTabWidget* inspectorTabs;
+    int objectTabIndex = -1;
+    int thermalTabIndex = -1;
+    int sceneTabIndex = -1;
     QTimer refreshTimer;
 
     TransformInspectorWidget* transformWidget;
