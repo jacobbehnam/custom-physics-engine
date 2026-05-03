@@ -69,8 +69,8 @@ void SceneManager::resetScene() {
 
     setGlobalAcceleration(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
     setSimSpeed(1.0f);
-    setGravitationalConstant(Constants::G);
-    setAmbientTemperature(293.15f);
+    physicsSystem->setGravitationalConstant(Constants::G);
+    physicsSystem->setAmbientTemperature(293.15f);
     setSelectFor(nullptr);
 }
 

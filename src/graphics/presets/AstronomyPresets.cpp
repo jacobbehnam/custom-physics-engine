@@ -232,8 +232,8 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     };
 
     sceneManager.setGlobalAcceleration(glm::vec3(0.0f));
-    sceneManager.setAmbientTemperature(2.725f);
-    sceneManager.setGravitationalConstant(Constants::G);
+    sceneManager.physicsSystem->setAmbientTemperature(2.725f);
+    sceneManager.physicsSystem->setGravitationalConstant(Constants::G);
     sceneManager.setSimSpeed(1.0e6f);
 
     PointMassOptions sunOptions;

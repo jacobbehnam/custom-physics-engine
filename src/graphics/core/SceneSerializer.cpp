@@ -100,9 +100,9 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     // Global settings
     QJsonObject settings;
     settings["gravity"] = JsonUtils::vec3ToJson(sceneManager->getGlobalAcceleration());
-    settings["gravitationalConstant"] = sceneManager->getGravitationalConstant();
+    settings["gravitationalConstant"] = sceneManager->physicsSystem->getGravitationalConstant();
     settings["simSpeed"] = sceneManager->getSimSpeed();
-    settings["ambientTemperature"] = sceneManager->getAmbientTemperature();
+    settings["ambientTemperature"] = sceneManager->physicsSystem->getAmbientTemperature();
     root["settings"] = settings;
 
     if (sceneManager->scene && sceneManager->scene->getCamera()) {
@@ -215,8 +215,10 @@ bool SceneSerializer::loadFromJson(const QString &filename) {
             sceneManager->setGlobalAcceleration(JsonUtils::jsonToVec3(settings["gravity"].toArray()));
         }
         sceneManager->setSimSpeed(JsonUtils::numberOr(settings, "simSpeed", sceneManager->getSimSpeed()));
-        sceneManager->setGravitationalConstant(JsonUtils::numberOr(settings, "gravitationalConstant", sceneManager->getGravitationalConstant()));
-        sceneManager->setAmbientTemperature(static_cast<float>(JsonUtils::numberOr(settings, "ambientTemperature", sceneManager->getAmbientTemperature())));
+        sceneManager->physicsSystem->setGravitationalConstant(
+            JsonUtils::numberOr(settings, "gravitationalConstant", sceneManager->physicsSystem->getGravitationalConstant()));
+        sceneManager->physicsSystem->setAmbientTemperature(
+            static_cast<float>(JsonUtils::numberOr(settings, "ambientTemperature", sceneManager->physicsSystem->getAmbientTemperature())));
     }
 
     std::unordered_map<uint32_t, SceneObject*> objectsBySavedId;
