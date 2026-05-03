@@ -8,7 +8,9 @@
 #include "graphics/core/SceneObject.h"
 
 namespace {
-constexpr int kMaxTrailPointsPerObject = 4096;
+constexpr int   kMaxTrailPointsPerObject = 4096;
+constexpr int   kMinTrailPointCount      = 2;
+constexpr float kTraceLineWidth          = 2.0f;
 }
 
 PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
@@ -50,7 +52,7 @@ void PathTraces::draw() const {
     float oldLineWidth;
     gl->glGetFloatv(GL_LINE_WIDTH, &oldLineWidth);
     
-    gl->glLineWidth(2.0f);
+    gl->glLineWidth(kTraceLineWidth);
 
     std::vector<glm::vec3> points;
     for (const auto& objPtr : objects) {
@@ -60,7 +62,7 @@ void PathTraces::draw() const {
 
         const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
         body->withFrames(BodyLock::LOCK, [this, &points, renderOrigin](const std::vector<ObjectSnapshot>& snapshots) {
-        if (snapshots.size() < 2) return;
+        if (snapshots.size() < kMinTrailPointCount) return;
 
         const float latestTime = snapshots.back().time;
         const float startTime = latestTime - this->timeWindow;
@@ -73,8 +75,8 @@ void PathTraces::draw() const {
             });
         int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
         int totalCount = static_cast<int>(snapshots.size()) - startIdx;
-        if (totalCount < 2) {
-            startIdx = std::max(0, static_cast<int>(snapshots.size()) - 2);
+        if (totalCount < kMinTrailPointCount) {
+            startIdx = std::max(0, static_cast<int>(snapshots.size()) - kMinTrailPointCount);
             totalCount = static_cast<int>(snapshots.size()) - startIdx;
         }
         const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
@@ -89,7 +91,7 @@ void PathTraces::draw() const {
             points.push_back(snapshots.back().position - renderOrigin);
         }
 
-        if (points.size() < 2) return;
+        if (points.size() < kMinTrailPointCount) return;
 
         this->gl->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
         this->gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
