@@ -18,6 +18,23 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace {
+constexpr float  kDefaultGlLineWidth            = 10.0f;
+constexpr double kFpsUpdateIntervalSeconds      = 0.1;
+constexpr int    kWheelDegreesPerStep           = 15;
+constexpr int    kWheelDeltaDivisor             = 8;
+constexpr int    kLabelGridCellPx               = 32;
+constexpr float  kClipWMin                      = 0.000001f;
+constexpr float  kOffscreenDirectionEpsilonSq   = 1.0e-6f;
+constexpr float  kEdgeClampX                    = 0.98f;
+constexpr float  kEdgeClampY                    = 0.95f;
+constexpr int    kLabelPaddingPx                = 2;
+constexpr int    kLabelOffsetAboveObjectPx      = 8;
+constexpr int    kLabelStepYPx                  = 4;
+constexpr int    kLabelMinStepXPx               = 36;
+constexpr int    kLabelSearchRings              = 12;
+}
+
 OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent) {}
 
 void OpenGLWindow::initializeGL() {
@@ -34,7 +51,7 @@ void OpenGLWindow::initializeGL() {
     //     std::cerr << "OpenGL DEBUG: " << message << std::endl;
     // }, nullptr);
 
-    glLineWidth(10.0f);
+    glLineWidth(kDefaultGlLineWidth);
 
     lastFrame = std::chrono::steady_clock::now();
     emit glInitialized();
@@ -94,7 +111,7 @@ void OpenGLWindow::calculateFPS() {
     frameCount++;
 
     std::chrono::duration<double> fpsDuration = lastFrame - lastFpsUpdate;
-    if (fpsDuration.count() >= 0.1) {  // Every 100 milliseconds
+    if (fpsDuration.count() >= kFpsUpdateIntervalSeconds) {
         fps = frameCount / fpsDuration.count();
         frameCount = 0;
         lastFpsUpdate = lastFrame;
@@ -130,8 +147,8 @@ void OpenGLWindow::mouseReleaseEvent(QMouseEvent* event) {
 void OpenGLWindow::wheelEvent(QWheelEvent* event) {
     if (!scene) return;
 
-    const QPoint numDegrees = event->angleDelta() / 8;
-    const float wheelSteps = static_cast<float>(numDegrees.y()) / 15.0f;
+    const QPoint numDegrees = event->angleDelta() / kWheelDeltaDivisor;
+    const float wheelSteps = static_cast<float>(numDegrees.y()) / static_cast<float>(kWheelDegreesPerStep);
     scene->getCamera()->processScroll(wheelSteps);
     event->accept();
     update();
@@ -196,7 +213,6 @@ void OpenGLWindow::updateObjectLabels() {
     const float w = static_cast<float>(width());
     const float h = static_cast<float>(height());
 
-    constexpr int kLabelGridCellPx = 32;
     const int labelGridCols = std::max(1, (width() + kLabelGridCellPx - 1) / kLabelGridCellPx);
     const int labelGridRows = std::max(1, (height() + kLabelGridCellPx - 1) / kLabelGridCellPx);
     std::vector<unsigned char> occupiedLabelCells(static_cast<size_t>(labelGridCols * labelGridRows), 0);
@@ -217,14 +233,14 @@ void OpenGLWindow::updateObjectLabels() {
     };
 
     auto overlapsOccupiedLabel = [&](const QRect& rect) {
-        const QRect padded = rect.adjusted(-2, -2, 2, 2);
+        const QRect padded = rect.adjusted(-kLabelPaddingPx, -kLabelPaddingPx, kLabelPaddingPx, kLabelPaddingPx);
         return visitLabelCells(padded, [&](int xCell, int yCell) {
             return occupiedLabelCells[static_cast<size_t>(yCell * labelGridCols + xCell)] != 0;
         });
     };
 
     auto occupyLabel = [&](const QRect& rect) {
-        const QRect padded = rect.adjusted(-2, -2, 2, 2);
+        const QRect padded = rect.adjusted(-kLabelPaddingPx, -kLabelPaddingPx, kLabelPaddingPx, kLabelPaddingPx);
         visitLabelCells(padded, [&](int xCell, int yCell) {
             occupiedLabelCells[static_cast<size_t>(yCell * labelGridCols + xCell)] = 1;
             return false;
@@ -254,7 +270,7 @@ void OpenGLWindow::updateObjectLabels() {
             clip.w = -clip.w;
         }
 
-        glm::vec3 ndc = glm::vec3(clip) / std::max(clip.w, 0.000001f);
+        glm::vec3 ndc = glm::vec3(clip) / std::max(clip.w, kClipWMin);
         if (!std::isfinite(ndc.x) || !std::isfinite(ndc.y) || !std::isfinite(ndc.z)) {
             button->hide();
             continue;
@@ -268,21 +284,21 @@ void OpenGLWindow::updateObjectLabels() {
             const float cameraY = glm::dot(toObject, scene->getCamera()->up);
             const float cameraZ = glm::dot(toObject, scene->getCamera()->front);
             glm::vec2 edgeDir(
-                cameraZ > 0.000001f ? cameraX / cameraZ : cameraX,
-                cameraZ > 0.000001f ? cameraY / cameraZ : cameraY
+                cameraZ > kClipWMin ? cameraX / cameraZ : cameraX,
+                cameraZ > kClipWMin ? cameraY / cameraZ : cameraY
             );
-            if (glm::dot(edgeDir, edgeDir) < 1.0e-6f) {
+            if (glm::dot(edgeDir, edgeDir) < kOffscreenDirectionEpsilonSq) {
                 edgeDir = glm::vec2(1.0f, 0.0f);
             }
 
-            const float scaleX = edgeDir.x != 0.0f ? 0.98f / std::abs(edgeDir.x) : std::numeric_limits<float>::infinity();
-            const float scaleY = edgeDir.y != 0.0f ? 0.95f / std::abs(edgeDir.y) : std::numeric_limits<float>::infinity();
+            const float scaleX = edgeDir.x != 0.0f ? kEdgeClampX / std::abs(edgeDir.x) : std::numeric_limits<float>::infinity();
+            const float scaleY = edgeDir.y != 0.0f ? kEdgeClampY / std::abs(edgeDir.y) : std::numeric_limits<float>::infinity();
             const float edgeScale = std::min(scaleX, scaleY);
             ndc.x = edgeDir.x * edgeScale;
             ndc.y = edgeDir.y * edgeScale;
         } else {
-            ndc.x = std::clamp(ndc.x, -0.98f, 0.98f);
-            ndc.y = std::clamp(ndc.y, -0.95f, 0.95f);
+            ndc.x = std::clamp(ndc.x, -kEdgeClampX, kEdgeClampX);
+            ndc.y = std::clamp(ndc.y, -kEdgeClampY, kEdgeClampY);
         }
 
         bool metricsDirty = false;
@@ -347,14 +363,14 @@ void OpenGLWindow::updateObjectLabels() {
         const int maxX = std::max(0, width() - button->width());
         const int maxY = std::max(0, height() - button->height());
         const int baseX = std::clamp(static_cast<int>((ndc.x * 0.5f + 0.5f) * w) - button->width() / 2, 0, maxX);
-        const int baseY = std::clamp(static_cast<int>((1.0f - (ndc.y * 0.5f + 0.5f)) * h) - button->height() - 8, 0, maxY);
-        const int stepY = button->height() + 4;
-        const int stepX = std::max(button->width() / 2, 36);
+        const int baseY = std::clamp(static_cast<int>((1.0f - (ndc.y * 0.5f + 0.5f)) * h) - button->height() - kLabelOffsetAboveObjectPx, 0, maxY);
+        const int stepY = button->height() + kLabelStepYPx;
+        const int stepX = std::max(button->width() / 2, kLabelMinStepXPx);
         int bestX = baseX;
         int bestY = baseY;
         int bestScore = std::numeric_limits<int>::max();
 
-        for (int ring = 0; ring <= 12; ++ring) {
+        for (int ring = 0; ring <= kLabelSearchRings; ++ring) {
             for (int dySign : {1, -1}) {
                 const int dy = ring == 0 ? 0 : dySign * ring * stepY;
                 for (int dxSign : {0, 1, -1}) {
