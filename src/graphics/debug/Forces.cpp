@@ -4,14 +4,19 @@
 #include "graphics/core/ResourceManager.h"
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 namespace {
 
-constexpr float kArrowStemMin = 0.35f;
-constexpr float kArrowStemMax = 2.4f;
-constexpr float kForceEpsilon = 1e-4f;
-constexpr float kMagSpanEpsilon = 1e-6f;
-constexpr glm::vec3 kArrowColor(1.0f, 1.0f, 0.0f);
+constexpr float     kArrowStemMin          = 1.0f;
+constexpr float     kArrowStemMax          = 3.5f;
+constexpr float     kArrowRadiusMin        = 1.0f;
+constexpr float     kArrowThicknessScale   = 0.08f;
+constexpr float     kDefaultArrowStrengthT = 0.5f;
+constexpr float     kForceEpsilon          = 1e-4f;
+constexpr float     kMagSpanEpsilon        = 1e-6f;
+constexpr float     kParallelAxisEpsilon   = 1e-3f;
+constexpr glm::vec3 kArrowColor            = glm::vec3(1.0f, 1.0f, 0.0f);
 
 glm::mat4 rotateFromYToDir(const glm::vec3& dir) {
     const glm::vec3 from(0.0f, 1.0f, 0.0f);
@@ -19,7 +24,7 @@ glm::mat4 rotateFromYToDir(const glm::vec3& dir) {
     const glm::vec3 crossA = glm::cross(from, to);
     const float cosA = glm::dot(from, to);
 
-    if (glm::length(crossA) < 1e-3f) {
+    if (glm::length(crossA) < kParallelAxisEpsilon) {
         if (cosA < 0.0f) {
             return glm::rotate(glm::mat4(1.0f), glm::pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f));
         }
@@ -57,7 +62,8 @@ void Forces::draw() const {
     float maxMag = 0.0f;
     bool haveSpan = false;
 
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         auto* body = obj->getPhysicsBody();
         if (!body) continue;
 
@@ -73,7 +79,10 @@ void Forces::draw() const {
             maxMag = std::max(maxMag, netMag);
         }
 
-        m_arrowScratch.push_back({obj->getObjectID(), net, netMag, body->getPosition(BodyLock::LOCK)});
+        const float radius = glm::compMax(glm::abs(obj->getScale())) * 0.5f;
+        const glm::vec3 dir = glm::normalize(net);
+        const glm::vec3 surfaceStart = body->getPosition(BodyLock::LOCK) + dir * radius;
+        m_arrowScratch.push_back({obj->getObjectID(), net, netMag, surfaceStart, std::max(radius, kArrowRadiusMin)});
     }
 
     if (m_arrowScratch.empty()) return;
@@ -81,6 +90,7 @@ void Forces::draw() const {
     basicShader->use();
 
     const float magSpan = maxMag - minMag;
+    const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
 
     m_instanceScratch.clear();
     if (m_instanceScratch.capacity() < m_arrowScratch.size()) {
@@ -89,16 +99,16 @@ void Forces::draw() const {
 
     for (const ArrowCpu& e : m_arrowScratch) {
         glm::mat4 model(1.0f);
-        model = glm::translate(model, e.startPos);
+        model = glm::translate(model, e.startPos - renderOrigin);
         model = model * rotateFromYToDir(e.net);
 
-        float t = 0.5f;
+        float t = kDefaultArrowStrengthT;
         if (magSpan > kMagSpanEpsilon) {
             t = (e.netMag - minMag) / magSpan;
         }
         const float lengthFactor = kArrowStemMin + t * (kArrowStemMax - kArrowStemMin);
 
-        model = glm::scale(model, glm::vec3(1.0f, 1.5f * lengthFactor, 1.0f));
+        model = glm::scale(model, glm::vec3(e.radius * kArrowThicknessScale, e.radius * lengthFactor, e.radius * kArrowThicknessScale));
         m_instanceScratch.emplace_back(model, e.objectID, kArrowColor);
     }
 

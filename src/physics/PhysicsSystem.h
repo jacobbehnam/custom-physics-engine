@@ -8,11 +8,9 @@
 
 #include "RigidBody.h"
 #include "physics/Constants.h"
-#include "solver/OneUnknownSolver.h"
 #include "solver/ProblemRouter.h"
 #include "spatial/Octree.h"
 #include "spatial/BVH.h"
-#include "solver/VectorRootSolver.h"
 
 namespace Physics {
     class PhysicsSystem {
@@ -33,19 +31,24 @@ namespace Physics {
 
         void enablePhysics();
         void disablePhysics();
+        bool isPhysicsEnabled() const { return physicsEnabled.load(); }
 
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration.load(); }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration.store(newAcceleration); }
         float getSimSpeed() const { return simSpeed.load(); }
         void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
-        float getGravitationalConstant() const { return gravitationalConstant.load(); }
-        void setGravitationalConstant(float newG) { gravitationalConstant.store(newG); }
+        double getGravitationalConstant() const { return gravitationalConstant.load(); }
+        void setGravitationalConstant(double newG) { gravitationalConstant.store(newG); }
+
+        float getAmbientTemperature() const { return ambientTemperature.load(); }
+        void setAmbientTemperature(float newTemp) { ambientTemperature.store(newTemp); }
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
 
         const ProblemRouter* getRouter() const { return &router; }
         void solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
         void reset();
+        void clearRuntimeState();
 
         float simTime = 0.0f; // TODO move
 
@@ -62,7 +65,8 @@ namespace Physics {
 
         std::atomic<glm::vec3> globalAcceleration;
         std::atomic<float> simSpeed{1.0f};
-        std::atomic<float> gravitationalConstant{Constants::G};
+        std::atomic<double> gravitationalConstant{Constants::G};
+        std::atomic<float> ambientTemperature{293.15f};
         std::atomic<long long> stepCount{0};
         std::vector<PhysicsBody*> bodies;
 

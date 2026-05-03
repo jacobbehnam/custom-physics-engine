@@ -1,7 +1,11 @@
 #include <algorithm>
+#include <cmath>
+#include <limits>
+#include <thread>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPointer>
 #include <QToolTip>
 
 #include "FrameGraphCanvas.h"
@@ -17,6 +21,7 @@ namespace {
     constexpr int   kPlotMarginBottomOffset = 4;
     constexpr int   kLabelOffset            = 2;
     constexpr int   kGridLines              = 3;
+    constexpr int   kGraphBucketsPerPixel   = 2;
 
     int nearestIndexByX(const std::vector<QPointF>& pts, qreal mx) {
         if (pts.empty()) return -1;
@@ -41,12 +46,17 @@ FrameGraphCanvas::FrameGraphCanvas(QWidget* parent)
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumHeight(kMinCanvasHeight);
+    resizeRebuildTimer.setSingleShot(true);
+    resizeRebuildTimer.setInterval(250);
+    connect(&resizeRebuildTimer, &QTimer::timeout, this, [this]() {
+        requestPointRebuild();
+    });
 }
 
-void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
+void FrameGraphCanvas::setSharedData(std::shared_ptr<const std::vector<ObjectSnapshot>> frames,
     const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMinP, float tMaxP) {
-    framesRef = (frames && !frames->empty()) ? frames : nullptr;
-    if (framesRef) {
+    framesData = (frames && !frames->empty()) ? std::move(frames) : nullptr;
+    if (framesData) {
         valueMinMaxPerMetric = valueMinMax;
         tMin = tMinP;
         tMax = tMaxP;
@@ -55,40 +65,67 @@ void FrameGraphCanvas::setSharedData(const std::vector<ObjectSnapshot>* frames,
         tMin = 0.0f;
         tMax = 0.0f;
     }
-    rebuildPoints();
-    update();
+    requestPointRebuild();
 }
 
 void FrameGraphCanvas::clear() {
-    framesRef = nullptr;
+    framesData.reset();
     valueMinMaxPerMetric = {};
     tMin = 0.0f;
     tMax = 0.0f;
     graphPoints.clear();
+    graphPointFrameIndices.clear();
     hoverIndex = -1;
+    rebuildGeneration.fetch_add(1, std::memory_order_relaxed);
+    invalidateCache();
     QToolTip::hideText();
     update();
 }
 
 void FrameGraphCanvas::setMetric(Metric metric) {
     currentMetric = metric;
-    rebuildPoints();
-    update();
+    requestPointRebuild();
 }
 
 void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     QWidget::paintEvent(event);
+    if (cacheDirty || baseCache.isNull()) {
+        rebuildBaseCache();
+    }
+
     QPainter painter(this);
+    painter.drawPixmap(0, 0, baseCache);
+
+    if (hoverIndex >= 0 && hoverIndex < static_cast<int>(graphPoints.size())) {
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        const QPalette pal = palette();
+        const QRect rect = plotRect();
+        const QColor hoverColor = pal.color(QPalette::Highlight);
+        const QPointF point = graphPoints[hoverIndex];
+        painter.setPen(QPen(hoverColor, kHoverLineWidth, Qt::DashLine));
+        painter.drawLine(QPointF(point.x(), rect.top()), QPointF(point.x(), rect.bottom()));
+        painter.setBrush(hoverColor);
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(point, kHoverPointRadius, kHoverPointRadius);
+    }
+}
+
+void FrameGraphCanvas::rebuildBaseCache() {
+    const qreal ratio = devicePixelRatioF();
+    baseCache = QPixmap(size() * ratio);
+    baseCache.setDevicePixelRatio(ratio);
+    baseCache.fill(Qt::transparent);
+
+    QPainter painter(&baseCache);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    const QPalette pal = palette();
     const QRect rect = plotRect();
+    const QPalette pal = palette();
     const QColor panelColor = pal.color(QPalette::Window);
     const QColor plotColor = pal.color(QPalette::Base);
     const QColor borderColor = pal.color(QPalette::Mid);
     const QColor textColor = pal.color(QPalette::Text);
     const QColor mutedText = pal.color(QPalette::Midlight);
     const QColor lineColor = pal.color(QPalette::Highlight);
-    const QColor hoverColor = pal.color(QPalette::Highlight);
     painter.fillRect(this->rect(), panelColor);
     painter.fillRect(rect, plotColor);
     painter.setPen(borderColor);
@@ -102,11 +139,13 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     painter.drawText(QRect(rect.left(), rect.bottom() + kLabelOffset, rect.width(), bottomLabelHeight()),
                      Qt::AlignRight | Qt::AlignVCenter,
                      tr("Time (s)"));
-    if (graphPoints.empty() || !framesRef) {
+    if (graphPoints.empty() || !framesData) {
         painter.setPen(mutedText);
         painter.drawText(rect, Qt::AlignCenter, tr("Select a simulated object to view its history."));
+        cacheDirty = false;
         return;
     }
+
     QPainterPath path;
     path.moveTo(graphPoints.front());
     for (size_t i = 1; i < graphPoints.size(); ++i) {
@@ -114,14 +153,7 @@ void FrameGraphCanvas::paintEvent(QPaintEvent* event) {
     }
     painter.setPen(QPen(lineColor, kLineWidth));
     painter.drawPath(path);
-    if (hoverIndex >= 0 && hoverIndex < static_cast<int>(graphPoints.size())) {
-        const QPointF point = graphPoints[hoverIndex];
-        painter.setPen(QPen(hoverColor, kHoverLineWidth, Qt::DashLine));
-        painter.drawLine(QPointF(point.x(), rect.top()), QPointF(point.x(), rect.bottom()));
-        painter.setBrush(hoverColor);
-        painter.setPen(Qt::NoPen);
-        painter.drawEllipse(point, kHoverPointRadius, kHoverPointRadius);
-    }
+    cacheDirty = false;
 }
 
 void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
@@ -136,8 +168,10 @@ void FrameGraphCanvas::mouseMoveEvent(QMouseEvent* event) {
     }
     const int nearestIndex = nearestIndexByX(graphPoints, event->position().x());
     if (nearestIndex < 0) return;
+    if (nearestIndex == hoverIndex) return;
+
     hoverIndex = nearestIndex;
-    const ObjectSnapshot& sample = (*framesRef)[static_cast<size_t>(nearestIndex)];
+    const ObjectSnapshot& sample = (*framesData)[graphPointFrameIndices[static_cast<size_t>(nearestIndex)]];
     const float value = objectSnapshotValue(currentMetric, sample);
     QToolTip::showText(event->globalPosition().toPoint(),
                        tr("t=%1 s\n%2=%3")
@@ -158,7 +192,9 @@ void FrameGraphCanvas::leaveEvent(QEvent* event) {
 
 void FrameGraphCanvas::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
-    rebuildPoints();
+    hoverIndex = -1;
+    QToolTip::hideText();
+    resizeRebuildTimer.start();
 }
 
 int FrameGraphCanvas::bottomLabelHeight() const {
@@ -170,29 +206,111 @@ QRect FrameGraphCanvas::plotRect() const {
     return rect().adjusted(kPlotMarginLeft, kPlotMarginTop, -kPlotMarginRight, -bottom);
 }
 
-void FrameGraphCanvas::rebuildPoints() {
-    graphPoints.clear();
+void FrameGraphCanvas::requestPointRebuild() {
     hoverIndex = -1;
-    if (!framesRef || framesRef->empty()) return;
+    const auto frames = framesData;
+    const uint64_t generation = rebuildGeneration.fetch_add(1, std::memory_order_relaxed) + 1;
     const QRect rect = plotRect();
-    if (rect.width() <= 1 || rect.height() <= 1) return;
+    if (!frames || frames->empty() || rect.width() <= 1 || rect.height() <= 1) {
+        applyRebuiltPoints(generation, {}, {});
+        return;
+    }
 
     const int m = static_cast<int>(currentMetric);
-    if (m < 0 || m >= static_cast<int>(kPlottableMetricCount)) return;
+    if (m < 0 || m >= static_cast<int>(kPlottableMetricCount)) {
+        applyRebuiltPoints(generation, {}, {});
+        return;
+    }
+
+    const auto valueRange = valueMinMaxPerMetric;
     const float minTime = tMin;
     const float maxTime = tMax;
-    const float minValue = valueMinMaxPerMetric[static_cast<size_t>(m)].first;
-    const float maxValue = valueMinMaxPerMetric[static_cast<size_t>(m)].second;
+    const Metric metric = currentMetric;
+    const QPointer<FrameGraphCanvas> self(this);
 
-    graphPoints.reserve(framesRef->size());
-    const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
-    const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
+    std::thread([self, frames, valueRange, minTime, maxTime, metric, m, rect, generation]() {
+        std::vector<QPointF> points;
+        std::vector<size_t> frameIndices;
 
-    for (const auto& frame : *framesRef) {
-        const float timeAlpha = (frame.time - minTime) * invTime;
-        const float valueAlpha = (objectSnapshotValue(currentMetric, frame) - minValue) * invValue;
-        const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
-        const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
-        graphPoints.emplace_back(x, y);
-    }
+        const float minValue = valueRange[static_cast<size_t>(m)].first;
+        const float maxValue = valueRange[static_cast<size_t>(m)].second;
+        const float invTime = maxTime > minTime ? 1.0f / (maxTime - minTime) : 0.0f;
+        const float invValue = maxValue > minValue ? 1.0f / (maxValue - minValue) : 0.0f;
+        struct Bucket {
+            bool used = false;
+            qreal x = 0.0;
+            qreal minY = std::numeric_limits<qreal>::max();
+            qreal maxY = std::numeric_limits<qreal>::lowest();
+            size_t minIndex = 0;
+            size_t maxIndex = 0;
+        };
+
+        const int bucketCount = std::max(1, rect.width() * kGraphBucketsPerPixel);
+        std::vector<Bucket> buckets(static_cast<size_t>(bucketCount));
+
+        for (size_t i = 0; i < frames->size(); ++i) {
+            const auto& frame = (*frames)[i];
+            const float timeAlpha = (frame.time - minTime) * invTime;
+            const float valueAlpha = (objectSnapshotValue(metric, frame) - minValue) * invValue;
+            if (!std::isfinite(timeAlpha) || !std::isfinite(valueAlpha)) continue;
+
+            const qreal x = rect.left() + static_cast<qreal>(timeAlpha) * rect.width();
+            const qreal y = rect.bottom() - static_cast<qreal>(valueAlpha) * rect.height();
+            if (!std::isfinite(x) || !std::isfinite(y)) continue;
+
+            const int bucketIndex = std::clamp(static_cast<int>(timeAlpha * static_cast<float>(bucketCount - 1)), 0, bucketCount - 1);
+            Bucket& bucket = buckets[static_cast<size_t>(bucketIndex)];
+            bucket.used = true;
+            bucket.x = x;
+            if (y < bucket.minY) {
+                bucket.minY = y;
+                bucket.minIndex = i;
+            }
+            if (y > bucket.maxY) {
+                bucket.maxY = y;
+                bucket.maxIndex = i;
+            }
+        }
+
+        points.reserve(static_cast<size_t>(bucketCount * 2));
+        frameIndices.reserve(points.capacity());
+
+        for (const Bucket& bucket : buckets) {
+            if (!bucket.used) continue;
+            if (bucket.minIndex <= bucket.maxIndex) {
+                points.emplace_back(bucket.x, bucket.minY);
+                frameIndices.push_back(bucket.minIndex);
+                if (bucket.maxY != bucket.minY) {
+                    points.emplace_back(bucket.x, bucket.maxY);
+                    frameIndices.push_back(bucket.maxIndex);
+                }
+            } else {
+                points.emplace_back(bucket.x, bucket.maxY);
+                frameIndices.push_back(bucket.maxIndex);
+                if (bucket.maxY != bucket.minY) {
+                    points.emplace_back(bucket.x, bucket.minY);
+                    frameIndices.push_back(bucket.minIndex);
+                }
+            }
+        }
+
+        if (!self) return;
+        QMetaObject::invokeMethod(self.data(), [self, generation, points = std::move(points), frameIndices = std::move(frameIndices)]() mutable {
+            if (!self) return;
+            self->applyRebuiltPoints(generation, std::move(points), std::move(frameIndices));
+        }, Qt::QueuedConnection);
+    }).detach();
+}
+
+void FrameGraphCanvas::invalidateCache() {
+    cacheDirty = true;
+}
+
+void FrameGraphCanvas::applyRebuiltPoints(uint64_t generation, std::vector<QPointF> points, std::vector<size_t> frameIndices) {
+    if (generation != rebuildGeneration.load(std::memory_order_relaxed)) return;
+    graphPoints = std::move(points);
+    graphPointFrameIndices = std::move(frameIndices);
+    hoverIndex = -1;
+    invalidateCache();
+    update();
 }

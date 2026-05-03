@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTreeWidget>
 #include <QTableWidget>
+#include <memory>
 
 #include "SnapshotTableModel.h"
 #include "graphics/core/SceneManager.h"
@@ -13,6 +14,7 @@ class OpenGLWindow;
 class InspectorWidget;
 class HierarchyWidget;
 class FrameGraphPanel;
+class QMenu;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -30,10 +32,19 @@ private slots:
 
 private:
     OpenGLWindow* glWindow;
-    SceneManager* sceneManager;
+    std::unique_ptr<SceneManager> sceneManager;
 
     QTreeWidgetItem* previousItem = nullptr;
     QLabel* fpsLabel;
+    QLabel* cameraPositionLabel;
+    QLabel* selectedObjectLabel;
+    QLabel* selectedObjectPositionLabel;
+    QLabel* selectedObjectDistanceLabel;
+    QLabel* simulationStateLabel;
+    QLabel* renderClockStateLabel;
+    QLabel* cameraFollowLabel;
+    QMenu* viewMenu = nullptr;
+    SceneObject* selectedInfoObject = nullptr;
 
     InspectorWidget* inspector;
     HierarchyWidget* hierarchy;
@@ -42,7 +53,9 @@ private:
 
     void setupDockWidgets();
     void setupFileMenu();
+    void setupPresetMenu();
     void setupSettingMenu();
     void setupMenuBar();
     void loadAppSettings();
+    void updateStatusPanel();
 };

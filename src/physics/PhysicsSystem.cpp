@@ -1,9 +1,9 @@
 #include "PhysicsSystem.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include "PointMass.h"
-#include "math/MathUtils.h"
-#include "solver/OneUnknownSolver.h"
+#include "physics/utils/ThermalUtils.h"
 
 namespace Physics {
     class PointMass;
@@ -46,52 +46,58 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
 
-    // first call ever: no previous to interpolate against
-    if (previousSnapshots.empty()) {
-        previousSnapshots = currentSnapshots;
+    if (currentSnapshots.empty()) {
+        return std::nullopt;
+    }
+
+    if (previousSnapshots.empty() || previousSnapshots.size() != currentSnapshots.size()) {
         return currentSnapshots;
     }
 
-    // grab the two timestamps (they’re all the same within each frame)
     float t0 = previousSnapshots[0].time;
     float t1 = currentSnapshots[0].time;
 
-    // outside the bracket → just clamp
-    if (renderSimTime <= t0) {
-        previousSnapshots = currentSnapshots;
-        return previousSnapshots;
-    }
-    if (renderSimTime >= t1) {
-        previousSnapshots = currentSnapshots;
+    if (!std::isfinite(t0) || !std::isfinite(t1) || t1 <= t0) {
         return currentSnapshots;
     }
 
-    // compute blend factor α in (0,1)
+    if (renderSimTime <= t0) {
+        return previousSnapshots;
+    }
+    if (renderSimTime >= t1) {
+        return currentSnapshots;
+    }
+
     float alpha = (renderSimTime - t0) / (t1 - t0);
 
-    // interpolate each ObjectSnapshot
     std::vector<ObjectSnapshot> out;
     out.reserve(currentSnapshots.size());
     for (size_t i = 0; i < currentSnapshots.size(); ++i) {
         const auto &A = previousSnapshots[i];
         const auto &B = currentSnapshots[i];
 
+        if (A.body != B.body) {
+            out.push_back(B);
+            continue;
+        }
+
         ObjectSnapshot C;
-        C.body     = A.body;                  // same pointer/ID
-        C.time     = renderSimTime;           // stamped with the render time
+        C.body     = A.body;
+        C.time     = renderSimTime;
         C.position = glm::mix(A.position, B.position, alpha);
         C.velocity = glm::mix(A.velocity, B.velocity, alpha);
+        C.temperature = glm::mix(A.temperature, B.temperature, alpha);
 
         out.push_back(C);
     }
 
-    // slide window: next time, previous = what we just returned
-    previousSnapshots = currentSnapshots;
     return out;
 }
 
 void Physics::PhysicsSystem::physicsLoop() {
-    constexpr float dt = 1.0f / 1000.0f;
+    constexpr float kBaseDt = 1.0f / 1000.0f;
+    constexpr int kMaxCatchUpSteps = 8;
+    constexpr float kMaxAdaptiveDt = 86400.0f;
 
     float accumulator = 0.0f;
     auto lastTime = std::chrono::high_resolution_clock::now();
@@ -109,36 +115,43 @@ void Physics::PhysicsSystem::physicsLoop() {
 
         accumulator += frameTime * getSimSpeed();
 
-        std::vector<PhysicsBody*> localBodies;
+        std::vector<ObjectSnapshot> localSnaps;
         {
             std::lock_guard<std::mutex> lock(bodiesMutex);
-            while (accumulator >= dt) {
-                if (step(dt)) {
-                    accumulator = 0.0f;
-                    break;
+            if (accumulator >= kBaseDt) {
+                const int neededSteps = static_cast<int>(std::ceil(accumulator / kBaseDt));
+                const int stepsToRun = std::max(1, std::min(neededSteps, kMaxCatchUpSteps));
+                const float dt = std::min(std::max(accumulator / static_cast<float>(stepsToRun), kBaseDt), kMaxAdaptiveDt);
+
+                for (int i = 0; i < stepsToRun && accumulator >= kBaseDt; ++i) {
+                    if (step(dt)) {
+                        accumulator = 0.0f;
+                        break;
+                    }
+                    accumulator -= std::min(dt, accumulator);
                 }
-                accumulator -= dt;
-            }
-            localBodies = bodies;
-        }
 
-        std::vector<ObjectSnapshot> localSnaps;
-        localSnaps.reserve(localBodies.size());
-        {
+                if (dt >= kMaxAdaptiveDt && accumulator >= kMaxAdaptiveDt * kMaxCatchUpSteps) {
+                    accumulator = 0.0f;
+                }
+            }
+
+            localSnaps.reserve(bodies.size());
+            for (auto* body : bodies) {
+                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK), static_cast<float>(body->getThermalProperties(BodyLock::LOCK).tempK) });
+            }
+
             std::lock_guard<std::mutex> lk(snapshotMutex);
-            for (auto* body : localBodies) {
-                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK) });
-            }
-
+            previousSnapshots = std::move(currentSnapshots);
             currentSnapshots = std::move(localSnaps);
+            snapshotReady.store(true, std::memory_order_release);
         }
-        snapshotReady.store(true, std::memory_order_release);
     }
 }
 
 void Physics::PhysicsSystem::addBody(PhysicsBody *body) {
     std::lock_guard<std::mutex> lock(bodiesMutex);
-    body->setForce("Gravity", body->getMass(BodyLock::LOCK) * getGlobalAcceleration(), BodyLock::LOCK);
+    body->setForce("Gravity", static_cast<float>(body->getMass(BodyLock::LOCK)) * getGlobalAcceleration(), BodyLock::LOCK);
     body->setForce("Normal", glm::vec3(0.0f), BodyLock::LOCK);
     bodies.push_back(body);
 }
@@ -148,13 +161,30 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
     auto it = std::remove(bodies.begin(), bodies.end(), body);
     if (it != bodies.end()) {
         bodies.erase(it, bodies.end());
+        resetState.erase(body);
+        {
+            std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+            auto removeSnapshotForBody = [body](std::vector<ObjectSnapshot>& snapshots) {
+                snapshots.erase(
+                    std::remove_if(snapshots.begin(), snapshots.end(), [body](const ObjectSnapshot& snapshot) {
+                        return snapshot.body == body;
+                    }),
+                    snapshots.end()
+                );
+            };
+            removeSnapshotForBody(currentSnapshots);
+            removeSnapshotForBody(previousSnapshots);
+            if (currentSnapshots.empty() && previousSnapshots.empty()) {
+                snapshotReady.store(false, std::memory_order_relaxed);
+            }
+        }
     } else {
         std::cerr << "[PhysicsSystem] Warning: Tried to remove a body not in the system.\n";
     }
 }
 
 void Physics::PhysicsSystem::advancePhysics(float dt) {
-    float targetTime = stepCount.load() * dt + dt; // the time we will be at after this step
+    float targetTime = simTime + dt;
     std::vector<PhysicsBody*> collidableBodies;
 
     PhysicsSystem::octree.build(bodies);
@@ -165,14 +195,11 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         }
 
         glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());
-        glm::vec3 globalGravity = body->getMass(BodyLock::NOLOCK) * getGlobalAcceleration();
+        glm::vec3 globalGravity = static_cast<float>(body->getMass(BodyLock::NOLOCK)) * getGlobalAcceleration();
         glm::vec3 totalGravity  = nBodyGravity + globalGravity;
         
         body->setForce("Normal", glm::vec3(0.0f), BodyLock::NOLOCK);
         body->setForce("Gravity", totalGravity, BodyLock::NOLOCK);
-
-        if (body->getIsStatic(BodyLock::NOLOCK))
-            continue;
 
         if (simTime == 0.0f) {
             body->recordFrame(0.0f, BodyLock::NOLOCK);
@@ -184,7 +211,28 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
             }
         }
 
-        body->step(dt, BodyLock::NOLOCK);
+        ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+        const double area = body->getSurfaceArea();
+        const double mass = body->getMass(BodyLock::NOLOCK);
+        const double ambientTemp = getAmbientTemperature();
+        const double proximityRadiation = PhysicsSystem::octree.computeHeat(body);
+
+        Physics::Thermal::integrateTemperature(props, mass, dt, [&](double tempK) {
+            ThermalProperties tmp = props;
+            tmp.tempK = tempK;
+            return Physics::Thermal::convectionHeatRate(tmp, area, ambientTemp)
+                + Physics::Thermal::ambientRadiationHeatRate(tmp, area, ambientTemp)
+                + Physics::Thermal::externalHeatFluxRate(tmp, area)
+                + proximityRadiation
+                + tmp.internalHeatPower;
+        });
+        if (std::isfinite(props.tempK)) {
+            body->setThermalProperty(props, BodyLock::NOLOCK);
+        }
+
+        if (!body->getIsStatic(BodyLock::NOLOCK)) {
+            body->step(dt, BodyLock::NOLOCK);
+        }
         body->recordFrame(targetTime, BodyLock::NOLOCK);
     }
 
@@ -196,7 +244,7 @@ void Physics::PhysicsSystem::advancePhysics(float dt) {
         if (a->getIsStatic(BodyLock::LOCK) && b->getIsStatic(BodyLock::LOCK)) continue;
 
         if (a->collidesWith(*b)) {
-            a->resolveCollisionWith(*b);
+            a->resolveCollisionWith(dt, *b);
         }
     }
 
@@ -256,6 +304,20 @@ void Physics::PhysicsSystem::reset() {
     }
 }
 
+void Physics::PhysicsSystem::clearRuntimeState() {
+    std::lock_guard<std::mutex> bodiesLock(bodiesMutex);
+    resetState.clear();
+    solver.reset();
+    stepCount.store(0);
+    simTime = 0.0f;
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+    }
+    snapshotReady.store(false, std::memory_order_relaxed);
+}
+
 void Physics::PhysicsSystem::enablePhysics() {
     physicsEnabled.store(true);
     snapshotReady.store(false, std::memory_order_relaxed); // so we don't read from the stale buffer
@@ -264,4 +326,3 @@ void Physics::PhysicsSystem::enablePhysics() {
 void Physics::PhysicsSystem::disablePhysics() {
     physicsEnabled.store(false);
 }
-

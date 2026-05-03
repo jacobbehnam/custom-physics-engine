@@ -3,11 +3,13 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
+class QTabWidget;
 class SceneManager;
 class SceneObject;
 
 class TransformInspectorWidget;
 class PhysicsInspectorWidget;
+class ThermalInspectorWidget;
 class ForcesInspectorWidget;
 class GlobalsInspectorWidget;
 
@@ -27,10 +29,15 @@ private:
     SceneObject* currentObject = nullptr;
 
     QVBoxLayout* mainLayout;
+    QTabWidget* inspectorTabs;
+    int objectTabIndex = -1;
+    int thermalTabIndex = -1;
+    int sceneTabIndex = -1;
     QTimer refreshTimer;
 
     TransformInspectorWidget* transformWidget;
     PhysicsInspectorWidget* physicsWidget;
+    ThermalInspectorWidget* thermalWidget;
     ForcesInspectorWidget* forcesWidget;
     GlobalsInspectorWidget* globalsWidget;
 };

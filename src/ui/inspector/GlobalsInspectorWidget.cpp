@@ -39,7 +39,7 @@ void GlobalsInspectorWidget::createUiComponents() {
         Physics::PhysicsSystem* physicSystem = sceneManager->physicsSystem.get();
         row.addScalar(
             [physicSystem]() { return physicSystem->getGravitationalConstant(); },
-            [physicSystem](float g) { physicSystem->setGravitationalConstant(g); },
+            [physicSystem](double g) { physicSystem->setGravitationalConstant(g); },
             "N·m²/kg²",
             [](ScalarWidget* widget) {
                 widget->setDecimals(15);
@@ -60,8 +60,26 @@ void GlobalsInspectorWidget::createUiComponents() {
         row.addScalar(
             [this]() { return sceneManager->getSimSpeed(); },
             [this](float s) { sceneManager->setSimSpeed(s); },
-            "x"
+            "x",
+            [](ScalarWidget* widget) {
+                widget->setRange(0.0, 1.0e12);
+            }
         );
+        layout->addRow(row.getLabel(), row.getEditor());
+        rows.push_back(std::move(row));
+    }
+
+    {
+        InspectorRow row("Ambient Temp", this);
+        Physics::PhysicsSystem* physicSystem = sceneManager->physicsSystem.get();
+        row.addScalar(
+            [physicSystem]() { return physicSystem->getAmbientTemperature(); },
+            [physicSystem](float t) { physicSystem->setAmbientTemperature(t); },
+            "K"
+        ).addButton("Room Temp", [this, physicSystem]() {
+            physicSystem->setAmbientTemperature(293.15f);
+            refresh();
+        });
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
     }
@@ -119,7 +137,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
     parameterStack->addWidget(targetVecWidget);
 
     subjectCombo->addItem("-- Subject --", -1);
-    for (auto* obj : sceneManager->getObjects()) {
+    for (const auto& objPtr : sceneManager->getObjects()) {
+        SceneObject* obj = objPtr.get();
         subjectCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
     }
     connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, subjectCombo](int){
@@ -162,7 +181,7 @@ void GlobalsInspectorWidget::createStopConditionUi() {
     mainContainerLayout->addWidget(equationRow);
     mainContainerLayout->addWidget(parameterStack);
 
-    auto updateLogic = [=]() {
+    auto updateLogic = [this, subjectCombo, propCombo, opCombo, thresholdWidget, parameterStack, targetObjCombo, targetVecWidget]() {
         int subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
         const QSignalBlocker b1(subjectCombo);
         subjectCombo->setCurrentIndex(subjIdx != -1 ? subjIdx : 0);
@@ -170,7 +189,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
         if (subjectCombo->count() != sceneManager->getObjects().size() + 1) {
              subjectCombo->clear();
              subjectCombo->addItem("-- Subject --", -1);
-             for (auto* obj : sceneManager->getObjects()) {
+             for (const auto& objPtr : sceneManager->getObjects()) {
+                 SceneObject* obj = objPtr.get();
                  subjectCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
              }
              subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
@@ -194,7 +214,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
             if (targetObjCombo->count() != sceneManager->getObjects().size()) {
                 const QSignalBlocker b(targetObjCombo);
                 targetObjCombo->clear();
-                for (auto* obj : sceneManager->getObjects()) {
+                for (const auto& objPtr : sceneManager->getObjects()) {
+                    SceneObject* obj = objPtr.get();
                     targetObjCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
                 }
             }
@@ -296,7 +317,8 @@ void GlobalsInspectorWidget::runSolver() {
     knowns["Target_Time"] = targetTime;
 
     SceneObject* visualSubject = nullptr;
-    for (auto* obj : sceneManager->getObjects()) {
+    for (const auto& objPtr : sceneManager->getObjects()) {
+        SceneObject* obj = objPtr.get();
         if (static_cast<int>(obj->getObjectID()) == cond.subjectID) {
             visualSubject = obj;
             break;

@@ -11,8 +11,12 @@
 #include "graphics/debug/PathTraces.h"
 #include "graphics/debug/Forces.h"
 #include "graphics/debug/Colliders.h"
+#include "graphics/presets/ScenePresets.h"
+#include "physics/Constants.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+
+#include <algorithm>
 
 SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(scn), physicsSystem(std::make_unique<Physics::PhysicsSystem>()) {
     // TODO: preload shaders in resourcemanager (rn its in Scene)
@@ -25,6 +29,8 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::defaultSetup() {
+    resetScene();
+
     SceneObject* ball = createObject("prim_sphere", ResourceManager::getShader("basic"), PointMassOptions());
     setObjectName(ball, "Ball");
     ball->getPhysicsBody()->setVelocity(glm::vec3(0.0f, 15.0f, 0.0f), BodyLock::LOCK);
@@ -43,6 +49,40 @@ void SceneManager::defaultSetup() {
     setObjectName(keys, "Keys");
 }
 
+void SceneManager::resetScene() {
+    stopSimulation();
+    physicsSystem->clearRuntimeState();
+    deleteAllObjects();
+    hoveredIDs.clear();
+    selectedIDs.clear();
+    stopCondition = {};
+    SceneObject::setPhysicsPosMap(SceneObject::PosMap{});
+    SceneObject::setRenderOrigin(glm::vec3(0.0f));
+
+    if (window) {
+        window->resetRenderClock();
+    }
+
+    if (scene && scene->getCamera()) {
+        scene->getCamera()->resetView();
+    }
+
+    setGlobalAcceleration(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
+    setSimSpeed(1.0f);
+    physicsSystem->setGravitationalConstant(Constants::G);
+    physicsSystem->setAmbientTemperature(293.15f);
+    setSelectFor(nullptr);
+}
+
+bool SceneManager::loadPreset(const ScenePresets::PresetDescriptor& preset) {
+    if (!preset.generate) return false;
+
+    resetScene();
+    preset.generate(*this);
+    applyDebugSettings();
+    return true;
+}
+
 SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = ResourceManager::getShader("basic"), const CreationOptions& options) {
     std::unique_ptr<SceneObject> primitive = nullptr;
     switch (type) {
@@ -56,6 +96,7 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();
 
+    sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -71,6 +112,7 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
     SceneObject* ptr = primitive.get();
 
     setObjectName(primitive.get(), makeUniqueName(generateDefaultName(options)));
+    sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
     addDrawable(ptr);
@@ -83,6 +125,15 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
 void SceneManager::deleteObject(SceneObject *obj) {
     if (!obj) return;
 
+    if (getCameraTarget() == obj) {
+        clearCameraTarget();
+    }
+    if (currentGizmo && currentGizmo->getTarget() == obj) {
+        deleteCurrentGizmo();
+    }
+    hoveredIDs.erase(obj->getObjectID());
+    selectedIDs.erase(obj->getObjectID());
+
     // Destructor already handle this
     // if (Physics::PhysicsBody* body = obj->getPhysicsBody()) {
     //     removeFromPhysicsSystem(body);
@@ -93,6 +144,13 @@ void SceneManager::deleteObject(SceneObject *obj) {
         pickableObjects.end()
     );
     scene->removeDrawable(obj);
+    sceneObjectsByID.erase(obj->getObjectID());
+    const std::string& objectName = obj->getName();
+    auto nameIt = usedNames.find(objectName);
+    if (nameIt != usedNames.end() && nameIt->second == obj) {
+        usedNames.erase(nameIt);
+    }
+    emit objectRemoved(obj);
 
     auto it = std::find_if(sceneObjects.begin(), sceneObjects.end(),
     [obj](const std::unique_ptr<SceneObject>& ptr) {
@@ -102,7 +160,6 @@ void SceneManager::deleteObject(SceneObject *obj) {
     if (it != sceneObjects.end()) {
         sceneObjects.erase(it);
     }
-    emit objectRemoved(obj);
 }
 
 void SceneManager::deleteAllObjects() {
@@ -111,14 +168,16 @@ void SceneManager::deleteAllObjects() {
         deleteObject(sceneObjects.back().get());
     }
     usedNames.clear();
+    sceneObjectsByID.clear();
 }
 
-std::vector<SceneObject*> SceneManager::getObjects() const {
-    std::vector<SceneObject*> ptrs;
-    ptrs.reserve(sceneObjects.size());
-    for (const auto& obj : sceneObjects)
-        ptrs.push_back(obj.get());
-    return ptrs;
+const std::vector<std::unique_ptr<SceneObject>>& SceneManager::getObjects() const {
+    return sceneObjects;
+}
+
+SceneObject* SceneManager::getObjectByID(uint32_t objectID) const {
+    auto it = sceneObjectsByID.find(objectID);
+    return it != sceneObjectsByID.end() ? it->second : nullptr;
 }
 
 std::string SceneManager::generateDefaultName(const CreationOptions& options) {
@@ -183,6 +242,19 @@ void SceneManager::setCameraTarget(SceneObject* target) {
     if (scene && scene->getCamera()) {
         scene->getCamera()->setTarget(target);
     }
+    if (target) {
+        selectObject(target);
+    }
+}
+
+void SceneManager::focusObject(SceneObject* target) {
+    if (!target) return;
+
+    selectObject(target);
+
+    if (scene && scene->getCamera()) {
+        scene->getCamera()->focusOn(target);
+    }
 }
 
 void SceneManager::clearCameraTarget() {
@@ -211,6 +283,15 @@ void SceneManager::updateHoverState(const Math::Ray &mouseRay) {
     if (hovered) {
         hoveredIDs.insert(hovered->getObjectID());
     }
+}
+
+void SceneManager::selectObject(SceneObject* obj) {
+    setSelectFor(nullptr);
+    if (!obj) return;
+
+    setSelectFor(obj);
+    setGizmoFor(obj, true);
+    emit selectedItem(obj);
 }
 
 void SceneManager::handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods) {
@@ -297,22 +378,23 @@ void SceneManager::processHeldKeys(const QSet<int> &heldKeys, float dt) {
         currentGizmo->handleDrag(ray);
     }
 
+    const float cameraDt = heldKeys.contains(Qt::Key_Shift) ? dt * 0.1f : dt;
     if (heldKeys.contains(Qt::Key_A))
-        camera->processKeyboard(Movement::LEFT, dt);
+        camera->processKeyboard(Movement::LEFT, cameraDt);
     if (heldKeys.contains(Qt::Key_D))
-        camera->processKeyboard(Movement::RIGHT, dt);
+        camera->processKeyboard(Movement::RIGHT, cameraDt);
     if (heldKeys.contains(Qt::Key_W))
-        camera->processKeyboard(Movement::FORWARD, dt);
+        camera->processKeyboard(Movement::FORWARD, cameraDt);
     if (heldKeys.contains(Qt::Key_S))
-        camera->processKeyboard(Movement::BACKWARD, dt);
+        camera->processKeyboard(Movement::BACKWARD, cameraDt);
 
     // TODO: Z,X,P,O should be processed by press once
     // It currently triggers every frame (caused bugs)
     if (heldKeys.contains(Qt::Key_Z)) {
-        physicsSystem->enablePhysics();
+        startSimulation();
     }
     if (heldKeys.contains(Qt::Key_X)) {
-        physicsSystem->disablePhysics();
+        stopSimulation();
     }
     if (heldKeys.contains(Qt::Key_P)) {
         if (saveScene("scene.json"))
@@ -351,7 +433,7 @@ void SceneManager::setSelectFor(SceneObject *obj, bool flag) {
     }
     uint32_t objID = obj->getObjectID();
     if (flag) {
-        if (selectedIDs.find(objID) == hoveredIDs.end())
+        if (selectedIDs.find(objID) == selectedIDs.end())
             selectedIDs.insert(objID);
     } else {
         selectedIDs.erase(objID);

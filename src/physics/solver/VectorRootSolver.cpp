@@ -1,9 +1,14 @@
 #include "VectorRootSolver.h"
 #include <iostream>
 
+namespace {
+constexpr float kSingularJacobianDeterminant = 1.0e-8f;
+constexpr float kSingularJacobianNudgeFactor = 0.01f;
+}
+
 template<typename InputT, typename OutputT>
 VectorRootSolver<InputT, OutputT>::VectorRootSolver(InitialGuessSetter initialGuessSetter, StopCondition stopCondition, ResultExtractor extractResult, const OutputT &tgt, double tol, int maxIter, double jacobianStep, double damping)
-    : setGuess(std::move(initialGuessSetter)), stopCondition(std::move(stopCondition)), extract(std::move(extractResult)), target(tgt), tolerance(tol), current(static_cast<InputT>(0)), h(jacobianStep), alpha(damping) {
+    : setGuess(std::move(initialGuessSetter)), stopCondition(std::move(stopCondition)), extract(std::move(extractResult)), target(tgt), current(static_cast<InputT>(0)), maxIterations(maxIter), h(jacobianStep), tolerance(tol), alpha(damping) {
     current = glm::vec3(0.0f); // Our initial guess is all zeroes
     fPerturbed.fill(glm::vec3(0.0f));
     state = SolverState::WaitingForBase;
@@ -19,6 +24,9 @@ bool VectorRootSolver<InputT, OutputT>::stepFrame() {
 
             baseOutput = extract();
             if (glm::length(baseOutput - target) < tolerance) {
+                return true;
+            }
+            if (iterationCount >= maxIterations) {
                 return true;
             }
 
@@ -63,16 +71,16 @@ bool VectorRootSolver<InputT, OutputT>::stepFrame() {
             float detJ = glm::determinant(J);
             glm::vec3 dx;
 
-            if (std::abs(detJ) < 1e-8f) {
+            if (std::abs(detJ) < kSingularJacobianDeterminant) {
                 // Jacobian nearly singular, apply a small nudge in direction of negative error
-                constexpr float nudgeFactor = 0.01f; // tweak as needed
-                dx = -nudgeFactor * error;
+                dx = -kSingularJacobianNudgeFactor * error;
             } else {
                 // Normal Newton step with damping
                 dx = -alpha * glm::inverse(J) * error;
             }
 
             current += dx;
+            ++iterationCount;
             setGuess(current);
             state = SolverState::WaitingForBase;
 

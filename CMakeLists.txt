@@ -30,6 +30,9 @@ add_library(PhysicsCore STATIC
         src/physics/RigidBody.cpp
         src/physics/PointMass.h
         src/physics/PointMass.cpp
+        src/physics/ThermalProperties.h
+        src/physics/utils/ThermalUtils.h
+        src/physics/utils/ThermalUtils.cpp
 
         # Bounding Box Logic
         src/physics/bounding/AABB.h
@@ -80,6 +83,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/graphics/core/SceneSerializer.cpp
         src/graphics/core/SceneSerializer.h
         src/graphics/core/SceneObjectOptions.h
+        src/graphics/presets/ScenePresets.cpp
+        src/graphics/presets/ScenePresets.h
+        src/graphics/presets/AstronomyPresets.cpp
+        src/graphics/presets/AstronomyPresets.h
         src/graphics/components/Mesh.cpp
         src/graphics/components/Shader.cpp
         src/graphics/components/Shader.h
@@ -132,6 +139,8 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/IInspectorSection.h
         src/ui/inspector/TransformInspectorWidget.h
         src/ui/inspector/TransformInspectorWidget.cpp
+        src/ui/inspector/ThermalInspectorWidget.h
+        src/ui/inspector/ThermalInspectorWidget.cpp
         src/ui/inspector/InspectorRow.h
         src/ui/SnapshotTableModel.cpp
         src/ui/SnapshotTableModel.h

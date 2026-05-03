@@ -28,6 +28,7 @@ private:
         glm::vec3 net{0.0f};
         float netMag = 0.0f;
         glm::vec3 startPos{0.0f};
+        float radius = 1.0f;
     };
 
     SceneManager* sceneManager;

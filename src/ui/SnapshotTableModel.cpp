@@ -14,7 +14,7 @@ int SnapshotTableModel::rowCount(const QModelIndex &parent) const {
 }
 
 int SnapshotTableModel::columnCount(const QModelIndex &parent) const {
-    return 7; // time, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z
+    return 8; // time, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, temp
 }
 
 QVariant SnapshotTableModel::data(const QModelIndex &index, int role) const {
@@ -29,6 +29,7 @@ QVariant SnapshotTableModel::data(const QModelIndex &index, int role) const {
         case 4: return s.velocity.x;
         case 5: return s.velocity.y;
         case 6: return s.velocity.z;
+        case 7: return s.temperature;
     }
     return {};
 }
@@ -43,6 +44,7 @@ QVariant SnapshotTableModel::headerData(int section, Qt::Orientation orientation
         case 4: return QStringLiteral("Vel X");
         case 5: return QStringLiteral("Vel Y");
         case 6: return QStringLiteral("Vel Z");
+        case 7: return QStringLiteral("Temp (K)");
     }
     return {};
 }

@@ -1,13 +1,63 @@
 #include "Scene.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 #include "math/MathUtils.h"
 #include <graphics/core/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <optional>
 #include <graphics/core/SceneObject.h>
 
 #include "ui/OpenGLWindow.h"
+
+namespace {
+constexpr float kFloatingOriginThreshold = 1.0e6f;
+constexpr float kNearClipDepthFraction = 0.05f;
+constexpr float kFarClipPaddingMultiplier = 1.25f;
+constexpr float kMinFarthestDepthOffset = 1.0f;
+constexpr float kMaxNearClipFractionOfFarClip = 0.5f;
+
+float maxAbsComponent(const glm::vec3& v) {
+    return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
+}
+
+std::optional<std::pair<float, float>> viewDepthSpan(const SceneObject& obj, const glm::vec3& cameraPosition, const glm::vec3& cameraFront) {
+    Mesh* mesh = obj.getMesh();
+    if (!mesh) return std::nullopt;
+
+    const auto& aabb = mesh->getLocalAABB();
+    const glm::vec3 min = aabb.getAABBMin();
+    const glm::vec3 max = aabb.getAABBMax();
+    const glm::mat4 model = obj.getModelMatrix();
+
+    float nearDepth = std::numeric_limits<float>::max();
+    float farDepth = -std::numeric_limits<float>::max();
+
+    for (int x = 0; x < 2; ++x) {
+        for (int y = 0; y < 2; ++y) {
+            for (int z = 0; z < 2; ++z) {
+                const glm::vec3 corner(
+                    x ? max.x : min.x,
+                    y ? max.y : min.y,
+                    z ? max.z : min.z
+                );
+                const glm::vec3 world = glm::vec3(model * glm::vec4(corner, 1.0f));
+                const float depth = glm::dot(world - cameraPosition, cameraFront);
+                nearDepth = std::min(nearDepth, depth);
+                farDepth = std::max(farDepth, depth);
+            }
+        }
+    }
+
+    if (!std::isfinite(nearDepth) || !std::isfinite(farDepth)) {
+        return std::nullopt;
+    }
+
+    return std::pair{nearDepth, farDepth};
+}
+}
 
 struct BatchKey {
     Mesh* mesh;
@@ -39,38 +89,80 @@ void Scene::freeObjectID(uint32_t objID) {
 }
 
 void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    SceneObject::PosMap renderPositions;
     if (snaps) {
-        SceneObject::PosMap posMap;
-        posMap.reserve(snaps->size());
+        renderPositions.reserve(snaps->size());
         for (const auto &s : *snaps) {
-            posMap.emplace(s.body, s.position);
+            renderPositions.emplace(s.body, s.position);
         }
-        SceneObject::setPhysicsPosMap(posMap);
+        SceneObject::setPhysicsPosMap(renderPositions);
     }
 
-    std::unordered_map<Physics::PhysicsBody*, glm::vec3> tmpMap;
-    if (snaps) {
-        tmpMap.reserve(snaps->size());
-        for (auto &s : *snaps)
-            tmpMap[s.body] = s.position;
+    glm::vec3 renderTargetPosition;
+    const glm::vec3* renderTargetPositionPtr = nullptr;
+    if (snaps && camera.hasTarget()) {
+        const SceneObject* target = camera.getTarget();
+        const Physics::PhysicsBody* targetBody = target ? target->getPhysicsBody() : nullptr;
+        for (const auto& snapshot : *snaps) {
+            if (snapshot.body == targetBody) {
+                renderTargetPosition = snapshot.position;
+                renderTargetPositionPtr = &renderTargetPosition;
+                break;
+            }
+        }
     }
 
-    camera.update();
+    camera.update(renderTargetPositionPtr);
+
+    float nearestDepth = std::numeric_limits<float>::max();
+    float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;
+    bool foundVisibleDepth = false;
+
+    for (auto* drawable : instancedDrawables) {
+        auto* obj = dynamic_cast<SceneObject*>(drawable);
+        if (!obj) continue;
+
+        const auto depthSpan = viewDepthSpan(*obj, camera.position, camera.front);
+        if (!depthSpan) continue;
+        if (depthSpan->second <= Camera::kDefaultNearClip) continue;
+
+        foundVisibleDepth = true;
+        nearestDepth = std::min(nearestDepth, std::max(depthSpan->first, Camera::kDefaultNearClip));
+        farthestDepth = std::max(farthestDepth, depthSpan->second);
+    }
+
+    if (foundVisibleDepth) {
+        const float farClip = std::max(farthestDepth * kFarClipPaddingMultiplier, Camera::kDefaultFarClip);
+        const float nearClip = nearestDepth == std::numeric_limits<float>::max()
+            ? Camera::kDefaultNearClip
+            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * kMaxNearClipFractionOfFarClip);
+        camera.setClipRange(nearClip, farClip);
+    } else {
+        camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
+    }
+
+    const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
+    SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    const glm::mat4 viewMatrix = useFloatingOrigin ? camera.getRenderViewMatrix() : camera.getViewMatrix();
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
-    cameraUBO.updateData(glm::value_ptr(camera.getViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
+    cameraUBO.updateData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
     std::vector<glm::ivec4> hoverVec(1024, glm::ivec4(0));
     for (uint32_t id : hoveredIDs) {
-        hoverVec[id] = glm::ivec4(1);
+        if (id < hoverVec.size()) {
+            hoverVec[id] = glm::ivec4(1);
+        }
     }
 
     std::vector<glm::ivec4> selectVec(1024, glm::ivec4(0));
     for (uint32_t id : selectedIDs) {
-        selectVec[id] = glm::ivec4(1);
+        if (id < selectVec.size()) {
+            selectVec[id] = glm::ivec4(1);
+        }
     }
 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
@@ -86,10 +178,10 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
 
     for (auto& [key, instances] : batches) {
         key.shader->use();
+        key.shader->setVec3("renderOrigin", SceneObject::getRenderOrigin());
         key.mesh->drawInstanced(instances);
     }
 
-    // --- custom ---
     for (auto* obj : customDrawables) {
         obj->draw();
     }

@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <array>
+#include <memory>
 #include <vector>
 
 #include "Metric.h"
@@ -15,7 +16,7 @@ class FrameGraphWidget : public QWidget {
 public:
     explicit FrameGraphWidget(QWidget* parent = nullptr);
 
-    void setSharedData(const std::vector<ObjectSnapshot>* frames,
+    void setSharedData(std::shared_ptr<const std::vector<ObjectSnapshot>> frames,
         const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, float tMin, float tMax);
     void clear();
     void setMetric(Metric metric);

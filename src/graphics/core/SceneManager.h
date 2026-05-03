@@ -1,5 +1,7 @@
 #pragma once
 #include <QObject>
+#include <memory>
+#include <unordered_map>
 
 #include "ResourceManager.h"
 #include "graphics/core/Scene.h"
@@ -10,6 +12,7 @@
 class PathTraces;
 class Forces;
 class Colliders;
+namespace ScenePresets { struct PresetDescriptor; }
 
 enum class Primitive {
     CUBE,
@@ -36,22 +39,27 @@ public:
     SceneObject* createObject(const std::string &meshName, Shader* shader = ResourceManager::getShader("basic"), const CreationOptions& = ObjectOptions{});
     void deleteObject(SceneObject* obj);
     void deleteAllObjects();
-    std::vector<SceneObject*> getObjects() const;
+    const std::vector<std::unique_ptr<SceneObject>>& getObjects() const;
+    SceneObject* getObjectByID(uint32_t objectID) const;
     bool isNameUnique(const std::string& name, SceneObject* self) const;
     void setObjectName(SceneObject* obj, const std::string& newName);
     std::string makeUniqueName(const std::string& baseName) const;
 
     void setCameraTarget(SceneObject* target);
+    void focusObject(SceneObject* target);
     void clearCameraTarget();
+    bool isCameraFollowing() const { return scene && scene->getCamera() && scene->getCamera()->hasTarget(); }
+    const SceneObject* getCameraTarget() const { return scene && scene->getCamera() ? scene->getCamera()->getTarget() : nullptr; }
 
     void addToPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->addBody(body); }
     void removeFromPhysicsSystem(Physics::PhysicsBody* body) const { physicsSystem->removeBody(body); }
     glm::vec3 getGlobalAcceleration() const { return physicsSystem->getGlobalAcceleration(); }
     void setGlobalAcceleration(const glm::vec3& newAcceleration) const { physicsSystem->setGlobalAcceleration(newAcceleration); }
+    bool isPhysicsRunning() const { return physicsSystem->isPhysicsEnabled(); }
     float getSimSpeed() const { return window->getSimSpeed(); }
     void setSimSpeed(float newSpeed) { window->setSimSpeed(newSpeed); physicsSystem->setSimSpeed(newSpeed); }
-    float getGravitationalConstant() const { return physicsSystem->getGravitationalConstant(); }
-    void setGravitationalConstant(float newG) const { physicsSystem->setGravitationalConstant(newG); }
+    void startSimulation() const { window->setRenderClockRunning(true); physicsSystem->enablePhysics(); }
+    void stopSimulation() const { physicsSystem->disablePhysics(); window->setRenderClockRunning(false); }
     void stepPhysics(float dt) const { physicsSystem->step(dt); }
 
     void addPickable(IPickable* obj) { pickableObjects.push_back(obj); }
@@ -59,6 +67,7 @@ public:
     void removePickable(IPickable* obj);
     void removeDrawable(IDrawable* obj) const { scene->removeDrawable(obj); }
     void updateHoverState(const Math::Ray& mouseRay);
+    void selectObject(SceneObject* obj);
     void setSelectFor(SceneObject *obj, bool flag = true);
 
     void processHeldKeys(const QSet<int> &heldKeys, float dt);
@@ -70,6 +79,8 @@ public:
 
     bool saveScene(const QString &file);
     bool loadScene(const QString &file);
+    bool loadPreset(const ScenePresets::PresetDescriptor& preset);
+    void resetScene();
 
     void defaultSetup(); // TODO: prob will remove later.
     std::unordered_set<uint32_t> hoveredIDs, selectedIDs; // TODO: dont make public
@@ -90,6 +101,7 @@ private:
     OpenGLWindow* window;
 
     std::vector<std::unique_ptr<SceneObject>> sceneObjects;
+    std::unordered_map<uint32_t, SceneObject*> sceneObjectsByID;
     std::vector<IPickable*> pickableObjects;
 
     GizmoType selectedGizmoType = GizmoType::TRANSLATE;

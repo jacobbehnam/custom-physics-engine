@@ -6,6 +6,7 @@ struct DebugSettings : public ISettingsGroup {
     float pathTrailTime = 2.0f;
     bool showForces = true;
     bool showColliders = true;
+    bool showObjectLabels = true;
 
     void load(QSettings& settings) override;
     void save(QSettings& settings) const override;

@@ -47,6 +47,7 @@ void Gizmo::draw() const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
 
+    const glm::mat4 worldToRender = SceneObject::worldToRenderMatrix();
     std::vector<Rendering::InstanceData> drawData;
     for (const auto& handle : handles) {
         glm::vec3 color = handle->getAxisDir(); // base RGB per axis
@@ -56,7 +57,8 @@ void Gizmo::draw() const {
             color = glm::mix(color, glm::vec3(1.0f), 0.7f); // lighten
         }
 
-        drawData.push_back({ handle->getModelMatrix(), objectID, color });
+        const glm::mat4 renderModel = worldToRender * handle->getModelMatrix();
+        drawData.push_back({ renderModel, objectID, color });
     }
 
     getMesh()->drawInstanced(drawData);

@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
+#include <cmath>
 #include "physics/PhysicsSystem.h"
 #include "physics/PointMass.h"
+#include "physics/RigidBody.h"
+#include "physics/bounding/BoxCollider.h"
+#include "physics/utils/ThermalUtils.h"
 
 // Helper Macros for concise GLM comparisons
 #define EXPECT_VEC3_EXACT(actual, expected) \
@@ -169,7 +173,7 @@ TEST(PhysicsSystem, Management_AddGetRemove) {
 TEST(PhysicsSystem, Parameters_GlobalSettings) {
     Physics::PhysicsSystem system;
 
-    EXPECT_FLOAT_EQ(system.getGlobalAcceleration().y, -9.81f);
+    EXPECT_FLOAT_EQ(system.getGlobalAcceleration().y, -Constants::STANDARD_GRAVITY);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 1.0f);
 
     system.setGlobalAcceleration(glm::vec3(0.0f));
@@ -177,6 +181,241 @@ TEST(PhysicsSystem, Parameters_GlobalSettings) {
 
     system.setSimSpeed(0.5f);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.5f);
+}
+
+TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    Physics::PointMass a(0, 1.0e6);
+    Physics::PointMass b(1, 1.0e6);
+
+    a.setPosition(glm::vec3(0.0f), BodyLock::LOCK);
+    b.setPosition(glm::vec3(0.0f), BodyLock::LOCK);
+    system.addBody(&a);
+    system.addBody(&b);
+
+    ASSERT_NO_FATAL_FAILURE(system.step(0.001f));
+    EXPECT_TRUE(std::isfinite(a.getPosition(BodyLock::LOCK).x));
+    EXPECT_TRUE(std::isfinite(b.getPosition(BodyLock::LOCK).x));
+}
+
+TEST(PhysicsSystem, SampleSolverGravity_DoesNotDriftSideways) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f));
+    system.setGravitationalConstant(Constants::G);
+
+    Physics::PointMass ball(0, 1.0, glm::vec3(0.0f, 0.0f, 0.0f), false);
+    ball.setVelocity(glm::vec3(0.0f, 15.0f, 0.0f), BodyLock::LOCK);
+
+    Physics::PointMass keys(1, 1.0, glm::vec3(0.0f, 20.0f, 0.0f), false);
+
+    system.addBody(&ball);
+    system.addBody(&keys);
+
+    constexpr float dt = 1.0f / 120.0f;
+    for (int i = 0; i < 120; ++i) {
+        system.step(dt);
+    }
+
+    EXPECT_NEAR(ball.getPosition(BodyLock::LOCK).x, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(ball.getPosition(BodyLock::LOCK).z, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(keys.getPosition(BodyLock::LOCK).x, 0.0f, 1.0e-6f);
+    EXPECT_NEAR(keys.getPosition(BodyLock::LOCK).z, 0.0f, 1.0e-6f);
+}
+
+TEST(ThermalUtils, ConductiveExchange_ConservesEnergyAndDoesNotOvershoot) {
+    ThermalProperties hot;
+    hot.tempK = 400.0;
+    hot.specificHeat = 1000.0f;
+    hot.conductivity = 1000.0f;
+
+    ThermalProperties cold;
+    cold.tempK = 300.0;
+    cold.specificHeat = 1000.0f;
+    cold.conductivity = 1000.0f;
+
+    const double massHot = 1.0;
+    const double massCold = 1.0;
+    const double initialEnergy = massHot * hot.specificHeat * hot.tempK + massCold * cold.specificHeat * cold.tempK;
+
+    Physics::Thermal::applyConductiveExchange(hot, massHot, cold, massCold, 1.0, 0.01, 1000.0);
+
+    const double finalEnergy = massHot * hot.specificHeat * hot.tempK + massCold * cold.specificHeat * cold.tempK;
+    EXPECT_NEAR(finalEnergy, initialEnergy, 1.0e-6);
+    EXPECT_DOUBLE_EQ(hot.tempK, 350.0);
+    EXPECT_DOUBLE_EQ(cold.tempK, 350.0);
+}
+
+TEST(ThermalUtils, AmbientRadiation_UsesStefanBoltzmannSignConvention) {
+    ThermalProperties props;
+    props.tempK = 400.0;
+    props.emissivity = 1.0f;
+
+    const double cooling = Physics::Thermal::ambientRadiationHeatRate(props, 1.0, 300.0);
+    const double heating = Physics::Thermal::ambientRadiationHeatRate(props, 1.0, 500.0);
+
+    EXPECT_LT(cooling, 0.0);
+    EXPECT_GT(heating, 0.0);
+}
+
+TEST(ThermalUtils, HeatCapacity_UsesThermalMassFraction) {
+    ThermalProperties props;
+    props.specificHeat = 1000.0f;
+    props.thermalMassFraction = 0.25f;
+
+    EXPECT_DOUBLE_EQ(Physics::Thermal::heatCapacity(8.0, props), 2000.0);
+}
+
+TEST(ThermalUtils, ExternalHeatFluxRate_UsesSurfaceArea) {
+    ThermalProperties props;
+    props.externalHeatFlux = 250.0;
+
+    EXPECT_DOUBLE_EQ(Physics::Thermal::externalHeatFluxRate(props, 4.0), 1000.0);
+}
+
+TEST(ThermalUtils, EffectiveProperties_UseTemperatureCoefficients) {
+    ThermalProperties props;
+    props.referenceTempK = 300.0f;
+    props.specificHeat = 1000.0f;
+    props.specificHeatTempCoeff = 0.01f;
+    props.conductivity = 10.0f;
+    props.conductivityTempCoeff = -0.01f;
+    props.density = 1000.0f;
+    props.linearExpansionCoeff = 1.0e-4f;
+
+    EXPECT_NEAR(Physics::Thermal::effectiveSpecificHeat(props, 310.0), 1100.0, 1.0e-4);
+    EXPECT_NEAR(Physics::Thermal::effectiveConductivity(props, 310.0), 9.0, 1.0e-5);
+    EXPECT_NEAR(Physics::Thermal::effectiveDensity(props, 310.0), 997.008973, 1.0e-5);
+}
+
+TEST(ThermalUtils, CarnotEfficiency_UsesAbsoluteTemperatures) {
+    EXPECT_DOUBLE_EQ(Physics::Thermal::carnotEfficiency(600.0, 300.0), 0.5);
+    EXPECT_DOUBLE_EQ(Physics::Thermal::carnotEfficiency(300.0, 600.0), 0.0);
+}
+
+TEST(ThermalUtils, ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint) {
+    ThermalProperties props;
+    props.tempK = 300.0;
+    props.specificHeat = 100.0f;
+    props.meltingPoint = 310.0f;
+    props.latentHeatFusion = 1000.0f;
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 1500.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 310.0);
+    EXPECT_FLOAT_EQ(props.fusionProgress, 0.5f);
+    EXPECT_GT(props.entropyJPerK, 0.0);
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 500.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 310.0);
+    EXPECT_FLOAT_EQ(props.fusionProgress, 1.0f);
+
+    Physics::Thermal::applyThermalEnergy(props, 1.0, 100.0);
+    EXPECT_DOUBLE_EQ(props.tempK, 311.0);
+}
+
+TEST(PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    system.setAmbientTemperature(300.0f);
+
+    Physics::PointMass pm(0, 10.0, glm::vec3(1.0f, 2.0f, 3.0f), true);
+    ThermalProperties props;
+    props.tempK = 400.0;
+    props.specificHeat = 1000.0f;
+    props.heatTransferCoeff = 10.0f;
+    props.emissivity = 0.0f;
+    props.density = 1000.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    system.addBody(&pm);
+    system.step(10.0f);
+
+    EXPECT_VEC3_EXACT(pm.getPosition(BodyLock::LOCK), glm::vec3(1.0f, 2.0f, 3.0f));
+    EXPECT_LT(pm.getThermalProperties(BodyLock::LOCK).tempK, 400.0);
+}
+
+TEST(PhysicsSystem, Step_InternalHeatPower_ChangesTemperature) {
+    Physics::PhysicsSystem system(glm::vec3(0.0f));
+    Physics::PointMass pm(0, 10.0, glm::vec3(0.0f), true);
+
+    ThermalProperties props;
+    props.tempK = 300.0;
+    props.specificHeat = 1000.0f;
+    props.heatTransferCoeff = 0.0f;
+    props.emissivity = 0.0f;
+    props.internalHeatPower = 1000.0;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    system.addBody(&pm);
+    system.step(10.0f);
+
+    EXPECT_NEAR(pm.getThermalProperties(BodyLock::LOCK).tempK, 301.0, 1.0e-6);
+}
+
+TEST(PhysicsBody, LoadFrame_RestoresTemperature) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 500.0;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    ObjectSnapshot snapshot{&pm, 0.0f, glm::vec3(1.0f), glm::vec3(2.0f), 275.0f};
+    pm.loadFrame(snapshot, BodyLock::LOCK);
+
+    EXPECT_FLOAT_EQ(pm.getThermalProperties(BodyLock::LOCK).tempK, 275.0f);
+}
+
+TEST(RigidBody, SurfaceArea_UsesAllScaleAxes) {
+    auto collider = std::make_unique<Physics::Bounding::BoxCollider>(
+        glm::vec3(0.0f),
+        glm::vec3(1.0f),
+        glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
+    );
+    Physics::RigidBody body(0, 1.0, std::move(collider));
+
+    std::vector<glm::vec3> vertices = {
+        {-0.5f, -0.5f, -0.5f},
+        { 0.5f, -0.5f, -0.5f},
+        { 0.5f,  0.5f, -0.5f},
+        {-0.5f,  0.5f, -0.5f},
+        {-0.5f, -0.5f,  0.5f},
+        { 0.5f, -0.5f,  0.5f},
+        { 0.5f,  0.5f,  0.5f},
+        {-0.5f,  0.5f,  0.5f},
+    };
+    std::vector<unsigned int> indices = {
+        0, 1, 2, 0, 2, 3,
+        4, 6, 5, 4, 7, 6,
+        0, 4, 5, 0, 5, 1,
+        3, 2, 6, 3, 6, 7,
+        1, 5, 6, 1, 6, 2,
+        0, 3, 7, 0, 7, 4,
+    };
+
+    body.setGeometry(vertices, indices);
+    body.setScale(glm::vec3(2.0f, 3.0f, 4.0f));
+
+    EXPECT_NEAR(body.getSurfaceArea(), 52.0f, 1.0e-5f);
+}
+
+TEST(RigidBody, CollisionHeat_ZeroSpecificHeat_DoesNotCreateNaN) {
+    auto collider = std::make_unique<Physics::Bounding::BoxCollider>(
+        glm::vec3(0.0f),
+        glm::vec3(1.0f),
+        glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
+    );
+    Physics::RigidBody body(0, 1.0, std::move(collider), glm::vec3(0.0f), true);
+    Physics::PointMass pm(1, 1.0, glm::vec3(0.0f), false);
+    pm.setVelocity(glm::vec3(0.0f, -1.0f, 0.0f), BodyLock::LOCK);
+
+    ThermalProperties bodyProps;
+    bodyProps.specificHeat = 0.0f;
+    body.setThermalProperty(bodyProps, BodyLock::LOCK);
+
+    ThermalProperties pmProps;
+    pmProps.specificHeat = 0.0f;
+    pm.setThermalProperty(pmProps, BodyLock::LOCK);
+
+    body.resolveCollisionWithPointMass(0.01f, pm);
+
+    EXPECT_TRUE(std::isfinite(body.getThermalProperties(BodyLock::LOCK).tempK));
+    EXPECT_TRUE(std::isfinite(pm.getThermalProperties(BodyLock::LOCK).tempK));
 }
 
 // Simulation tests
@@ -222,7 +461,7 @@ TEST(Integration, Constant_Velocity_Zero_Acceleration) {
 }
 
 TEST(Integration, Freefall_Zero_Initial_Velocity) {
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 1.0f;
     constexpr float dt = 0.01f;
     constexpr float startY = 100.0f;
@@ -245,7 +484,7 @@ TEST(Integration, Freefall_Zero_Initial_Velocity) {
 }
 
 TEST(Integration, Freefall_With_Initial_Velocity) {
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 10.0f;
     constexpr float dt = 0.01f;
 
@@ -269,7 +508,7 @@ TEST(Integration, Freefall_With_Initial_Velocity) {
 
 TEST(Integration, Multi_Axis_Forces) {
     // Forces: Gravity on Y axis, Thrust on X and Y axis
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 2.5f;
     constexpr float dt = 0.01f;
 
