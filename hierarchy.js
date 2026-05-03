@@ -61,6 +61,7 @@ var hierarchy =
     ] ],
     [ "Physics::PhysicsSystem", "classPhysics_1_1PhysicsSystem.html", null ],
     [ "PointMassOptions", "structPointMassOptions.html", null ],
+    [ "ScenePresets::PresetDescriptor", "namespaceScenePresets.html#structScenePresets_1_1PresetDescriptor", null ],
     [ "ProblemRouter", "classProblemRouter.html", null ],
     [ "QAbstractNativeEventFilter", null, [
       [ "RawInputFilter", "classRawInputFilter.html", null ]
@@ -96,6 +97,7 @@ var hierarchy =
         [ "ForcesInspectorWidget", "classForcesInspectorWidget.html", null ],
         [ "GlobalsInspectorWidget", "classGlobalsInspectorWidget.html", null ],
         [ "PhysicsInspectorWidget", "classPhysicsInspectorWidget.html", null ],
+        [ "ThermalInspectorWidget", "classThermalInspectorWidget.html", null ],
         [ "TransformInspectorWidget", "classTransformInspectorWidget.html", null ]
       ] ],
       [ "InspectorWidget", "classInspectorWidget.html", null ],
@@ -110,6 +112,7 @@ var hierarchy =
     [ "Shader", "classShader.html", null ],
     [ "SimulationStopCondition", "SceneManager_8h.html#structSimulationStopCondition", null ],
     [ "SolverDecision", "ProblemRouter_8h.html#structSolverDecision", null ],
+    [ "ThermalProperties", "ThermalProperties_8h.html#structThermalProperties", null ],
     [ "UniformBuffer", "classUniformBuffer.html", null ],
     [ "Vertex", "structVertex.html", null ]
 ];

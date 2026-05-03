@@ -47,7 +47,8 @@ var NAVTREE =
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
-        [ "Variables", "namespacemembers_vars.html", null ]
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Typedefs", "namespacemembers_type.html", null ]
       ] ]
     ] ],
     [ "Data Structures", "annotated.html", [
@@ -79,10 +80,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AABB_8cpp.html",
-"RotateHandle_8cpp_source.html",
-"classISettingsGroup.html#a52333422b0c2e5c49b3e2bf60c6afec8",
-"classPhysics_1_1PhysicsSystem.html#a76107071237fe8941f8ca9609f3f4926",
-"dir_59425e443f801f1f2fd8bbe4959a3ccf.html"
+"ProblemRouter_8h.html",
+"classColliders.html#a30e4d51d4d5d9615ba51ffeb8341eb7e",
+"classPhysics_1_1Bounding_1_1BoxCollider.html#a1bcefb37027b137b5ef9b4a953161f53",
+"classRotateHandle.html#a251dde0c3864638e4f73351a76d6d6a3",
+"index.html#autotoc_md12"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

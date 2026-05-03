@@ -6,5 +6,6 @@ var searchData=
   ['physicssystem_3',['PhysicsSystem',['../classPhysics_1_1PhysicsSystem.html',1,'Physics']]],
   ['pointmass_4',['PointMass',['../classPhysics_1_1PointMass.html',1,'Physics']]],
   ['pointmassoptions_5',['PointMassOptions',['../structPointMassOptions.html',1,'']]],
-  ['problemrouter_6',['ProblemRouter',['../classProblemRouter.html',1,'']]]
+  ['presetdescriptor_6',['PresetDescriptor',['../namespaceScenePresets.html#structScenePresets_1_1PresetDescriptor',1,'ScenePresets']]],
+  ['problemrouter_7',['ProblemRouter',['../classProblemRouter.html',1,'']]]
 ];

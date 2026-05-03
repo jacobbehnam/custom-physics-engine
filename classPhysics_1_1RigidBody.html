@@ -117,8 +117,8 @@ Collaboration diagram for Physics::RigidBody:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab62419475c929a3bdd9efefe54084bc8" id="r_ab62419475c929a3bdd9efefe54084bc8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#ab62419475c929a3bdd9efefe54084bc8">RigidBody</a> (uint32_t id, float mass, std::unique_ptr&lt; <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Bounding::ICollider</a> &gt; collider, glm::vec3 pos=glm::vec3(0.0f), bool isStatic=false)</td></tr>
-<tr class="separator:ab62419475c929a3bdd9efefe54084bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e15852e149598e4fa74c051686bea05" id="r_a1e15852e149598e4fa74c051686bea05"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a1e15852e149598e4fa74c051686bea05">RigidBody</a> (uint32_t id, double mass, std::unique_ptr&lt; <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Bounding::ICollider</a> &gt; collider, glm::vec3 pos=glm::vec3(0.0f), bool isStatic=false)</td></tr>
+<tr class="separator:a1e15852e149598e4fa74c051686bea05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0adaeac3a972c6cc7a5933e2c6d14d3" id="r_ab0adaeac3a972c6cc7a5933e2c6d14d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#ab0adaeac3a972c6cc7a5933e2c6d14d3">RigidBody</a> (uint32_t id, std::unique_ptr&lt; <a class="el" href="classPhysics_1_1Bounding_1_1ICollider.html">Bounding::ICollider</a> &gt; collider, glm::vec3 pos=glm::vec3(0.0f), bool isStatic=true)</td></tr>
 <tr class="separator:ab0adaeac3a972c6cc7a5933e2c6d14d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac2bd5da0ab8976455b7dfc044af9873" id="r_aac2bd5da0ab8976455b7dfc044af9873"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#aac2bd5da0ab8976455b7dfc044af9873">step</a> (float dt, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) override</td></tr>
@@ -135,12 +135,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a33bcd981d85932f3cdd4e3690a0c39c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0f0675a3ea22d8da2ae954dbbd62f3d" id="r_aa0f0675a3ea22d8da2ae954dbbd62f3d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#aa0f0675a3ea22d8da2ae954dbbd62f3d">collidesWithRigidBody</a> (const <a class="el" href="classPhysics_1_1RigidBody.html">RigidBody</a> &amp;rb) const override</td></tr>
 <tr class="separator:aa0f0675a3ea22d8da2ae954dbbd62f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09862556638ce22e4c00f2d35180068a" id="r_a09862556638ce22e4c00f2d35180068a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a09862556638ce22e4c00f2d35180068a">resolveCollisionWith</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> &amp;other) override</td></tr>
-<tr class="separator:a09862556638ce22e4c00f2d35180068a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4b4ea01aa74880550e9e1d91e6ed10d" id="r_ab4b4ea01aa74880550e9e1d91e6ed10d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#ab4b4ea01aa74880550e9e1d91e6ed10d">resolveCollisionWithPointMass</a> (<a class="el" href="classPhysics_1_1PointMass.html">PointMass</a> &amp;pm) override</td></tr>
-<tr class="separator:ab4b4ea01aa74880550e9e1d91e6ed10d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75cc007b769b6157f9dbe23a5c5618b8" id="r_a75cc007b769b6157f9dbe23a5c5618b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a75cc007b769b6157f9dbe23a5c5618b8">resolveCollisionWithRigidBody</a> (<a class="el" href="classPhysics_1_1RigidBody.html">RigidBody</a> &amp;rb) override</td></tr>
-<tr class="separator:a75cc007b769b6157f9dbe23a5c5618b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08d0a8a002cd7df363c52d4704c0d471" id="r_a08d0a8a002cd7df363c52d4704c0d471"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a08d0a8a002cd7df363c52d4704c0d471">resolveCollisionWith</a> (float dt, <a class="el" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> &amp;other) override</td></tr>
+<tr class="separator:a08d0a8a002cd7df363c52d4704c0d471"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e7d7e2da6c0011c98745c15903a2b15" id="r_a4e7d7e2da6c0011c98745c15903a2b15"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a4e7d7e2da6c0011c98745c15903a2b15">resolveCollisionWithPointMass</a> (float dt, <a class="el" href="classPhysics_1_1PointMass.html">PointMass</a> &amp;pm) override</td></tr>
+<tr class="separator:a4e7d7e2da6c0011c98745c15903a2b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96875f628238e7a88e8143825a8c4722" id="r_a96875f628238e7a88e8143825a8c4722"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#a96875f628238e7a88e8143825a8c4722">resolveCollisionWithRigidBody</a> (float dt, <a class="el" href="classPhysics_1_1RigidBody.html">RigidBody</a> &amp;rb) override</td></tr>
+<tr class="separator:a96875f628238e7a88e8143825a8c4722"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb2cf75e06364a8187c1a2bfc4e2f99e" id="r_aeb2cf75e06364a8187c1a2bfc4e2f99e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#aeb2cf75e06364a8187c1a2bfc4e2f99e">setScale</a> (const glm::vec3 &amp;newScale)</td></tr>
+<tr class="separator:aeb2cf75e06364a8187c1a2bfc4e2f99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6fa3ca05c32a643e47681b5f575eee8" id="r_ad6fa3ca05c32a643e47681b5f575eee8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1RigidBody.html#ad6fa3ca05c32a643e47681b5f575eee8">setGeometry</a> (const std::vector&lt; glm::vec3 &gt; &amp;vertices, const std::vector&lt; unsigned int &gt; &amp;indices)</td></tr>
+<tr class="separator:ad6fa3ca05c32a643e47681b5f575eee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysics_1_1PhysicsBody"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysics_1_1PhysicsBody')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a></td></tr>
 <tr class="memitem:a2d5ddf4c1593c1f510e5c53c5cff57c2 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a2d5ddf4c1593c1f510e5c53c5cff57c2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a2d5ddf4c1593c1f510e5c53c5cff57c2">PhysicsBody</a> ()=delete</td></tr>
 <tr class="separator:a2d5ddf4c1593c1f510e5c53c5cff57c2 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,10 +174,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4bbf491e193cf2e29954c38a92865e29 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c75c65ff08d82aac980c01ec89c6991 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a9c75c65ff08d82aac980c01ec89c6991"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a9c75c65ff08d82aac980c01ec89c6991">setVelocity</a> (const glm::vec3 &amp;vel, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
 <tr class="separator:a9c75c65ff08d82aac980c01ec89c6991 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c44730bee1088e28f85b4579f506c7d inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a0c44730bee1088e28f85b4579f506c7d"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a0c44730bee1088e28f85b4579f506c7d">getMass</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) const</td></tr>
-<tr class="separator:a0c44730bee1088e28f85b4579f506c7d inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf04f20a38cef7b966f7d0a339a98dc3 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_abf04f20a38cef7b966f7d0a339a98dc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#abf04f20a38cef7b966f7d0a339a98dc3">setMass</a> (float newMass, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
-<tr class="separator:abf04f20a38cef7b966f7d0a339a98dc3 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04c6bf672135128ea6ebc6028c1a8a97 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a04c6bf672135128ea6ebc6028c1a8a97"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a04c6bf672135128ea6ebc6028c1a8a97">getMass</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) const</td></tr>
+<tr class="separator:a04c6bf672135128ea6ebc6028c1a8a97 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1b530c4f77272396b438354b2322634 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_ad1b530c4f77272396b438354b2322634"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#ad1b530c4f77272396b438354b2322634">setMass</a> (double newMass, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
+<tr class="separator:ad1b530c4f77272396b438354b2322634 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5589f3d686ebb04f47fa42376b9939b5 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a5589f3d686ebb04f47fa42376b9939b5"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a5589f3d686ebb04f47fa42376b9939b5">getThermalProperties</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) const</td></tr>
+<tr class="separator:a5589f3d686ebb04f47fa42376b9939b5 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad76815a1ef3d53f6c2901afa5277554f inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_ad76815a1ef3d53f6c2901afa5277554f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#ad76815a1ef3d53f6c2901afa5277554f">setThermalProperty</a> (const <a class="el" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a> &amp;newProps, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
+<tr class="separator:ad76815a1ef3d53f6c2901afa5277554f inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a3f602f251373d49eaaefeacaf3cb5b inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a4a3f602f251373d49eaaefeacaf3cb5b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a4a3f602f251373d49eaaefeacaf3cb5b">getSurfaceArea</a> () const</td></tr>
+<tr class="separator:a4a3f602f251373d49eaaefeacaf3cb5b inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b4cbc6f8c2f9834cfd5b251c9b27062 inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_a9b4cbc6f8c2f9834cfd5b251c9b27062"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a9b4cbc6f8c2f9834cfd5b251c9b27062">getIsStatic</a> (<a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock) const</td></tr>
 <tr class="separator:a9b4cbc6f8c2f9834cfd5b251c9b27062 inherit pub_methods_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdcc5254d170bb6939cb988bf64613dc inherit pub_methods_classPhysics_1_1PhysicsBody" id="r_afdcc5254d170bb6939cb988bf64613dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#afdcc5254d170bb6939cb988bf64613dc">setIsStatic</a> (bool newStatic, <a class="el" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2">BodyLock</a> lock)</td></tr>
@@ -200,13 +210,15 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:acaa77c267f89fea18c073868508af6dd inherit pro_attribs_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad10fa891d4a79fb61db2e7fbc01e7990 inherit pro_attribs_classPhysics_1_1PhysicsBody" id="r_ad10fa891d4a79fb61db2e7fbc01e7990"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#ad10fa891d4a79fb61db2e7fbc01e7990">frames</a></td></tr>
 <tr class="separator:ad10fa891d4a79fb61db2e7fbc01e7990 inherit pro_attribs_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53301a18ed7d5b3d70dc4eeb0748a65d inherit pro_attribs_classPhysics_1_1PhysicsBody" id="r_a53301a18ed7d5b3d70dc4eeb0748a65d"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysics_1_1PhysicsBody.html#a53301a18ed7d5b3d70dc4eeb0748a65d">surfaceArea</a> = 1.0f</td></tr>
+<tr class="separator:a53301a18ed7d5b3d70dc4eeb0748a65d inherit pro_attribs_classPhysics_1_1PhysicsBody"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="RigidBody_8h_source.html#l00012">12</a> of file <a class="el" href="RigidBody_8h_source.html">RigidBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8h_source.html#l00014">14</a> of file <a class="el" href="RigidBody_8h_source.html">RigidBody.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab62419475c929a3bdd9efefe54084bc8" name="ab62419475c929a3bdd9efefe54084bc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab62419475c929a3bdd9efefe54084bc8">&#9670;&#160;</a></span>RigidBody() <span class="overload">[1/2]</span></h2>
+<a id="a1e15852e149598e4fa74c051686bea05" name="a1e15852e149598e4fa74c051686bea05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e15852e149598e4fa74c051686bea05">&#9670;&#160;</a></span>RigidBody() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -220,7 +232,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>mass</em>, </td>
         </tr>
         <tr>
@@ -249,11 +261,11 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00008">8</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00043">43</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ab62419475c929a3bdd9efefe54084bc8_cgraph.svg" width="366" height="179"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_a1e15852e149598e4fa74c051686bea05_cgraph.svg" width="366" height="243"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -304,11 +316,11 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00016">16</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00052">52</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ab0adaeac3a972c6cc7a5933e2c6d14d3_cgraph.svg" width="366" height="179"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ab0adaeac3a972c6cc7a5933e2c6d14d3_cgraph.svg" width="366" height="243"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -340,7 +352,7 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a9adc84ac7f3f25bfea6e316e8293fbec">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00054">54</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00094">94</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -375,7 +387,7 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a1a0074c821332df842a8964bb26381e1">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00058">58</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00098">98</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -415,7 +427,7 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#abd13f91a0aaeaef21e492db3f1507043">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00064">64</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00104">104</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 
 </div>
 </div>
@@ -444,7 +456,7 @@ Here is the caller graph for this function:</div>
 
 <p>Reimplemented from <a class="el" href="classPhysics_1_1PhysicsBody.html#ad67776bca8ab8dda937bdb1dc50855e6">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8h_source.html#l00022">22</a> of file <a class="el" href="RigidBody_8h_source.html">RigidBody.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8h_source.html#l00024">24</a> of file <a class="el" href="RigidBody_8h_source.html">RigidBody.h</a>.</p>
 
 </div>
 </div>
@@ -484,7 +496,7 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#abc6f2b48178e8a1a15e2270557cb3d37">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00032">32</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00069">69</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 
 </div>
 </div>
@@ -524,12 +536,12 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a0bd6cc4c18c4b89063eb4a83a2694793">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00024">24</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00061">61</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a09862556638ce22e4c00f2d35180068a" name="a09862556638ce22e4c00f2d35180068a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09862556638ce22e4c00f2d35180068a">&#9670;&#160;</a></span>resolveCollisionWith()</h2>
+<a id="a08d0a8a002cd7df363c52d4704c0d471" name="a08d0a8a002cd7df363c52d4704c0d471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08d0a8a002cd7df363c52d4704c0d471">&#9670;&#160;</a></span>resolveCollisionWith()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -540,9 +552,19 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">bool Physics::RigidBody::resolveCollisionWith </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -552,19 +574,19 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a193b6cea5d9830ea18dc1b35280904d5">Physics::PhysicsBody</a>.</p>
+<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a64ab0791e0b333482a1d182af3d66871">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00068">68</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00108">108</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_a09862556638ce22e4c00f2d35180068a_cgraph.svg" width="454" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_a08d0a8a002cd7df363c52d4704c0d471_cgraph.svg" width="454" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
 </div>
-<a id="ab4b4ea01aa74880550e9e1d91e6ed10d" name="ab4b4ea01aa74880550e9e1d91e6ed10d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b4ea01aa74880550e9e1d91e6ed10d">&#9670;&#160;</a></span>resolveCollisionWithPointMass()</h2>
+<a id="a4e7d7e2da6c0011c98745c15903a2b15" name="a4e7d7e2da6c0011c98745c15903a2b15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e7d7e2da6c0011c98745c15903a2b15">&#9670;&#160;</a></span>resolveCollisionWithPointMass()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -575,9 +597,19 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname">bool Physics::RigidBody::resolveCollisionWithPointMass </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classPhysics_1_1PointMass.html">PointMass</a> &amp;&#160;</td>
-          <td class="paramname"><em>pm</em></td><td>)</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classPhysics_1_1PointMass.html">PointMass</a> &amp;&#160;</td>
+          <td class="paramname"><em>pm</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -587,24 +619,24 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a38cb42a809893336b72052f9dbe97612">Physics::PhysicsBody</a>.</p>
+<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#af892e089d4faa17a844c8577c335bde0">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00072">72</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00112">112</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ab4b4ea01aa74880550e9e1d91e6ed10d_cgraph.svg" width="451" height="435"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_a4e7d7e2da6c0011c98745c15903a2b15_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ab4b4ea01aa74880550e9e1d91e6ed10d_icgraph.svg" width="520" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_a4e7d7e2da6c0011c98745c15903a2b15_icgraph.svg" width="520" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
 </div>
-<a id="a75cc007b769b6157f9dbe23a5c5618b8" name="a75cc007b769b6157f9dbe23a5c5618b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75cc007b769b6157f9dbe23a5c5618b8">&#9670;&#160;</a></span>resolveCollisionWithRigidBody()</h2>
+<a id="a96875f628238e7a88e8143825a8c4722" name="a96875f628238e7a88e8143825a8c4722"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96875f628238e7a88e8143825a8c4722">&#9670;&#160;</a></span>resolveCollisionWithRigidBody()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -615,9 +647,19 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">bool Physics::RigidBody::resolveCollisionWithRigidBody </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classPhysics_1_1RigidBody.html">RigidBody</a> &amp;&#160;</td>
-          <td class="paramname"><em>rb</em></td><td>)</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classPhysics_1_1RigidBody.html">RigidBody</a> &amp;&#160;</td>
+          <td class="paramname"><em>rb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -627,9 +669,69 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#a62e6fec19245649b1b7185614e2f3683">Physics::PhysicsBody</a>.</p>
+<p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#adc3d9789491b39e7f1e753acbeb296a8">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00095">95</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00154">154</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad6fa3ca05c32a643e47681b5f575eee8" name="ad6fa3ca05c32a643e47681b5f575eee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6fa3ca05c32a643e47681b5f575eee8">&#9670;&#160;</a></span>setGeometry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Physics::RigidBody::setGeometry </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; glm::vec3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vertices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>indices</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00022">22</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_ad6fa3ca05c32a643e47681b5f575eee8_icgraph.svg" width="259" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="aeb2cf75e06364a8187c1a2bfc4e2f99e" name="aeb2cf75e06364a8187c1a2bfc4e2f99e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb2cf75e06364a8187c1a2bfc4e2f99e">&#9670;&#160;</a></span>setScale()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Physics::RigidBody::setScale </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>newScale</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00016">16</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classPhysics_1_1RigidBody_aeb2cf75e06364a8187c1a2bfc4e2f99e_icgraph.svg" width="578" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 
 </div>
 </div>
@@ -669,7 +771,7 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classPhysics_1_1PhysicsBody.html#afc59ca2d939ab0727571a34148ff55ff">Physics::PhysicsBody</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00041">41</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RigidBody_8cpp_source.html#l00081">81</a> of file <a class="el" href="RigidBody_8cpp_source.html">RigidBody.cpp</a>.</p>
 
 </div>
 </div>

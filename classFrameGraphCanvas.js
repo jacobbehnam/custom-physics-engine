@@ -7,5 +7,5 @@ var classFrameGraphCanvas =
     [ "paintEvent", "classFrameGraphCanvas.html#ae00f954b07ed48c0d56fb1dfb91cbb90", null ],
     [ "resizeEvent", "classFrameGraphCanvas.html#aa468259751e4378c06ea609090d8ccbe", null ],
     [ "setMetric", "classFrameGraphCanvas.html#ad7d262482869ac8989b2a5514b6fb329", null ],
-    [ "setSharedData", "classFrameGraphCanvas.html#a0a79a484416f3ea872a4abef00bb4e74", null ]
+    [ "setSharedData", "classFrameGraphCanvas.html#a92eea1af014812dd9a429318f6d480e4", null ]
 ];

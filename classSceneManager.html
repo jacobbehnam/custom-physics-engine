@@ -130,8 +130,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4543114007c5bb40ddab62cd9f2ac613"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53736fa499987ffff612d3ee7c85442c" id="r_a53736fa499987ffff612d3ee7c85442c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a53736fa499987ffff612d3ee7c85442c">deleteAllObjects</a> ()</td></tr>
 <tr class="separator:a53736fa499987ffff612d3ee7c85442c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8688edec501c8e945dff1a85c7e33c7" id="r_ad8688edec501c8e945dff1a85c7e33c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classSceneObject.html">SceneObject</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ad8688edec501c8e945dff1a85c7e33c7">getObjects</a> () const</td></tr>
-<tr class="separator:ad8688edec501c8e945dff1a85c7e33c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af96b87421832797ab531895ec04bee09" id="r_af96b87421832797ab531895ec04bee09"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classSceneObject.html">SceneObject</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#af96b87421832797ab531895ec04bee09">getObjects</a> () const</td></tr>
+<tr class="separator:af96b87421832797ab531895ec04bee09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48e7f142395f016ab391145e686f373e" id="r_a48e7f142395f016ab391145e686f373e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a48e7f142395f016ab391145e686f373e">getObjectByID</a> (uint32_t objectID) const</td></tr>
+<tr class="separator:a48e7f142395f016ab391145e686f373e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a624cd344feba3357d2ec95bab7229a6f" id="r_a624cd344feba3357d2ec95bab7229a6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a624cd344feba3357d2ec95bab7229a6f">isNameUnique</a> (const std::string &amp;name, <a class="el" href="classSceneObject.html">SceneObject</a> *self) const</td></tr>
 <tr class="separator:a624cd344feba3357d2ec95bab7229a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad894e90cf7ad353aab707f966c9711d" id="r_aad894e90cf7ad353aab707f966c9711d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#aad894e90cf7ad353aab707f966c9711d">setObjectName</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj, const std::string &amp;newName)</td></tr>
@@ -140,8 +142,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab6a7ecbff438f2dbee8a0f31795456f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab469d1eea307d05b27433cb74231b4eb" id="r_ab469d1eea307d05b27433cb74231b4eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ab469d1eea307d05b27433cb74231b4eb">setCameraTarget</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *target)</td></tr>
 <tr class="separator:ab469d1eea307d05b27433cb74231b4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c5088464b489b31f23e0791e2b9c0b0" id="r_a2c5088464b489b31f23e0791e2b9c0b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a2c5088464b489b31f23e0791e2b9c0b0">focusObject</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *target)</td></tr>
+<tr class="separator:a2c5088464b489b31f23e0791e2b9c0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad143244bc503acbe2371b662ea0dcd0c" id="r_ad143244bc503acbe2371b662ea0dcd0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ad143244bc503acbe2371b662ea0dcd0c">clearCameraTarget</a> ()</td></tr>
 <tr class="separator:ad143244bc503acbe2371b662ea0dcd0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77aa3589238abfa1c416fda908520bf7" id="r_a77aa3589238abfa1c416fda908520bf7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a77aa3589238abfa1c416fda908520bf7">isCameraFollowing</a> () const</td></tr>
+<tr class="separator:a77aa3589238abfa1c416fda908520bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30fc32723c50bf9707a44ac398e5ecb9" id="r_a30fc32723c50bf9707a44ac398e5ecb9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a30fc32723c50bf9707a44ac398e5ecb9">getCameraTarget</a> () const</td></tr>
+<tr class="separator:a30fc32723c50bf9707a44ac398e5ecb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4c384d4f3ae448f6ddc3140aa9766be" id="r_ab4c384d4f3ae448f6ddc3140aa9766be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ab4c384d4f3ae448f6ddc3140aa9766be">addToPhysicsSystem</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *body) const</td></tr>
 <tr class="separator:ab4c384d4f3ae448f6ddc3140aa9766be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a950d9257e6d737616480fb2b3c00ce62" id="r_a950d9257e6d737616480fb2b3c00ce62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a950d9257e6d737616480fb2b3c00ce62">removeFromPhysicsSystem</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *body) const</td></tr>
@@ -150,14 +158,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad73f1ee3bdfe2567544871845707ce0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8dafcb538b1cfbf727b82644ad5815ad" id="r_a8dafcb538b1cfbf727b82644ad5815ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a8dafcb538b1cfbf727b82644ad5815ad">setGlobalAcceleration</a> (const glm::vec3 &amp;newAcceleration) const</td></tr>
 <tr class="separator:a8dafcb538b1cfbf727b82644ad5815ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9339f7f147958f296ad41b9ffcc369cc" id="r_a9339f7f147958f296ad41b9ffcc369cc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a9339f7f147958f296ad41b9ffcc369cc">isPhysicsRunning</a> () const</td></tr>
+<tr class="separator:a9339f7f147958f296ad41b9ffcc369cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae085a7aade1b9a2adcb7d9f1b2660790" id="r_ae085a7aade1b9a2adcb7d9f1b2660790"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ae085a7aade1b9a2adcb7d9f1b2660790">getSimSpeed</a> () const</td></tr>
 <tr class="separator:ae085a7aade1b9a2adcb7d9f1b2660790"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64f4064d9201d062a24f750763c1f703" id="r_a64f4064d9201d062a24f750763c1f703"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a64f4064d9201d062a24f750763c1f703">setSimSpeed</a> (float newSpeed)</td></tr>
 <tr class="separator:a64f4064d9201d062a24f750763c1f703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5117d2cabac5d1f95994f47f530b377b" id="r_a5117d2cabac5d1f95994f47f530b377b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a5117d2cabac5d1f95994f47f530b377b">getGravitationalConstant</a> () const</td></tr>
-<tr class="separator:a5117d2cabac5d1f95994f47f530b377b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a357678fb063589b2ed1dc9a5f0b55ae2" id="r_a357678fb063589b2ed1dc9a5f0b55ae2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a357678fb063589b2ed1dc9a5f0b55ae2">setGravitationalConstant</a> (float newG) const</td></tr>
-<tr class="separator:a357678fb063589b2ed1dc9a5f0b55ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39e7273c405b8acab08f3e532612c921" id="r_a39e7273c405b8acab08f3e532612c921"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a39e7273c405b8acab08f3e532612c921">startSimulation</a> () const</td></tr>
+<tr class="separator:a39e7273c405b8acab08f3e532612c921"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22428540d6ea2d04bd9f9b720e9346dd" id="r_a22428540d6ea2d04bd9f9b720e9346dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a22428540d6ea2d04bd9f9b720e9346dd">stopSimulation</a> () const</td></tr>
+<tr class="separator:a22428540d6ea2d04bd9f9b720e9346dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a017344f06af810213616414ac98e93cc" id="r_a017344f06af810213616414ac98e93cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a017344f06af810213616414ac98e93cc">stepPhysics</a> (float dt) const</td></tr>
 <tr class="separator:a017344f06af810213616414ac98e93cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31d525542db0b239ba61dd36a3d92d43" id="r_a31d525542db0b239ba61dd36a3d92d43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a31d525542db0b239ba61dd36a3d92d43">addPickable</a> (<a class="el" href="classIPickable.html">IPickable</a> *obj)</td></tr>
@@ -170,6 +180,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab7c34393bb10361069b0ea73ec2797f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9525363a1d77757f3be7e4f09c1500c9" id="r_a9525363a1d77757f3be7e4f09c1500c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">updateHoverState</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;mouseRay)</td></tr>
 <tr class="separator:a9525363a1d77757f3be7e4f09c1500c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63d3a08f13b314ed1d871f598f26534d" id="r_a63d3a08f13b314ed1d871f598f26534d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a63d3a08f13b314ed1d871f598f26534d">selectObject</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj)</td></tr>
+<tr class="separator:a63d3a08f13b314ed1d871f598f26534d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af40d0ff3e76f89bbf5504f1694814179" id="r_af40d0ff3e76f89bbf5504f1694814179"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#af40d0ff3e76f89bbf5504f1694814179">setSelectFor</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj, bool flag=true)</td></tr>
 <tr class="separator:af40d0ff3e76f89bbf5504f1694814179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59f13c06bf3f19d5e543502a0ddd0467" id="r_a59f13c06bf3f19d5e543502a0ddd0467"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467">processHeldKeys</a> (const QSet&lt; int &gt; &amp;heldKeys, float dt)</td></tr>
@@ -186,6 +198,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1a46a8c9e99b6b27404a2f870f38749c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b7b0a022dcce523178e8414fb8e4463" id="r_a7b7b0a022dcce523178e8414fb8e4463"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a7b7b0a022dcce523178e8414fb8e4463">loadScene</a> (const QString &amp;file)</td></tr>
 <tr class="separator:a7b7b0a022dcce523178e8414fb8e4463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9d648b5fb5a92c4612c640fc7cb47fb" id="r_ad9d648b5fb5a92c4612c640fc7cb47fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#ad9d648b5fb5a92c4612c640fc7cb47fb">loadPreset</a> (const <a class="el" href="namespaceScenePresets.html#structScenePresets_1_1PresetDescriptor">ScenePresets::PresetDescriptor</a> &amp;preset)</td></tr>
+<tr class="separator:ad9d648b5fb5a92c4612c640fc7cb47fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8774b3322c2d86c6f1f2e0a8a9896af1" id="r_a8774b3322c2d86c6f1f2e0a8a9896af1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a8774b3322c2d86c6f1f2e0a8a9896af1">resetScene</a> ()</td></tr>
+<tr class="separator:a8774b3322c2d86c6f1f2e0a8a9896af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfea563d3849e3c8c09fc3febe9ae1e2" id="r_acfea563d3849e3c8c09fc3febe9ae1e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#acfea563d3849e3c8c09fc3febe9ae1e2">defaultSetup</a> ()</td></tr>
 <tr class="separator:acfea563d3849e3c8c09fc3febe9ae1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76592c383a85fda664a79fa155ead19e" id="r_a76592c383a85fda664a79fa155ead19e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneManager.html#a76592c383a85fda664a79fa155ead19e">objectAdded</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj)</td></tr>
@@ -214,7 +230,7 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00029">29</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00032">32</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aac0c52b9be10e597bacacb46b2887877" name="aac0c52b9be10e597bacacb46b2887877"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aac0c52b9be10e597bacacb46b2887877">&#9670;&#160;</a></span>SceneManager()</h2>
@@ -242,7 +258,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00017">17</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00021">21</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 
 </div>
 </div>
@@ -269,7 +285,7 @@ Data Fields</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00023">23</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00027">27</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 
 </div>
 </div>
@@ -298,7 +314,7 @@ Data Fields</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00058">58</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00066">66</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -307,7 +323,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad0d1661e5869720d7a07b1912d75318d_icgraph.svg" width="100%" height="419"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad0d1661e5869720d7a07b1912d75318d_icgraph.svg" width="100%" height="450"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -336,11 +352,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00057">57</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00065">65</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a31d525542db0b239ba61dd36a3d92d43_icgraph.svg" width="100%" height="419"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a31d525542db0b239ba61dd36a3d92d43_icgraph.svg" width="100%" height="450"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -369,7 +385,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00047">47</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00054">54</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -393,11 +409,16 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00419">419</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00501">501</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_af2a17ef84ef7682d13ab8c36e3c9fdd3_cgraph.svg" width="447" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_af2a17ef84ef7682d13ab8c36e3c9fdd3_icgraph.svg" width="458" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -417,11 +438,16 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00188">188</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00260">260</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad143244bc503acbe2371b662ea0dcd0c_cgraph.svg" width="422" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad143244bc503acbe2371b662ea0dcd0c_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -491,16 +517,16 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00068">68</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00109">109</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1daee617aa556b8af8a7202d3f8f28c8_cgraph.svg" width="100%" height="530"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1daee617aa556b8af8a7202d3f8f28c8_cgraph.svg" width="100%" height="567"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1daee617aa556b8af8a7202d3f8f28c8_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1daee617aa556b8af8a7202d3f8f28c8_icgraph.svg" width="100%" height="413"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -537,11 +563,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00046">46</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00086">86</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a926214cf6f1ad40c275720b9db4346a7_cgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a926214cf6f1ad40c275720b9db4346a7_cgraph.svg" width="100%" height="438"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -561,7 +587,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00027">27</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00031">31</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -585,16 +611,16 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00108">108</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00165">165</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a53736fa499987ffff612d3ee7c85442c_cgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a53736fa499987ffff612d3ee7c85442c_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a53736fa499987ffff612d3ee7c85442c_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a53736fa499987ffff612d3ee7c85442c_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -614,7 +640,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00361">361</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00443">443</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -623,7 +649,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a99992b526976863d1dab7dc88cc6ec2a_icgraph.svg" width="100%" height="499"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a99992b526976863d1dab7dc88cc6ec2a_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -644,16 +670,83 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00083">83</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00125">125</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a4543114007c5bb40ddab62cd9f2ac613_cgraph.svg" width="496" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a4543114007c5bb40ddab62cd9f2ac613_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a4543114007c5bb40ddab62cd9f2ac613_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a4543114007c5bb40ddab62cd9f2ac613_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a2c5088464b489b31f23e0791e2b9c0b0" name="a2c5088464b489b31f23e0791e2b9c0b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c5088464b489b31f23e0791e2b9c0b0">&#9670;&#160;</a></span>focusObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SceneManager::focusObject </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td>
+          <td class="paramname"><em>target</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00250">250</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a2c5088464b489b31f23e0791e2b9c0b0_cgraph.svg" width="100%" height="476"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a2c5088464b489b31f23e0791e2b9c0b0_icgraph.svg" width="450" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a30fc32723c50bf9707a44ac398e5ecb9" name="a30fc32723c50bf9707a44ac398e5ecb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30fc32723c50bf9707a44ac398e5ecb9">&#9670;&#160;</a></span>getCameraTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classSceneObject.html">SceneObject</a> * SceneManager::getCameraTarget </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00052">52</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a30fc32723c50bf9707a44ac398e5ecb9_cgraph.svg" width="440" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a30fc32723c50bf9707a44ac398e5ecb9_icgraph.svg" width="100%" height="439"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -681,7 +774,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00049">49</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00056">56</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -690,46 +783,39 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a5117d2cabac5d1f95994f47f530b377b" name="a5117d2cabac5d1f95994f47f530b377b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5117d2cabac5d1f95994f47f530b377b">&#9670;&#160;</a></span>getGravitationalConstant()</h2>
+<a id="a48e7f142395f016ab391145e686f373e" name="a48e7f142395f016ab391145e686f373e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48e7f142395f016ab391145e686f373e">&#9670;&#160;</a></span>getObjectByID()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">float SceneManager::getGravitationalConstant </td>
+          <td class="memname"><a class="el" href="classSceneObject.html">SceneObject</a> * SceneManager::getObjectByID </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>objectID</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00053">53</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00178">178</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a5117d2cabac5d1f95994f47f530b377b_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a48e7f142395f016ab391145e686f373e_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
 </div>
-<a id="ad8688edec501c8e945dff1a85c7e33c7" name="ad8688edec501c8e945dff1a85c7e33c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8688edec501c8e945dff1a85c7e33c7">&#9670;&#160;</a></span>getObjects()</h2>
+<a id="af96b87421832797ab531895ec04bee09" name="af96b87421832797ab531895ec04bee09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af96b87421832797ab531895ec04bee09">&#9670;&#160;</a></span>getObjects()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="classSceneObject.html">SceneObject</a> * &gt; SceneManager::getObjects </td>
+          <td class="memname">const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classSceneObject.html">SceneObject</a> &gt; &gt; &amp; SceneManager::getObjects </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -737,11 +823,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00116">116</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00174">174</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad8688edec501c8e945dff1a85c7e33c7_icgraph.svg" width="100%" height="487"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_af96b87421832797ab531895ec04bee09_icgraph.svg" width="100%" height="487"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -769,7 +855,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00051">51</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00059">59</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -778,7 +864,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ae085a7aade1b9a2adcb7d9f1b2660790_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ae085a7aade1b9a2adcb7d9f1b2660790_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -815,7 +901,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00216">216</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00297">297</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -825,6 +911,38 @@ Here is the call graph for this function:</div>
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_ac517c77baec7191a36898308818ebb5f_icgraph.svg" width="499" height="115"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a77aa3589238abfa1c416fda908520bf7" name="a77aa3589238abfa1c416fda908520bf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77aa3589238abfa1c416fda908520bf7">&#9670;&#160;</a></span>isCameraFollowing()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SceneManager::isCameraFollowing </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00051">51</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a77aa3589238abfa1c416fda908520bf7_cgraph.svg" width="454" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -855,11 +973,63 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00138">138</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00197">197</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a624cd344feba3357d2ec95bab7229a6f_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a624cd344feba3357d2ec95bab7229a6f_icgraph.svg" width="100%" height="429"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a9339f7f147958f296ad41b9ffcc369cc" name="a9339f7f147958f296ad41b9ffcc369cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9339f7f147958f296ad41b9ffcc369cc">&#9670;&#160;</a></span>isPhysicsRunning()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SceneManager::isPhysicsRunning </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00058">58</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+
+</div>
+</div>
+<a id="ad9d648b5fb5a92c4612c640fc7cb47fb" name="ad9d648b5fb5a92c4612c640fc7cb47fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9d648b5fb5a92c4612c640fc7cb47fb">&#9670;&#160;</a></span>loadPreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SceneManager::loadPreset </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceScenePresets.html#structScenePresets_1_1PresetDescriptor">ScenePresets::PresetDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>preset</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00077">77</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ad9d648b5fb5a92c4612c640fc7cb47fb_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -880,7 +1050,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00378">378</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00460">460</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -910,11 +1080,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00169">169</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00228">228</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab6a7ecbff438f2dbee8a0f31795456f9_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab6a7ecbff438f2dbee8a0f31795456f9_icgraph.svg" width="100%" height="413"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -937,7 +1107,7 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a76592c383a85fda664a79fa155ead19e_icgraph.svg" width="100%" height="382"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a76592c383a85fda664a79fa155ead19e_icgraph.svg" width="100%" height="413"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -960,7 +1130,7 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1ecbf10d22d2ff153407cd139bf89632_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1ecbf10d22d2ff153407cd139bf89632_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -993,7 +1163,7 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a76dba0a09f8b2a1dc376236f904a9c3a_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a76dba0a09f8b2a1dc376236f904a9c3a_icgraph.svg" width="100%" height="429"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1024,7 +1194,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00272">272</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00353">353</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1062,7 +1232,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00060">60</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00068">68</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1071,7 +1241,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab7c34393bb10361069b0ea73ec2797f8_icgraph.svg" width="100%" height="499"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab7c34393bb10361069b0ea73ec2797f8_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1100,7 +1270,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00048">48</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00055">55</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1125,11 +1295,40 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00367">367</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00449">449</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1c647e38474ee02d5dd8510bc2313c38_icgraph.svg" width="100%" height="499"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1c647e38474ee02d5dd8510bc2313c38_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a8774b3322c2d86c6f1f2e0a8a9896af1" name="a8774b3322c2d86c6f1f2e0a8a9896af1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8774b3322c2d86c6f1f2e0a8a9896af1">&#9670;&#160;</a></span>resetScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SceneManager::resetScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00052">52</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a8774b3322c2d86c6f1f2e0a8a9896af1_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a8774b3322c2d86c6f1f2e0a8a9896af1_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1150,11 +1349,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00373">373</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00455">455</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1a46a8c9e99b6b27404a2f870f38749c_cgraph.svg" width="100%" height="524"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a1a46a8c9e99b6b27404a2f870f38749c_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -1182,7 +1381,37 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a25bec2896954b4f0c3bed8ef736993d3_icgraph.svg" width="100%" height="424"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a25bec2896954b4f0c3bed8ef736993d3_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a63d3a08f13b314ed1d871f598f26534d" name="a63d3a08f13b314ed1d871f598f26534d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63d3a08f13b314ed1d871f598f26534d">&#9670;&#160;</a></span>selectObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SceneManager::selectObject </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00288">288</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a63d3a08f13b314ed1d871f598f26534d_cgraph.svg" width="100%" height="425"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a63d3a08f13b314ed1d871f598f26534d_icgraph.svg" width="100%" height="424"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1203,16 +1432,16 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00182">182</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00241">241</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab469d1eea307d05b27433cb74231b4eb_cgraph.svg" width="438" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab469d1eea307d05b27433cb74231b4eb_cgraph.svg" width="100%" height="439"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab469d1eea307d05b27433cb74231b4eb_icgraph.svg" width="474" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_ab469d1eea307d05b27433cb74231b4eb_icgraph.svg" width="100%" height="376"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1243,7 +1472,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00331">331</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00413">413</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1252,7 +1481,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a490d6eddd6ef23ffd8f283582a2d7d88_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a490d6eddd6ef23ffd8f283582a2d7d88_icgraph.svg" width="100%" height="500"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1281,44 +1510,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00050">50</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00057">57</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a8dafcb538b1cfbf727b82644ad5815ad_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
-</div>
-
-</div>
-</div>
-<a id="a357678fb063589b2ed1dc9a5f0b55ae2" name="a357678fb063589b2ed1dc9a5f0b55ae2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a357678fb063589b2ed1dc9a5f0b55ae2">&#9670;&#160;</a></span>setGravitationalConstant()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SceneManager::setGravitationalConstant </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>newG</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00054">54</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a357678fb063589b2ed1dc9a5f0b55ae2_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a8dafcb538b1cfbf727b82644ad5815ad_icgraph.svg" width="100%" height="450"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1349,7 +1545,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00147">147</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00206">206</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1358,7 +1554,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_aad894e90cf7ad353aab707f966c9711d_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_aad894e90cf7ad353aab707f966c9711d_icgraph.svg" width="100%" height="429"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1389,7 +1585,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00344">344</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00426">426</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1398,7 +1594,7 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_af40d0ff3e76f89bbf5504f1694814179_icgraph.svg" width="100%" height="424"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_af40d0ff3e76f89bbf5504f1694814179_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1427,7 +1623,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00052">52</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00060">60</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1436,7 +1632,44 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a64f4064d9201d062a24f750763c1f703_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a64f4064d9201d062a24f750763c1f703_icgraph.svg" width="100%" height="450"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a39e7273c405b8acab08f3e532612c921" name="a39e7273c405b8acab08f3e532612c921"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39e7273c405b8acab08f3e532612c921">&#9670;&#160;</a></span>startSimulation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SceneManager::startSimulation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00061">61</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a39e7273c405b8acab08f3e532612c921_cgraph.svg" width="519" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a39e7273c405b8acab08f3e532612c921_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -1465,7 +1698,44 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00055">55</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00063">63</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+
+</div>
+</div>
+<a id="a22428540d6ea2d04bd9f9b720e9346dd" name="a22428540d6ea2d04bd9f9b720e9346dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22428540d6ea2d04bd9f9b720e9346dd">&#9670;&#160;</a></span>stopSimulation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SceneManager::stopSimulation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00062">62</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneManager_a22428540d6ea2d04bd9f9b720e9346dd_cgraph.svg" width="516" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneManager_a22428540d6ea2d04bd9f9b720e9346dd_icgraph.svg" width="100%" height="412"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -1485,7 +1755,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00207">207</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8cpp_source.html#l00279">279</a> of file <a class="el" href="SceneManager_8cpp_source.html">SceneManager.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1512,7 +1782,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00075">75</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00086">86</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 
 </div>
 </div>
@@ -1528,7 +1798,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00078">78</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00089">89</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 
 </div>
 </div>
@@ -1544,7 +1814,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00077">77</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00088">88</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 
 </div>
 </div>
@@ -1560,7 +1830,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00075">75</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00086">86</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 
 </div>
 </div>
@@ -1576,7 +1846,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00079">79</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneManager_8h_source.html#l00090">90</a> of file <a class="el" href="SceneManager_8h_source.html">SceneManager.h</a>.</p>
 
 </div>
 </div>

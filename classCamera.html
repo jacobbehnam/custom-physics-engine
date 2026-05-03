@@ -113,20 +113,36 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a070be911e21efa1402f331ea902b1f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f90e661a78172675ca06ea69667b531" id="r_a2f90e661a78172675ca06ea69667b531"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a2f90e661a78172675ca06ea69667b531">getViewMatrix</a> () const</td></tr>
 <tr class="separator:a2f90e661a78172675ca06ea69667b531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a716b2c31725fbfc7283417df06047bb9" id="r_a716b2c31725fbfc7283417df06047bb9"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a716b2c31725fbfc7283417df06047bb9">getRenderViewMatrix</a> () const</td></tr>
+<tr class="separator:a716b2c31725fbfc7283417df06047bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a29e1564468a5b612eb141c9d44170d" id="r_a1a29e1564468a5b612eb141c9d44170d"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a1a29e1564468a5b612eb141c9d44170d">getProjMatrix</a> () const</td></tr>
 <tr class="separator:a1a29e1564468a5b612eb141c9d44170d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4c5e591077abfa0f7ed95b231da38b9" id="r_ad4c5e591077abfa0f7ed95b231da38b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#ad4c5e591077abfa0f7ed95b231da38b9">setAspectRatio</a> (float ratio)</td></tr>
 <tr class="separator:ad4c5e591077abfa0f7ed95b231da38b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3365648721a971862141153e5730754a" id="r_a3365648721a971862141153e5730754a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a3365648721a971862141153e5730754a">setClipRange</a> (float nearPlane, float farPlane)</td></tr>
+<tr class="separator:a3365648721a971862141153e5730754a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a275ffd6ebff6f8cabc93d3ed55ff38a2" id="r_a275ffd6ebff6f8cabc93d3ed55ff38a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a275ffd6ebff6f8cabc93d3ed55ff38a2">setView</a> (const glm::vec3 &amp;newPosition, double newYaw, double newPitch)</td></tr>
+<tr class="separator:a275ffd6ebff6f8cabc93d3ed55ff38a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91d49a4fc2bbae5fb02ff3f3d52ac883" id="r_a91d49a4fc2bbae5fb02ff3f3d52ac883"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a91d49a4fc2bbae5fb02ff3f3d52ac883">resetView</a> (const glm::vec3 &amp;newPosition=glm::vec3(0.0f, 10.0f, 30.0f))</td></tr>
+<tr class="separator:a91d49a4fc2bbae5fb02ff3f3d52ac883"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac75c8838146cbcb15fc5de5d1e0f057c" id="r_ac75c8838146cbcb15fc5de5d1e0f057c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#ac75c8838146cbcb15fc5de5d1e0f057c">setTarget</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj)</td></tr>
 <tr class="separator:ac75c8838146cbcb15fc5de5d1e0f057c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcac84fa9ef337ffaa121fff4f9c52f4" id="r_abcac84fa9ef337ffaa121fff4f9c52f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#abcac84fa9ef337ffaa121fff4f9c52f4">focusOn</a> (<a class="el" href="classSceneObject.html">SceneObject</a> *obj)</td></tr>
+<tr class="separator:abcac84fa9ef337ffaa121fff4f9c52f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c2eb9907441db681f3fbd34694d415e" id="r_a2c2eb9907441db681f3fbd34694d415e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a2c2eb9907441db681f3fbd34694d415e">clearTarget</a> ()</td></tr>
 <tr class="separator:a2c2eb9907441db681f3fbd34694d415e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42cda7239981a5618660d04bd5893556" id="r_a42cda7239981a5618660d04bd5893556"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a42cda7239981a5618660d04bd5893556">update</a> ()</td></tr>
-<tr class="separator:a42cda7239981a5618660d04bd5893556"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa52da46bef8a559e3cf79c8334f753e" id="r_aaa52da46bef8a559e3cf79c8334f753e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#aaa52da46bef8a559e3cf79c8334f753e">hasTarget</a> () const</td></tr>
+<tr class="separator:aaa52da46bef8a559e3cf79c8334f753e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a962f895654dc24f21502b5141368c4d3" id="r_a962f895654dc24f21502b5141368c4d3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a962f895654dc24f21502b5141368c4d3">getTarget</a> () const</td></tr>
+<tr class="separator:a962f895654dc24f21502b5141368c4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c9b1877741ae1f8777b91446af61ac0" id="r_a2c9b1877741ae1f8777b91446af61ac0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a2c9b1877741ae1f8777b91446af61ac0">update</a> (const glm::vec3 *renderTargetPosition=nullptr)</td></tr>
+<tr class="separator:a2c9b1877741ae1f8777b91446af61ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af99955c976c3bbeec08714d7724bab89" id="r_af99955c976c3bbeec08714d7724bab89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#af99955c976c3bbeec08714d7724bab89">resetMouse</a> ()</td></tr>
 <tr class="separator:af99955c976c3bbeec08714d7724bab89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96d300da335234059e602591070ba009" id="r_a96d300da335234059e602591070ba009"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a96d300da335234059e602591070ba009">processMouseMovement</a> (float xoffset, float yoffset)</td></tr>
 <tr class="separator:a96d300da335234059e602591070ba009"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bcf6062738a3e81975bd7fd616fd4fe" id="r_a3bcf6062738a3e81975bd7fd616fd4fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a3bcf6062738a3e81975bd7fd616fd4fe">processScroll</a> (float wheelSteps)</td></tr>
+<tr class="separator:a3bcf6062738a3e81975bd7fd616fd4fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3374b86bbff4f043d1f0051e074b0391" id="r_a3374b86bbff4f043d1f0051e074b0391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a3374b86bbff4f043d1f0051e074b0391">processKeyboard</a> (<a class="el" href="Camera_8h.html#a2fc3593b03b2993ef34f3900f6be985e">Movement</a> direction, float deltaTime)</td></tr>
 <tr class="separator:a3374b86bbff4f043d1f0051e074b0391"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -163,6 +179,10 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:acfedfb022a15c3d4e266593a9c51d1d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1905be62506fcf0dfa971865b5d492fc" id="r_a1905be62506fcf0dfa971865b5d492fc"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#a1905be62506fcf0dfa971865b5d492fc">kDefaultFov</a> = 45.0f</td></tr>
 <tr class="separator:a1905be62506fcf0dfa971865b5d492fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa1d3e58b57741e2afb6c05116a1fb40" id="r_aaa1d3e58b57741e2afb6c05116a1fb40"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#aaa1d3e58b57741e2afb6c05116a1fb40">kDefaultNearClip</a> = 0.1f</td></tr>
+<tr class="separator:aaa1d3e58b57741e2afb6c05116a1fb40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae73397d8d4604be77a7c5a4addb5f99" id="r_aae73397d8d4604be77a7c5a4addb5f99"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCamera.html#aae73397d8d4604be77a7c5a4addb5f99">kDefaultFarClip</a> = 300000.0f</td></tr>
+<tr class="separator:aae73397d8d4604be77a7c5a4addb5f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -184,7 +204,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00006">6</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00030">30</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 
 </div>
 </div>
@@ -204,11 +224,41 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00032">32</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00112">112</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a2c2eb9907441db681f3fbd34694d415e_icgraph.svg" width="422" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_a2c2eb9907441db681f3fbd34694d415e_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="abcac84fa9ef337ffaa121fff4f9c52f4" name="abcac84fa9ef337ffaa121fff4f9c52f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abcac84fa9ef337ffaa121fff4f9c52f4">&#9670;&#160;</a></span>focusOn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::focusOn </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classSceneObject.html">SceneObject</a> *&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00089">89</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_abcac84fa9ef337ffaa121fff4f9c52f4_cgraph.svg" width="378" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_abcac84fa9ef337ffaa121fff4f9c52f4_icgraph.svg" width="632" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -228,11 +278,67 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00018">18</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00046">46</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a1a29e1564468a5b612eb141c9d44170d_icgraph.svg" width="559" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a1a29e1564468a5b612eb141c9d44170d_icgraph.svg" width="330" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a716b2c31725fbfc7283417df06047bb9" name="a716b2c31725fbfc7283417df06047bb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a716b2c31725fbfc7283417df06047bb9">&#9670;&#160;</a></span>getRenderViewMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::mat4 Camera::getRenderViewMatrix </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00042">42</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a716b2c31725fbfc7283417df06047bb9_icgraph.svg" width="383" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a962f895654dc24f21502b5141368c4d3" name="a962f895654dc24f21502b5141368c4d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a962f895654dc24f21502b5141368c4d3">&#9670;&#160;</a></span>getTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classSceneObject.html">SceneObject</a> * Camera::getTarget </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00049">49</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_a962f895654dc24f21502b5141368c4d3_icgraph.svg" width="100%" height="439"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -252,11 +358,43 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00014">14</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00038">38</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a2f90e661a78172675ca06ea69667b531_icgraph.svg" width="566" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a2f90e661a78172675ca06ea69667b531_icgraph.svg" width="336" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="aaa52da46bef8a559e3cf79c8334f753e" name="aaa52da46bef8a559e3cf79c8334f753e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa52da46bef8a559e3cf79c8334f753e">&#9670;&#160;</a></span>hasTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Camera::hasTarget </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00048">48</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_aaa52da46bef8a559e3cf79c8334f753e_icgraph.svg" width="454" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -287,7 +425,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00065">65</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00192">192</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -322,11 +460,31 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00051">51</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00134">134</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3bcf6062738a3e81975bd7fd616fd4fe" name="a3bcf6062738a3e81975bd7fd616fd4fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bcf6062738a3e81975bd7fd616fd4fe">&#9670;&#160;</a></span>processScroll()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::processScroll </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>wheelSteps</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00169">169</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
-Here is the caller graph for this function:</div>
+Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a96d300da335234059e602591070ba009_icgraph.svg" width="550" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a3bcf6062738a3e81975bd7fd616fd4fe_cgraph.svg" width="392" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -346,11 +504,41 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00095">95</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00226">226</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_af99955c976c3bbeec08714d7724bab89_icgraph.svg" width="100%" height="386"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_af99955c976c3bbeec08714d7724bab89_icgraph.svg" width="100%" height="498"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a91d49a4fc2bbae5fb02ff3f3d52ac883" name="a91d49a4fc2bbae5fb02ff3f3d52ac883"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91d49a4fc2bbae5fb02ff3f3d52ac883">&#9670;&#160;</a></span>resetView()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::resetView </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>newPosition</em> = <code>glm::vec3(0.0f,&#160;10.0f,&#160;30.0f)</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00074">74</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a91d49a4fc2bbae5fb02ff3f3d52ac883_cgraph.svg" width="544" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_a91d49a4fc2bbae5fb02ff3f3d52ac883_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -379,11 +567,41 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00037">37</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00040">40</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+
+</div>
+</div>
+<a id="a3365648721a971862141153e5730754a" name="a3365648721a971862141153e5730754a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3365648721a971862141153e5730754a">&#9670;&#160;</a></span>setClipRange()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::setClipRange </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>nearPlane</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>farPlane</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00058">58</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_ad4c5e591077abfa0f7ed95b231da38b9_icgraph.svg" width="424" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a3365648721a971862141153e5730754a_icgraph.svg" width="327" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -404,17 +622,68 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00028">28</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00078">78</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_ac75c8838146cbcb15fc5de5d1e0f057c_cgraph.svg" width="384" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_ac75c8838146cbcb15fc5de5d1e0f057c_icgraph.svg" width="663" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_ac75c8838146cbcb15fc5de5d1e0f057c_icgraph.svg" width="100%" height="376"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
 </div>
-<a id="a42cda7239981a5618660d04bd5893556" name="a42cda7239981a5618660d04bd5893556"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42cda7239981a5618660d04bd5893556">&#9670;&#160;</a></span>update()</h2>
+<a id="a275ffd6ebff6f8cabc93d3ed55ff38a2" name="a275ffd6ebff6f8cabc93d3ed55ff38a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a275ffd6ebff6f8cabc93d3ed55ff38a2">&#9670;&#160;</a></span>setView()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::setView </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>newPosition</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>newYaw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>newPitch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00063">63</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a275ffd6ebff6f8cabc93d3ed55ff38a2_cgraph.svg" width="350" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classCamera_a275ffd6ebff6f8cabc93d3ed55ff38a2_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a2c9b1877741ae1f8777b91446af61ac0" name="a2c9b1877741ae1f8777b91446af61ac0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c9b1877741ae1f8777b91446af61ac0">&#9670;&#160;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -422,22 +691,23 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void Camera::update </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const glm::vec3 *&#160;</td>
+          <td class="paramname"><em>renderTargetPosition</em> = <code>nullptr</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00039">39</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8cpp_source.html#l00118">118</a> of file <a class="el" href="Camera_8cpp_source.html">Camera.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a42cda7239981a5618660d04bd5893556_cgraph.svg" width="370" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a2c9b1877741ae1f8777b91446af61ac0_cgraph.svg" width="370" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a42cda7239981a5618660d04bd5893556_icgraph.svg" width="516" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classCamera_a2c9b1877741ae1f8777b91446af61ac0_icgraph.svg" width="287" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -455,7 +725,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00048">48</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00058">58</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
 
 </div>
 </div>
@@ -471,7 +741,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00030">30</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00032">32</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
 
 </div>
 </div>
@@ -488,6 +758,30 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00016">16</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+
+</div>
+</div>
+<a id="aae73397d8d4604be77a7c5a4addb5f99" name="aae73397d8d4604be77a7c5a4addb5f99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae73397d8d4604be77a7c5a4addb5f99">&#9670;&#160;</a></span>kDefaultFarClip</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr float Camera::kDefaultFarClip = 300000.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00028">28</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
 
 </div>
 </div>
@@ -563,6 +857,30 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="aaa1d3e58b57741e2afb6c05116a1fb40" name="aaa1d3e58b57741e2afb6c05116a1fb40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa1d3e58b57741e2afb6c05116a1fb40">&#9670;&#160;</a></span>kDefaultNearClip</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr float Camera::kDefaultNearClip = 0.1f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00027">27</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+
+</div>
+</div>
 <a id="a374b33e654bf21d19230a82672bd3aac" name="a374b33e654bf21d19230a82672bd3aac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a374b33e654bf21d19230a82672bd3aac">&#9670;&#160;</a></span>mouseSensitivity</h2>
 
@@ -575,7 +893,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00029">29</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00031">31</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
 
 </div>
 </div>
@@ -591,7 +909,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00028">28</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Camera_8h_source.html#l00030">30</a> of file <a class="el" href="Camera_8h_source.html">Camera.h</a>.</p>
 
 </div>
 </div>

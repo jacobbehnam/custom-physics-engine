@@ -118,40 +118,44 @@ $(document).ready(function(){initNavTree('DebugTab_8cpp_source.html',''); initRe
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    m_showTrailsBox = <span class="keyword">new</span> QCheckBox();</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    m_trailTimeBox = <span class="keyword">new</span> QDoubleSpinBox();</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    m_trailTimeBox-&gt;setRange(0.1, 60.0);</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    m_trailTimeBox-&gt;setRange(0.1, 10e7);</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    m_trailTimeBox-&gt;setSingleStep(0.5);</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    m_showForcesBox = <span class="keyword">new</span> QCheckBox();</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    m_showCollidersBox = <span class="keyword">new</span> QCheckBox();</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">auto</span>&amp; dbgGroup = <a class="code hl_function" href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a>().<a class="code hl_function" href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">getGroup</a>&lt;<a class="code hl_struct" href="structDebugSettings.html">DebugSettings</a>&gt;();</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    m_showTrailsBox-&gt;setChecked(dbgGroup.showAllPathTrails);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    m_trailTimeBox-&gt;setValue(dbgGroup.pathTrailTime);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    m_showForcesBox-&gt;setChecked(dbgGroup.showForces);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    m_showCollidersBox-&gt;setChecked(dbgGroup.showColliders);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show All Path Trails:&quot;</span>, m_showTrailsBox);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Path Trail Time (seconds):&quot;</span>, m_trailTimeBox);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show Forces:&quot;</span>, m_showForcesBox);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show Colliders:&quot;</span>, m_showCollidersBox);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    m_showObjectLabelsBox = <span class="keyword">new</span> QCheckBox();</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keyword">auto</span>&amp; dbgGroup = <a class="code hl_function" href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a>().<a class="code hl_function" href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">getGroup</a>&lt;<a class="code hl_struct" href="structDebugSettings.html">DebugSettings</a>&gt;();</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    m_showTrailsBox-&gt;setChecked(dbgGroup.showAllPathTrails);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    m_trailTimeBox-&gt;setValue(dbgGroup.pathTrailTime);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    m_showForcesBox-&gt;setChecked(dbgGroup.showForces);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    m_showCollidersBox-&gt;setChecked(dbgGroup.showColliders);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    m_showObjectLabelsBox-&gt;setChecked(dbgGroup.showObjectLabels);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show All Path Trails:&quot;</span>, m_showTrailsBox);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Path Trail Time (seconds):&quot;</span>, m_trailTimeBox);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show Forces:&quot;</span>, m_showForcesBox);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show Colliders:&quot;</span>, m_showCollidersBox);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    layout-&gt;addRow(<span class="stringliteral">&quot;Show Object Labels:&quot;</span>, m_showObjectLabelsBox);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
 </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="foldopen" id="foldopen00031" data-start="{" data-end="}">
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">DebugTab::saveSettings</a>() {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keyword">auto</span>&amp; dbgGroupSave = <a class="code hl_function" href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a>().<a class="code hl_function" href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">getGroup</a>&lt;<a class="code hl_struct" href="structDebugSettings.html">DebugSettings</a>&gt;();</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    dbgGroupSave.<a class="code hl_variable" href="structDebugSettings.html#a2ca8177539109539d0d01d5031d42114">showAllPathTrails</a> = m_showTrailsBox-&gt;isChecked();</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    dbgGroupSave.pathTrailTime = m_trailTimeBox-&gt;value();</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    dbgGroupSave.showForces = m_showForcesBox-&gt;isChecked();</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    dbgGroupSave.showColliders = m_showCollidersBox-&gt;isChecked();</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="foldopen" id="foldopen00034" data-start="{" data-end="}">
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">   34</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">DebugTab::saveSettings</a>() {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">auto</span>&amp; dbgGroupSave = <a class="code hl_function" href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a>().<a class="code hl_function" href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">getGroup</a>&lt;<a class="code hl_struct" href="structDebugSettings.html">DebugSettings</a>&gt;();</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    dbgGroupSave.<a class="code hl_variable" href="structDebugSettings.html#a2ca8177539109539d0d01d5031d42114">showAllPathTrails</a> = m_showTrailsBox-&gt;isChecked();</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    dbgGroupSave.pathTrailTime = m_trailTimeBox-&gt;value();</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    dbgGroupSave.showForces = m_showForcesBox-&gt;isChecked();</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    dbgGroupSave.showColliders = m_showCollidersBox-&gt;isChecked();</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    dbgGroupSave.showObjectLabels = m_showObjectLabelsBox-&gt;isChecked();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
 </div>
 <div class="ttc" id="aAppSettings_8h_html"><div class="ttname"><a href="AppSettings_8h.html">AppSettings.h</a></div></div>
 <div class="ttc" id="aDebugSettings_8h_html"><div class="ttname"><a href="DebugSettings_8h.html">DebugSettings.h</a></div></div>
 <div class="ttc" id="aDebugTab_8h_html"><div class="ttname"><a href="DebugTab_8h.html">DebugTab.h</a></div></div>
 <div class="ttc" id="aclassAppSettings_html_a1a7b7175ec4769346b50d6c5735cfca9"><div class="ttname"><a href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a></div><div class="ttdeci">static AppSettings &amp; getInstance()</div><div class="ttdef"><b>Definition</b> <a href="AppSettings_8h_source.html#l00011">AppSettings.h:11</a></div></div>
 <div class="ttc" id="aclassAppSettings_html_a33dabfd8f02c3afa68e0b587c202519f"><div class="ttname"><a href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">AppSettings::getGroup</a></div><div class="ttdeci">T &amp; getGroup() const</div><div class="ttdef"><b>Definition</b> <a href="AppSettings_8h_source.html#l00028">AppSettings.h:28</a></div></div>
-<div class="ttc" id="aclassDebugTab_html_a24ab458421934b598a97fd01a13e0a95"><div class="ttname"><a href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">DebugTab::saveSettings</a></div><div class="ttdeci">void saveSettings() override</div><div class="ttdef"><b>Definition</b> <a href="DebugTab_8cpp_source.html#l00031">DebugTab.cpp:31</a></div></div>
+<div class="ttc" id="aclassDebugTab_html_a24ab458421934b598a97fd01a13e0a95"><div class="ttname"><a href="classDebugTab.html#a24ab458421934b598a97fd01a13e0a95">DebugTab::saveSettings</a></div><div class="ttdeci">void saveSettings() override</div><div class="ttdef"><b>Definition</b> <a href="DebugTab_8cpp_source.html#l00034">DebugTab.cpp:34</a></div></div>
 <div class="ttc" id="aclassDebugTab_html_a5a296109274b1d3f5ec756f453ee5fd3"><div class="ttname"><a href="classDebugTab.html#a5a296109274b1d3f5ec756f453ee5fd3">DebugTab::DebugTab</a></div><div class="ttdeci">DebugTab(QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition</b> <a href="DebugTab_8cpp_source.html#l00008">DebugTab.cpp:8</a></div></div>
 <div class="ttc" id="astructDebugSettings_html"><div class="ttname"><a href="structDebugSettings.html">DebugSettings</a></div><div class="ttdef"><b>Definition</b> <a href="DebugSettings_8h_source.html#l00004">DebugSettings.h:4</a></div></div>
 <div class="ttc" id="astructDebugSettings_html_a2ca8177539109539d0d01d5031d42114"><div class="ttname"><a href="structDebugSettings.html#a2ca8177539109539d0d01d5031d42114">DebugSettings::showAllPathTrails</a></div><div class="ttdeci">bool showAllPathTrails</div><div class="ttdef"><b>Definition</b> <a href="DebugSettings_8h_source.html#l00005">DebugSettings.h:5</a></div></div>

@@ -1,23 +1,52 @@
 <map id="Scene::getCamera" name="Scene::getCamera">
-<area shape="rect" id="Node000001" title=" " alt="" coords="575,170,716,195"/>
-<area shape="rect" id="Node000002" href="$classSceneManager.html#ad143244bc503acbe2371b662ea0dcd0c" title=" " alt="" coords="299,5,508,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="626,160,584,109,556,82,525,60,501,48,503,43,528,55,560,78,588,105,630,157"/>
-<area shape="rect" id="Node000003" href="$classSceneManager.html#ac517c77baec7191a36898308818ebb5f" title=" " alt="" coords="297,69,510,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="610,165,570,144,526,124,491,112,492,107,528,119,573,139,613,161"/>
-<area shape="rect" id="Node000006" href="$classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0" title=" " alt="" coords="280,133,527,173"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="560,175,527,171,527,166,561,170"/>
-<area shape="rect" id="Node000007" href="$classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467" title=" " alt="" coords="285,198,522,223"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="561,195,514,201,513,195,560,190"/>
-<area shape="rect" id="Node000009" href="$classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382" title=" " alt="" coords="310,247,497,273"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="608,204,528,237,480,250,478,245,526,232,606,199"/>
-<area shape="rect" id="Node000010" href="$classSceneManager.html#ab469d1eea307d05b27433cb74231b4eb" title=" " alt="" coords="285,297,522,322"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="626,208,584,249,557,270,528,288,498,299,496,294,526,283,554,266,580,245,622,204"/>
-<area shape="rect" id="Node000004" href="$classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a" title=" " alt="" coords="13,37,224,77"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="283,78,224,72,225,67,283,73"/>
-<area shape="rect" id="Node000005" href="$classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73" title=" " alt="" coords="5,101,232,141"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="283,105,233,111,232,106,283,100"/>
-<area shape="rect" id="Node000008" href="$classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d" title=" " alt="" coords="28,198,209,223"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="271,213,209,213,209,208,271,208"/>
-<area shape="rect" id="Node000011" href="$classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072" title=" " alt="" coords="30,289,207,329"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="271,312,208,312,208,307,271,307"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="2129,294,2271,320"/>
+<area shape="rect" id="Node000002" href="$classSceneManager.html#ad143244bc503acbe2371b662ea0dcd0c" title=" " alt="" coords="1851,103,2061,143"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2184,283,2143,219,2114,186,2080,157,2058,145,2060,141,2083,153,2118,182,2148,216,2189,280"/>
+<area shape="rect" id="Node000005" href="$classSceneManager.html#a8774b3322c2d86c6f1f2e0a8a9896af1" title=" " alt="" coords="1028,126,1227,152"/>
+<area shape="poly" id="edge24_Node000001_Node000005" title=" " alt="" coords="2191,281,2179,237,2157,185,2125,133,2104,111,2080,93,2019,62,1956,39,1890,23,1822,13,1753,9,1684,9,1549,22,1423,46,1312,76,1223,105,1160,129,1158,124,1221,100,1311,71,1422,41,1549,17,1684,4,1753,3,1822,8,1891,18,1957,34,2022,57,2083,89,2108,107,2129,130,2162,182,2184,236,2196,280"/>
+<area shape="rect" id="Node000007" href="$classSceneSerializer.html#a490f2bd87e7c9459ee47be974653b433" title=" " alt="" coords="761,320,980,345"/>
+<area shape="poly" id="edge22_Node000001_Node000007" title=" " alt="" coords="2116,316,1913,328,1671,335,1390,335,980,335,980,330,1390,330,1671,330,1913,323,2115,311"/>
+<area shape="rect" id="Node000009" href="$classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467" title=" " alt="" coords="235,269,472,294"/>
+<area shape="poly" id="edge23_Node000001_Node000009" title=" " alt="" coords="2140,293,2081,280,1877,245,1787,236,1671,234,869,234,750,237,632,247,435,271,434,266,631,242,750,232,869,228,1671,228,1787,231,1877,239,2082,275,2141,288"/>
+<area shape="rect" id="Node000012" href="$classSceneManager.html#a2c5088464b489b31f23e0791e2b9c0b0" title=" " alt="" coords="1855,440,2057,465"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="2179,331,2136,370,2083,409,2044,428,2005,442,2003,437,2042,423,2080,405,2133,366,2175,328"/>
+<area shape="rect" id="Node000014" href="$classSceneManager.html#a30fc32723c50bf9707a44ac398e5ecb9" title=" " alt="" coords="1837,168,2075,193"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="2175,286,2133,249,2080,215,2027,195,2029,190,2083,210,2136,245,2178,282"/>
+<area shape="rect" id="Node000015" href="$classSceneSerializer.html#a56e278bcdda1f03f192797122dd6d0c0" title=" " alt="" coords="1568,269,1771,294"/>
+<area shape="poly" id="edge25_Node000001_Node000015" title=" " alt="" coords="2116,306,1771,289,1771,284,2116,300"/>
+<area shape="rect" id="Node000017" href="$classSceneManager.html#ac517c77baec7191a36898308818ebb5f" title=" " alt="" coords="1849,528,2063,568"/>
+<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="2188,333,2146,402,2117,442,2083,478,2044,508,2004,530,2001,526,2041,503,2080,474,2113,439,2142,399,2184,330"/>
+<area shape="rect" id="Node000020" href="$classSceneManager.html#a77aa3589238abfa1c416fda908520bf7" title=" " alt="" coords="1831,593,2081,618"/>
+<area shape="poly" id="edge21_Node000001_Node000020" title=" " alt="" coords="2198,334,2188,387,2167,454,2152,489,2134,524,2111,555,2083,582,2062,595,2060,590,2080,578,2107,552,2129,521,2148,487,2162,452,2183,385,2193,333"/>
+<area shape="rect" id="Node000021" href="$classSceneManager.html#ab469d1eea307d05b27433cb74231b4eb" title=" " alt="" coords="1837,370,2075,396"/>
+<area shape="poly" id="edge26_Node000001_Node000021" title=" " alt="" coords="2156,327,2082,353,2013,373,2011,368,2081,348,2154,322"/>
+<area shape="rect" id="Node000003" href="$classSceneManager.html#a4543114007c5bb40ddab62cd9f2ac613" title=" " alt="" coords="1565,126,1774,152"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1838,132,1775,136,1774,130,1838,127"/>
+<area shape="rect" id="Node000004" href="$classSceneManager.html#a53736fa499987ffff612d3ee7c85442c" title=" " alt="" coords="1275,126,1508,152"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1551,142,1508,142,1508,136,1551,136"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1261,142,1227,142,1227,136,1261,136"/>
+<area shape="rect" id="Node000006" href="$classSceneManager.html#acfea563d3849e3c8c09fc3febe9ae1e2" title=" " alt="" coords="766,102,975,128"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1014,131,975,127,976,122,1015,126"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="1100,162,891,321,887,317,1097,158"/>
+<area shape="rect" id="Node000011" href="$classSceneManager.html#ad9d648b5fb5a92c4612c640fc7cb47fb" title=" " alt="" coords="773,152,968,177"/>
+<area shape="poly" id="edge10_Node000005_Node000011" title=" " alt="" coords="1015,153,969,157,968,152,1014,147"/>
+<area shape="rect" id="Node000008" href="$classSceneManager.html#a7b7b0a022dcce523178e8414fb8e4463" title=" " alt="" coords="520,320,713,345"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="748,335,714,335,714,330,748,330"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="536,320,420,297,421,292,537,314"/>
+<area shape="rect" id="Node000010" href="$classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d" title=" " alt="" coords="5,269,187,294"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="221,284,187,284,187,279,221,279"/>
+<area shape="rect" id="Node000013" href="$namespaceScenePresets_1_1Astronomy.html#a0b0e571c83bcdb2d16710b9425375b5f" title=" " alt="" coords="1575,484,1763,524"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="1872,470,1764,490,1763,485,1871,465"/>
+<area shape="poly" id="edge14_Node000014_Node000003" title=" " alt="" coords="1854,168,1758,154,1759,149,1855,163"/>
+<area shape="poly" id="edge15_Node000014_Node000015" title=" " alt="" coords="1907,200,1707,271,1705,266,1905,195"/>
+<area shape="rect" id="Node000016" href="$classSceneManager.html#a1a46a8c9e99b6b27404a2f870f38749c" title=" " alt="" coords="1029,269,1225,294"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="1554,284,1226,284,1226,279,1554,279"/>
+<area shape="poly" id="edge17_Node000016_Node000009" title=" " alt="" coords="1015,284,473,284,473,279,1015,279"/>
+<area shape="rect" id="Node000018" href="$classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a" title=" " alt="" coords="1564,548,1775,588"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="1836,559,1775,564,1775,558,1835,554"/>
+<area shape="rect" id="Node000019" href="$classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73" title=" " alt="" coords="1556,612,1783,652"/>
+<area shape="poly" id="edge20_Node000017_Node000019" title=" " alt="" coords="1858,575,1832,583,1784,603,1747,615,1745,610,1782,598,1830,578,1856,569"/>
+<area shape="poly" id="edge27_Node000021_Node000007" title=" " alt="" coords="1823,384,1464,376,1246,367,1028,354,967,348,967,342,1028,348,1247,362,1464,371,1823,379"/>
+<area shape="rect" id="Node000022" href="$classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072" title=" " alt="" coords="1581,420,1758,460"/>
+<area shape="poly" id="edge28_Node000021_Node000022" title=" " alt="" coords="1879,401,1759,425,1758,420,1878,396"/>
 </map>

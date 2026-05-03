@@ -105,8 +105,12 @@ $(document).ready(function(){initNavTree('PhysicsTests_8cpp.html',''); initResiz
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;gtest/gtest.h&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 <code>#include &quot;<a class="el" href="PhysicsSystem_8h_source.html">physics/PhysicsSystem.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="PointMass_8h_source.html">physics/PointMass.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="RigidBody_8h_source.html">physics/RigidBody.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="BoxCollider_8h_source.html">physics/bounding/BoxCollider.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ThermalUtils_8h_source.html">physics/utils/ThermalUtils.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for PhysicsTests.cpp:</div>
 <div class="dyncontent">
@@ -150,6 +154,34 @@ Functions</h2></td></tr>
 <tr class="separator:ada313be6c07af4495c59c8be0af48e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0f10376a422f1b9ec16dd0766f471e2" id="r_aa0f10376a422f1b9ec16dd0766f471e2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#aa0f10376a422f1b9ec16dd0766f471e2">TEST</a> (PhysicsSystem, Parameters_GlobalSettings)</td></tr>
 <tr class="separator:aa0f10376a422f1b9ec16dd0766f471e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23bf395ec0488453124b5076abfebd57" id="r_a23bf395ec0488453124b5076abfebd57"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a23bf395ec0488453124b5076abfebd57">TEST</a> (PhysicsSystem, Step_OverlappingBodies_DoesNotCrash)</td></tr>
+<tr class="separator:a23bf395ec0488453124b5076abfebd57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42065a0a58764ccebb0d254d063654f0" id="r_a42065a0a58764ccebb0d254d063654f0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a42065a0a58764ccebb0d254d063654f0">TEST</a> (PhysicsSystem, SampleSolverGravity_DoesNotDriftSideways)</td></tr>
+<tr class="separator:a42065a0a58764ccebb0d254d063654f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a985ead36d6f21bfe093a62aeda3103e2" id="r_a985ead36d6f21bfe093a62aeda3103e2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a985ead36d6f21bfe093a62aeda3103e2">TEST</a> (ThermalUtils, ConductiveExchange_ConservesEnergyAndDoesNotOvershoot)</td></tr>
+<tr class="separator:a985ead36d6f21bfe093a62aeda3103e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd32ec4e925bb511efc1b10090ed5b93" id="r_acd32ec4e925bb511efc1b10090ed5b93"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#acd32ec4e925bb511efc1b10090ed5b93">TEST</a> (ThermalUtils, AmbientRadiation_UsesStefanBoltzmannSignConvention)</td></tr>
+<tr class="separator:acd32ec4e925bb511efc1b10090ed5b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e1d22d3768c48def0bef01f352499ff" id="r_a3e1d22d3768c48def0bef01f352499ff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a3e1d22d3768c48def0bef01f352499ff">TEST</a> (ThermalUtils, HeatCapacity_UsesThermalMassFraction)</td></tr>
+<tr class="separator:a3e1d22d3768c48def0bef01f352499ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa85a64289067d449045fa0031cd6ec82" id="r_aa85a64289067d449045fa0031cd6ec82"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#aa85a64289067d449045fa0031cd6ec82">TEST</a> (ThermalUtils, ExternalHeatFluxRate_UsesSurfaceArea)</td></tr>
+<tr class="separator:aa85a64289067d449045fa0031cd6ec82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75ba5c62335618d6d517701284101e65" id="r_a75ba5c62335618d6d517701284101e65"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a75ba5c62335618d6d517701284101e65">TEST</a> (ThermalUtils, EffectiveProperties_UseTemperatureCoefficients)</td></tr>
+<tr class="separator:a75ba5c62335618d6d517701284101e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0740b28c52541a56083292f684ca7cb" id="r_af0740b28c52541a56083292f684ca7cb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#af0740b28c52541a56083292f684ca7cb">TEST</a> (ThermalUtils, CarnotEfficiency_UsesAbsoluteTemperatures)</td></tr>
+<tr class="separator:af0740b28c52541a56083292f684ca7cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0407d0a28cee579779bf66d159a989d" id="r_aa0407d0a28cee579779bf66d159a989d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#aa0407d0a28cee579779bf66d159a989d">TEST</a> (ThermalUtils, ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint)</td></tr>
+<tr class="separator:aa0407d0a28cee579779bf66d159a989d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c08826252388d8a395a642f81cb5962" id="r_a0c08826252388d8a395a642f81cb5962"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a0c08826252388d8a395a642f81cb5962">TEST</a> (PhysicsSystem, Step_StaticBody_UpdatesTemperatureButNotPosition)</td></tr>
+<tr class="separator:a0c08826252388d8a395a642f81cb5962"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bd5358388f351202a6a8ed4c3367b32" id="r_a6bd5358388f351202a6a8ed4c3367b32"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a6bd5358388f351202a6a8ed4c3367b32">TEST</a> (PhysicsSystem, Step_InternalHeatPower_ChangesTemperature)</td></tr>
+<tr class="separator:a6bd5358388f351202a6a8ed4c3367b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf77e4c378263518bc0385482a700b33" id="r_adf77e4c378263518bc0385482a700b33"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#adf77e4c378263518bc0385482a700b33">TEST</a> (PhysicsBody, LoadFrame_RestoresTemperature)</td></tr>
+<tr class="separator:adf77e4c378263518bc0385482a700b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac15ef44b6edc28d27a67cd4139765a7f" id="r_ac15ef44b6edc28d27a67cd4139765a7f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#ac15ef44b6edc28d27a67cd4139765a7f">TEST</a> (RigidBody, SurfaceArea_UsesAllScaleAxes)</td></tr>
+<tr class="separator:ac15ef44b6edc28d27a67cd4139765a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae14e19948f282c097b0e8761991c0e1" id="r_aae14e19948f282c097b0e8761991c0e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#aae14e19948f282c097b0e8761991c0e1">TEST</a> (RigidBody, CollisionHeat_ZeroSpecificHeat_DoesNotCreateNaN)</td></tr>
+<tr class="separator:aae14e19948f282c097b0e8761991c0e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11092ab830efde715171fcf7ecf7a74c" id="r_a11092ab830efde715171fcf7ecf7a74c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a11092ab830efde715171fcf7ecf7a74c">TEST</a> (Integration, Zero_Velocity_Zero_Acceleration)</td></tr>
 <tr class="separator:a11092ab830efde715171fcf7ecf7a74c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a370cb716ace9dbfe84f482760aea0d00" id="r_a370cb716ace9dbfe84f482760aea0d00"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PhysicsTests_8cpp.html#a370cb716ace9dbfe84f482760aea0d00">TEST</a> (Integration, Constant_Velocity_Zero_Acceleration)</td></tr>
@@ -202,7 +234,7 @@ Variables</h2></td></tr>
 <div class="line">    EXPECT_FLOAT_EQ((actual).y, (expected).y); \</div>
 <div class="line">    EXPECT_FLOAT_EQ((actual).z, (expected).z)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00006">6</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00010">10</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
@@ -241,13 +273,13 @@ Variables</h2></td></tr>
 <div class="line">    EXPECT_NEAR((actual).y, (expected).y, (tol)); \</div>
 <div class="line">    EXPECT_NEAR((actual).z, (expected).z, (tol))</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00011">11</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00015">15</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a370cb716ace9dbfe84f482760aea0d00" name="a370cb716ace9dbfe84f482760aea0d00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a370cb716ace9dbfe84f482760aea0d00">&#9670;&#160;</a></span>TEST() <span class="overload">[1/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a370cb716ace9dbfe84f482760aea0d00">&#9670;&#160;</a></span>TEST() <span class="overload">[1/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,7 +304,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00203">203</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00442">442</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -282,7 +314,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="a7c2a98ae0fe61e18c53dbbfc3dd2678d" name="a7c2a98ae0fe61e18c53dbbfc3dd2678d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c2a98ae0fe61e18c53dbbfc3dd2678d">&#9670;&#160;</a></span>TEST() <span class="overload">[2/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c2a98ae0fe61e18c53dbbfc3dd2678d">&#9670;&#160;</a></span>TEST() <span class="overload">[2/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -307,7 +339,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00247">247</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00486">486</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -317,7 +349,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="a6ef196198e91ed8297633a5002dd70e9" name="a6ef196198e91ed8297633a5002dd70e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ef196198e91ed8297633a5002dd70e9">&#9670;&#160;</a></span>TEST() <span class="overload">[3/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ef196198e91ed8297633a5002dd70e9">&#9670;&#160;</a></span>TEST() <span class="overload">[3/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -342,7 +374,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00224">224</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00463">463</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -352,7 +384,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="aaf9917cd74087c265f26822275a0cf9a" name="aaf9917cd74087c265f26822275a0cf9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf9917cd74087c265f26822275a0cf9a">&#9670;&#160;</a></span>TEST() <span class="overload">[4/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf9917cd74087c265f26822275a0cf9a">&#9670;&#160;</a></span>TEST() <span class="overload">[4/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -377,7 +409,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00295">295</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00534">534</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -387,7 +419,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="a556d37407360d92575b9fde9164b643a" name="a556d37407360d92575b9fde9164b643a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a556d37407360d92575b9fde9164b643a">&#9670;&#160;</a></span>TEST() <span class="overload">[5/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a556d37407360d92575b9fde9164b643a">&#9670;&#160;</a></span>TEST() <span class="overload">[5/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -412,7 +444,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00270">270</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00509">509</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -422,7 +454,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="a11092ab830efde715171fcf7ecf7a74c" name="a11092ab830efde715171fcf7ecf7a74c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11092ab830efde715171fcf7ecf7a74c">&#9670;&#160;</a></span>TEST() <span class="overload">[6/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a11092ab830efde715171fcf7ecf7a74c">&#9670;&#160;</a></span>TEST() <span class="overload">[6/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -447,7 +479,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00183">183</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00422">422</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -456,8 +488,43 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="adf77e4c378263518bc0385482a700b33" name="adf77e4c378263518bc0385482a700b33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf77e4c378263518bc0385482a700b33">&#9670;&#160;</a></span>TEST() <span class="overload">[7/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsBody&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LoadFrame_RestoresTemperature&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00352">352</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_adf77e4c378263518bc0385482a700b33_cgraph.svg" width="100%" height="434"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
 <a id="ada313be6c07af4495c59c8be0af48e0c" name="ada313be6c07af4495c59c8be0af48e0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada313be6c07af4495c59c8be0af48e0c">&#9670;&#160;</a></span>TEST() <span class="overload">[7/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ada313be6c07af4495c59c8be0af48e0c">&#9670;&#160;</a></span>TEST() <span class="overload">[8/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -482,7 +549,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00157">157</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00161">161</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -492,7 +559,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="aa0f10376a422f1b9ec16dd0766f471e2" name="aa0f10376a422f1b9ec16dd0766f471e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0f10376a422f1b9ec16dd0766f471e2">&#9670;&#160;</a></span>TEST() <span class="overload">[8/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0f10376a422f1b9ec16dd0766f471e2">&#9670;&#160;</a></span>TEST() <span class="overload">[9/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -517,7 +584,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00169">169</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00173">173</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -526,8 +593,148 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="a42065a0a58764ccebb0d254d063654f0" name="a42065a0a58764ccebb0d254d063654f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42065a0a58764ccebb0d254d063654f0">&#9670;&#160;</a></span>TEST() <span class="overload">[10/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsSystem&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SampleSolverGravity_DoesNotDriftSideways&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00201">201</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a42065a0a58764ccebb0d254d063654f0_cgraph.svg" width="516" height="339"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a6bd5358388f351202a6a8ed4c3367b32" name="a6bd5358388f351202a6a8ed4c3367b32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bd5358388f351202a6a8ed4c3367b32">&#9670;&#160;</a></span>TEST() <span class="overload">[11/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsSystem&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Step_InternalHeatPower_ChangesTemperature&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00334">334</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a6bd5358388f351202a6a8ed4c3367b32_cgraph.svg" width="100%" height="506"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a23bf395ec0488453124b5076abfebd57" name="a23bf395ec0488453124b5076abfebd57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23bf395ec0488453124b5076abfebd57">&#9670;&#160;</a></span>TEST() <span class="overload">[12/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsSystem&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Step_OverlappingBodies_DoesNotCrash&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00186">186</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a23bf395ec0488453124b5076abfebd57_cgraph.svg" width="500" height="275"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a0c08826252388d8a395a642f81cb5962" name="a0c08826252388d8a395a642f81cb5962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c08826252388d8a395a642f81cb5962">&#9670;&#160;</a></span>TEST() <span class="overload">[13/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">PhysicsSystem&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Step_StaticBody_UpdatesTemperatureButNotPosition&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00314">314</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a0c08826252388d8a395a642f81cb5962_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
 <a id="a1ffe7e874ca99da33243a1f5d80ef904" name="a1ffe7e874ca99da33243a1f5d80ef904"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ffe7e874ca99da33243a1f5d80ef904">&#9670;&#160;</a></span>TEST() <span class="overload">[9/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ffe7e874ca99da33243a1f5d80ef904">&#9670;&#160;</a></span>TEST() <span class="overload">[14/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -552,12 +759,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00112">112</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00116">116</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a44f3b7286d5ca25cc15a381e94481ff1" name="a44f3b7286d5ca25cc15a381e94481ff1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44f3b7286d5ca25cc15a381e94481ff1">&#9670;&#160;</a></span>TEST() <span class="overload">[10/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a44f3b7286d5ca25cc15a381e94481ff1">&#9670;&#160;</a></span>TEST() <span class="overload">[15/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -582,12 +789,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00021">21</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00025">25</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a1879d8333d289c1898b2dff35e3d0712" name="a1879d8333d289c1898b2dff35e3d0712"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1879d8333d289c1898b2dff35e3d0712">&#9670;&#160;</a></span>TEST() <span class="overload">[11/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1879d8333d289c1898b2dff35e3d0712">&#9670;&#160;</a></span>TEST() <span class="overload">[16/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -612,12 +819,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00030">30</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00034">34</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="ad986307424ebbaa77255a344cb825454" name="ad986307424ebbaa77255a344cb825454"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad986307424ebbaa77255a344cb825454">&#9670;&#160;</a></span>TEST() <span class="overload">[12/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad986307424ebbaa77255a344cb825454">&#9670;&#160;</a></span>TEST() <span class="overload">[17/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -642,12 +849,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00065">65</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00069">69</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="aef7ccf524f1bd259ce2842019a5ac41d" name="aef7ccf524f1bd259ce2842019a5ac41d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef7ccf524f1bd259ce2842019a5ac41d">&#9670;&#160;</a></span>TEST() <span class="overload">[13/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aef7ccf524f1bd259ce2842019a5ac41d">&#9670;&#160;</a></span>TEST() <span class="overload">[18/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -672,12 +879,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00093">93</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00097">97</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a7cb352beeed20b8c8bdf82db1643d3f6" name="a7cb352beeed20b8c8bdf82db1643d3f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cb352beeed20b8c8bdf82db1643d3f6">&#9670;&#160;</a></span>TEST() <span class="overload">[14/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cb352beeed20b8c8bdf82db1643d3f6">&#9670;&#160;</a></span>TEST() <span class="overload">[19/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -702,12 +909,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00059">59</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00063">63</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="af3007639304b13a8b9d5c19b5f35adfb" name="af3007639304b13a8b9d5c19b5f35adfb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3007639304b13a8b9d5c19b5f35adfb">&#9670;&#160;</a></span>TEST() <span class="overload">[15/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af3007639304b13a8b9d5c19b5f35adfb">&#9670;&#160;</a></span>TEST() <span class="overload">[20/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -732,12 +939,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00081">81</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00085">85</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="ad3cd401fe7c6b784f318c7e09b7b491c" name="ad3cd401fe7c6b784f318c7e09b7b491c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3cd401fe7c6b784f318c7e09b7b491c">&#9670;&#160;</a></span>TEST() <span class="overload">[16/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3cd401fe7c6b784f318c7e09b7b491c">&#9670;&#160;</a></span>TEST() <span class="overload">[21/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -762,12 +969,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00100">100</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00104">104</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="aa7820a67d317a59920d927f5a676bff7" name="aa7820a67d317a59920d927f5a676bff7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7820a67d317a59920d927f5a676bff7">&#9670;&#160;</a></span>TEST() <span class="overload">[17/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7820a67d317a59920d927f5a676bff7">&#9670;&#160;</a></span>TEST() <span class="overload">[22/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -792,12 +999,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00039">39</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00043">43</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a7f62417fad299f854af31f434c5542f2" name="a7f62417fad299f854af31f434c5542f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f62417fad299f854af31f434c5542f2">&#9670;&#160;</a></span>TEST() <span class="overload">[18/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f62417fad299f854af31f434c5542f2">&#9670;&#160;</a></span>TEST() <span class="overload">[23/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -822,12 +1029,12 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00144">144</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00148">148</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
 <a id="af2a11f0a2668ae330af3db121925c2fe" name="af2a11f0a2668ae330af3db121925c2fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2a11f0a2668ae330af3db121925c2fe">&#9670;&#160;</a></span>TEST() <span class="overload">[19/19]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af2a11f0a2668ae330af3db121925c2fe">&#9670;&#160;</a></span>TEST() <span class="overload">[24/33]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -852,7 +1059,322 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00125">125</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00129">129</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aae14e19948f282c097b0e8761991c0e1" name="aae14e19948f282c097b0e8761991c0e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae14e19948f282c097b0e8761991c0e1">&#9670;&#160;</a></span>TEST() <span class="overload">[25/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">RigidBody&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CollisionHeat_ZeroSpecificHeat_DoesNotCreateNaN&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00397">397</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_aae14e19948f282c097b0e8761991c0e1_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="ac15ef44b6edc28d27a67cd4139765a7f" name="ac15ef44b6edc28d27a67cd4139765a7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac15ef44b6edc28d27a67cd4139765a7f">&#9670;&#160;</a></span>TEST() <span class="overload">[26/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">RigidBody&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SurfaceArea_UsesAllScaleAxes&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00364">364</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_ac15ef44b6edc28d27a67cd4139765a7f_cgraph.svg" width="275" height="179"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="acd32ec4e925bb511efc1b10090ed5b93" name="acd32ec4e925bb511efc1b10090ed5b93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd32ec4e925bb511efc1b10090ed5b93">&#9670;&#160;</a></span>TEST() <span class="overload">[27/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AmbientRadiation_UsesStefanBoltzmannSignConvention&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00247">247</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_acd32ec4e925bb511efc1b10090ed5b93_cgraph.svg" width="100%" height="424"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="aa0407d0a28cee579779bf66d159a989d" name="aa0407d0a28cee579779bf66d159a989d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0407d0a28cee579779bf66d159a989d">&#9670;&#160;</a></span>TEST() <span class="overload">[28/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ApplyThermalEnergy_ConsumesLatentHeatAtMeltingPoint&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00294">294</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_aa0407d0a28cee579779bf66d159a989d_cgraph.svg" width="100%" height="488"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="af0740b28c52541a56083292f684ca7cb" name="af0740b28c52541a56083292f684ca7cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0740b28c52541a56083292f684ca7cb">&#9670;&#160;</a></span>TEST() <span class="overload">[29/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CarnotEfficiency_UsesAbsoluteTemperatures&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00289">289</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_af0740b28c52541a56083292f684ca7cb_cgraph.svg" width="607" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a985ead36d6f21bfe093a62aeda3103e2" name="a985ead36d6f21bfe093a62aeda3103e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a985ead36d6f21bfe093a62aeda3103e2">&#9670;&#160;</a></span>TEST() <span class="overload">[30/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ConductiveExchange_ConservesEnergyAndDoesNotOvershoot&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00224">224</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a985ead36d6f21bfe093a62aeda3103e2_cgraph.svg" width="100%" height="538"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a75ba5c62335618d6d517701284101e65" name="a75ba5c62335618d6d517701284101e65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75ba5c62335618d6d517701284101e65">&#9670;&#160;</a></span>TEST() <span class="overload">[31/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EffectiveProperties_UseTemperatureCoefficients&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00274">274</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a75ba5c62335618d6d517701284101e65_cgraph.svg" width="539" height="179"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="aa85a64289067d449045fa0031cd6ec82" name="aa85a64289067d449045fa0031cd6ec82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa85a64289067d449045fa0031cd6ec82">&#9670;&#160;</a></span>TEST() <span class="overload">[32/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ExternalHeatFluxRate_UsesSurfaceArea&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00267">267</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_aa85a64289067d449045fa0031cd6ec82_cgraph.svg" width="308" height="51"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a3e1d22d3768c48def0bef01f352499ff" name="a3e1d22d3768c48def0bef01f352499ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e1d22d3768c48def0bef01f352499ff">&#9670;&#160;</a></span>TEST() <span class="overload">[33/33]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST </td>
+          <td>(</td>
+          <td class="paramtype">ThermalUtils&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HeatCapacity_UsesThermalMassFraction&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00259">259</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="PhysicsTests_8cpp_a3e1d22d3768c48def0bef01f352499ff_cgraph.svg" width="100%" height="386"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -877,7 +1399,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00019">19</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00023">23</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
@@ -901,7 +1423,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00017">17</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00021">21</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>
@@ -925,7 +1447,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00018">18</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PhysicsTests_8cpp_source.html#l00022">22</a> of file <a class="el" href="PhysicsTests_8cpp_source.html">PhysicsTests.cpp</a>.</p>
 
 </div>
 </div>

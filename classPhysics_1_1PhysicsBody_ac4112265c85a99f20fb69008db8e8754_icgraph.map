@@ -1,33 +1,43 @@
 <map id="Physics::PhysicsBody::getPosition" name="Physics::PhysicsBody::getPosition">
-<area shape="rect" id="Node000001" title=" " alt="" coords="563,362,724,402"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="563,469,724,509"/>
 <area shape="rect" id="Node000002" href="$classOctree.html#a3ce4d26b06d82c7de15eaca20d537440" title=" " alt="" coords="347,5,452,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="637,349,628,284,607,201,591,158,570,117,544,78,513,45,484,29,451,21,453,16,486,24,516,41,549,75,575,114,596,156,612,200,633,283,642,348"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="640,455,638,372,632,319,621,261,606,202,583,145,552,91,513,45,484,28,451,21,453,16,486,23,516,41,557,88,588,142,611,200,627,260,637,318,643,372,646,455"/>
 <area shape="rect" id="Node000003" href="$classPhysics_1_1PointMass.html#adb853a2e4fe9b535b6b080ee3a70e43b" title=" " alt="" coords="311,55,488,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="633,349,620,296,597,231,562,165,539,136,513,109,487,93,489,89,516,105,543,132,566,163,602,229,625,295,639,348"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="638,455,631,383,611,290,595,241,574,193,547,148,513,109,487,92,490,88,516,105,551,145,579,190,600,239,616,289,636,382,643,455"/>
 <area shape="rect" id="Node000004" href="$classPhysics_1_1RigidBody.html#a33bcd981d85932f3cdd4e3690a0c39c5" title=" " alt="" coords="311,119,488,159"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="629,350,612,309,587,262,554,214,513,173,487,159,489,154,516,169,558,210,591,259,616,307,633,348"/>
-<area shape="rect" id="Node000006" href="$classOctree.html#a041f0e7b806a25e0cd9f7aeb2242852b" title=" " alt="" coords="317,184,482,209"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="623,351,579,285,549,252,513,224,481,210,484,205,516,220,552,248,583,282,627,348"/>
-<area shape="rect" id="Node000007" href="$classPhysics_1_1PointMass.html#a32dbe49764fdd24798577d9db54baff3" title=" " alt="" coords="284,234,515,274"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="609,355,565,320,513,288,485,277,487,272,516,284,568,316,612,351"/>
-<area shape="rect" id="Node000008" href="$classPhysics_1_1RigidBody.html#ab4b4ea01aa74880550e9e1d91e6ed10d" title=" " alt="" coords="284,298,515,338"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="553,361,475,341,477,335,554,356"/>
-<area shape="rect" id="Node000010" href="$classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072" title=" " alt="" coords="311,362,488,402"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="549,385,488,385,488,379,549,379"/>
-<area shape="rect" id="Node000011" href="$PhysicsTests_8cpp.html#a370cb716ace9dbfe84f482760aea0d00" title=" " alt="" coords="372,427,427,452"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="551,408,515,417,428,436,426,431,514,411,550,403"/>
-<area shape="rect" id="Node000012" href="$PhysicsTests_8cpp.html#a7c2a98ae0fe61e18c53dbbfc3dd2678d" title=" " alt="" coords="372,476,427,501"/>
-<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="608,413,565,442,516,467,469,481,427,489,426,483,468,476,514,462,562,437,605,408"/>
-<area shape="rect" id="Node000013" href="$PhysicsTests_8cpp.html#a6ef196198e91ed8297633a5002dd70e9" title=" " alt="" coords="372,525,427,551"/>
-<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="623,415,578,468,549,494,516,516,470,533,427,539,427,534,469,528,513,512,545,490,574,464,619,411"/>
-<area shape="rect" id="Node000014" href="$PhysicsTests_8cpp.html#aaf9917cd74087c265f26822275a0cf9a" title=" " alt="" coords="372,575,427,600"/>
-<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="631,416,613,451,588,492,555,532,516,566,494,577,471,584,427,590,426,585,469,579,492,572,513,561,551,528,583,489,608,449,626,413"/>
-<area shape="rect" id="Node000015" href="$PhysicsTests_8cpp.html#a556d37407360d92575b9fde9164b643a" title=" " alt="" coords="372,624,427,649"/>
-<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="636,416,620,462,596,516,562,570,540,594,516,615,495,627,471,634,427,640,426,635,470,629,493,622,513,610,537,590,557,566,591,513,615,460,631,414"/>
-<area shape="rect" id="Node000016" href="$PhysicsTests_8cpp.html#a11092ab830efde715171fcf7ecf7a74c" title=" " alt="" coords="372,673,427,699"/>
-<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="639,416,627,471,604,538,587,573,568,607,544,637,516,664,495,677,471,684,427,690,427,684,470,679,493,672,513,660,540,634,563,604,583,571,599,536,622,470,634,415"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="636,456,625,395,603,319,587,279,567,240,542,205,513,173,487,157,490,153,516,169,546,201,571,238,591,277,608,317,630,394,641,455"/>
+<area shape="rect" id="Node000006" href="$classOctree.html#a9e4033c3835eabfc49b01f566ded0923" title=" " alt="" coords="317,184,482,209"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="633,456,620,404,597,340,562,276,539,247,513,223,481,206,483,202,516,218,543,244,566,273,602,338,625,402,639,454"/>
+<area shape="rect" id="Node000007" href="$classOctree.html#a2a87e28ce9c64242a6e4c8cb0aaac2a1" title=" " alt="" coords="319,233,480,259"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="629,456,613,413,589,364,555,314,535,292,513,274,479,257,481,252,516,269,539,289,560,311,593,361,618,411,634,454"/>
+<area shape="rect" id="Node000008" href="$classPhysics_1_1PointMass.html#aa94536ea681b33ed376700aae820cef0" title=" " alt="" coords="284,283,515,323"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="622,459,577,397,547,365,513,338,491,326,493,321,516,333,551,361,581,393,626,455"/>
+<area shape="rect" id="Node000009" href="$classPhysics_1_1RigidBody.html#a4e7d7e2da6c0011c98745c15903a2b15" title=" " alt="" coords="284,347,515,387"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="607,462,563,431,514,402,484,390,486,385,516,397,566,426,610,458"/>
+<area shape="rect" id="Node000012" href="$classGlobalsInspectorWidget.html#ac983b68fcff61ff889660f3d93221072" title=" " alt="" coords="311,411,488,451"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="549,469,484,454,486,449,550,464"/>
+<area shape="rect" id="Node000013" href="$PhysicsTests_8cpp.html#a370cb716ace9dbfe84f482760aea0d00" title=" " alt="" coords="372,476,427,501"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="549,491,427,491,427,486,549,486"/>
+<area shape="rect" id="Node000014" href="$PhysicsTests_8cpp.html#a7c2a98ae0fe61e18c53dbbfc3dd2678d" title=" " alt="" coords="372,525,427,551"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="550,510,427,535,426,530,549,505"/>
+<area shape="rect" id="Node000015" href="$PhysicsTests_8cpp.html#a6ef196198e91ed8297633a5002dd70e9" title=" " alt="" coords="372,575,427,600"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="604,518,563,544,516,566,469,579,427,587,426,582,468,574,514,561,560,539,601,514"/>
+<area shape="rect" id="Node000016" href="$PhysicsTests_8cpp.html#aaf9917cd74087c265f26822275a0cf9a" title=" " alt="" coords="372,624,427,649"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="621,521,576,570,547,595,516,615,470,631,427,638,427,633,469,626,513,610,544,590,572,566,617,518"/>
+<area shape="rect" id="Node000017" href="$PhysicsTests_8cpp.html#a556d37407360d92575b9fde9164b643a" title=" " alt="" coords="372,673,427,699"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="630,523,611,557,586,595,554,633,516,664,494,675,471,682,427,688,427,683,470,677,492,670,513,660,550,629,582,592,607,554,625,520"/>
+<area shape="rect" id="Node000018" href="$PhysicsTests_8cpp.html#a11092ab830efde715171fcf7ecf7a74c" title=" " alt="" coords="372,723,427,748"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="635,523,619,567,595,619,561,670,540,693,516,714,495,725,471,733,427,738,427,733,470,728,493,720,513,709,536,690,556,667,590,616,614,565,630,521"/>
+<area shape="rect" id="Node000019" href="$PhysicsTests_8cpp.html#a42065a0a58764ccebb0d254d063654f0" title=" " alt="" coords="372,772,427,797"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="639,523,626,576,602,641,567,707,544,737,516,763,495,775,471,783,427,788,427,783,470,778,493,770,513,759,540,733,562,704,598,639,621,575,634,522"/>
+<area shape="rect" id="Node000020" href="$PhysicsTests_8cpp.html#a23bf395ec0488453124b5076abfebd57" title=" " alt="" coords="372,821,427,847"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="642,523,631,585,610,664,593,705,573,744,547,780,516,812,495,825,472,833,427,838,426,833,470,828,493,820,513,808,543,777,568,741,589,702,605,662,626,584,636,522"/>
+<area shape="rect" id="Node000021" href="$PhysicsTests_8cpp.html#a0c08826252388d8a395a642f81cb5962" title=" " alt="" coords="372,871,427,896"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="644,523,636,594,617,686,601,734,579,781,551,824,516,861,496,875,472,883,427,887,427,882,471,877,493,870,513,857,547,821,574,778,596,732,612,684,631,593,638,522"/>
 <area shape="rect" id="Node000005" href="$classPhysics_1_1PointMass.html#a255dc33b6adda680f6451125f51873be" title=" " alt="" coords="33,119,209,159"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="297,142,209,142,209,137,297,137"/>
-<area shape="rect" id="Node000009" href="$classPhysics_1_1PointMass.html#a2a9325bac8ed95540eeb66438de1045d" title=" " alt="" coords="5,298,236,338"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="270,321,236,321,236,315,270,315"/>
+<area shape="rect" id="Node000010" href="$classPhysics_1_1PointMass.html#a6876155fbb7a943c6d2e06f4c6707959" title=" " alt="" coords="5,319,236,359"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="270,357,236,354,236,348,271,352"/>
+<area shape="rect" id="Node000011" href="$PhysicsTests_8cpp.html#aae14e19948f282c097b0e8761991c0e1" title=" " alt="" coords="93,384,148,409"/>
+<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="271,384,149,396,148,391,270,378"/>
 </map>

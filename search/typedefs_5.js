@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['simulationrun_0',['SimulationRun',['../classOneUnknownSolver.html#ad79943e4df470832a6bc9c50170b56d5',1,'OneUnknownSolver']]],
-  ['stopcondition_1',['StopCondition',['../classVectorRootSolver.html#af48e1464295b812f84d296236aca6424',1,'VectorRootSolver']]]
+  ['resultextractor_0',['resultextractor',['../classOneUnknownSolver.html#a0697826708a233da266c0d849dd65a83',1,'OneUnknownSolver::ResultExtractor'],['../classVectorRootSolver.html#a59a9347a8e962d409713349276ae7f83',1,'VectorRootSolver::ResultExtractor']]]
 ];

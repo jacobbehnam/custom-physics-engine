@@ -108,7 +108,7 @@ $(document).ready(function(){initNavTree('structOctreeNode.html',''); initResiza
 <div class="dynheader">
 Collaboration diagram for OctreeNode:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structOctreeNode__coll__graph.svg" width="288" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structOctreeNode__coll__graph.svg" width="118" height="124"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -126,12 +126,16 @@ Data Fields</h2></td></tr>
 <tr class="separator:ad61a846747bcf5b953ef743007f56325"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affaf683f114438f936ce9e65c630c793" id="r_affaf683f114438f936ce9e65c630c793"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#affaf683f114438f936ce9e65c630c793">childMask</a> = 0</td></tr>
 <tr class="separator:affaf683f114438f936ce9e65c630c793"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0554b7c130f254bb8dd128c0ba0671eb" id="r_a0554b7c130f254bb8dd128c0ba0671eb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#a0554b7c130f254bb8dd128c0ba0671eb">body</a> = nullptr</td></tr>
-<tr class="separator:a0554b7c130f254bb8dd128c0ba0671eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff02b2bec5f1f305570a5e624666925d" id="r_aff02b2bec5f1f305570a5e624666925d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#aff02b2bec5f1f305570a5e624666925d">bodies</a></td></tr>
+<tr class="separator:aff02b2bec5f1f305570a5e624666925d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeae811f81b204978904a26b6e14b1752" id="r_aeae811f81b204978904a26b6e14b1752"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#aeae811f81b204978904a26b6e14b1752">massCenter</a></td></tr>
 <tr class="separator:aeae811f81b204978904a26b6e14b1752"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae041503efad46b260dc210a3aecdd007" id="r_ae041503efad46b260dc210a3aecdd007"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#ae041503efad46b260dc210a3aecdd007">totalMass</a> = 0.0f</td></tr>
-<tr class="separator:ae041503efad46b260dc210a3aecdd007"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae35abd518c368c68b03f37cc85492ea" id="r_aae35abd518c368c68b03f37cc85492ea"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#aae35abd518c368c68b03f37cc85492ea">totalMass</a> = 0.0</td></tr>
+<tr class="separator:aae35abd518c368c68b03f37cc85492ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66f434ad3b425797b4cf375b22625c23" id="r_a66f434ad3b425797b4cf375b22625c23"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#a66f434ad3b425797b4cf375b22625c23">totalEffectiveArea</a> = 0.0</td></tr>
+<tr class="separator:a66f434ad3b425797b4cf375b22625c23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f9479f9421dff37c1bea7eb6ec72971" id="r_a5f9479f9421dff37c1bea7eb6ec72971"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOctreeNode.html#a5f9479f9421dff37c1bea7eb6ec72971">totalEmission</a> = 0.0</td></tr>
+<tr class="separator:a5f9479f9421dff37c1bea7eb6ec72971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -160,24 +164,24 @@ Data Fields</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00030">30</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00034">34</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structOctreeNode_a438377c5b3bcf093c1ecfbc6f8ecbc2a_icgraph.svg" width="371" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structOctreeNode_a438377c5b3bcf093c1ecfbc6f8ecbc2a_icgraph.svg" width="371" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
 </div>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a0554b7c130f254bb8dd128c0ba0671eb" name="a0554b7c130f254bb8dd128c0ba0671eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0554b7c130f254bb8dd128c0ba0671eb">&#9670;&#160;</a></span>body</h2>
+<a id="aff02b2bec5f1f305570a5e624666925d" name="aff02b2bec5f1f305570a5e624666925d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff02b2bec5f1f305570a5e624666925d">&#9670;&#160;</a></span>bodies</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a>* OctreeNode::body = nullptr</td>
+          <td class="memname">std::vector&lt;<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a>*&gt; OctreeNode::bodies</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -266,14 +270,46 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="ae041503efad46b260dc210a3aecdd007" name="ae041503efad46b260dc210a3aecdd007"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae041503efad46b260dc210a3aecdd007">&#9670;&#160;</a></span>totalMass</h2>
+<a id="a66f434ad3b425797b4cf375b22625c23" name="a66f434ad3b425797b4cf375b22625c23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66f434ad3b425797b4cf375b22625c23">&#9670;&#160;</a></span>totalEffectiveArea</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float OctreeNode::totalMass = 0.0f</td>
+          <td class="memname">double OctreeNode::totalEffectiveArea = 0.0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00031">31</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
+
+</div>
+</div>
+<a id="a5f9479f9421dff37c1bea7eb6ec72971" name="a5f9479f9421dff37c1bea7eb6ec72971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f9479f9421dff37c1bea7eb6ec72971">&#9670;&#160;</a></span>totalEmission</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double OctreeNode::totalEmission = 0.0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00032">32</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
+
+</div>
+</div>
+<a id="aae35abd518c368c68b03f37cc85492ea" name="aae35abd518c368c68b03f37cc85492ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae35abd518c368c68b03f37cc85492ea">&#9670;&#160;</a></span>totalMass</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double OctreeNode::totalMass = 0.0</td>
         </tr>
       </table>
 </div><div class="memdoc">

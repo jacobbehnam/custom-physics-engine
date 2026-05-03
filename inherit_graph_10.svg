@@ -93,8 +93,8 @@
 <g id="edge21_Node000002_Node000004" class="edge">
 <title>Node2&#45;&gt;Node4</title>
 <g id="a_edge21_Node000002_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M46.72,-157.62C57.7,-133.02 80.1,-90.23 112,-65.5 116.99,-61.63 122.82,-58.52 128.79,-56.03"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="43.44,-156.38 42.72,-166.95 49.88,-159.14 43.44,-156.38"/>
+<path fill="none" stroke="#63b8ff" d="M46.61,-157.37C57.48,-132.46 79.75,-89.19 112,-64.5 116.42,-61.11 121.51,-58.35 126.77,-56.1"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="43.29,-156.24 42.66,-166.82 49.75,-158.94 43.29,-156.24"/>
 </a>
 </g>
 </g>
@@ -170,30 +170,12 @@
 </a>
 </g>
 </g>
-<!-- Node13 -->
-<g id="Node000013" class="node">
-<title>Node13</title>
-<g id="a_Node000013"><a xlink:href="classInspectorWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="216.5,-167 120.5,-167 120.5,-148 216.5,-148 216.5,-167"/>
-<text text-anchor="middle" x="168.5" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">InspectorWidget</text>
-</a>
-</g>
-</g>
-<!-- Node2&#45;&gt;Node13 -->
-<g id="edge30_Node000002_Node000013" class="edge">
-<title>Node2&#45;&gt;Node13</title>
-<g id="a_edge30_Node000002_Node000013"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M77.44,-170.82C90.93,-168.82 106.26,-166.56 120.39,-164.47"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="76.9,-167.36 67.52,-172.28 77.92,-174.28 76.9,-167.36"/>
-</a>
-</g>
-</g>
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="classScalarWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="209,-130 128,-130 128,-111 209,-111 209,-130"/>
-<text text-anchor="middle" x="168.5" y="-118" font-family="Helvetica,sans-Serif" font-size="10.00">ScalarWidget</text>
+<g id="a_Node000014"><a xlink:href="classInspectorWidget.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="216.5,-167 120.5,-167 120.5,-148 216.5,-148 216.5,-167"/>
+<text text-anchor="middle" x="168.5" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">InspectorWidget</text>
 </a>
 </g>
 </g>
@@ -201,17 +183,17 @@
 <g id="edge31_Node000002_Node000014" class="edge">
 <title>Node2&#45;&gt;Node14</title>
 <g id="a_edge31_Node000002_Node000014"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M64.98,-162.22C78.74,-154.94 96.05,-146.24 112,-139.5 120.07,-136.09 128.98,-132.83 137.26,-130"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="63.25,-159.18 56.08,-166.99 66.55,-165.35 63.25,-159.18"/>
+<path fill="none" stroke="#63b8ff" d="M77.44,-170.82C90.93,-168.82 106.26,-166.56 120.39,-164.47"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="76.9,-167.36 67.52,-172.28 77.92,-174.28 76.9,-167.36"/>
 </a>
 </g>
 </g>
 <!-- Node15 -->
 <g id="Node000015" class="node">
 <title>Node15</title>
-<g id="a_Node000015"><a xlink:href="classVector3Widget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="212.5,-93 124.5,-93 124.5,-74 212.5,-74 212.5,-93"/>
-<text text-anchor="middle" x="168.5" y="-81" font-family="Helvetica,sans-Serif" font-size="10.00">Vector3Widget</text>
+<g id="a_Node000015"><a xlink:href="classScalarWidget.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="209,-130 128,-130 128,-111 209,-111 209,-130"/>
+<text text-anchor="middle" x="168.5" y="-118" font-family="Helvetica,sans-Serif" font-size="10.00">ScalarWidget</text>
 </a>
 </g>
 </g>
@@ -219,6 +201,24 @@
 <g id="edge32_Node000002_Node000015" class="edge">
 <title>Node2&#45;&gt;Node15</title>
 <g id="a_edge32_Node000002_Node000015"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M64.98,-162.22C78.74,-154.94 96.05,-146.24 112,-139.5 120.07,-136.09 128.98,-132.83 137.26,-130"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="63.25,-159.18 56.08,-166.99 66.55,-165.35 63.25,-159.18"/>
+</a>
+</g>
+</g>
+<!-- Node16 -->
+<g id="Node000016" class="node">
+<title>Node16</title>
+<g id="a_Node000016"><a xlink:href="classVector3Widget.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="212.5,-93 124.5,-93 124.5,-74 212.5,-74 212.5,-93"/>
+<text text-anchor="middle" x="168.5" y="-81" font-family="Helvetica,sans-Serif" font-size="10.00">Vector3Widget</text>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node16 -->
+<g id="edge33_Node000002_Node000016" class="edge">
+<title>Node2&#45;&gt;Node16</title>
+<g id="a_edge33_Node000002_Node000016"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M52.19,-159.06C65.6,-142.42 87.8,-117.71 112,-102.5 118.04,-98.71 124.92,-95.57 131.74,-93.01"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="49.43,-156.91 46.01,-166.93 54.94,-161.23 49.43,-156.91"/>
 </a>
@@ -228,8 +228,8 @@
 <g id="Node000009" class="node">
 <title>Node9</title>
 <g id="a_Node000009"><a xlink:href="classForcesInspectorWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="397.5,-259 269.5,-259 269.5,-240 397.5,-240 397.5,-259"/>
-<text text-anchor="middle" x="333.5" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00">ForcesInspectorWidget</text>
+<polygon fill="white" stroke="#666666" points="397.5,-278 269.5,-278 269.5,-259 397.5,-259 397.5,-278"/>
+<text text-anchor="middle" x="333.5" y="-266" font-family="Helvetica,sans-Serif" font-size="10.00">ForcesInspectorWidget</text>
 </a>
 </g>
 </g>
@@ -237,8 +237,8 @@
 <g id="edge26_Node000008_Node000009" class="edge">
 <title>Node8&#45;&gt;Node9</title>
 <g id="a_edge26_Node000008_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M209.23,-207.38C214.58,-209.32 219.95,-211.38 225,-213.5 241.5,-220.41 244.23,-225.28 261,-231.5 269.64,-234.7 279.08,-237.53 288.18,-239.94"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="210.33,-204.05 199.73,-204.03 208,-210.65 210.33,-204.05"/>
+<path fill="none" stroke="#63b8ff" d="M214.97,-208.04C218.46,-209.69 221.85,-211.5 225,-213.5 244.38,-225.77 241.12,-239.04 261,-250.5 266.88,-253.89 273.39,-256.64 280.01,-258.89"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="216.15,-204.74 205.57,-204.09 213.43,-211.2 216.15,-204.74"/>
 </a>
 </g>
 </g>
@@ -246,8 +246,8 @@
 <g id="Node000010" class="node">
 <title>Node10</title>
 <g id="a_Node000010"><a xlink:href="classGlobalsInspectorWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="400,-222 267,-222 267,-203 400,-203 400,-222"/>
-<text text-anchor="middle" x="333.5" y="-210" font-family="Helvetica,sans-Serif" font-size="10.00">GlobalsInspectorWidget</text>
+<polygon fill="white" stroke="#666666" points="400,-241 267,-241 267,-222 400,-222 400,-241"/>
+<text text-anchor="middle" x="333.5" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">GlobalsInspectorWidget</text>
 </a>
 </g>
 </g>
@@ -255,8 +255,8 @@
 <g id="edge27_Node000008_Node000010" class="edge">
 <title>Node8&#45;&gt;Node10</title>
 <g id="a_edge27_Node000008_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M229.34,-201.11C241.53,-202.45 254.41,-203.88 266.79,-205.24"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="229.61,-197.62 219.29,-200 228.85,-204.57 229.61,-197.62"/>
+<path fill="none" stroke="#63b8ff" d="M221.43,-206.29C243.69,-211.34 269.34,-217.16 290.38,-221.94"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="222,-202.83 211.48,-204.03 220.45,-209.66 222,-202.83"/>
 </a>
 </g>
 </g>
@@ -264,8 +264,8 @@
 <g id="Node000011" class="node">
 <title>Node11</title>
 <g id="a_Node000011"><a xlink:href="classPhysicsInspectorWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="400,-185 267,-185 267,-166 400,-166 400,-185"/>
-<text text-anchor="middle" x="333.5" y="-173" font-family="Helvetica,sans-Serif" font-size="10.00">PhysicsInspectorWidget</text>
+<polygon fill="white" stroke="#666666" points="400,-204 267,-204 267,-185 400,-185 400,-204"/>
+<text text-anchor="middle" x="333.5" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00">PhysicsInspectorWidget</text>
 </a>
 </g>
 </g>
@@ -273,17 +273,17 @@
 <g id="edge28_Node000008_Node000011" class="edge">
 <title>Node8&#45;&gt;Node11</title>
 <g id="a_edge28_Node000008_Node000011"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M229.34,-187.52C241.53,-186.1 254.41,-184.6 266.79,-183.16"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="228.82,-184.06 219.29,-188.7 229.63,-191.01 228.82,-184.06"/>
+<path fill="none" stroke="#63b8ff" d="M229.34,-194.5C241.53,-194.5 254.41,-194.5 266.79,-194.5"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="229.29,-191 219.29,-194.5 229.29,-198 229.29,-191"/>
 </a>
 </g>
 </g>
 <!-- Node12 -->
 <g id="Node000012" class="node">
 <title>Node12</title>
-<g id="a_Node000012"><a xlink:href="classTransformInspectorWidget.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="406,-148 261,-148 261,-129 406,-129 406,-148"/>
-<text text-anchor="middle" x="333.5" y="-136" font-family="Helvetica,sans-Serif" font-size="10.00">TransformInspectorWidget</text>
+<g id="a_Node000012"><a xlink:href="classThermalInspectorWidget.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="402,-167 265,-167 265,-148 402,-148 402,-167"/>
+<text text-anchor="middle" x="333.5" y="-155" font-family="Helvetica,sans-Serif" font-size="10.00">ThermalInspectorWidget</text>
 </a>
 </g>
 </g>
@@ -291,8 +291,26 @@
 <g id="edge29_Node000008_Node000012" class="edge">
 <title>Node8&#45;&gt;Node12</title>
 <g id="a_edge29_Node000008_Node000012"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M211.87,-181.6C216.34,-179.99 220.79,-178.28 225,-176.5 241.67,-169.46 244.15,-164.09 261,-157.5 270.21,-153.9 280.35,-150.75 290.02,-148.1"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="210.44,-178.39 202.13,-184.95 212.72,-185.01 210.44,-178.39"/>
+<path fill="none" stroke="#63b8ff" d="M221.43,-182.71C243.69,-177.66 269.34,-171.84 290.38,-167.06"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="220.45,-179.34 211.48,-184.97 222,-186.17 220.45,-179.34"/>
+</a>
+</g>
+</g>
+<!-- Node13 -->
+<g id="Node000013" class="node">
+<title>Node13</title>
+<g id="a_Node000013"><a xlink:href="classTransformInspectorWidget.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="406,-130 261,-130 261,-111 406,-111 406,-130"/>
+<text text-anchor="middle" x="333.5" y="-118" font-family="Helvetica,sans-Serif" font-size="10.00">TransformInspectorWidget</text>
+</a>
+</g>
+</g>
+<!-- Node8&#45;&gt;Node13 -->
+<g id="edge30_Node000008_Node000013" class="edge">
+<title>Node8&#45;&gt;Node13</title>
+<g id="a_edge30_Node000008_Node000013"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M216.71,-181.01C219.59,-179.63 222.38,-178.13 225,-176.5 244.48,-164.38 241.2,-151.09 261,-139.5 267.65,-135.61 275.11,-132.5 282.64,-130.01"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="215.17,-177.86 207.33,-184.98 217.9,-184.3 215.17,-177.86"/>
 </a>
 </g>
 </g>

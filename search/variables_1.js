@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['center_0',['center',['../structOctreeNode.html#a7f02fd21b673b7f7ce367a6ca1090a75',1,'OctreeNode']]],
-  ['childmask_1',['childMask',['../structOctreeNode.html#affaf683f114438f936ce9e65c630c793',1,'OctreeNode']]],
-  ['children_2',['children',['../structOctreeNode.html#ad61a846747bcf5b953ef743007f56325',1,'OctreeNode']]],
-  ['color_3',['color',['../structRendering_1_1InstanceData.html#a1704ec3d791423c0c7fa2065a7b7525c',1,'Rendering::InstanceData']]],
-  ['createcollider_4',['createCollider',['../structRigidBodyOptions.html#a851d1e1c5cec05eb1f30aab68e2a4b8d',1,'RigidBodyOptions']]],
-  ['current_5',['current',['../classOneUnknownSolver.html#a20f906c276a87cc004c7a452a4d47c3b',1,'OneUnknownSolver']]]
+  ['base_0',['base',['../structPointMassOptions.html#acaef26ed9a7321b35bd17a6d149359ae',1,'PointMassOptions::base'],['../structRigidBodyOptions.html#a445d5b27547afb87e078f5591f1f02bc',1,'RigidBodyOptions::base']]],
+  ['base_5ffloat_5ftolerance_1',['BASE_FLOAT_TOLERANCE',['../PhysicsTests_8cpp.html#aaf07ecb47b49a9bb98ebbb129b7780ce',1,'PhysicsTests.cpp']]],
+  ['bodies_2',['bodies',['../structOctreeNode.html#aff02b2bec5f1f305570a5e624666925d',1,'OctreeNode']]],
+  ['body_3',['body',['../PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308',1,'ObjectSnapshot::body'],['../structBVHNode.html#adc945264b96070e9b2c1531ee5d08e6f',1,'BVHNode::body']]],
+  ['boilingpoint_4',['boilingPoint',['../ThermalProperties_8h.html#ab685e2e60c9290c8da985277ee0d146f',1,'ThermalProperties']]],
+  ['bounds_5',['bounds',['../structBVHNode.html#ae0aa5754f943ff6da78b8619a478945e',1,'BVHNode']]]
 ];

@@ -111,6 +111,7 @@ $(document).ready(function(){initNavTree('SceneSerializer_8cpp.html',''); initRe
 <code>#include &lt;QDebug&gt;</code><br />
 <code>#include &quot;<a class="el" href="ResourceManager_8h_source.html">ResourceManager.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="SceneObject_8h_source.html">graphics/core/SceneObject.h</a>&quot;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for SceneSerializer.cpp:</div>
 <div class="dyncontent">
@@ -126,10 +127,16 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ad3802c3303b442b30a13e517d2616fe0" id="r_ad3802c3303b442b30a13e517d2616fe0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#ad3802c3303b442b30a13e517d2616fe0">JsonUtils::numberOr</a> (const QJsonObject &amp;obj, const char *key, double fallback)</td></tr>
+<tr class="separator:ad3802c3303b442b30a13e517d2616fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9bf373a72d131da0b8d71ade1295533" id="r_aa9bf373a72d131da0b8d71ade1295533"><td class="memItemLeft" align="right" valign="top">QJsonArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#aa9bf373a72d131da0b8d71ade1295533">JsonUtils::vec3ToJson</a> (const glm::vec3 &amp;v)</td></tr>
 <tr class="separator:aa9bf373a72d131da0b8d71ade1295533"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8da6e319ea5969afbe6ddd6620add30" id="r_ab8da6e319ea5969afbe6ddd6620add30"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#ab8da6e319ea5969afbe6ddd6620add30">JsonUtils::jsonToVec3</a> (QJsonArray arr)</td></tr>
-<tr class="separator:ab8da6e319ea5969afbe6ddd6620add30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa1d619a37dd36640fe736abe091c191" id="r_aaa1d619a37dd36640fe736abe091c191"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#aaa1d619a37dd36640fe736abe091c191">JsonUtils::jsonToVec3</a> (QJsonArray arr, const glm::vec3 &amp;fallback=glm::vec3(0.0f))</td></tr>
+<tr class="separator:aaa1d619a37dd36640fe736abe091c191"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6871183dbbf50d7d3fa9370da6559025" id="r_a6871183dbbf50d7d3fa9370da6559025"><td class="memItemLeft" align="right" valign="top">QJsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#a6871183dbbf50d7d3fa9370da6559025">JsonUtils::thermalToJson</a> (const <a class="el" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a> &amp;props)</td></tr>
+<tr class="separator:a6871183dbbf50d7d3fa9370da6559025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a306e4a00b40b665d23c56405ae3b1bc8" id="r_a306e4a00b40b665d23c56405ae3b1bc8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceJsonUtils.html#a306e4a00b40b665d23c56405ae3b1bc8">JsonUtils::jsonToThermal</a> (const QJsonObject &amp;obj, const <a class="el" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a> &amp;fallback)</td></tr>
+<tr class="separator:a306e4a00b40b665d23c56405ae3b1bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

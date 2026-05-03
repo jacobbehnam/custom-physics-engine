@@ -11,6 +11,8 @@ var dir_dcdb6e2c55277f38c2f293d252aedf56 =
     [ "InspectorWidget.h", "InspectorWidget_8h.html", "InspectorWidget_8h" ],
     [ "PhysicsInspectorWidget.cpp", "PhysicsInspectorWidget_8cpp.html", null ],
     [ "PhysicsInspectorWidget.h", "PhysicsInspectorWidget_8h.html", "PhysicsInspectorWidget_8h" ],
+    [ "ThermalInspectorWidget.cpp", "ThermalInspectorWidget_8cpp.html", null ],
+    [ "ThermalInspectorWidget.h", "ThermalInspectorWidget_8h.html", "ThermalInspectorWidget_8h" ],
     [ "TransformInspectorWidget.cpp", "TransformInspectorWidget_8cpp.html", null ],
     [ "TransformInspectorWidget.h", "TransformInspectorWidget_8h.html", "TransformInspectorWidget_8h" ]
 ];

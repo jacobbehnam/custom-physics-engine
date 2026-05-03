@@ -155,6 +155,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af7482555ee9fdb5c369fac511d5cf537" id="r_af7482555ee9fdb5c369fac511d5cf537"><td class="memItemLeft" align="right" valign="top">std::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">intersectsRay</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray) const override</td></tr>
 <tr class="memdesc:af7482555ee9fdb5c369fac511d5cf537"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if a ray intersects this object's geometry.  <br /></td></tr>
 <tr class="separator:af7482555ee9fdb5c369fac511d5cf537"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cde97cfbea49bee81f9bb8718f2ab27" id="r_a2cde97cfbea49bee81f9bb8718f2ab27"><td class="memItemLeft" align="right" valign="top">glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#a2cde97cfbea49bee81f9bb8718f2ab27">getModelMatrix</a> () const override</td></tr>
+<tr class="memdesc:a2cde97cfbea49bee81f9bb8718f2ab27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the model transformation matrix for this instance.  <br /></td></tr>
+<tr class="separator:a2cde97cfbea49bee81f9bb8718f2ab27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51694b249daac83a466e6acdb08c5554" id="r_a51694b249daac83a466e6acdb08c5554"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#a51694b249daac83a466e6acdb08c5554">handleClick</a> (const <a class="el" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> &amp;ray, float distance) override</td></tr>
 <tr class="memdesc:a51694b249daac83a466e6acdb08c5554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a mouse click on this object.  <br /></td></tr>
 <tr class="separator:a51694b249daac83a466e6acdb08c5554"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,10 +194,16 @@ Public Member Functions</h2></td></tr>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ac01ac7731712baaeb3173a2a7e3f151a" id="r_ac01ac7731712baaeb3173a2a7e3f151a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#ac01ac7731712baaeb3173a2a7e3f151a">setPhysicsPosMap</a> (const <a class="el" href="classSceneObject.html#a773d247b2a976a6684aca6c4df235ec3">PosMap</a> &amp;m)</td></tr>
 <tr class="separator:ac01ac7731712baaeb3173a2a7e3f151a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acabdda3760407bdba426ac3d4488159f" id="r_acabdda3760407bdba426ac3d4488159f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#acabdda3760407bdba426ac3d4488159f">setRenderOrigin</a> (const glm::vec3 &amp;origin)</td></tr>
+<tr class="separator:acabdda3760407bdba426ac3d4488159f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a444efd8e0b34552d07e6dad15aaeba00" id="r_a444efd8e0b34552d07e6dad15aaeba00"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00">getRenderOrigin</a> ()</td></tr>
+<tr class="separator:a444efd8e0b34552d07e6dad15aaeba00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23e2ef7498178e3bca16c37f137f2d88" id="r_a23e2ef7498178e3bca16c37f137f2d88"><td class="memItemLeft" align="right" valign="top">static glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSceneObject.html#a23e2ef7498178e3bca16c37f137f2d88">worldToRenderMatrix</a> ()</td></tr>
+<tr class="separator:a23e2ef7498178e3bca16c37f137f2d88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00021">21</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00022">22</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a773d247b2a976a6684aca6c4df235ec3" name="a773d247b2a976a6684aca6c4df235ec3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a773d247b2a976a6684aca6c4df235ec3">&#9670;&#160;</a></span>PosMap</h2>
@@ -208,7 +217,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00051">51</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00053">53</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 
 </div>
 </div>
@@ -261,7 +270,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a71b5ba2106108265edb221540f4ec1ae_cgraph.svg" width="464" height="200"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a71b5ba2106108265edb221540f4ec1ae_cgraph.svg" width="466" height="348"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -281,7 +290,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00053">53</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00071">71</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -314,7 +323,12 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00049">49</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00051">51</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a2ed12216f0ee45423035ddfdb0c9044b_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -346,7 +360,7 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="classIPickable.html#acc124ead38fd7422afacfe619a078834">IPickable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00194">194</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00244">244</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 
 </div>
 </div>
@@ -384,11 +398,16 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="classIInstancedDrawable.html#aea390aaac2857505049bd0d95b73e777">IInstancedDrawable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00202">202</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00252">252</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a55121847afa67b03afa5a4a27922bde0_cgraph.svg" width="466" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a55121847afa67b03afa5a4a27922bde0_icgraph.svg" width="379" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -425,7 +444,12 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="classIDrawable.html#af2ae858023ba63c9cee032662984b139">IDrawable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00044">44</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00046">46</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_ae86730acbd0a398e2a4d2473a2f52b8e_icgraph.svg" width="327" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 
 </div>
 </div>
@@ -452,7 +476,51 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00047">47</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00049">49</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a67fffede336f82183a5b5d2c9d6c8239_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a2cde97cfbea49bee81f9bb8718f2ab27" name="a2cde97cfbea49bee81f9bb8718f2ab27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cde97cfbea49bee81f9bb8718f2ab27">&#9670;&#160;</a></span>getModelMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::mat4 SceneObject::getModelMatrix </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the model transformation matrix for this instance. </p>
+<p>The model matrix transforms vertices from model space to render space. World-space drawables should subtract <a class="el" href="classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00">SceneObject::getRenderOrigin()</a> before uploading instance data. Simulation, picking, and serialization must keep using world-space transforms.</p>
+<dl class="section return"><dt>Returns</dt><dd>The 4x4 model transformation matrix.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is called once per frame during batch preparation. </dd></dl>
+
+<p>Implements <a class="el" href="classIInstancedDrawable.html#a89feb02187f064ae133a53843ea2d7df">IInstancedDrawable</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00078">78</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a2cde97cfbea49bee81f9bb8718f2ab27_icgraph.svg" width="100%" height="475"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -479,11 +547,11 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00046">46</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00048">48</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_abebc043e3253d66da477f862a950775d_icgraph.svg" width="100%" height="383"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_abebc043e3253d66da477f862a950775d_icgraph.svg" width="100%" height="488"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -524,11 +592,11 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classIDrawable.html#acfe3e5ebe14667831238c8e23266b3f5">IDrawable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00198">198</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00248">248</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ad77f12eb793b32da2ef40f0042cb1de8_icgraph.svg" width="100%" height="424"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ad77f12eb793b32da2ef40f0042cb1de8_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -556,11 +624,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00038">38</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00039">39</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_ab3595ced6ccce80d1e864bbf28e1988a_icgraph.svg" width="483" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ab3595ced6ccce80d1e864bbf28e1988a_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -580,11 +648,43 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00163">163</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00213">213</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a3d1aa613dd4f4ee6947754a355a48cc9_icgraph.svg" width="100%" height="536"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a3d1aa613dd4f4ee6947754a355a48cc9_icgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+
+</div>
+</div>
+<a id="a444efd8e0b34552d07e6dad15aaeba00" name="a444efd8e0b34552d07e6dad15aaeba00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a444efd8e0b34552d07e6dad15aaeba00">&#9670;&#160;</a></span>getRenderOrigin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static glm::vec3 SceneObject::getRenderOrigin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00064">64</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a444efd8e0b34552d07e6dad15aaeba00_icgraph.svg" width="407" height="135"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>
@@ -604,7 +704,12 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00169">169</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00219">219</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a3783915337e9b271e66b49ce82abe8f4_icgraph.svg" width="100%" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -623,7 +728,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00182">182</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00232">232</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -647,11 +752,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00186">186</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00236">236</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a43bf76c6717d9210f576852aee2297c7_icgraph.svg" width="422" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a43bf76c6717d9210f576852aee2297c7_icgraph.svg" width="100%" height="475"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -688,7 +793,12 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classIDrawable.html#a150ad941a699e1bee766d968bae86a9d">IDrawable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00173">173</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00223">223</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_a80f6133afc5bdf8f4d5d560995c9718a_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 
 </div>
 </div>
@@ -749,7 +859,7 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="classIPickable.html#aabf11fe38a2332ac844b5b51093c7cd2">IPickable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00134">134</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00179">179</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -805,7 +915,7 @@ Here is the call graph for this function:</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> std::nullopt;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassSceneObject_html_af7482555ee9fdb5c369fac511d5cf537"><div class="ttname"><a href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a></div><div class="ttdeci">std::optional&lt; float &gt; intersectsRay(const Math::Ray &amp;ray) const override</div><div class="ttdoc">Tests if a ray intersects this object's geometry.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00121">SceneObject.cpp:121</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_af7482555ee9fdb5c369fac511d5cf537"><div class="ttname"><a href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537">SceneObject::intersectsRay</a></div><div class="ttdeci">std::optional&lt; float &gt; intersectsRay(const Math::Ray &amp;ray) const override</div><div class="ttdoc">Tests if a ray intersects this object's geometry.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00166">SceneObject.cpp:166</a></div></div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classSceneObject.html#af7482555ee9fdb5c369fac511d5cf537" title="Tests if a ray intersects this object&#39;s geometry.">SceneObject::intersectsRay()</a> </dd>
 <dd>
 <a class="el" href="classGizmo.html#a4dddd2e66342acf412161da2ac567b7e" title="Tests if a ray intersects any of the gizmo&#39;s handles.">Gizmo::intersectsRay()</a> </dd>
@@ -814,7 +924,7 @@ MathUtils::intersectsRay() </dd></dl>
 
 <p>Implements <a class="el" href="classIPickable.html#a69ded211af3ca1009ddbafd14aef8bb7">IPickable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00121">121</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00166">166</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 
 </div>
 </div>
@@ -857,7 +967,7 @@ MathUtils::intersectsRay() </dd></dl>
 
 <p>Implements <a class="el" href="classIPickable.html#aa5db23e2e774abaacdb00344866708a6">IPickable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00190">190</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00240">240</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
 
 </div>
 </div>
@@ -885,11 +995,11 @@ MathUtils::intersectsRay() </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00048">48</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00050">50</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ad8ac9406b35bee3cd4fad75db013d9c4_icgraph.svg" width="100%" height="364"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ad8ac9406b35bee3cd4fad75db013d9c4_icgraph.svg" width="100%" height="429"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -918,11 +1028,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00053">53</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00055">55</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_ac01ac7731712baaeb3173a2a7e3f151a_icgraph.svg" width="620" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_ac01ac7731712baaeb3173a2a7e3f151a_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -943,11 +1053,49 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00138">138</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00183">183</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_af36a3463b19299b7d7cca2b476c36870_cgraph.svg" width="456" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_af36a3463b19299b7d7cca2b476c36870_icgraph.svg" width="424" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="acabdda3760407bdba426ac3d4488159f" name="acabdda3760407bdba426ac3d4488159f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acabdda3760407bdba426ac3d4488159f">&#9670;&#160;</a></span>setRenderOrigin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void SceneObject::setRenderOrigin </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>origin</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00060">60</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classSceneObject_acabdda3760407bdba426ac3d4488159f_icgraph.svg" width="100%" height="401"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>
@@ -968,7 +1116,12 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00151">151</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00196">196</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a625f2fbee7601ca70c627bc48b5aae09_cgraph.svg" width="460" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 
 </div>
 </div>
@@ -988,7 +1141,12 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00177">177</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00227">227</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a65d990f152f55417e054550d05fd54dc_cgraph.svg" width="491" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1013,11 +1171,48 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00157">157</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SceneObject_8cpp_source.html#l00202">202</a> of file <a class="el" href="SceneObject_8cpp_source.html">SceneObject.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a3809528676d1cfc238e37b76056dbbe0_cgraph.svg" width="440" height="102"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a3809528676d1cfc238e37b76056dbbe0_icgraph.svg" width="384" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a23e2ef7498178e3bca16c37f137f2d88" name="a23e2ef7498178e3bca16c37f137f2d88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23e2ef7498178e3bca16c37f137f2d88">&#9670;&#160;</a></span>worldToRenderMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static glm::mat4 SceneObject::worldToRenderMatrix </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SceneObject_8h_source.html#l00068">68</a> of file <a class="el" href="SceneObject_8h_source.html">SceneObject.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="classSceneObject_a23e2ef7498178e3bca16c37f137f2d88_icgraph.svg" width="384" height="86"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>

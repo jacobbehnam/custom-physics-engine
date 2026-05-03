@@ -1,7 +1,7 @@
 var classOpenGLWindow =
 [
-    [ "OpenGLWindow", "classOpenGLWindow.html#a7b3e6349450e61dceb5e04b7671906ef", null ],
-    [ "~OpenGLWindow", "classOpenGLWindow.html#aa220b192c71871aab9100f4058a8d62d", null ],
+    [ "OpenGLWindow", "classOpenGLWindow.html#aa3eee540070ff748070689c474ff6eb3", null ],
+    [ "~OpenGLWindow", "classOpenGLWindow.html#ae5dad1032c1d4d106a21c2c191fc95f8", null ],
     [ "fpsUpdated", "classOpenGLWindow.html#aa081ce2299c65f77ec2a3f663361b174", null ],
     [ "getFramebufferSize", "classOpenGLWindow.html#a1f6ce057f24901310bc6b3592718f5c7", null ],
     [ "getMousePos", "classOpenGLWindow.html#aa9a79782ee03b05acd2fedba2cc73009", null ],
@@ -12,14 +12,18 @@ var classOpenGLWindow =
     [ "isKeyPressed", "classOpenGLWindow.html#a6385cb51d61e023b727e2d4f112db9ac", null ],
     [ "isMouseButtonHeld", "classOpenGLWindow.html#af1fce23ea11a3279b43567daa0348d24", null ],
     [ "isMouseCaptured", "classOpenGLWindow.html#abafa9b00fb8edd30f4b4d3e1b5e8f949", null ],
+    [ "isRenderClockRunning", "classOpenGLWindow.html#afb573536507894b12e1c17601b29464d", null ],
     [ "keyPressEvent", "classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414", null ],
     [ "keyReleaseEvent", "classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e", null ],
     [ "mousePressEvent", "classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a", null ],
     [ "mouseReleaseEvent", "classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73", null ],
     [ "paintGL", "classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d", null ],
+    [ "resetRenderClock", "classOpenGLWindow.html#a4fefe361052fe6919478923cd07b31a8", null ],
     [ "resizeGL", "classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382", null ],
     [ "setMouseCaptured", "classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe", null ],
-    [ "setScene", "classOpenGLWindow.html#a50a19b0730800329be27986034060a66", null ],
+    [ "setRenderClockRunning", "classOpenGLWindow.html#a4d24be49081a2f432fcd016ee9bf1f0f", null ],
+    [ "setScene", "classOpenGLWindow.html#a873accf31bc20442d64372477c75d378", null ],
     [ "setSceneManager", "classOpenGLWindow.html#aee749f62aacbb22c8f34c606e8d44d2c", null ],
-    [ "setSimSpeed", "classOpenGLWindow.html#ad664443240cdd277b10bacbf1608478b", null ]
+    [ "setSimSpeed", "classOpenGLWindow.html#ad664443240cdd277b10bacbf1608478b", null ],
+    [ "wheelEvent", "classOpenGLWindow.html#afcb03a667c42c8351312b7b06a08225c", null ]
 ];

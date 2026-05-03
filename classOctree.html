@@ -109,14 +109,16 @@ $(document).ready(function(){initNavTree('classOctree.html',''); initResizable()
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af10d164bb5cf3908b54508ea2514ff1f" id="r_af10d164bb5cf3908b54508ea2514ff1f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOctree.html#af10d164bb5cf3908b54508ea2514ff1f">Octree</a> ()=default</td></tr>
 <tr class="separator:af10d164bb5cf3908b54508ea2514ff1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a041f0e7b806a25e0cd9f7aeb2242852b" id="r_a041f0e7b806a25e0cd9f7aeb2242852b"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOctree.html#a041f0e7b806a25e0cd9f7aeb2242852b">computeForce</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *body, float G)</td></tr>
-<tr class="separator:a041f0e7b806a25e0cd9f7aeb2242852b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e4033c3835eabfc49b01f566ded0923" id="r_a9e4033c3835eabfc49b01f566ded0923"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOctree.html#a9e4033c3835eabfc49b01f566ded0923">computeForce</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *body, double G)</td></tr>
+<tr class="separator:a9e4033c3835eabfc49b01f566ded0923"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a87e28ce9c64242a6e4c8cb0aaac2a1" id="r_a2a87e28ce9c64242a6e4c8cb0aaac2a1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOctree.html#a2a87e28ce9c64242a6e4c8cb0aaac2a1">computeHeat</a> (<a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *body)</td></tr>
+<tr class="separator:a2a87e28ce9c64242a6e4c8cb0aaac2a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ce4d26b06d82c7de15eaca20d537440" id="r_a3ce4d26b06d82c7de15eaca20d537440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOctree.html#a3ce4d26b06d82c7de15eaca20d537440">build</a> (const std::vector&lt; <a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> * &gt; &amp;bodies)</td></tr>
 <tr class="separator:a3ce4d26b06d82c7de15eaca20d537440"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00035">35</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Octree_8h_source.html#l00039">39</a> of file <a class="el" href="Octree_8h_source.html">Octree.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af10d164bb5cf3908b54508ea2514ff1f" name="af10d164bb5cf3908b54508ea2514ff1f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af10d164bb5cf3908b54508ea2514ff1f">&#9670;&#160;</a></span>Octree()</h2>
@@ -160,7 +162,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Octree_8cpp_source.html#l00081">81</a> of file <a class="el" href="Octree_8cpp_source.html">Octree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Octree_8cpp_source.html#l00111">111</a> of file <a class="el" href="Octree_8cpp_source.html">Octree.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -169,8 +171,8 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="a041f0e7b806a25e0cd9f7aeb2242852b" name="a041f0e7b806a25e0cd9f7aeb2242852b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a041f0e7b806a25e0cd9f7aeb2242852b">&#9670;&#160;</a></span>computeForce()</h2>
+<a id="a9e4033c3835eabfc49b01f566ded0923" name="a9e4033c3835eabfc49b01f566ded0923"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e4033c3835eabfc49b01f566ded0923">&#9670;&#160;</a></span>computeForce()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -184,7 +186,7 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>G</em>&#160;</td>
         </tr>
         <tr>
@@ -195,11 +197,36 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Octree_8cpp_source.html#l00106">106</a> of file <a class="el" href="Octree_8cpp_source.html">Octree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Octree_8cpp_source.html#l00136">136</a> of file <a class="el" href="Octree_8cpp_source.html">Octree.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classOctree_a041f0e7b806a25e0cd9f7aeb2242852b_cgraph.svg" width="387" height="215"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classOctree_a9e4033c3835eabfc49b01f566ded0923_cgraph.svg" width="387" height="215"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+
+</div>
+</div>
+<a id="a2a87e28ce9c64242a6e4c8cb0aaac2a1" name="a2a87e28ce9c64242a6e4c8cb0aaac2a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a87e28ce9c64242a6e4c8cb0aaac2a1">&#9670;&#160;</a></span>computeHeat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Octree::computeHeat </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a> *&#160;</td>
+          <td class="paramname"><em>body</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Octree_8cpp_source.html#l00195">195</a> of file <a class="el" href="Octree_8cpp_source.html">Octree.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classOctree_a2a87e28ce9c64242a6e4c8cb0aaac2a1_cgraph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 
 </div>

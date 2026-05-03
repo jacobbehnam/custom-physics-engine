@@ -8,10 +8,12 @@ var classSceneObject =
     [ "getInstanceData", "classSceneObject.html#a55121847afa67b03afa5a4a27922bde0", null ],
     [ "getMesh", "classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e", null ],
     [ "getMeshName", "classSceneObject.html#a67fffede336f82183a5b5d2c9d6c8239", null ],
+    [ "getModelMatrix", "classSceneObject.html#a2cde97cfbea49bee81f9bb8718f2ab27", null ],
     [ "getName", "classSceneObject.html#abebc043e3253d66da477f862a950775d", null ],
     [ "getObjectID", "classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8", null ],
     [ "getPhysicsBody", "classSceneObject.html#ab3595ced6ccce80d1e864bbf28e1988a", null ],
     [ "getPosition", "classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9", null ],
+    [ "getRenderOrigin", "classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00", null ],
     [ "getRotation", "classSceneObject.html#a3783915337e9b271e66b49ce82abe8f4", null ],
     [ "getRotationQuat", "classSceneObject.html#a7ba00c8012e21f9833880b89e311aedf", null ],
     [ "getScale", "classSceneObject.html#a43bf76c6717d9210f576852aee2297c7", null ],
@@ -22,7 +24,9 @@ var classSceneObject =
     [ "setName", "classSceneObject.html#ad8ac9406b35bee3cd4fad75db013d9c4", null ],
     [ "setPhysicsPosMap", "classSceneObject.html#ac01ac7731712baaeb3173a2a7e3f151a", null ],
     [ "setPosition", "classSceneObject.html#af36a3463b19299b7d7cca2b476c36870", null ],
+    [ "setRenderOrigin", "classSceneObject.html#acabdda3760407bdba426ac3d4488159f", null ],
     [ "setRotation", "classSceneObject.html#a625f2fbee7601ca70c627bc48b5aae09", null ],
     [ "setRotationQuat", "classSceneObject.html#a65d990f152f55417e054550d05fd54dc", null ],
-    [ "setScale", "classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0", null ]
+    [ "setScale", "classSceneObject.html#a3809528676d1cfc238e37b76056dbbe0", null ],
+    [ "worldToRenderMatrix", "classSceneObject.html#a23e2ef7498178e3bca16c37f137f2d88", null ]
 ];

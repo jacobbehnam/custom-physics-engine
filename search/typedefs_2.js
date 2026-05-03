@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['monitorfunction_0',['MonitorFunction',['../classInterceptSolver.html#a5dc3abecbc8f57ade8a5615153ef4e4d',1,'InterceptSolver']]],
-  ['mousecallback_1',['MouseCallback',['../classRawInputFilter.html#ac6966c5811be5b0efb27c546a0d1fbb7',1,'RawInputFilter']]]
+  ['initialguesssetter_0',['InitialGuessSetter',['../classVectorRootSolver.html#a06e4f6d03e5d0e0f7cfc21dc42c66af3',1,'VectorRootSolver']]]
 ];

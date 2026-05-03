@@ -108,9 +108,9 @@ $(document).ready(function(){initNavTree('PhysicsSystem_8cpp_source.html',''); i
 <a href="PhysicsSystem_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="PhysicsSystem_8h.html">PhysicsSystem.h</a>&quot;</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="PointMass_8h.html">PointMass.h</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="MathUtils_8h.html">math/MathUtils.h</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="OneUnknownSolver_8h.html">solver/OneUnknownSolver.h</a>&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;cmath&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="PointMass_8h.html">PointMass.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="ThermalUtils_8h.html">physics/utils/ThermalUtils.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacePhysics.html">Physics</a> {</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="keyword">class </span>PointMass;</div>
@@ -164,270 +164,341 @@ $(document).ready(function(){initNavTree('PhysicsSystem_8cpp_source.html',''); i
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::lock_guard&lt;std::mutex&gt; lk(snapshotMutex);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// first call ever: no previous to interpolate against</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">if</span> (previousSnapshots.empty()) {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        previousSnapshots = currentSnapshots;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="keywordflow">return</span> currentSnapshots;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">// grab the two timestamps (they’re all the same within each frame)</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">float</span> t0 = previousSnapshots[0].time;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">float</span> t1 = currentSnapshots[0].time;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="comment">// outside the bracket → just clamp</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">if</span> (renderSimTime &lt;= t0) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        previousSnapshots = currentSnapshots;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">return</span> previousSnapshots;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    }</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordflow">if</span> (renderSimTime &gt;= t1) {</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        previousSnapshots = currentSnapshots;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">return</span> currentSnapshots;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="comment">// compute blend factor α in (0,1)</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordtype">float</span> alpha = (renderSimTime - t0) / (t1 - t0);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="comment">// interpolate each ObjectSnapshot</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">if</span> (currentSnapshots.empty()) {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordflow">if</span> (previousSnapshots.empty() || previousSnapshots.size() != currentSnapshots.size()) {</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">return</span> currentSnapshots;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">float</span> t0 = previousSnapshots[0].time;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">float</span> t1 = currentSnapshots[0].time;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">if</span> (!std::isfinite(t0) || !std::isfinite(t1) || t1 &lt;= t0) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keywordflow">return</span> currentSnapshots;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordflow">if</span> (renderSimTime &lt;= t0) {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">return</span> previousSnapshots;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">if</span> (renderSimTime &gt;= t1) {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> currentSnapshots;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">float</span> alpha = (renderSimTime - t0) / (t1 - t0);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::vector&lt;ObjectSnapshot&gt; out;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    out.reserve(currentSnapshots.size());</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; currentSnapshots.size(); ++i) {</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keyword">const</span> <span class="keyword">auto</span> &amp;A = previousSnapshots[i];</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keyword">const</span> <span class="keyword">auto</span> &amp;B = currentSnapshots[i];</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <a class="code hl_struct" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> C;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308">body</a>     = A.body;                  <span class="comment">// same pointer/ID</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a3ff173f27d613583d2ad940fa19a1b2f">time</a>     = renderSimTime;           <span class="comment">// stamped with the render time</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#ad34ad47ce42a11c8249293f6062a0d70">position</a> = glm::mix(A.position, B.position, alpha);</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a799ccdd1f55d6bcac2f50c85279faf40">velocity</a> = glm::mix(A.velocity, B.velocity, alpha);</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        out.push_back(C);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="comment">// slide window: next time, previous = what we just returned</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    previousSnapshots = currentSnapshots;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> out;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keywordflow">if</span> (A.body != B.body) {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            out.push_back(B);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <a class="code hl_struct" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> C;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308">body</a>     = A.body;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a3ff173f27d613583d2ad940fa19a1b2f">time</a>     = renderSimTime;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#ad34ad47ce42a11c8249293f6062a0d70">position</a> = glm::mix(A.position, B.position, alpha);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a799ccdd1f55d6bcac2f50c85279faf40">velocity</a> = glm::mix(A.velocity, B.velocity, alpha);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        C.<a class="code hl_variable" href="PhysicsBody_8h.html#a8b0eb56820df56c6a530d975f20944aa">temperature</a> = glm::mix(A.temperature, B.temperature, alpha);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        out.push_back(C);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordflow">return</span> out;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">void</span> Physics::PhysicsSystem::physicsLoop() {</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">constexpr</span> <span class="keywordtype">float</span> dt = 1.0f / 1000.0f;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordtype">float</span> accumulator = 0.0f;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keyword">auto</span> lastTime = std::chrono::high_resolution_clock::now();</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">while</span> (threadRunning.load()) {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="keyword">auto</span> now = std::chrono::high_resolution_clock::now();</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordtype">float</span> frameTime = std::chrono::duration&lt;float&gt;(now - lastTime).count();</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        lastTime = now;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="keywordflow">if</span> (!physicsEnabled.load()) {</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            std::this_thread::sleep_for(std::chrono::milliseconds(1));</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            accumulator = 0.0f;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            lastTime = std::chrono::high_resolution_clock::now();</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        accumulator += frameTime * getSimSpeed();</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        std::vector&lt;PhysicsBody*&gt; localBodies;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <span class="keywordflow">while</span> (accumulator &gt;= dt) {</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                <span class="keywordflow">if</span> (step(dt)) {</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                    accumulator = 0.0f;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                }</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                accumulator -= dt;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            }</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>            localBodies = bodies;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        }</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        std::vector&lt;ObjectSnapshot&gt; localSnaps;</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        localSnaps.reserve(localBodies.size());</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        {</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            std::lock_guard&lt;std::mutex&gt; lk(snapshotMutex);</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>* body : localBodies) {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                localSnaps.push_back({ body,simTime, body-&gt;getPosition(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>), body-&gt;getVelocity(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>) });</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            }</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            currentSnapshots = std::move(localSnaps);</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        }</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        snapshotReady.store(<span class="keyword">true</span>, std::memory_order_release);</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    }</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>}</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keywordtype">void</span> Physics::PhysicsSystem::physicsLoop() {</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">constexpr</span> <span class="keywordtype">float</span> kBaseDt = 1.0f / 1000.0f;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">constexpr</span> <span class="keywordtype">int</span> kMaxCatchUpSteps = 8;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keyword">constexpr</span> <span class="keywordtype">float</span> kMaxAdaptiveDt = 86400.0f;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keywordtype">float</span> accumulator = 0.0f;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keyword">auto</span> lastTime = std::chrono::high_resolution_clock::now();</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">while</span> (threadRunning.load()) {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        <span class="keyword">auto</span> now = std::chrono::high_resolution_clock::now();</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordtype">float</span> frameTime = std::chrono::duration&lt;float&gt;(now - lastTime).count();</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        lastTime = now;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <span class="keywordflow">if</span> (!physicsEnabled.load()) {</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            std::this_thread::sleep_for(std::chrono::milliseconds(1));</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            accumulator = 0.0f;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            lastTime = std::chrono::high_resolution_clock::now();</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        }</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        accumulator += frameTime * getSimSpeed();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        std::vector&lt;ObjectSnapshot&gt; localSnaps;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        {</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>            std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            <span class="keywordflow">if</span> (accumulator &gt;= kBaseDt) {</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>                <span class="keyword">const</span> <span class="keywordtype">int</span> neededSteps = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(std::ceil(accumulator / kBaseDt));</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                <span class="keyword">const</span> <span class="keywordtype">int</span> stepsToRun = std::max(1, std::min(neededSteps, kMaxCatchUpSteps));</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>                <span class="keyword">const</span> <span class="keywordtype">float</span> dt = std::min(std::max(accumulator / <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(stepsToRun), kBaseDt), kMaxAdaptiveDt);</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; stepsToRun &amp;&amp; accumulator &gt;= kBaseDt; ++i) {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                    <span class="keywordflow">if</span> (step(dt)) {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                        accumulator = 0.0f;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                    }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                    accumulator -= std::min(dt, accumulator);</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                <span class="keywordflow">if</span> (dt &gt;= kMaxAdaptiveDt &amp;&amp; accumulator &gt;= kMaxAdaptiveDt * kMaxCatchUpSteps) {</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                    accumulator = 0.0f;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                }</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>            }</div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="foldopen" id="foldopen00139" data-start="{" data-end="}">
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">  139</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">Physics::PhysicsSystem::addBody</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> *body) {</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">setForce</a>(<span class="stringliteral">&quot;Gravity&quot;</span>, body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#a0c44730bee1088e28f85b4579f506c7d">getMass</a>(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>) * getGlobalAcceleration(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">setForce</a>(<span class="stringliteral">&quot;Normal&quot;</span>, glm::vec3(0.0f), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    bodies.push_back(body);</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>}</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>            localSnaps.reserve(bodies.size());</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>* body : bodies) {</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                localSnaps.push_back({ body,simTime, body-&gt;getPosition(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>), body-&gt;getVelocity(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>), <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(body-&gt;getThermalProperties(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>).tempK) });</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            }</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>            std::lock_guard&lt;std::mutex&gt; lk(snapshotMutex);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>            previousSnapshots = std::move(currentSnapshots);</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>            currentSnapshots = std::move(localSnaps);</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            snapshotReady.store(<span class="keyword">true</span>, std::memory_order_release);</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    }</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">  152</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">Physics::PhysicsSystem::addBody</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> *body) {</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">setForce</a>(<span class="stringliteral">&quot;Gravity&quot;</span>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#a04c6bf672135128ea6ebc6028c1a8a97">getMass</a>(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>)) * getGlobalAcceleration(), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    body-&gt;<a class="code hl_function" href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">setForce</a>(<span class="stringliteral">&quot;Normal&quot;</span>, glm::vec3(0.0f), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    bodies.push_back(body);</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>}</div>
 </div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
-<div class="foldopen" id="foldopen00146" data-start="{" data-end="}">
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">  146</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">Physics::PhysicsSystem::removeBody</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> *body) {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keyword">auto</span> it = std::remove(bodies.begin(), bodies.end(), body);</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keywordflow">if</span> (it != bodies.end()) {</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        bodies.erase(it, bodies.end());</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        std::cerr &lt;&lt; <span class="stringliteral">&quot;[PhysicsSystem] Warning: Tried to remove a body not in the system.\n&quot;</span>;</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    }</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>}</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="foldopen" id="foldopen00159" data-start="{" data-end="}">
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">  159</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">Physics::PhysicsSystem::removeBody</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a> *body) {</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    std::lock_guard&lt;std::mutex&gt; lock(bodiesMutex);</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keyword">auto</span> it = std::remove(bodies.begin(), bodies.end(), body);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keywordflow">if</span> (it != bodies.end()) {</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        bodies.erase(it, bodies.end());</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        resetState.erase(body);</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        {</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            std::lock_guard&lt;std::mutex&gt; snapshotLock(snapshotMutex);</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>            <span class="keyword">auto</span> removeSnapshotForBody = [body](std::vector&lt;ObjectSnapshot&gt;&amp; snapshots) {</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                snapshots.erase(</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                    std::remove_if(snapshots.begin(), snapshots.end(), [body](<span class="keyword">const</span> <a class="code hl_struct" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a>&amp; snapshot) {</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                        return snapshot.body == body;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                    }),</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>                    snapshots.end()</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                );</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            };</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            removeSnapshotForBody(currentSnapshots);</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            removeSnapshotForBody(previousSnapshots);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>            <span class="keywordflow">if</span> (currentSnapshots.empty() &amp;&amp; previousSnapshots.empty()) {</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                snapshotReady.store(<span class="keyword">false</span>, std::memory_order_relaxed);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>            }</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        }</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        std::cerr &lt;&lt; <span class="stringliteral">&quot;[PhysicsSystem] Warning: Tried to remove a body not in the system.\n&quot;</span>;</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    }</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>}</div>
 </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="keywordtype">void</span> Physics::PhysicsSystem::advancePhysics(<span class="keywordtype">float</span> dt) {</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    <span class="keywordtype">float</span> targetTime = stepCount.load() * dt + dt; <span class="comment">// the time we will be at after this step</span></div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    std::vector&lt;PhysicsBody*&gt; collidableBodies;</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    PhysicsSystem::octree.build(bodies);</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> body : bodies) {</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        std::unique_lock&lt;std::mutex&gt; guard = body-&gt;lockState();</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        <span class="keywordflow">if</span> (body-&gt;getCollider() != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            collidableBodies.push_back(body);</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        }</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        glm::vec3 globalGravity = body-&gt;getMass(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>) * getGlobalAcceleration();</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        glm::vec3 totalGravity  = nBodyGravity + globalGravity;</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        </div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        body-&gt;setForce(<span class="stringliteral">&quot;Normal&quot;</span>, glm::vec3(0.0f), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        body-&gt;setForce(<span class="stringliteral">&quot;Gravity&quot;</span>, totalGravity, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        <span class="keywordflow">if</span> (body-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>))</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keywordflow">if</span> (simTime == 0.0f) {</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>            body-&gt;recordFrame(0.0f, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            <span class="keywordflow">if</span> (resetState.find(body) == resetState.end()) {</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>                body-&gt;withFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>, [<span class="keyword">this</span>, body](<span class="keyword">const</span> std::vector&lt;ObjectSnapshot&gt;&amp; fr) {</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>                    <span class="keywordflow">if</span> (!fr.empty()) resetState[body] = fr.front();</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                });</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            }</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        }</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        body-&gt;step(dt, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        body-&gt;recordFrame(targetTime, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    }</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="comment">// Broad phase</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <a class="code hl_class" href="classBVH.html">BVH</a> bvh;</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    bvh.build(collidableBodies);</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>[a, b] : bvh.getPotentialCollisions()) {</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="comment">// Narrow phase</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keywordflow">if</span> (a-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>) &amp;&amp; b-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>)) <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        <span class="keywordflow">if</span> (a-&gt;collidesWith(*b)) {</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            a-&gt;resolveCollisionWith(*b);</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        }</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    }</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    stepCount++;</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    simTime = targetTime;</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>}</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keywordtype">void</span> Physics::PhysicsSystem::advancePhysics(<span class="keywordtype">float</span> dt) {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordtype">float</span> targetTime = simTime + dt;</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    std::vector&lt;PhysicsBody*&gt; collidableBodies;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    PhysicsSystem::octree.build(bodies);</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> body : bodies) {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        std::unique_lock&lt;std::mutex&gt; guard = body-&gt;lockState();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <span class="keywordflow">if</span> (body-&gt;getCollider() != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            collidableBodies.push_back(body);</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        }</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        glm::vec3 nBodyGravity  = PhysicsSystem::octree.computeForce(body, getGravitationalConstant());</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        glm::vec3 globalGravity = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(body-&gt;getMass(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>)) * getGlobalAcceleration();</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        glm::vec3 totalGravity  = nBodyGravity + globalGravity;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        body-&gt;setForce(<span class="stringliteral">&quot;Normal&quot;</span>, glm::vec3(0.0f), <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        body-&gt;setForce(<span class="stringliteral">&quot;Gravity&quot;</span>, totalGravity, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="keywordflow">if</span> (simTime == 0.0f) {</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            body-&gt;recordFrame(0.0f, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
-<div class="foldopen" id="foldopen00207" data-start="{" data-end="}">
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">  207</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">Physics::PhysicsSystem::step</a>(<span class="keywordtype">float</span> dt) {</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keywordflow">if</span> (solver &amp;&amp; solver-&gt;stepFrame()) {</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        std::cout &lt;&lt; <span class="stringliteral">&quot;Solver Converged!&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordtype">float</span> finalDuration = this-&gt;simTime - (dt * 0.5f); <span class="comment">// ensures no extra step is made due to floating point errors</span></div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> body : bodies) {</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            body-&gt;withFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>, [<span class="keyword">this</span>, body](<span class="keyword">const</span> std::vector&lt;ObjectSnapshot&gt;&amp; frames) {</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                <span class="keywordflow">if</span> (!frames.empty()) {</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                    <span class="comment">// The first frame is always t=0 for the current trajectory</span></div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                    resetState[body] = frames.front();</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                }</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            });</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        }</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        reset();</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        <span class="keywordtype">float</span> bakeTimer = 0.0f;</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        <span class="keywordflow">while</span> (bakeTimer &lt; finalDuration) {</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            advancePhysics(dt);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            bakeTimer += dt;</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        }</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        solver = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        physicsEnabled = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    advancePhysics(dt);</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>}</div>
-</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            <span class="keywordflow">if</span> (resetState.find(body) == resetState.end()) {</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                body-&gt;withFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>, [<span class="keyword">this</span>, body](<span class="keyword">const</span> std::vector&lt;ObjectSnapshot&gt;&amp; fr) {</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                    <span class="keywordflow">if</span> (!fr.empty()) resetState[body] = fr.front();</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                });</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            }</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        }</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        <a class="code hl_struct" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a> props = body-&gt;getThermalProperties(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        <span class="keyword">const</span> <span class="keywordtype">double</span> area = body-&gt;getSurfaceArea();</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        <span class="keyword">const</span> <span class="keywordtype">double</span> mass = body-&gt;getMass(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keyword">const</span> <span class="keywordtype">double</span> ambientTemp = getAmbientTemperature();</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <span class="keyword">const</span> <span class="keywordtype">double</span> proximityRadiation = PhysicsSystem::octree.computeHeat(body);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <a class="code hl_function" href="namespacePhysics_1_1Thermal.html#a7d354d9cd4784f896b446fcaa286439c">Physics::Thermal::integrateTemperature</a>(props, mass, dt, [&amp;](<span class="keywordtype">double</span> tempK) {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            <a class="code hl_struct" href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a> tmp = props;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            tmp.<a class="code hl_variable" href="ThermalProperties_8h.html#a192f88e7fb3f29a4c0759a6951d623af">tempK</a> = tempK;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keywordflow">return</span> <a class="code hl_function" href="namespacePhysics_1_1Thermal.html#a2f2b081371d33b27fab1476da4081b23">Physics::Thermal::convectionHeatRate</a>(tmp, area, ambientTemp)</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                + <a class="code hl_function" href="namespacePhysics_1_1Thermal.html#aacab006c23ae445dba58583d615319b1">Physics::Thermal::ambientRadiationHeatRate</a>(tmp, area, ambientTemp)</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                + <a class="code hl_function" href="namespacePhysics_1_1Thermal.html#aa13a0fda5c0989cf75e8b4667b69b6fb">Physics::Thermal::externalHeatFluxRate</a>(tmp, area)</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                + proximityRadiation</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                + tmp.<a class="code hl_variable" href="ThermalProperties_8h.html#a1098508ae2c9bda1b8ac13011937551d">internalHeatPower</a>;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        });</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        <span class="keywordflow">if</span> (std::isfinite(props.<a class="code hl_variable" href="ThermalProperties_8h.html#a192f88e7fb3f29a4c0759a6951d623af">tempK</a>)) {</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            body-&gt;setThermalProperty(props, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span> </div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        <span class="keywordflow">if</span> (!body-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>)) {</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            body-&gt;step(dt, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        }</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        body-&gt;recordFrame(targetTime, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a>);</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    }</div>
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
-<div class="foldopen" id="foldopen00239" data-start="{" data-end="}">
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">  239</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">Physics::PhysicsSystem::solveProblem</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a>* body, <span class="keyword">const</span> std::unordered_map&lt;std::string, double&gt; &amp;knowns, <span class="keyword">const</span> std::string &amp;unknown) {</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    solver = router.makeSolver(body, knowns, unknown);</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keywordflow">if</span> (solver) {</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        std::cout &lt;&lt; <span class="stringliteral">&quot;Solver Started: &quot;</span> &lt;&lt; unknown &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        physicsEnabled = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        std::cerr &lt;&lt; <span class="stringliteral">&quot;Solver Error: No recipe found for &quot;</span> &lt;&lt; unknown &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    }</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>}</div>
-</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="foldopen" id="foldopen00250" data-start="{" data-end="}">
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">  250</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">Physics::PhysicsSystem::reset</a>() {</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    stepCount.store(0);</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    simTime = 0.0f;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> [body, initialState] : resetState) {</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        body-&gt;clearAllFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        body-&gt;loadFrame(initialState, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    }</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>}</div>
-</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    <span class="comment">// Broad phase</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <a class="code hl_class" href="classBVH.html">BVH</a> bvh;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    bvh.build(collidableBodies);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>[a, b] : bvh.getPotentialCollisions()) {</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="comment">// Narrow phase</span></div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">if</span> (a-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>) &amp;&amp; b-&gt;getIsStatic(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>)) <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keywordflow">if</span> (a-&gt;collidesWith(*b)) {</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            a-&gt;resolveCollisionWith(dt, *b);</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        }</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    stepCount++;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    simTime = targetTime;</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>}</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
+<div class="foldopen" id="foldopen00255" data-start="{" data-end="}">
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">  255</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">Physics::PhysicsSystem::step</a>(<span class="keywordtype">float</span> dt) {</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keywordflow">if</span> (solver &amp;&amp; solver-&gt;stepFrame()) {</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        std::cout &lt;&lt; <span class="stringliteral">&quot;Solver Converged!&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="foldopen" id="foldopen00259" data-start="{" data-end="}">
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">  259</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">Physics::PhysicsSystem::enablePhysics</a>() {</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    physicsEnabled.store(<span class="keyword">true</span>);</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    snapshotReady.store(<span class="keyword">false</span>, std::memory_order_relaxed); <span class="comment">// so we don&#39;t read from the stale buffer</span></div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>}</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        <span class="keywordtype">float</span> finalDuration = this-&gt;simTime - (dt * 0.5f); <span class="comment">// ensures no extra step is made due to floating point errors</span></div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> body : bodies) {</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            body-&gt;withFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>, [<span class="keyword">this</span>, body](<span class="keyword">const</span> std::vector&lt;ObjectSnapshot&gt;&amp; frames) {</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                <span class="keywordflow">if</span> (!frames.empty()) {</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                    <span class="comment">// The first frame is always t=0 for the current trajectory</span></div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                    resetState[body] = frames.front();</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                }</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            });</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        }</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        reset();</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        <span class="keywordtype">float</span> bakeTimer = 0.0f;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="keywordflow">while</span> (bakeTimer &lt; finalDuration) {</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            advancePhysics(dt);</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            bakeTimer += dt;</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        }</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        solver = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        physicsEnabled = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    }</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    advancePhysics(dt);</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>}</div>
 </div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
-<div class="foldopen" id="foldopen00264" data-start="{" data-end="}">
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">  264</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">Physics::PhysicsSystem::disablePhysics</a>() {</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    physicsEnabled.store(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>}</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
+<div class="foldopen" id="foldopen00287" data-start="{" data-end="}">
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">  287</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">Physics::PhysicsSystem::solveProblem</a>(<a class="code hl_class" href="classPhysics_1_1PhysicsBody.html">PhysicsBody</a>* body, <span class="keyword">const</span> std::unordered_map&lt;std::string, double&gt; &amp;knowns, <span class="keyword">const</span> std::string &amp;unknown) {</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    solver = router.makeSolver(body, knowns, unknown);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    <span class="keywordflow">if</span> (solver) {</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        std::cout &lt;&lt; <span class="stringliteral">&quot;Solver Started: &quot;</span> &lt;&lt; unknown &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        physicsEnabled = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        std::cerr &lt;&lt; <span class="stringliteral">&quot;Solver Error: No recipe found for &quot;</span> &lt;&lt; unknown &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    }</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>}</div>
 </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="ttc" id="aMathUtils_8h_html"><div class="ttname"><a href="MathUtils_8h.html">MathUtils.h</a></div><div class="ttdoc">Mathematical utility functions for 3D graphics and physics.</div></div>
-<div class="ttc" id="aOneUnknownSolver_8h_html"><div class="ttname"><a href="OneUnknownSolver_8h.html">OneUnknownSolver.h</a></div></div>
-<div class="ttc" id="aPhysicsBody_8h_html_a03804771c0676c0fb6f538f47fc91308"><div class="ttname"><a href="PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308">ObjectSnapshot::body</a></div><div class="ttdeci">Physics::PhysicsBody * body</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00033">PhysicsBody.h:33</a></div></div>
-<div class="ttc" id="aPhysicsBody_8h_html_a3ff173f27d613583d2ad940fa19a1b2f"><div class="ttname"><a href="PhysicsBody_8h.html#a3ff173f27d613583d2ad940fa19a1b2f">ObjectSnapshot::time</a></div><div class="ttdeci">float time</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00034">PhysicsBody.h:34</a></div></div>
-<div class="ttc" id="aPhysicsBody_8h_html_a799ccdd1f55d6bcac2f50c85279faf40"><div class="ttname"><a href="PhysicsBody_8h.html#a799ccdd1f55d6bcac2f50c85279faf40">ObjectSnapshot::velocity</a></div><div class="ttdeci">glm::vec3 velocity</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00036">PhysicsBody.h:36</a></div></div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
+<div class="foldopen" id="foldopen00298" data-start="{" data-end="}">
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">  298</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">Physics::PhysicsSystem::reset</a>() {</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>    stepCount.store(0);</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    simTime = 0.0f;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> [body, initialState] : resetState) {</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        body-&gt;clearAllFrames(<a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        body-&gt;loadFrame(initialState, <a class="code hl_enumvalue" href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a>);</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    }</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>}</div>
+</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
+<div class="foldopen" id="foldopen00307" data-start="{" data-end="}">
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#a3de2dca62da6b73862f1c97cd61c54a1">  307</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#a3de2dca62da6b73862f1c97cd61c54a1">Physics::PhysicsSystem::clearRuntimeState</a>() {</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    std::lock_guard&lt;std::mutex&gt; bodiesLock(bodiesMutex);</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    resetState.clear();</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    solver.reset();</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    stepCount.store(0);</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    simTime = 0.0f;</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    {</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        std::lock_guard&lt;std::mutex&gt; snapshotLock(snapshotMutex);</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        currentSnapshots.clear();</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        previousSnapshots.clear();</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    }</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    snapshotReady.store(<span class="keyword">false</span>, std::memory_order_relaxed);</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>}</div>
+</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
+<div class="foldopen" id="foldopen00321" data-start="{" data-end="}">
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">  321</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">Physics::PhysicsSystem::enablePhysics</a>() {</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    physicsEnabled.store(<span class="keyword">true</span>);</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    snapshotReady.store(<span class="keyword">false</span>, std::memory_order_relaxed); <span class="comment">// so we don&#39;t read from the stale buffer</span></div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>}</div>
+</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
+<div class="foldopen" id="foldopen00326" data-start="{" data-end="}">
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno"><a class="line" href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">  326</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">Physics::PhysicsSystem::disablePhysics</a>() {</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    physicsEnabled.store(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>}</div>
+</div>
+<div class="ttc" id="aPhysicsBody_8h_html_a03804771c0676c0fb6f538f47fc91308"><div class="ttname"><a href="PhysicsBody_8h.html#a03804771c0676c0fb6f538f47fc91308">ObjectSnapshot::body</a></div><div class="ttdeci">Physics::PhysicsBody * body</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00035">PhysicsBody.h:35</a></div></div>
+<div class="ttc" id="aPhysicsBody_8h_html_a3ff173f27d613583d2ad940fa19a1b2f"><div class="ttname"><a href="PhysicsBody_8h.html#a3ff173f27d613583d2ad940fa19a1b2f">ObjectSnapshot::time</a></div><div class="ttdeci">float time</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00036">PhysicsBody.h:36</a></div></div>
+<div class="ttc" id="aPhysicsBody_8h_html_a799ccdd1f55d6bcac2f50c85279faf40"><div class="ttname"><a href="PhysicsBody_8h.html#a799ccdd1f55d6bcac2f50c85279faf40">ObjectSnapshot::velocity</a></div><div class="ttdeci">glm::vec3 velocity</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00038">PhysicsBody.h:38</a></div></div>
 <div class="ttc" id="aPhysicsBody_8h_html_a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241"><div class="ttname"><a href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2ac47569294e78f75f1f9efbec8b865241">BodyLock::NOLOCK</a></div><div class="ttdeci">@ NOLOCK</div></div>
 <div class="ttc" id="aPhysicsBody_8h_html_a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f"><div class="ttname"><a href="PhysicsBody_8h.html#a79b4e825c3dd3d73ce6694d87f854ed2af510b97de4ace11844b85f23d0fc012f">BodyLock::LOCK</a></div><div class="ttdeci">@ LOCK</div></div>
-<div class="ttc" id="aPhysicsBody_8h_html_ad34ad47ce42a11c8249293f6062a0d70"><div class="ttname"><a href="PhysicsBody_8h.html#ad34ad47ce42a11c8249293f6062a0d70">ObjectSnapshot::position</a></div><div class="ttdeci">glm::vec3 position</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00035">PhysicsBody.h:35</a></div></div>
-<div class="ttc" id="aPhysicsBody_8h_html_structObjectSnapshot"><div class="ttname"><a href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a></div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00032">PhysicsBody.h:32</a></div></div>
+<div class="ttc" id="aPhysicsBody_8h_html_a8b0eb56820df56c6a530d975f20944aa"><div class="ttname"><a href="PhysicsBody_8h.html#a8b0eb56820df56c6a530d975f20944aa">ObjectSnapshot::temperature</a></div><div class="ttdeci">float temperature</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00039">PhysicsBody.h:39</a></div></div>
+<div class="ttc" id="aPhysicsBody_8h_html_ad34ad47ce42a11c8249293f6062a0d70"><div class="ttname"><a href="PhysicsBody_8h.html#ad34ad47ce42a11c8249293f6062a0d70">ObjectSnapshot::position</a></div><div class="ttdeci">glm::vec3 position</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00037">PhysicsBody.h:37</a></div></div>
+<div class="ttc" id="aPhysicsBody_8h_html_structObjectSnapshot"><div class="ttname"><a href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a></div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00034">PhysicsBody.h:34</a></div></div>
 <div class="ttc" id="aPhysicsSystem_8h_html"><div class="ttname"><a href="PhysicsSystem_8h.html">PhysicsSystem.h</a></div></div>
 <div class="ttc" id="aPointMass_8h_html"><div class="ttname"><a href="PointMass_8h.html">PointMass.h</a></div></div>
+<div class="ttc" id="aThermalProperties_8h_html_a1098508ae2c9bda1b8ac13011937551d"><div class="ttname"><a href="ThermalProperties_8h.html#a1098508ae2c9bda1b8ac13011937551d">ThermalProperties::internalHeatPower</a></div><div class="ttdeci">double internalHeatPower</div><div class="ttdef"><b>Definition</b> <a href="ThermalProperties_8h_source.html#l00005">ThermalProperties.h:5</a></div></div>
+<div class="ttc" id="aThermalProperties_8h_html_a192f88e7fb3f29a4c0759a6951d623af"><div class="ttname"><a href="ThermalProperties_8h.html#a192f88e7fb3f29a4c0759a6951d623af">ThermalProperties::tempK</a></div><div class="ttdeci">double tempK</div><div class="ttdef"><b>Definition</b> <a href="ThermalProperties_8h_source.html#l00004">ThermalProperties.h:4</a></div></div>
+<div class="ttc" id="aThermalProperties_8h_html_structThermalProperties"><div class="ttname"><a href="ThermalProperties_8h.html#structThermalProperties">ThermalProperties</a></div><div class="ttdef"><b>Definition</b> <a href="ThermalProperties_8h_source.html#l00003">ThermalProperties.h:3</a></div></div>
+<div class="ttc" id="aThermalUtils_8h_html"><div class="ttname"><a href="ThermalUtils_8h.html">ThermalUtils.h</a></div></div>
 <div class="ttc" id="aclassBVH_html"><div class="ttname"><a href="classBVH.html">BVH</a></div><div class="ttdef"><b>Definition</b> <a href="BVH_8h_source.html#l00020">BVH.h:20</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a></div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00040">PhysicsBody.h:40</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html_a0c44730bee1088e28f85b4579f506c7d"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html#a0c44730bee1088e28f85b4579f506c7d">Physics::PhysicsBody::getMass</a></div><div class="ttdeci">float getMass(BodyLock lock) const</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8cpp_source.html#l00104">PhysicsBody.cpp:104</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html_acb13769923f966df84e223a540ace45d"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">Physics::PhysicsBody::setForce</a></div><div class="ttdeci">void setForce(const std::string &amp;name, const glm::vec3 &amp;force, BodyLock lock)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8cpp_source.html#l00025">PhysicsBody.cpp:25</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html">Physics::PhysicsBody</a></div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8h_source.html#l00043">PhysicsBody.h:43</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html_a04c6bf672135128ea6ebc6028c1a8a97"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html#a04c6bf672135128ea6ebc6028c1a8a97">Physics::PhysicsBody::getMass</a></div><div class="ttdeci">virtual double getMass(BodyLock lock) const</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8cpp_source.html#l00107">PhysicsBody.cpp:107</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsBody_html_acb13769923f966df84e223a540ace45d"><div class="ttname"><a href="classPhysics_1_1PhysicsBody.html#acb13769923f966df84e223a540ace45d">Physics::PhysicsBody::setForce</a></div><div class="ttdeci">void setForce(const std::string &amp;name, const glm::vec3 &amp;force, BodyLock lock)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsBody_8cpp_source.html#l00028">PhysicsBody.cpp:28</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a0925c56ed3f32dac7734bb55b54de818"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a0925c56ed3f32dac7734bb55b54de818">Physics::PhysicsSystem::fetchLatestSnapshot</a></div><div class="ttdeci">std::optional&lt; std::vector&lt; ObjectSnapshot &gt; &gt; fetchLatestSnapshot(float renderSimTime)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00043">PhysicsSystem.cpp:43</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a114d0b35fc66a96baf1c4e117fd41e9b"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">Physics::PhysicsSystem::solveProblem</a></div><div class="ttdeci">void solveProblem(PhysicsBody *body, const std::unordered_map&lt; std::string, double &gt; &amp;knowns, const std::string &amp;unknown=&quot;&quot;)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00239">PhysicsSystem.cpp:239</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a2441a3c9cc1816012454d02714c96db3"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">Physics::PhysicsSystem::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00250">PhysicsSystem.cpp:250</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a350570f0421c2bc6e762027b04c9775e"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">Physics::PhysicsSystem::addBody</a></div><div class="ttdeci">void addBody(PhysicsBody *body)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00139">PhysicsSystem.cpp:139</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a114d0b35fc66a96baf1c4e117fd41e9b"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a114d0b35fc66a96baf1c4e117fd41e9b">Physics::PhysicsSystem::solveProblem</a></div><div class="ttdeci">void solveProblem(PhysicsBody *body, const std::unordered_map&lt; std::string, double &gt; &amp;knowns, const std::string &amp;unknown=&quot;&quot;)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00287">PhysicsSystem.cpp:287</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a2441a3c9cc1816012454d02714c96db3"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a2441a3c9cc1816012454d02714c96db3">Physics::PhysicsSystem::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00298">PhysicsSystem.cpp:298</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a350570f0421c2bc6e762027b04c9775e"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a350570f0421c2bc6e762027b04c9775e">Physics::PhysicsSystem::addBody</a></div><div class="ttdeci">void addBody(PhysicsBody *body)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00152">PhysicsSystem.cpp:152</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a3760c2d498934e5f14f4a68bc6ebe35e"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a3760c2d498934e5f14f4a68bc6ebe35e">Physics::PhysicsSystem::~PhysicsSystem</a></div><div class="ttdeci">~PhysicsSystem()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00014">PhysicsSystem.cpp:14</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a3de2dca62da6b73862f1c97cd61c54a1"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a3de2dca62da6b73862f1c97cd61c54a1">Physics::PhysicsSystem::clearRuntimeState</a></div><div class="ttdeci">void clearRuntimeState()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00307">PhysicsSystem.cpp:307</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a5044b98c274908509a14d6a86d5b2ced"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a5044b98c274908509a14d6a86d5b2ced">Physics::PhysicsSystem::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00024">PhysicsSystem.cpp:24</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a52c470bc3e96b30c16d9bd44c97ca30a"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a52c470bc3e96b30c16d9bd44c97ca30a">Physics::PhysicsSystem::start</a></div><div class="ttdeci">void start()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00019">PhysicsSystem.cpp:19</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a69ab6a8d4580b0a7c250c45421c49d28"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">Physics::PhysicsSystem::step</a></div><div class="ttdeci">bool step(float dt)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00207">PhysicsSystem.cpp:207</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a69ab6a8d4580b0a7c250c45421c49d28"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a69ab6a8d4580b0a7c250c45421c49d28">Physics::PhysicsSystem::step</a></div><div class="ttdeci">bool step(float dt)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00255">PhysicsSystem.cpp:255</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_a8ca667cece20839864c63fe8f14f870d"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#a8ca667cece20839864c63fe8f14f870d">Physics::PhysicsSystem::waitForStop</a></div><div class="ttdeci">void waitForStop()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00029">PhysicsSystem.cpp:29</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_aa3b953e0aba6aa7f2fda5cbdae6c5646"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">Physics::PhysicsSystem::removeBody</a></div><div class="ttdeci">void removeBody(PhysicsBody *body)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00146">PhysicsSystem.cpp:146</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_ab8d9fa9feb0f48a71c504cec570f7d0c"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">Physics::PhysicsSystem::enablePhysics</a></div><div class="ttdeci">void enablePhysics()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00259">PhysicsSystem.cpp:259</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_aa3b953e0aba6aa7f2fda5cbdae6c5646"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#aa3b953e0aba6aa7f2fda5cbdae6c5646">Physics::PhysicsSystem::removeBody</a></div><div class="ttdeci">void removeBody(PhysicsBody *body)</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00159">PhysicsSystem.cpp:159</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_ab8d9fa9feb0f48a71c504cec570f7d0c"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#ab8d9fa9feb0f48a71c504cec570f7d0c">Physics::PhysicsSystem::enablePhysics</a></div><div class="ttdeci">void enablePhysics()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00321">PhysicsSystem.cpp:321</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_ac1ec04c0ecda11ea37edeb130857f6fa"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#ac1ec04c0ecda11ea37edeb130857f6fa">Physics::PhysicsSystem::getBodyById</a></div><div class="ttdeci">PhysicsBody * getBodyById(uint32_t id) const</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00034">PhysicsSystem.cpp:34</a></div></div>
 <div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_aefa23e1450e80dfd4847516e6d38fae3"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#aefa23e1450e80dfd4847516e6d38fae3">Physics::PhysicsSystem::PhysicsSystem</a></div><div class="ttdeci">PhysicsSystem(const glm::vec3 &amp;globalAccel=glm::vec3(0.0f, -Constants::STANDARD_GRAVITY, 0.0f))</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00012">PhysicsSystem.cpp:12</a></div></div>
-<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_af5b4862333beb18e738d66799d356949"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">Physics::PhysicsSystem::disablePhysics</a></div><div class="ttdeci">void disablePhysics()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00264">PhysicsSystem.cpp:264</a></div></div>
-<div class="ttc" id="anamespacePhysics_html"><div class="ttname"><a href="namespacePhysics.html">Physics</a></div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00016">SceneObject.h:16</a></div></div>
+<div class="ttc" id="aclassPhysics_1_1PhysicsSystem_html_af5b4862333beb18e738d66799d356949"><div class="ttname"><a href="classPhysics_1_1PhysicsSystem.html#af5b4862333beb18e738d66799d356949">Physics::PhysicsSystem::disablePhysics</a></div><div class="ttdeci">void disablePhysics()</div><div class="ttdef"><b>Definition</b> <a href="PhysicsSystem_8cpp_source.html#l00326">PhysicsSystem.cpp:326</a></div></div>
+<div class="ttc" id="anamespacePhysics_1_1Thermal_html_a2f2b081371d33b27fab1476da4081b23"><div class="ttname"><a href="namespacePhysics_1_1Thermal.html#a2f2b081371d33b27fab1476da4081b23">Physics::Thermal::convectionHeatRate</a></div><div class="ttdeci">double convectionHeatRate(const ThermalProperties &amp;props, double areaM2, double ambientTempK)</div><div class="ttdef"><b>Definition</b> <a href="ThermalUtils_8cpp_source.html#l00098">ThermalUtils.cpp:98</a></div></div>
+<div class="ttc" id="anamespacePhysics_1_1Thermal_html_a7d354d9cd4784f896b446fcaa286439c"><div class="ttname"><a href="namespacePhysics_1_1Thermal.html#a7d354d9cd4784f896b446fcaa286439c">Physics::Thermal::integrateTemperature</a></div><div class="ttdeci">void integrateTemperature(ThermalProperties &amp;props, double massKg, double dt, HeatRateFn &amp;&amp;heatRateAtTemp)</div><div class="ttdef"><b>Definition</b> <a href="ThermalUtils_8h_source.html#l00039">ThermalUtils.h:39</a></div></div>
+<div class="ttc" id="anamespacePhysics_1_1Thermal_html_aa13a0fda5c0989cf75e8b4667b69b6fb"><div class="ttname"><a href="namespacePhysics_1_1Thermal.html#aa13a0fda5c0989cf75e8b4667b69b6fb">Physics::Thermal::externalHeatFluxRate</a></div><div class="ttdeci">double externalHeatFluxRate(const ThermalProperties &amp;props, double areaM2)</div><div class="ttdef"><b>Definition</b> <a href="ThermalUtils_8cpp_source.html#l00111">ThermalUtils.cpp:111</a></div></div>
+<div class="ttc" id="anamespacePhysics_1_1Thermal_html_aacab006c23ae445dba58583d615319b1"><div class="ttname"><a href="namespacePhysics_1_1Thermal.html#aacab006c23ae445dba58583d615319b1">Physics::Thermal::ambientRadiationHeatRate</a></div><div class="ttdeci">double ambientRadiationHeatRate(const ThermalProperties &amp;props, double areaM2, double ambientTempK)</div><div class="ttdef"><b>Definition</b> <a href="ThermalUtils_8cpp_source.html#l00103">ThermalUtils.cpp:103</a></div></div>
+<div class="ttc" id="anamespacePhysics_html"><div class="ttname"><a href="namespacePhysics.html">Physics</a></div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00017">SceneObject.h:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

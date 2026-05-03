@@ -120,8 +120,8 @@ Collaboration diagram for FrameGraphCanvas:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa6a21e232fde85f2300119c8b2f0c1a5" id="r_aa6a21e232fde85f2300119c8b2f0c1a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFrameGraphCanvas.html#aa6a21e232fde85f2300119c8b2f0c1a5">FrameGraphCanvas</a> (QWidget *parent=nullptr)</td></tr>
 <tr class="separator:aa6a21e232fde85f2300119c8b2f0c1a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a79a484416f3ea872a4abef00bb4e74" id="r_a0a79a484416f3ea872a4abef00bb4e74"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFrameGraphCanvas.html#a0a79a484416f3ea872a4abef00bb4e74">setSharedData</a> (const std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; *frames, const std::array&lt; std::pair&lt; float, float &gt;, <a class="el" href="Metric_8h.html#a7140b57ca37e54cf77cbbf6648c925e6">kPlottableMetricCount</a> &gt; &amp;valueMinMax, float tMin, float tMax)</td></tr>
-<tr class="separator:a0a79a484416f3ea872a4abef00bb4e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92eea1af014812dd9a429318f6d480e4" id="r_a92eea1af014812dd9a429318f6d480e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFrameGraphCanvas.html#a92eea1af014812dd9a429318f6d480e4">setSharedData</a> (std::shared_ptr&lt; const std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; &gt; frames, const std::array&lt; std::pair&lt; float, float &gt;, <a class="el" href="Metric_8h.html#a7140b57ca37e54cf77cbbf6648c925e6">kPlottableMetricCount</a> &gt; &amp;valueMinMax, float tMin, float tMax)</td></tr>
+<tr class="separator:a92eea1af014812dd9a429318f6d480e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fe64d27af4e03abef21d4fa77c294a1" id="r_a4fe64d27af4e03abef21d4fa77c294a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFrameGraphCanvas.html#a4fe64d27af4e03abef21d4fa77c294a1">clear</a> ()</td></tr>
 <tr class="separator:a4fe64d27af4e03abef21d4fa77c294a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7d262482869ac8989b2a5514b6fb329" id="r_ad7d262482869ac8989b2a5514b6fb329"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFrameGraphCanvas.html#ad7d262482869ac8989b2a5514b6fb329">setMetric</a> (<a class="el" href="Metric_8h.html#abf74dfd688b4203cefa6d49f8d14403e">Metric</a> metric)</td></tr>
@@ -140,7 +140,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8h_source.html#l00011">11</a> of file <a class="el" href="FrameGraphCanvas_8h_source.html">FrameGraphCanvas.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8h_source.html#l00015">15</a> of file <a class="el" href="FrameGraphCanvas_8h_source.html">FrameGraphCanvas.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa6a21e232fde85f2300119c8b2f0c1a5" name="aa6a21e232fde85f2300119c8b2f0c1a5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa6a21e232fde85f2300119c8b2f0c1a5">&#9670;&#160;</a></span>FrameGraphCanvas()</h2>
@@ -166,7 +166,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00039">39</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00044">44</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 
 </div>
 </div>
@@ -186,7 +186,7 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00062">62</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00071">71</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -219,7 +219,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00152">152</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00186">186</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00127">127</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00159">159</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -280,7 +280,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00079">79</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00090">90</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 
 </div>
 </div>
@@ -308,7 +308,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00159">159</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00193">193</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +328,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00073">73</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00085">85</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -337,8 +337,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a0a79a484416f3ea872a4abef00bb4e74" name="a0a79a484416f3ea872a4abef00bb4e74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a79a484416f3ea872a4abef00bb4e74">&#9670;&#160;</a></span>setSharedData()</h2>
+<a id="a92eea1af014812dd9a429318f6d480e4" name="a92eea1af014812dd9a429318f6d480e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92eea1af014812dd9a429318f6d480e4">&#9670;&#160;</a></span>setSharedData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -346,7 +346,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void FrameGraphCanvas::setSharedData </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; const std::vector&lt; <a class="el" href="PhysicsBody_8h.html#structObjectSnapshot">ObjectSnapshot</a> &gt; &gt;&#160;</td>
           <td class="paramname"><em>frames</em>, </td>
         </tr>
         <tr>
@@ -375,11 +375,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00046">46</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FrameGraphCanvas_8cpp_source.html#l00056">56</a> of file <a class="el" href="FrameGraphCanvas_8cpp_source.html">FrameGraphCanvas.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classFrameGraphCanvas_a0a79a484416f3ea872a4abef00bb4e74_icgraph.svg" width="566" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classFrameGraphCanvas_a92eea1af014812dd9a429318f6d480e4_icgraph.svg" width="566" height="36"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 
 </div>

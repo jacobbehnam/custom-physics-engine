@@ -2,9 +2,12 @@ var classHierarchyWidget =
 [
     [ "HierarchyWidget", "classHierarchyWidget.html#aafc71a3e28240b106dc550909901dd61", null ],
     [ "addObject", "classHierarchyWidget.html#a32c08e80fc612430e0db40bf377fb5aa", null ],
+    [ "clearCameraFollowRequested", "classHierarchyWidget.html#a762380c3ee89098876ae12f098b58ed1", null ],
     [ "createObjectRequested", "classHierarchyWidget.html#afd0c8738b4b1e5b1cf5b6cae6c501d16", null ],
     [ "deleteObjectRequested", "classHierarchyWidget.html#a7038277ea74c8e9695eb8887900ec8f1", null ],
     [ "deleteSelected", "classHierarchyWidget.html#a23600df008993c71d2eb4d1d5fbf1a82", null ],
+    [ "focusObjectRequested", "classHierarchyWidget.html#a5c332b22891dade6203e0b509c1520e3", null ],
+    [ "followObjectRequested", "classHierarchyWidget.html#ab652f8ef6c669533e6504ffda40cf29e", null ],
     [ "keyPressEvent", "classHierarchyWidget.html#af79993812a2ea090b284d536e1528db7", null ],
     [ "onItemNameChanged", "classHierarchyWidget.html#ad4014093232abbe73804a49bd6d58569", null ],
     [ "onItemSelectionChanged", "classHierarchyWidget.html#ab078125f6163a25ab432c526697c6acd", null ],

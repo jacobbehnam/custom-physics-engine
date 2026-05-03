@@ -19,6 +19,9 @@ var annotated_dup =
     [ "Rendering", "namespaceRendering.html", [
       [ "InstanceData", "structRendering_1_1InstanceData.html", "structRendering_1_1InstanceData" ]
     ] ],
+    [ "ScenePresets", "namespaceScenePresets.html", [
+      [ "PresetDescriptor", "namespaceScenePresets.html#structScenePresets_1_1PresetDescriptor", "namespaceScenePresets_structScenePresets_1_1PresetDescriptor_dup" ]
+    ] ],
     [ "std", "namespacestd.html", [
       [ "hash< Vertex >", "structstd_1_1hash_3_01Vertex_01_4.html", "structstd_1_1hash_3_01Vertex_01_4" ]
     ] ],
@@ -83,6 +86,8 @@ var annotated_dup =
     [ "SnapshotTableModel", "classSnapshotTableModel.html", "classSnapshotTableModel" ],
     [ "SolverDecision", "ProblemRouter_8h.html#structSolverDecision", "ProblemRouter_8h_structSolverDecision" ],
     [ "SolverDialog", "classSolverDialog.html", "classSolverDialog" ],
+    [ "ThermalInspectorWidget", "classThermalInspectorWidget.html", "classThermalInspectorWidget" ],
+    [ "ThermalProperties", "ThermalProperties_8h.html#structThermalProperties", "ThermalProperties_8h_structThermalProperties" ],
     [ "TransformInspectorWidget", "classTransformInspectorWidget.html", "classTransformInspectorWidget" ],
     [ "TranslateHandle", "classTranslateHandle.html", "classTranslateHandle" ],
     [ "UniformBuffer", "classUniformBuffer.html", "classUniformBuffer" ],

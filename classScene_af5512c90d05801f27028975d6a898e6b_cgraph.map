@@ -1,17 +1,39 @@
 <map id="Scene::draw" name="Scene::draw">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,129,107,155"/>
-<area shape="rect" id="Node000002" href="$classCamera.html#a1a29e1564468a5b612eb141c9d44170d" title=" " alt="" coords="185,5,355,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,128,99,84,124,60,153,40,171,31,173,36,156,44,128,64,103,88,68,131"/>
-<area shape="rect" id="Node000003" href="$classCamera.html#a2f90e661a78172675ca06ea69667b531" title=" " alt="" coords="182,55,358,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="77,127,112,107,154,89,180,81,181,86,156,94,114,112,79,132"/>
-<area shape="rect" id="Node000004" href="$classSceneObject.html#ac01ac7731712baaeb3173a2a7e3f151a" title=" " alt="" coords="155,104,385,129"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="107,133,149,128,149,134,107,139"/>
-<area shape="rect" id="Node000005" href="$classCamera.html#a42cda7239981a5618660d04bd5893556" title=" " alt="" coords="207,153,333,179"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="107,145,194,155,193,160,107,150"/>
-<area shape="rect" id="Node000007" href="$classUniformBuffer.html#ab8c80840cb69d51f92ef35365deb47ef" title=" " alt="" coords="171,203,369,228"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="81,152,115,170,156,187,186,197,185,202,154,193,113,175,78,157"/>
-<area shape="rect" id="Node000008" href="$classShader.html#a3c7896754f0e1fca8bde860cfef63832" title=" " alt="" coords="221,252,319,277"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="68,153,103,195,128,218,156,237,181,248,208,255,207,260,179,253,153,242,125,222,100,199,64,156"/>
-<area shape="rect" id="Node000006" href="$classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9" title=" " alt="" coords="433,153,617,179"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="334,163,419,163,419,169,334,169"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,376,107,401"/>
+<area shape="rect" id="Node000002" href="$classSceneObject.html#a55121847afa67b03afa5a4a27922bde0" title="Gets the complete per&#45;instance data for GPU upload." alt="" coords="161,5,379,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="54,376,54,315,64,225,76,175,94,126,119,80,153,40,157,36,161,40,157,44,124,83,99,128,81,176,70,226,60,316,59,376"/>
+<area shape="rect" id="Node000004" href="$classSceneObject.html#ae86730acbd0a398e2a4d2473a2f52b8e" title="Gets the mesh geometry for this object." alt="" coords="187,55,353,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="55,375,58,322,71,245,83,203,100,161,123,123,153,89,172,77,175,81,156,93,127,126,105,164,88,204,76,246,63,323,60,376"/>
+<area shape="rect" id="Node000005" href="$classSceneObject.html#ab3595ced6ccce80d1e864bbf28e1988a" title=" " alt="" coords="163,104,377,129"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="56,376,62,330,77,266,89,231,106,197,127,166,153,139,159,134,162,138,156,143,131,169,111,200,94,233,82,268,67,331,61,376"/>
+<area shape="rect" id="Node000006" href="$classCamera.html#a1a29e1564468a5b612eb141c9d44170d" title=" " alt="" coords="185,153,355,179"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="57,375,66,338,84,287,112,233,131,209,153,188,171,177,174,182,156,192,135,212,116,236,89,289,71,339,62,376"/>
+<area shape="rect" id="Node000007" href="$classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00" title=" " alt="" coords="161,203,379,228"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="59,375,71,346,91,308,118,270,153,237,162,232,165,236,156,241,122,273,95,311,76,348,64,377"/>
+<area shape="rect" id="Node000008" href="$classCamera.html#a716b2c31725fbfc7283417df06047bb9" title=" " alt="" coords="159,252,381,277"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="64,374,99,331,124,306,153,286,167,280,170,284,156,291,128,311,103,334,68,378"/>
+<area shape="rect" id="Node000009" href="$classSceneObject.html#a80f6133afc5bdf8f4d5d560995c9718a" title="Gets the shader used to render this object." alt="" coords="181,301,359,327"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="77,374,112,354,154,336,180,327,181,333,156,340,114,359,79,378"/>
+<area shape="rect" id="Node000010" href="$classCamera.html#a962f895654dc24f21502b5141368c4d3" title=" " alt="" coords="199,351,341,376"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="107,380,185,371,186,376,107,385"/>
+<area shape="rect" id="Node000011" href="$classCamera.html#a2f90e661a78172675ca06ea69667b531" title=" " alt="" coords="182,400,358,425"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="107,392,169,399,168,404,107,397"/>
+<area shape="rect" id="Node000012" href="$classCamera.html#aaa52da46bef8a559e3cf79c8334f753e" title=" " alt="" coords="198,449,342,475"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="81,399,115,417,156,434,186,443,185,448,154,439,113,422,78,404"/>
+<area shape="rect" id="Node000013" href="$classCamera.html#a3365648721a971862141153e5730754a" title=" " alt="" coords="187,499,353,524"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="68,400,103,442,128,465,156,484,175,492,172,497,153,488,125,469,100,445,64,403"/>
+<area shape="rect" id="Node000014" href="$classSceneObject.html#ac01ac7731712baaeb3173a2a7e3f151a" title=" " alt="" coords="155,548,385,573"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="64,401,77,429,96,465,123,502,156,533,168,540,166,545,153,537,119,506,91,468,72,431,60,403"/>
+<area shape="rect" id="Node000015" href="$classSceneObject.html#acabdda3760407bdba426ac3d4488159f" title=" " alt="" coords="162,597,378,623"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="62,401,71,438,89,487,117,539,135,562,156,583,166,589,163,593,153,587,131,566,112,542,84,489,66,439,57,402"/>
+<area shape="rect" id="Node000016" href="$classCamera.html#a2c9b1877741ae1f8777b91446af61ac0" title=" " alt="" coords="207,647,333,672"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="61,401,67,446,83,509,95,542,111,575,131,606,156,632,174,643,194,651,192,656,171,648,153,636,127,609,107,578,90,545,78,510,62,447,56,402"/>
+<area shape="rect" id="Node000018" href="$classUniformBuffer.html#ab8c80840cb69d51f92ef35365deb47ef" title=" " alt="" coords="171,696,369,721"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="60,401,63,454,76,530,89,571,105,612,128,649,157,681,163,687,160,691,153,685,123,652,101,614,84,573,71,531,58,454,55,402"/>
+<area shape="rect" id="Node000019" href="$classShader.html#a3c7896754f0e1fca8bde860cfef63832" title=" " alt="" coords="221,745,319,771"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="59,402,60,461,70,550,82,599,100,647,124,692,156,731,180,746,207,754,206,759,178,751,153,735,120,695,95,650,77,601,65,551,55,462,54,402"/>
+<area shape="rect" id="Node000003" href="$classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8" title="Gets the unique identifier for this object." alt="" coords="433,5,621,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="379,15,419,15,419,21,379,21"/>
+<area shape="rect" id="Node000017" href="$classSceneObject.html#a3d1aa613dd4f4ee6947754a355a48cc9" title=" " alt="" coords="435,647,619,672"/>
+<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="334,657,421,657,421,662,334,662"/>
 </map>

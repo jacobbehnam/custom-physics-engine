@@ -4,5 +4,5 @@ var classFrameGraphWidget =
     [ "clear", "classFrameGraphWidget.html#a137ccd88adb67b01bd2c41acdaf1ee7b", null ],
     [ "setMetric", "classFrameGraphWidget.html#abcef1aa6ff7bbf2541a343e0317864de", null ],
     [ "setSelectorVisible", "classFrameGraphWidget.html#a85ab8c21cf549ab2f9d066e547de074b", null ],
-    [ "setSharedData", "classFrameGraphWidget.html#acb6a8f50f735a4629776c840c393865b", null ]
+    [ "setSharedData", "classFrameGraphWidget.html#aa9238351005da8918a7e302c5dcfe6f5", null ]
 ];

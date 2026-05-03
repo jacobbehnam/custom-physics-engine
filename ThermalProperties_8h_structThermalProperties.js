@@ -1,0 +1,26 @@
+var ThermalProperties_8h_structThermalProperties =
+[
+    [ "absorptivity", "ThermalProperties_8h.html#a5dfadaed5042de8e8ed3b5ced85236b6", null ],
+    [ "absorptivityTempCoeff", "ThermalProperties_8h.html#a810309833876cf9b1e89a18990e32bf4", null ],
+    [ "boilingPoint", "ThermalProperties_8h.html#ab685e2e60c9290c8da985277ee0d146f", null ],
+    [ "conductivity", "ThermalProperties_8h.html#ab2f025aae36eb295b00aca7c8cb0a554", null ],
+    [ "conductivityTempCoeff", "ThermalProperties_8h.html#acff252b567d82099f7e66d2c96468e7b", null ],
+    [ "density", "ThermalProperties_8h.html#aff20ed0c442768fb14a0829b3aa9ab77", null ],
+    [ "emissivity", "ThermalProperties_8h.html#ad8c04a3c66b1647a3f39d44476c114a0", null ],
+    [ "emissivityTempCoeff", "ThermalProperties_8h.html#aeaa7ba40d17cfdc4d5648703bb6bed61", null ],
+    [ "entropyJPerK", "ThermalProperties_8h.html#af814a65c17b53a83d9a070b453a45b3a", null ],
+    [ "externalHeatFlux", "ThermalProperties_8h.html#ab7a93592d02ae98d6a6c44ab63a194bf", null ],
+    [ "fusionProgress", "ThermalProperties_8h.html#a0cb50d6534e7dc8901cb3c683b4683d8", null ],
+    [ "heatTransferCoeff", "ThermalProperties_8h.html#a02affa35dc5eb84b3340ff3053344f0e", null ],
+    [ "internalHeatPower", "ThermalProperties_8h.html#a1098508ae2c9bda1b8ac13011937551d", null ],
+    [ "latentHeatFusion", "ThermalProperties_8h.html#a9db283d98f785941edc2becef605cf4c", null ],
+    [ "latentHeatVaporization", "ThermalProperties_8h.html#a37ded57e30329a36b309859b5cf4965e", null ],
+    [ "linearExpansionCoeff", "ThermalProperties_8h.html#a2f46134cde76a75c5635d23e53060cd9", null ],
+    [ "meltingPoint", "ThermalProperties_8h.html#aef2ed363b66be9f460a459bc102a771b", null ],
+    [ "referenceTempK", "ThermalProperties_8h.html#a0d9a05f1e8607ec88b7c054f592e1364", null ],
+    [ "specificHeat", "ThermalProperties_8h.html#a54216214df944b062cb1a316ed116004", null ],
+    [ "specificHeatTempCoeff", "ThermalProperties_8h.html#a5e8143c1c6952657533022e6ae8378bf", null ],
+    [ "tempK", "ThermalProperties_8h.html#a192f88e7fb3f29a4c0759a6951d623af", null ],
+    [ "thermalMassFraction", "ThermalProperties_8h.html#a25de2ea28dddae71eca844f648ce9765", null ],
+    [ "vaporizationProgress", "ThermalProperties_8h.html#a5c60243d784a73674185639150c5ebcf", null ]
+];

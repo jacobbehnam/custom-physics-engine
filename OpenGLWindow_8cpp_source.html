@@ -108,198 +108,467 @@ $(document).ready(function(){initNavTree('OpenGLWindow_8cpp_source.html',''); in
 <a href="OpenGLWindow_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="OpenGLWindow_8h.html">ui/OpenGLWindow.h</a>&quot;</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;QMouseEvent&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;QElapsedTimer&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="PhysicsSystem_8h.html">physics/PhysicsSystem.h</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">graphics/core/Scene.h</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="SceneManager_8h.html">graphics/core/SceneManager.h</a>&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="Gizmo_8h.html">graphics/components/Gizmo.h</a>&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="ResourceManager_8h.html">graphics/core/ResourceManager.h</a>&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a7b3e6349450e61dceb5e04b7671906ef">   11</a></span><a class="code hl_function" href="classOpenGLWindow.html#a7b3e6349450e61dceb5e04b7671906ef">OpenGLWindow::OpenGLWindow</a>(<a class="code hl_class" href="classScene.html">Scene</a>* scn, QWidget* parent) : QOpenGLWidget(parent), scene(scn) {}</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#aa220b192c71871aab9100f4058a8d62d">   13</a></span><a class="code hl_function" href="classOpenGLWindow.html#aa220b192c71871aab9100f4058a8d62d">OpenGLWindow::~OpenGLWindow</a>() {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">delete</span> scene;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>}</div>
-</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="foldopen" id="foldopen00017" data-start="{" data-end="}">
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">   17</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">OpenGLWindow::initializeGL</a>() {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    initializeOpenGLFunctions();</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <a class="code hl_function" href="classResourceManager.html#a0a235573ecd13c5102579a2b26eea515">ResourceManager::initialize</a>(<span class="keyword">this</span>); <span class="comment">// inherits from QOpenGLFunctions so can be cast to it</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    glEnable(GL_DEPTH_TEST);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="comment">// glEnable(GL_DEBUG_OUTPUT);</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="comment">// glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="comment">//                           GLsizei length, const GLchar* message, const void* userParam) {</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="comment">//     std::cerr &lt;&lt; &quot;OpenGL DEBUG: &quot; &lt;&lt; message &lt;&lt; std::endl;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="comment">// }, nullptr);</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    glLineWidth(10.0f);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    lastFrame = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    emit <a class="code hl_function" href="classOpenGLWindow.html#ac4e6f99f1a4dbda0da5e8d293b817094">glInitialized</a>();</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
-</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="foldopen" id="foldopen00034" data-start="{" data-end="}">
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">   34</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">OpenGLWindow::resizeGL</a>(<span class="keywordtype">int</span> w, <span class="keywordtype">int</span> h) {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="comment">// TODO: camera should be in SceneManager</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    glViewport(0, 0, w, h);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    scene-&gt;<a class="code hl_function" href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">getCamera</a>()-&gt;<a class="code hl_function" href="classCamera.html#ad4c5e591077abfa0f7ed95b231da38b9">setAspectRatio</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(w) / h);</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
-</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;QRect&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="PhysicsSystem_8h.html">physics/PhysicsSystem.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">graphics/core/Scene.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="SceneManager_8h.html">graphics/core/SceneManager.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="Gizmo_8h.html">graphics/components/Gizmo.h</a>&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="ResourceManager_8h.html">graphics/core/ResourceManager.h</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="SceneObject_8h.html">graphics/core/SceneObject.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="AppSettings_8h.html">ui/AppSettings.h</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="DebugSettings_8h.html">ui/settings/DebugSettings.h</a>&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;cmath&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;glm/gtc/matrix_transform.hpp&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">constexpr</span> <span class="keywordtype">float</span>  kDefaultGlLineWidth            = 10.0f;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">constexpr</span> <span class="keywordtype">double</span> kFpsUpdateIntervalSeconds      = 0.1;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kWheelDegreesPerStep           = 15;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kWheelDeltaDivisor             = 8;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelGridCellPx               = 32;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">constexpr</span> <span class="keywordtype">float</span>  kClipWMin                      = 0.000001f;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">constexpr</span> <span class="keywordtype">float</span>  kOffscreenDirectionEpsilonSq   = 1.0e-6f;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">constexpr</span> <span class="keywordtype">float</span>  kEdgeClampX                    = 0.98f;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">constexpr</span> <span class="keywordtype">float</span>  kEdgeClampY                    = 0.95f;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelPaddingPx                = 2;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelOffsetAboveObjectPx      = 8;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelStepYPx                  = 4;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelMinStepXPx               = 36;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">constexpr</span> <span class="keywordtype">int</span>    kLabelSearchRings              = 12;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#aa3eee540070ff748070689c474ff6eb3">   38</a></span><a class="code hl_function" href="classOpenGLWindow.html#aa3eee540070ff748070689c474ff6eb3">OpenGLWindow::OpenGLWindow</a>(QWidget* parent) : QOpenGLWidget(parent) {}</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">   40</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">OpenGLWindow::paintGL</a>() {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">auto</span> currentFrame = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    std::chrono::duration&lt;double&gt; deltaDuration = currentFrame - lastFrame;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">double</span> deltaTime = deltaDuration.count();</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    lastFrame = currentFrame;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordflow">if</span> (simulating) {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        renderSimTime += deltaTime * simSpeed;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">//sceneManager-&gt;stepPhysics(deltaTime);</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// 1) Acquire the latest batch of snapshots</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">auto</span> snaps = sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#a99fae998a17244a1a4c4de05227cddc8">physicsSystem</a>-&gt;fetchLatestSnapshot(renderSimTime);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">   40</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">OpenGLWindow::initializeGL</a>() {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    initializeOpenGLFunctions();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <a class="code hl_function" href="classResourceManager.html#a0a235573ecd13c5102579a2b26eea515">ResourceManager::initialize</a>(<span class="keyword">this</span>); <span class="comment">// inherits from QOpenGLFunctions so can be cast to it</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    glEnable(GL_DEPTH_TEST);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    glClearDepth(0.0);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    glDepthFunc(GL_GREATER);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// glEnable(GL_DEBUG_OUTPUT);</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity,</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">//                           GLsizei length, const GLchar* message, const void* userParam) {</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">//     std::cerr &lt;&lt; &quot;OpenGL DEBUG: &quot; &lt;&lt; message &lt;&lt; std::endl;</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// }, nullptr);</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467">processHeldKeys</a>(pressedKeys, deltaTime);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    glLineWidth(kDefaultGlLineWidth);</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> ray = getMouseRay();</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">updateHoverState</a>(ray);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    scene-&gt;<a class="code hl_function" href="classScene.html#af5512c90d05801f27028975d6a898e6b">draw</a>(snaps, sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#ad543933ed9afc042da4ec660664a1876">hoveredIDs</a>, sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#a67078b5b5512d16435811a4ca033bb01">selectedIDs</a>);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    lastFrame = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    emit <a class="code hl_function" href="classOpenGLWindow.html#ac4e6f99f1a4dbda0da5e8d293b817094">glInitialized</a>();</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    calculateFPS();</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    update();</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
+<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">   60</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">OpenGLWindow::resizeGL</a>(<span class="keywordtype">int</span> w, <span class="keywordtype">int</span> h) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="comment">// TODO: camera should be in SceneManager</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    glViewport(0, 0, w, h);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    scene-&gt;getCamera()-&gt;setAspectRatio(<span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(w) / h);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
 </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> OpenGLWindow::getMouseRay() {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    QPointF mousePos = <a class="code hl_function" href="classOpenGLWindow.html#aa9a79782ee03b05acd2fedba2cc73009">getMousePos</a>();</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    QSize fbSize = <a class="code hl_function" href="classOpenGLWindow.html#a1f6ce057f24901310bc6b3592718f5c7">getFramebufferSize</a>();</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">return</span> {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        scene-&gt;<a class="code hl_function" href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">getCamera</a>()-&gt;<a class="code hl_variable" href="classCamera.html#a04b5db2c530d8630660e8cfb93a4b3b5">position</a>,</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <a class="code hl_function" href="namespaceMath.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7">Math::screenToWorldRayDirection</a>(</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            mousePos.x(), mousePos.y(),</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            fbSize.width(), fbSize.height(),</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            scene-&gt;<a class="code hl_function" href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">getCamera</a>()-&gt;<a class="code hl_function" href="classCamera.html#a2f90e661a78172675ca06ea69667b531">getViewMatrix</a>(), scene-&gt;<a class="code hl_function" href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">getCamera</a>()-&gt;<a class="code hl_function" href="classCamera.html#a1a29e1564468a5b612eb141c9d44170d">getProjMatrix</a>())</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    };</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> OpenGLWindow::calculateFPS() {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keyword">static</span> <span class="keywordtype">int</span> frameCount = 0;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keyword">static</span> <span class="keywordtype">double</span> fps = 0.0f;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">static</span> std::chrono::steady_clock::time_point lastFpsUpdate = lastFrame;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    frameCount++;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    std::chrono::duration&lt;double&gt; fpsDuration = lastFrame - lastFpsUpdate;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordflow">if</span> (fpsDuration.count() &gt;= 0.1) {  <span class="comment">// Every 100 milliseconds</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        fps = frameCount / fpsDuration.count();</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        frameCount = 0;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        lastFpsUpdate = lastFrame;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        emit <a class="code hl_function" href="classOpenGLWindow.html#aa081ce2299c65f77ec2a3f663361b174">fpsUpdated</a>(fps);</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    }</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="}">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">   66</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">OpenGLWindow::paintGL</a>() {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">auto</span> currentFrame = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    std::chrono::duration&lt;double&gt; deltaDuration = currentFrame - lastFrame;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordtype">double</span> deltaTime = deltaDuration.count();</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    lastFrame = currentFrame;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">if</span> (simulating) {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        renderSimTime += deltaTime * simSpeed;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="comment">//sceneManager-&gt;stepPhysics(deltaTime);</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="comment">// 1) Acquire the latest batch of snapshots</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keyword">auto</span> snaps = sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#a99fae998a17244a1a4c4de05227cddc8">physicsSystem</a>-&gt;fetchLatestSnapshot(renderSimTime);</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467">processHeldKeys</a>(pressedKeys, deltaTime);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> ray = getMouseRay();</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">updateHoverState</a>(ray);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    scene-&gt;draw(snaps, sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#ad543933ed9afc042da4ec660664a1876">hoveredIDs</a>, sceneManager-&gt;<a class="code hl_variable" href="classSceneManager.html#a67078b5b5512d16435811a4ca033bb01">selectedIDs</a>);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    updateObjectLabels();</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    calculateFPS();</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    update();</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
+</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><a class="code hl_struct" href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a> OpenGLWindow::getMouseRay() {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    QPointF mousePos = <a class="code hl_function" href="classOpenGLWindow.html#aa9a79782ee03b05acd2fedba2cc73009">getMousePos</a>();</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    QSize fbSize = <a class="code hl_function" href="classOpenGLWindow.html#a1f6ce057f24901310bc6b3592718f5c7">getFramebufferSize</a>();</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">   96</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">OpenGLWindow::keyPressEvent</a>(QKeyEvent* event) {</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    simulating = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    pressedKeys.insert(event-&gt;key());</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>}</div>
-</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="foldopen" id="foldopen00101" data-start="{" data-end="}">
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">  101</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">OpenGLWindow::keyReleaseEvent</a>(QKeyEvent* event) {</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    pressedKeys.remove(event-&gt;key());</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordflow">return</span> {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        scene-&gt;getCamera()-&gt;position,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <a class="code hl_function" href="namespaceMath.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7">Math::screenToWorldRayDirection</a>(</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            mousePos.x(), mousePos.y(),</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            fbSize.width(), fbSize.height(),</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            scene-&gt;getCamera()-&gt;getViewMatrix(), scene-&gt;getCamera()-&gt;getProjMatrix())</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    };</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>}</div>
-</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">  105</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">OpenGLWindow::mousePressEvent</a>(QMouseEvent* event) {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    pressedMouseButtons.insert(event-&gt;button());</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    setFocus();</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">if</span> (sceneManager)</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">handleMouseButton</a>(event-&gt;button(), event-&gt;type(), event-&gt;modifiers());</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    update();</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
-</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keywordtype">void</span> OpenGLWindow::calculateFPS() {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keyword">static</span> <span class="keywordtype">int</span> frameCount = 0;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">static</span> <span class="keywordtype">double</span> fps = 0.0f;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">static</span> std::chrono::steady_clock::time_point lastFpsUpdate = lastFrame;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    frameCount++;</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="foldopen" id="foldopen00113" data-start="{" data-end="}">
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">  113</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">OpenGLWindow::mouseReleaseEvent</a>(QMouseEvent* event) {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    pressedMouseButtons.remove(event-&gt;button());</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">if</span> (sceneManager)</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">handleMouseButton</a>(event-&gt;button(), QEvent::MouseButtonRelease, event-&gt;modifiers());</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    update();</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    std::chrono::duration&lt;double&gt; fpsDuration = lastFrame - lastFpsUpdate;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keywordflow">if</span> (fpsDuration.count() &gt;= kFpsUpdateIntervalSeconds) {</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        fps = frameCount / fpsDuration.count();</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        frameCount = 0;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        lastFpsUpdate = lastFrame;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        emit <a class="code hl_function" href="classOpenGLWindow.html#aa081ce2299c65f77ec2a3f663361b174">fpsUpdated</a>(fps);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    }</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>}</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="foldopen" id="foldopen00123" data-start="{" data-end="}">
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">  123</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">OpenGLWindow::keyPressEvent</a>(QKeyEvent* event) {</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    pressedKeys.insert(event-&gt;key());</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>}</div>
 </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
-<div class="foldopen" id="foldopen00121" data-start="{" data-end="}">
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">  121</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">OpenGLWindow::setMouseCaptured</a>(<span class="keywordtype">bool</span> captured) {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    mouseCaptured = captured;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordflow">if</span> (captured) {</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        mouseLastPosBeforeCapture = QCursor::pos();</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        setCursor(Qt::BlankCursor);</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        setCursor(Qt::ArrowCursor);</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        QCursor::setPos(mouseLastPosBeforeCapture);</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    }</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>}</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="foldopen" id="foldopen00127" data-start="{" data-end="}">
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">  127</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">OpenGLWindow::keyReleaseEvent</a>(QKeyEvent* event) {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    pressedKeys.remove(event-&gt;key());</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>}</div>
 </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="foldopen" id="foldopen00132" data-start="{" data-end="}">
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">  132</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">OpenGLWindow::handleRawMouseDelta</a>(<span class="keywordtype">int</span> dx, <span class="keywordtype">int</span> dy) {</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordflow">if</span> (mouseCaptured) {</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        QCursor::setPos(mouseLastPosBeforeCapture);</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        scene-&gt;<a class="code hl_function" href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">getCamera</a>()-&gt;<a class="code hl_function" href="classCamera.html#a96d300da335234059e602591070ba009">processMouseMovement</a>(dx, -dy);</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    }</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="foldopen" id="foldopen00131" data-start="{" data-end="}">
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">  131</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">OpenGLWindow::mousePressEvent</a>(QMouseEvent* event) {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    pressedMouseButtons.insert(event-&gt;button());</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    setFocus();</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <span class="keywordflow">if</span> (sceneManager)</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">handleMouseButton</a>(event-&gt;button(), event-&gt;type(), event-&gt;modifiers());</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    update();</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>}</div>
 </div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
+<div class="foldopen" id="foldopen00139" data-start="{" data-end="}">
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">  139</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">OpenGLWindow::mouseReleaseEvent</a>(QMouseEvent* event) {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    pressedMouseButtons.remove(event-&gt;button());</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    <span class="keywordflow">if</span> (sceneManager)</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">handleMouseButton</a>(event-&gt;button(), QEvent::MouseButtonRelease, event-&gt;modifiers());</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    update();</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>}</div>
+</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
+<div class="foldopen" id="foldopen00147" data-start="{" data-end="}">
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#afcb03a667c42c8351312b7b06a08225c">  147</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#afcb03a667c42c8351312b7b06a08225c">OpenGLWindow::wheelEvent</a>(QWheelEvent* event) {</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keywordflow">if</span> (!scene) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keyword">const</span> QPoint numDegrees = <span class="keyword">event</span>-&gt;angleDelta() / kWheelDeltaDivisor;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> wheelSteps = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(numDegrees.y()) / <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(kWheelDegreesPerStep);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    scene-&gt;getCamera()-&gt;processScroll(wheelSteps);</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keyword">event</span>-&gt;accept();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    update();</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>}</div>
+</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="foldopen" id="foldopen00157" data-start="{" data-end="}">
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">  157</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">OpenGLWindow::setMouseCaptured</a>(<span class="keywordtype">bool</span> captured) {</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    mouseCaptured = captured;</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="keywordflow">if</span> (captured) {</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        mouseLastPosBeforeCapture = QCursor::pos();</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        setCursor(Qt::BlankCursor);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        setCursor(Qt::ArrowCursor);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        QCursor::setPos(mouseLastPosBeforeCapture);</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    }</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>}</div>
+</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="foldopen" id="foldopen00168" data-start="{" data-end="}">
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">  168</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">OpenGLWindow::handleRawMouseDelta</a>(<span class="keywordtype">int</span> dx, <span class="keywordtype">int</span> dy) {</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordflow">if</span> (mouseCaptured) {</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        QCursor::setPos(mouseLastPosBeforeCapture);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        scene-&gt;getCamera()-&gt;processMouseMovement(dx, -dy);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    }</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>}</div>
+</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="keywordtype">void</span> OpenGLWindow::hideObjectLabels() {</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="keywordflow">for</span> (QPushButton* button : objectLabelButtons) {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keywordflow">if</span> (button) button-&gt;hide();</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    }</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>}</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="keywordtype">void</span> OpenGLWindow::updateObjectLabels() {</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <span class="keywordflow">if</span> (!scene || !sceneManager) {</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        hideObjectLabels();</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    }</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keyword">auto</span>&amp; dbg = <a class="code hl_function" href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a>().<a class="code hl_function" href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">getGroup</a>&lt;<a class="code hl_struct" href="structDebugSettings.html">DebugSettings</a>&gt;();</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keywordflow">if</span> (!dbg.showObjectLabels) {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        hideObjectLabels();</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    }</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; objects = sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#af96b87421832797ab531895ec04bee09">getObjects</a>();</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    <span class="keywordflow">while</span> (objectLabelButtons.size() &lt; objects.size()) {</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="keyword">auto</span>* button = <span class="keyword">new</span> QPushButton(<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        button-&gt;setFocusPolicy(Qt::NoFocus);</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        button-&gt;setCursor(Qt::PointingHandCursor);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        connect(button, &amp;QPushButton::clicked, <span class="keyword">this</span>, [<span class="keyword">this</span>, button]() {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            <span class="keywordflow">if</span> (!sceneManager) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            <span class="keyword">const</span> uint32_t objectID = button-&gt;property(<span class="stringliteral">&quot;objectID&quot;</span>).toUInt();</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            <span class="keywordflow">if</span> (<a class="code hl_class" href="classSceneObject.html">SceneObject</a>* obj = sceneManager-&gt;<a class="code hl_function" href="classSceneManager.html#a48e7f142395f016ab391145e686f373e">getObjectByID</a>(objectID)) {</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                sceneManager-&gt;focusObject(obj);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                setFocus();</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            }</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        });</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        objectLabelButtons.push_back(button);</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    }</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keyword">const</span> glm::vec3 renderOrigin = <a class="code hl_function" href="classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00">SceneObject::getRenderOrigin</a>();</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keyword">const</span> <span class="keywordtype">bool</span> useFloatingOrigin = std::max({std::abs(renderOrigin.x), std::abs(renderOrigin.y), std::abs(renderOrigin.z)}) &gt; 0.0f;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="keyword">const</span> glm::mat4 view = useFloatingOrigin ? scene-&gt;getCamera()-&gt;getRenderViewMatrix() : scene-&gt;getCamera()-&gt;getViewMatrix();</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keyword">const</span> glm::mat4 proj = scene-&gt;getCamera()-&gt;getProjMatrix();</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> w = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(width());</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> h = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(height());</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> labelGridCols = std::max(1, (width() + kLabelGridCellPx - 1) / kLabelGridCellPx);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> labelGridRows = std::max(1, (height() + kLabelGridCellPx - 1) / kLabelGridCellPx);</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    std::vector&lt;unsigned char&gt; occupiedLabelCells(<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(labelGridCols * labelGridRows), 0);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keyword">auto</span> visitLabelCells = [&amp;](<span class="keyword">const</span> QRect&amp; rect, <span class="keyword">auto</span>&amp;&amp; visitor) {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> left = std::clamp(rect.left() / kLabelGridCellPx, 0, labelGridCols - 1);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> right = std::clamp(rect.right() / kLabelGridCellPx, 0, labelGridCols - 1);</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> top = std::clamp(rect.top() / kLabelGridCellPx, 0, labelGridRows - 1);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> bottom = std::clamp(rect.bottom() / kLabelGridCellPx, 0, labelGridRows - 1);</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> yCell = top; yCell &lt;= bottom; ++yCell) {</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> xCell = left; xCell &lt;= right; ++xCell) {</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                <span class="keywordflow">if</span> (visitor(xCell, yCell))</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            }</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    };</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    <span class="keyword">auto</span> overlapsOccupiedLabel = [&amp;](<span class="keyword">const</span> QRect&amp; rect) {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        <span class="keyword">const</span> QRect padded = rect.adjusted(-kLabelPaddingPx, -kLabelPaddingPx, kLabelPaddingPx, kLabelPaddingPx);</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        <span class="keywordflow">return</span> visitLabelCells(padded, [&amp;](<span class="keywordtype">int</span> xCell, <span class="keywordtype">int</span> yCell) {</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            <span class="keywordflow">return</span> occupiedLabelCells[<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(yCell * labelGridCols + xCell)] != 0;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        });</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    };</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keyword">auto</span> occupyLabel = [&amp;](<span class="keyword">const</span> QRect&amp; rect) {</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="keyword">const</span> QRect padded = rect.adjusted(-kLabelPaddingPx, -kLabelPaddingPx, kLabelPaddingPx, kLabelPaddingPx);</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        visitLabelCells(padded, [&amp;](<span class="keywordtype">int</span> xCell, <span class="keywordtype">int</span> yCell) {</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            occupiedLabelCells[<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(yCell * labelGridCols + xCell)] = 1;</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        });</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    };</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; objectLabelButtons.size(); ++i) {</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        QPushButton* button = objectLabelButtons[i];</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        <span class="keywordflow">if</span> (i &gt;= objects.size()) {</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>            button-&gt;hide();</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        }</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        <a class="code hl_class" href="classSceneObject.html">SceneObject</a>* obj = objects[i].get();</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="keyword">const</span> glm::vec3 objectPosition = glm::vec3(obj-&gt;<a class="code hl_function" href="classSceneObject.html#a2cde97cfbea49bee81f9bb8718f2ab27">getModelMatrix</a>()[3]);</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        <span class="keyword">const</span> glm::vec3 labelPosition = useFloatingOrigin ? objectPosition - renderOrigin : objectPosition;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        glm::vec4 clip = proj * view * glm::vec4(labelPosition, 1.0f);</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="keywordflow">if</span> (!std::isfinite(clip.x) || !std::isfinite(clip.y) || !std::isfinite(clip.z) || !std::isfinite(clip.w)) {</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            button-&gt;hide();</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        }</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> behindCamera = clip.w &lt; 0.0f;</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keywordflow">if</span> (behindCamera) {</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            clip.x = -clip.x;</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            clip.y = -clip.y;</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            clip.w = -clip.w;</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        }</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        glm::vec3 ndc = glm::vec3(clip) / std::max(clip.w, kClipWMin);</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <span class="keywordflow">if</span> (!std::isfinite(ndc.x) || !std::isfinite(ndc.y) || !std::isfinite(ndc.z)) {</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            button-&gt;hide();</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        }</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> outsideNdc = ndc.x &lt; -1.0f || ndc.x &gt; 1.0f || ndc.y &lt; -1.0f || ndc.y &gt; 1.0f;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> offscreen = behindCamera || outsideNdc;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        <span class="keywordflow">if</span> (offscreen) {</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>            <span class="keyword">const</span> glm::vec3 toObject = objectPosition - scene-&gt;getCamera()-&gt;position;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> cameraX = glm::dot(toObject, scene-&gt;getCamera()-&gt;right);</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> cameraY = glm::dot(toObject, scene-&gt;getCamera()-&gt;up);</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> cameraZ = glm::dot(toObject, scene-&gt;getCamera()-&gt;front);</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>            glm::vec2 edgeDir(</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                cameraZ &gt; kClipWMin ? cameraX / cameraZ : cameraX,</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                cameraZ &gt; kClipWMin ? cameraY / cameraZ : cameraY</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>            );</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="keywordflow">if</span> (glm::dot(edgeDir, edgeDir) &lt; kOffscreenDirectionEpsilonSq) {</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                edgeDir = glm::vec2(1.0f, 0.0f);</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>            }</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> scaleX = edgeDir.x != 0.0f ? kEdgeClampX / std::abs(edgeDir.x) : <a class="code hl_namespace" href="namespacestd.html">std</a>::numeric_limits&lt;float&gt;::infinity();</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> scaleY = edgeDir.y != 0.0f ? kEdgeClampY / std::abs(edgeDir.y) : <a class="code hl_namespace" href="namespacestd.html">std</a>::numeric_limits&lt;float&gt;::infinity();</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            <span class="keyword">const</span> <span class="keywordtype">float</span> edgeScale = std::min(scaleX, scaleY);</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            ndc.x = edgeDir.x * edgeScale;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>            ndc.y = edgeDir.y * edgeScale;</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            ndc.x = std::clamp(ndc.x, -kEdgeClampX, kEdgeClampX);</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>            ndc.y = std::clamp(ndc.y, -kEdgeClampY, kEdgeClampY);</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        }</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        <span class="keywordtype">bool</span> metricsDirty = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        QString labelText = QString::fromStdString(obj-&gt;<a class="code hl_function" href="classSceneObject.html#abebc043e3253d66da477f862a950775d">getName</a>());</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="keywordflow">if</span> (offscreen) {</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>            <span class="keywordflow">if</span> (std::abs(ndc.x) &gt; std::abs(ndc.y)) {</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                labelText = ndc.x &lt; 0.0f</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                    ? <span class="stringliteral">&quot;← &quot;</span> + labelText</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                    : labelText + <span class="stringliteral">&quot; →&quot;</span>;</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                labelText = ndc.y &lt; 0.0f</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                    ? labelText + <span class="stringliteral">&quot; ↓&quot;</span></div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                    : <span class="stringliteral">&quot;↑ &quot;</span> + labelText;</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>            }</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        }</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        <span class="keywordflow">if</span> (button-&gt;text() != labelText) {</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>            button-&gt;setText(labelText);</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            metricsDirty = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        }</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        button-&gt;setProperty(<span class="stringliteral">&quot;objectID&quot;</span>, obj-&gt;<a class="code hl_function" href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">getObjectID</a>());</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        <span class="keyword">const</span> QVariant oldOffscreen = button-&gt;property(<span class="stringliteral">&quot;offscreen&quot;</span>);</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        <span class="keywordflow">if</span> (!oldOffscreen.isValid() || oldOffscreen.toBool() != offscreen) {</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            button-&gt;setProperty(<span class="stringliteral">&quot;offscreen&quot;</span>, offscreen);</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            button-&gt;setStyleSheet(offscreen</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                ? <span class="stringliteral">&quot;QPushButton {&quot;</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                <span class="stringliteral">&quot; background: rgba(20, 22, 24, 120);&quot;</span></div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                <span class="stringliteral">&quot; border: 1px dashed rgba(20, 22, 24, 120);&quot;</span></div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                <span class="stringliteral">&quot; color: rgba(210, 210, 210, 170);&quot;</span></div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                <span class="stringliteral">&quot; padding: 1px 5px;&quot;</span></div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                <span class="stringliteral">&quot; font-size: 12px;&quot;</span></div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>                <span class="stringliteral">&quot; border-radius: 2px;&quot;</span></div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                <span class="stringliteral">&quot; min-height: 0px;&quot;</span></div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                <span class="stringliteral">&quot;}&quot;</span></div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                <span class="stringliteral">&quot;QPushButton:hover {&quot;</span></div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>                <span class="stringliteral">&quot; background: rgba(35, 38, 42, 170);&quot;</span></div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>                <span class="stringliteral">&quot; border-color: rgba(220, 220, 220, 180);&quot;</span></div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                <span class="stringliteral">&quot; color: rgba(235, 235, 235, 220);&quot;</span></div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                <span class="stringliteral">&quot;}&quot;</span></div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>                : <span class="stringliteral">&quot;QPushButton {&quot;</span></div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                <span class="stringliteral">&quot; background: rgba(28, 32, 35, 190);&quot;</span></div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                <span class="stringliteral">&quot; border: 1px solid rgba(115, 130, 135, 150);&quot;</span></div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>                <span class="stringliteral">&quot; color: rgba(235, 235, 235, 235);&quot;</span></div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                <span class="stringliteral">&quot; padding: 1px 5px;&quot;</span></div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>                <span class="stringliteral">&quot; font-size: 12px;&quot;</span></div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>                <span class="stringliteral">&quot; border-radius: 2px;&quot;</span></div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>                <span class="stringliteral">&quot; min-height: 0px;&quot;</span></div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>                <span class="stringliteral">&quot;}&quot;</span></div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                <span class="stringliteral">&quot;QPushButton:hover {&quot;</span></div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                <span class="stringliteral">&quot; background: rgba(44, 50, 54, 225);&quot;</span></div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>                <span class="stringliteral">&quot; border-color: rgba(150, 170, 175, 190);&quot;</span></div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>                <span class="stringliteral">&quot;}&quot;</span></div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>            );</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>            metricsDirty = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        }</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        <span class="keyword">const</span> QVariant metricsReady = button-&gt;property(<span class="stringliteral">&quot;metricsReady&quot;</span>);</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        <span class="keywordflow">if</span> (metricsDirty || !metricsReady.isValid() || !metricsReady.toBool()) {</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>            button-&gt;adjustSize();</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            button-&gt;setProperty(<span class="stringliteral">&quot;metricsReady&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        }</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span> </div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> maxX = std::max(0, width() - button-&gt;width());</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> maxY = std::max(0, height() - button-&gt;height());</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> baseX = std::clamp(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>((ndc.x * 0.5f + 0.5f) * w) - button-&gt;width() / 2, 0, maxX);</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> baseY = std::clamp(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>((1.0f - (ndc.y * 0.5f + 0.5f)) * h) - button-&gt;height() - kLabelOffsetAboveObjectPx, 0, maxY);</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> stepY = button-&gt;height() + kLabelStepYPx;</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> stepX = std::max(button-&gt;width() / 2, kLabelMinStepXPx);</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        <span class="keywordtype">int</span> bestX = baseX;</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        <span class="keywordtype">int</span> bestY = baseY;</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        <span class="keywordtype">int</span> bestScore = std::numeric_limits&lt;int&gt;::max();</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span> </div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ring = 0; ring &lt;= kLabelSearchRings; ++ring) {</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> dySign : {1, -1}) {</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                <span class="keyword">const</span> <span class="keywordtype">int</span> dy = ring == 0 ? 0 : dySign * ring * stepY;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> dxSign : {0, 1, -1}) {</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> dx = dxSign * ring * stepX;</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> candidateX = std::clamp(baseX + dx, 0, maxX);</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> candidateY = std::clamp(baseY + dy, 0, maxY);</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                    <span class="keyword">const</span> QRect candidate(candidateX, candidateY, button-&gt;width(), button-&gt;height());</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                    <span class="keywordflow">if</span> (overlapsOccupiedLabel(candidate)) <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span> </div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> score = (candidateX - baseX) * (candidateX - baseX) + (candidateY - baseY) * (candidateY - baseY);</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                    <span class="keywordflow">if</span> (score &lt; bestScore) {</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>                        bestScore = score;</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                        bestX = candidateX;</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                        bestY = candidateY;</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                    }</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>                }</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            }</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>            <span class="keywordflow">if</span> (bestScore != std::numeric_limits&lt;int&gt;::max()) <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>        }</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>        <span class="keyword">const</span> QRect placed(bestX, bestY, button-&gt;width(), button-&gt;height());</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>        occupyLabel(placed);</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>        button-&gt;move(bestX, bestY);</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        button-&gt;show();</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>        button-&gt;raise();</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>    }</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>}</div>
+<div class="ttc" id="aAppSettings_8h_html"><div class="ttname"><a href="AppSettings_8h.html">AppSettings.h</a></div></div>
+<div class="ttc" id="aDebugSettings_8h_html"><div class="ttname"><a href="DebugSettings_8h.html">DebugSettings.h</a></div></div>
 <div class="ttc" id="aGizmo_8h_html"><div class="ttname"><a href="Gizmo_8h.html">Gizmo.h</a></div><div class="ttdoc">Interactive 3D manipulation gizmo for scene objects.</div></div>
 <div class="ttc" id="aOpenGLWindow_8h_html"><div class="ttname"><a href="OpenGLWindow_8h.html">OpenGLWindow.h</a></div></div>
 <div class="ttc" id="aPhysicsSystem_8h_html"><div class="ttname"><a href="PhysicsSystem_8h.html">PhysicsSystem.h</a></div></div>
 <div class="ttc" id="aResourceManager_8h_html"><div class="ttname"><a href="ResourceManager_8h.html">ResourceManager.h</a></div></div>
 <div class="ttc" id="aSceneManager_8h_html"><div class="ttname"><a href="SceneManager_8h.html">SceneManager.h</a></div></div>
+<div class="ttc" id="aSceneObject_8h_html"><div class="ttname"><a href="SceneObject_8h.html">SceneObject.h</a></div></div>
 <div class="ttc" id="aScene_8h_html"><div class="ttname"><a href="Scene_8h.html">Scene.h</a></div></div>
-<div class="ttc" id="aclassCamera_html_a04b5db2c530d8630660e8cfb93a4b3b5"><div class="ttname"><a href="classCamera.html#a04b5db2c530d8630660e8cfb93a4b3b5">Camera::position</a></div><div class="ttdeci">glm::vec3 position</div><div class="ttdef"><b>Definition</b> <a href="Camera_8h_source.html#l00015">Camera.h:15</a></div></div>
-<div class="ttc" id="aclassCamera_html_a1a29e1564468a5b612eb141c9d44170d"><div class="ttname"><a href="classCamera.html#a1a29e1564468a5b612eb141c9d44170d">Camera::getProjMatrix</a></div><div class="ttdeci">glm::mat4 getProjMatrix() const</div><div class="ttdef"><b>Definition</b> <a href="Camera_8cpp_source.html#l00018">Camera.cpp:18</a></div></div>
-<div class="ttc" id="aclassCamera_html_a2f90e661a78172675ca06ea69667b531"><div class="ttname"><a href="classCamera.html#a2f90e661a78172675ca06ea69667b531">Camera::getViewMatrix</a></div><div class="ttdeci">glm::mat4 getViewMatrix() const</div><div class="ttdef"><b>Definition</b> <a href="Camera_8cpp_source.html#l00014">Camera.cpp:14</a></div></div>
-<div class="ttc" id="aclassCamera_html_a96d300da335234059e602591070ba009"><div class="ttname"><a href="classCamera.html#a96d300da335234059e602591070ba009">Camera::processMouseMovement</a></div><div class="ttdeci">void processMouseMovement(float xoffset, float yoffset)</div><div class="ttdef"><b>Definition</b> <a href="Camera_8cpp_source.html#l00051">Camera.cpp:51</a></div></div>
-<div class="ttc" id="aclassCamera_html_ad4c5e591077abfa0f7ed95b231da38b9"><div class="ttname"><a href="classCamera.html#ad4c5e591077abfa0f7ed95b231da38b9">Camera::setAspectRatio</a></div><div class="ttdeci">void setAspectRatio(float ratio)</div><div class="ttdef"><b>Definition</b> <a href="Camera_8h_source.html#l00037">Camera.h:37</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a1f6ce057f24901310bc6b3592718f5c7"><div class="ttname"><a href="classOpenGLWindow.html#a1f6ce057f24901310bc6b3592718f5c7">OpenGLWindow::getFramebufferSize</a></div><div class="ttdeci">QSize getFramebufferSize() const</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8h_source.html#l00030">OpenGLWindow.h:30</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a2a95d17daeae3447ca23d4e99c913b73"><div class="ttname"><a href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">OpenGLWindow::mouseReleaseEvent</a></div><div class="ttdeci">void mouseReleaseEvent(QMouseEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00113">OpenGLWindow.cpp:113</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a2bab1f7d3713b60e4c9c4632607fc382"><div class="ttname"><a href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">OpenGLWindow::resizeGL</a></div><div class="ttdeci">void resizeGL(int w, int h) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00034">OpenGLWindow.cpp:34</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a3db5152769ffded2ba4de8b6563c205a"><div class="ttname"><a href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">OpenGLWindow::mousePressEvent</a></div><div class="ttdeci">void mousePressEvent(QMouseEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00105">OpenGLWindow.cpp:105</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a4af260370ccb985f666db5ef5c49f60e"><div class="ttname"><a href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">OpenGLWindow::keyReleaseEvent</a></div><div class="ttdeci">void keyReleaseEvent(QKeyEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00101">OpenGLWindow.cpp:101</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a78a08ce4e95d04f81f579a5ee391f414"><div class="ttname"><a href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">OpenGLWindow::keyPressEvent</a></div><div class="ttdeci">void keyPressEvent(QKeyEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00096">OpenGLWindow.cpp:96</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a7b3e6349450e61dceb5e04b7671906ef"><div class="ttname"><a href="classOpenGLWindow.html#a7b3e6349450e61dceb5e04b7671906ef">OpenGLWindow::OpenGLWindow</a></div><div class="ttdeci">OpenGLWindow(Scene *scene, QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00011">OpenGLWindow.cpp:11</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_a7ecf04635ece36551edb2a0be6fddfbe"><div class="ttname"><a href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">OpenGLWindow::setMouseCaptured</a></div><div class="ttdeci">void setMouseCaptured(bool captured)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00121">OpenGLWindow.cpp:121</a></div></div>
+<div class="ttc" id="aclassAppSettings_html_a1a7b7175ec4769346b50d6c5735cfca9"><div class="ttname"><a href="classAppSettings.html#a1a7b7175ec4769346b50d6c5735cfca9">AppSettings::getInstance</a></div><div class="ttdeci">static AppSettings &amp; getInstance()</div><div class="ttdef"><b>Definition</b> <a href="AppSettings_8h_source.html#l00011">AppSettings.h:11</a></div></div>
+<div class="ttc" id="aclassAppSettings_html_a33dabfd8f02c3afa68e0b587c202519f"><div class="ttname"><a href="classAppSettings.html#a33dabfd8f02c3afa68e0b587c202519f">AppSettings::getGroup</a></div><div class="ttdeci">T &amp; getGroup() const</div><div class="ttdef"><b>Definition</b> <a href="AppSettings_8h_source.html#l00028">AppSettings.h:28</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a1f6ce057f24901310bc6b3592718f5c7"><div class="ttname"><a href="classOpenGLWindow.html#a1f6ce057f24901310bc6b3592718f5c7">OpenGLWindow::getFramebufferSize</a></div><div class="ttdeci">QSize getFramebufferSize() const</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8h_source.html#l00034">OpenGLWindow.h:34</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a2a95d17daeae3447ca23d4e99c913b73"><div class="ttname"><a href="classOpenGLWindow.html#a2a95d17daeae3447ca23d4e99c913b73">OpenGLWindow::mouseReleaseEvent</a></div><div class="ttdeci">void mouseReleaseEvent(QMouseEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00139">OpenGLWindow.cpp:139</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a2bab1f7d3713b60e4c9c4632607fc382"><div class="ttname"><a href="classOpenGLWindow.html#a2bab1f7d3713b60e4c9c4632607fc382">OpenGLWindow::resizeGL</a></div><div class="ttdeci">void resizeGL(int w, int h) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00060">OpenGLWindow.cpp:60</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a3db5152769ffded2ba4de8b6563c205a"><div class="ttname"><a href="classOpenGLWindow.html#a3db5152769ffded2ba4de8b6563c205a">OpenGLWindow::mousePressEvent</a></div><div class="ttdeci">void mousePressEvent(QMouseEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00131">OpenGLWindow.cpp:131</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a4af260370ccb985f666db5ef5c49f60e"><div class="ttname"><a href="classOpenGLWindow.html#a4af260370ccb985f666db5ef5c49f60e">OpenGLWindow::keyReleaseEvent</a></div><div class="ttdeci">void keyReleaseEvent(QKeyEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00127">OpenGLWindow.cpp:127</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a78a08ce4e95d04f81f579a5ee391f414"><div class="ttname"><a href="classOpenGLWindow.html#a78a08ce4e95d04f81f579a5ee391f414">OpenGLWindow::keyPressEvent</a></div><div class="ttdeci">void keyPressEvent(QKeyEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00123">OpenGLWindow.cpp:123</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_a7ecf04635ece36551edb2a0be6fddfbe"><div class="ttname"><a href="classOpenGLWindow.html#a7ecf04635ece36551edb2a0be6fddfbe">OpenGLWindow::setMouseCaptured</a></div><div class="ttdeci">void setMouseCaptured(bool captured)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00157">OpenGLWindow.cpp:157</a></div></div>
 <div class="ttc" id="aclassOpenGLWindow_html_aa081ce2299c65f77ec2a3f663361b174"><div class="ttname"><a href="classOpenGLWindow.html#aa081ce2299c65f77ec2a3f663361b174">OpenGLWindow::fpsUpdated</a></div><div class="ttdeci">void fpsUpdated(double fps)</div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_aa220b192c71871aab9100f4058a8d62d"><div class="ttname"><a href="classOpenGLWindow.html#aa220b192c71871aab9100f4058a8d62d">OpenGLWindow::~OpenGLWindow</a></div><div class="ttdeci">~OpenGLWindow()</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00013">OpenGLWindow.cpp:13</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_aa9a79782ee03b05acd2fedba2cc73009"><div class="ttname"><a href="classOpenGLWindow.html#aa9a79782ee03b05acd2fedba2cc73009">OpenGLWindow::getMousePos</a></div><div class="ttdeci">QPointF getMousePos() const</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8h_source.html#l00028">OpenGLWindow.h:28</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_abcc1c26d72708de1d3de2ef234d8b7f0"><div class="ttname"><a href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">OpenGLWindow::handleRawMouseDelta</a></div><div class="ttdeci">void handleRawMouseDelta(int dx, int dy)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00132">OpenGLWindow.cpp:132</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_aa3eee540070ff748070689c474ff6eb3"><div class="ttname"><a href="classOpenGLWindow.html#aa3eee540070ff748070689c474ff6eb3">OpenGLWindow::OpenGLWindow</a></div><div class="ttdeci">OpenGLWindow(QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00038">OpenGLWindow.cpp:38</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_aa9a79782ee03b05acd2fedba2cc73009"><div class="ttname"><a href="classOpenGLWindow.html#aa9a79782ee03b05acd2fedba2cc73009">OpenGLWindow::getMousePos</a></div><div class="ttdeci">QPointF getMousePos() const</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8h_source.html#l00032">OpenGLWindow.h:32</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_abcc1c26d72708de1d3de2ef234d8b7f0"><div class="ttname"><a href="classOpenGLWindow.html#abcc1c26d72708de1d3de2ef234d8b7f0">OpenGLWindow::handleRawMouseDelta</a></div><div class="ttdeci">void handleRawMouseDelta(int dx, int dy)</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00168">OpenGLWindow.cpp:168</a></div></div>
 <div class="ttc" id="aclassOpenGLWindow_html_ac4e6f99f1a4dbda0da5e8d293b817094"><div class="ttname"><a href="classOpenGLWindow.html#ac4e6f99f1a4dbda0da5e8d293b817094">OpenGLWindow::glInitialized</a></div><div class="ttdeci">void glInitialized()</div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_aea9ee69010d8451ab00cd488a8c6717d"><div class="ttname"><a href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">OpenGLWindow::paintGL</a></div><div class="ttdeci">void paintGL() override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00040">OpenGLWindow.cpp:40</a></div></div>
-<div class="ttc" id="aclassOpenGLWindow_html_af9bf97beb23f116f52bf4f1dde8a3281"><div class="ttname"><a href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">OpenGLWindow::initializeGL</a></div><div class="ttdeci">void initializeGL() override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00017">OpenGLWindow.cpp:17</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_aea9ee69010d8451ab00cd488a8c6717d"><div class="ttname"><a href="classOpenGLWindow.html#aea9ee69010d8451ab00cd488a8c6717d">OpenGLWindow::paintGL</a></div><div class="ttdeci">void paintGL() override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00066">OpenGLWindow.cpp:66</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_af9bf97beb23f116f52bf4f1dde8a3281"><div class="ttname"><a href="classOpenGLWindow.html#af9bf97beb23f116f52bf4f1dde8a3281">OpenGLWindow::initializeGL</a></div><div class="ttdeci">void initializeGL() override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00040">OpenGLWindow.cpp:40</a></div></div>
+<div class="ttc" id="aclassOpenGLWindow_html_afcb03a667c42c8351312b7b06a08225c"><div class="ttname"><a href="classOpenGLWindow.html#afcb03a667c42c8351312b7b06a08225c">OpenGLWindow::wheelEvent</a></div><div class="ttdeci">void wheelEvent(QWheelEvent *event) override</div><div class="ttdef"><b>Definition</b> <a href="OpenGLWindow_8cpp_source.html#l00147">OpenGLWindow.cpp:147</a></div></div>
 <div class="ttc" id="aclassResourceManager_html_a0a235573ecd13c5102579a2b26eea515"><div class="ttname"><a href="classResourceManager.html#a0a235573ecd13c5102579a2b26eea515">ResourceManager::initialize</a></div><div class="ttdeci">static void initialize(QOpenGLFunctions_4_5_Core *funcs)</div><div class="ttdef"><b>Definition</b> <a href="ResourceManager_8cpp_source.html#l00009">ResourceManager.cpp:9</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_a59f13c06bf3f19d5e543502a0ddd0467"><div class="ttname"><a href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467">SceneManager::processHeldKeys</a></div><div class="ttdeci">void processHeldKeys(const QSet&lt; int &gt; &amp;heldKeys, float dt)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00272">SceneManager.cpp:272</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_a67078b5b5512d16435811a4ca033bb01"><div class="ttname"><a href="classSceneManager.html#a67078b5b5512d16435811a4ca033bb01">SceneManager::selectedIDs</a></div><div class="ttdeci">std::unordered_set&lt; uint32_t &gt; selectedIDs</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00075">SceneManager.h:75</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_a9525363a1d77757f3be7e4f09c1500c9"><div class="ttname"><a href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">SceneManager::updateHoverState</a></div><div class="ttdeci">void updateHoverState(const Math::Ray &amp;mouseRay)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00207">SceneManager.cpp:207</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_a99fae998a17244a1a4c4de05227cddc8"><div class="ttname"><a href="classSceneManager.html#a99fae998a17244a1a4c4de05227cddc8">SceneManager::physicsSystem</a></div><div class="ttdeci">std::unique_ptr&lt; Physics::PhysicsSystem &gt; physicsSystem</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00078">SceneManager.h:78</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_ac517c77baec7191a36898308818ebb5f"><div class="ttname"><a href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">SceneManager::handleMouseButton</a></div><div class="ttdeci">void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00216">SceneManager.cpp:216</a></div></div>
-<div class="ttc" id="aclassSceneManager_html_ad543933ed9afc042da4ec660664a1876"><div class="ttname"><a href="classSceneManager.html#ad543933ed9afc042da4ec660664a1876">SceneManager::hoveredIDs</a></div><div class="ttdeci">std::unordered_set&lt; uint32_t &gt; hoveredIDs</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00075">SceneManager.h:75</a></div></div>
-<div class="ttc" id="aclassScene_html"><div class="ttname"><a href="classScene.html">Scene</a></div><div class="ttdef"><b>Definition</b> <a href="Scene_8h_source.html#l00011">Scene.h:11</a></div></div>
-<div class="ttc" id="aclassScene_html_a8ec1e638529f69f716e791ba3ac4d2f7"><div class="ttname"><a href="classScene.html#a8ec1e638529f69f716e791ba3ac4d2f7">Scene::getCamera</a></div><div class="ttdeci">Camera * getCamera()</div><div class="ttdef"><b>Definition</b> <a href="Scene_8cpp_source.html#l00098">Scene.cpp:98</a></div></div>
-<div class="ttc" id="aclassScene_html_af5512c90d05801f27028975d6a898e6b"><div class="ttname"><a href="classScene.html#af5512c90d05801f27028975d6a898e6b">Scene::draw</a></div><div class="ttdeci">void draw(const std::optional&lt; std::vector&lt; ObjectSnapshot &gt; &gt; &amp;snapshots, const std::unordered_set&lt; uint32_t &gt; &amp;hoverIDs, const std::unordered_set&lt; uint32_t &gt; &amp;selectIDs)</div><div class="ttdef"><b>Definition</b> <a href="Scene_8cpp_source.html#l00041">Scene.cpp:41</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_a48e7f142395f016ab391145e686f373e"><div class="ttname"><a href="classSceneManager.html#a48e7f142395f016ab391145e686f373e">SceneManager::getObjectByID</a></div><div class="ttdeci">SceneObject * getObjectByID(uint32_t objectID) const</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00178">SceneManager.cpp:178</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_a59f13c06bf3f19d5e543502a0ddd0467"><div class="ttname"><a href="classSceneManager.html#a59f13c06bf3f19d5e543502a0ddd0467">SceneManager::processHeldKeys</a></div><div class="ttdeci">void processHeldKeys(const QSet&lt; int &gt; &amp;heldKeys, float dt)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00353">SceneManager.cpp:353</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_a67078b5b5512d16435811a4ca033bb01"><div class="ttname"><a href="classSceneManager.html#a67078b5b5512d16435811a4ca033bb01">SceneManager::selectedIDs</a></div><div class="ttdeci">std::unordered_set&lt; uint32_t &gt; selectedIDs</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00086">SceneManager.h:86</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_a9525363a1d77757f3be7e4f09c1500c9"><div class="ttname"><a href="classSceneManager.html#a9525363a1d77757f3be7e4f09c1500c9">SceneManager::updateHoverState</a></div><div class="ttdeci">void updateHoverState(const Math::Ray &amp;mouseRay)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00279">SceneManager.cpp:279</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_a99fae998a17244a1a4c4de05227cddc8"><div class="ttname"><a href="classSceneManager.html#a99fae998a17244a1a4c4de05227cddc8">SceneManager::physicsSystem</a></div><div class="ttdeci">std::unique_ptr&lt; Physics::PhysicsSystem &gt; physicsSystem</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00089">SceneManager.h:89</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_ac517c77baec7191a36898308818ebb5f"><div class="ttname"><a href="classSceneManager.html#ac517c77baec7191a36898308818ebb5f">SceneManager::handleMouseButton</a></div><div class="ttdeci">void handleMouseButton(Qt::MouseButton button, QEvent::Type type, Qt::KeyboardModifiers mods)</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00297">SceneManager.cpp:297</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_ad543933ed9afc042da4ec660664a1876"><div class="ttname"><a href="classSceneManager.html#ad543933ed9afc042da4ec660664a1876">SceneManager::hoveredIDs</a></div><div class="ttdeci">std::unordered_set&lt; uint32_t &gt; hoveredIDs</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8h_source.html#l00086">SceneManager.h:86</a></div></div>
+<div class="ttc" id="aclassSceneManager_html_af96b87421832797ab531895ec04bee09"><div class="ttname"><a href="classSceneManager.html#af96b87421832797ab531895ec04bee09">SceneManager::getObjects</a></div><div class="ttdeci">const std::vector&lt; std::unique_ptr&lt; SceneObject &gt; &gt; &amp; getObjects() const</div><div class="ttdef"><b>Definition</b> <a href="SceneManager_8cpp_source.html#l00174">SceneManager.cpp:174</a></div></div>
+<div class="ttc" id="aclassSceneObject_html"><div class="ttname"><a href="classSceneObject.html">SceneObject</a></div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00022">SceneObject.h:22</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a2cde97cfbea49bee81f9bb8718f2ab27"><div class="ttname"><a href="classSceneObject.html#a2cde97cfbea49bee81f9bb8718f2ab27">SceneObject::getModelMatrix</a></div><div class="ttdeci">glm::mat4 getModelMatrix() const override</div><div class="ttdoc">Gets the model transformation matrix for this instance.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00078">SceneObject.cpp:78</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_a444efd8e0b34552d07e6dad15aaeba00"><div class="ttname"><a href="classSceneObject.html#a444efd8e0b34552d07e6dad15aaeba00">SceneObject::getRenderOrigin</a></div><div class="ttdeci">static glm::vec3 getRenderOrigin()</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00064">SceneObject.h:64</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_abebc043e3253d66da477f862a950775d"><div class="ttname"><a href="classSceneObject.html#abebc043e3253d66da477f862a950775d">SceneObject::getName</a></div><div class="ttdeci">const std::string &amp; getName() const</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8h_source.html#l00048">SceneObject.h:48</a></div></div>
+<div class="ttc" id="aclassSceneObject_html_ad77f12eb793b32da2ef40f0042cb1de8"><div class="ttname"><a href="classSceneObject.html#ad77f12eb793b32da2ef40f0042cb1de8">SceneObject::getObjectID</a></div><div class="ttdeci">uint32_t getObjectID() const override</div><div class="ttdoc">Gets the unique identifier for this object.</div><div class="ttdef"><b>Definition</b> <a href="SceneObject_8cpp_source.html#l00248">SceneObject.cpp:248</a></div></div>
 <div class="ttc" id="anamespaceMath_html_ab2a4127e5d2510ff22c7ee9a07a2c9b7"><div class="ttname"><a href="namespaceMath.html#ab2a4127e5d2510ff22c7ee9a07a2c9b7">Math::screenToWorldRayDirection</a></div><div class="ttdeci">glm::vec3 screenToWorldRayDirection(double mouseX, double mouseY, int fbWidth, int fbHeight, const glm::mat4 &amp;view, const glm::mat4 &amp;projection)</div><div class="ttdoc">Converts screen coordinates to a world-space ray direction.</div><div class="ttdef"><b>Definition</b> <a href="MathUtils_8h_source.html#l00117">MathUtils.h:117</a></div></div>
 <div class="ttc" id="anamespaceMath_html_structMath_1_1Ray"><div class="ttname"><a href="namespaceMath.html#structMath_1_1Ray">Math::Ray</a></div><div class="ttdoc">Represents a ray in 3D space.</div><div class="ttdef"><b>Definition</b> <a href="Ray_8h_source.html#l00011">Ray.h:11</a></div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">Hash specialization for Vertex to enable use in unordered containers.</div><div class="ttdef"><b>Definition</b> <a href="Mesh_8h_source.html#l00033">Mesh.h:33</a></div></div>
+<div class="ttc" id="astructDebugSettings_html"><div class="ttname"><a href="structDebugSettings.html">DebugSettings</a></div><div class="ttdef"><b>Definition</b> <a href="DebugSettings_8h_source.html#l00004">DebugSettings.h:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
