@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <numbers>
 #include <string_view>
 
 #include "graphics/core/ResourceManager.h"
@@ -18,7 +19,7 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     constexpr double defaultEpochJd = 2461161.5;
     constexpr double j2000Jd = 2451545.0;
     constexpr double julianCenturyDays = 36525.0;
-    constexpr double pi = 3.14159265358979323846264338327950288;
+    constexpr double pi = std::numbers::pi_v<double>;
     constexpr double degToRad = pi / 180.0;
 
     struct OrbitalElements {
@@ -88,7 +89,7 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     };
 
     auto emittedRadiationPower = [](double radiusKm, double tempK, double emissivity) {
-        const double radiusM = radiusKm * 1000.0;
+        const double radiusM = radiusKm * metersPerKm;
         const double surfaceArea = 4.0 * pi * radiusM * radiusM;
         return emissivity * Constants::STEFAN_BOLTZMANN * surfaceArea * std::pow(tempK, 4.0);
     };
@@ -96,7 +97,7 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     const double sunLuminosity = emittedRadiationPower(sunRadiusKm, sunTempK, 1.0);
 
     auto absorbedSolarPower = [&](double radiusKm, double orbitDistanceAu, double absorptivity) {
-        const double radiusM = radiusKm * 1000.0;
+        const double radiusM = radiusKm * metersPerKm;
         const double projectedArea = pi * radiusM * radiusM;
         const double orbitDistanceM = orbitDistanceAu * metersPerAu;
         const double irradiance = sunLuminosity / (4.0 * pi * orbitDistanceM * orbitDistanceM);
@@ -152,10 +153,11 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     };
 
     auto normalizeRadians = [](double angle) {
-        constexpr double twoPi = 6.28318530717958647692528676655900576;
+        constexpr double pi = std::numbers::pi_v<double>;
+        constexpr double twoPi = 2.0 * pi;
         angle = std::fmod(angle, twoPi);
-        if (angle < -3.14159265358979323846264338327950288) angle += twoPi;
-        if (angle > 3.14159265358979323846264338327950288) angle -= twoPi;
+        if (angle < -pi) angle += twoPi;
+        if (angle > pi) angle -= twoPi;
         return angle;
     };
 

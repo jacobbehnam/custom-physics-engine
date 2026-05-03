@@ -173,7 +173,7 @@ TEST(PhysicsSystem, Management_AddGetRemove) {
 TEST(PhysicsSystem, Parameters_GlobalSettings) {
     Physics::PhysicsSystem system;
 
-    EXPECT_FLOAT_EQ(system.getGlobalAcceleration().y, -9.81f);
+    EXPECT_FLOAT_EQ(system.getGlobalAcceleration().y, -Constants::STANDARD_GRAVITY);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 1.0f);
 
     system.setGlobalAcceleration(glm::vec3(0.0f));
@@ -461,7 +461,7 @@ TEST(Integration, Constant_Velocity_Zero_Acceleration) {
 }
 
 TEST(Integration, Freefall_Zero_Initial_Velocity) {
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 1.0f;
     constexpr float dt = 0.01f;
     constexpr float startY = 100.0f;
@@ -484,7 +484,7 @@ TEST(Integration, Freefall_Zero_Initial_Velocity) {
 }
 
 TEST(Integration, Freefall_With_Initial_Velocity) {
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 10.0f;
     constexpr float dt = 0.01f;
 
@@ -508,7 +508,7 @@ TEST(Integration, Freefall_With_Initial_Velocity) {
 
 TEST(Integration, Multi_Axis_Forces) {
     // Forces: Gravity on Y axis, Thrust on X and Y axis
-    constexpr float gravity = -9.81f;
+    constexpr float gravity = -Constants::STANDARD_GRAVITY;
     constexpr float time = 2.5f;
     constexpr float dt = 0.01f;
 

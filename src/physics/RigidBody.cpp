@@ -8,6 +8,11 @@
 #include "bounding/BoxCollider.h"
 #include "physics/utils/ThermalUtils.h"
 
+namespace {
+constexpr double kContactAreaFraction = 0.01;
+constexpr double kContactConductionDistance = 0.01;
+}
+
 void Physics::RigidBody::setScale(const glm::vec3& newScale) {
     std::lock_guard<std::mutex> lock(stateMutex);
     scale = newScale;
@@ -132,8 +137,8 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     Physics::Thermal::applyThermalEnergy(rbProps, getMass(BodyLock::NOLOCK), keLost * 0.5);
     Physics::Thermal::applyThermalEnergy(pmProps, pm.getMass(BodyLock::NOLOCK), keLost * 0.5);
 
-    const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
-    const double distance = 0.01;
+    const double contactArea = kContactAreaFraction * std::min(getSurfaceArea(), pm.getSurfaceArea());
+    const double distance = kContactConductionDistance;
     Physics::Thermal::applyConductiveExchange(
         rbProps, getMass(BodyLock::NOLOCK),
         pmProps, pm.getMass(BodyLock::NOLOCK),

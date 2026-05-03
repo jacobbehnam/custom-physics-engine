@@ -5,6 +5,12 @@
 #include "RigidBody.h"
 #include "physics/utils/ThermalUtils.h"
 
+namespace {
+constexpr float kPointMassCollisionDistance = 0.01f;
+constexpr double kContactAreaFraction = 0.01;
+constexpr double kContactConductionDistance = 0.01;
+}
+
 Physics::PointMass::PointMass(uint32_t id, double m, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setPosition(pos, BodyLock::NOLOCK);
@@ -101,8 +107,7 @@ bool Physics::PointMass::collidesWith(const PhysicsBody &other) const {
 }
 
 bool Physics::PointMass::collidesWithPointMass(const PointMass &pm) const {
-    float threshold = 0.01f;
-    return glm::distance(getPosition(BodyLock::LOCK), pm.getPosition(BodyLock::LOCK)) <= threshold;
+    return glm::distance(getPosition(BodyLock::LOCK), pm.getPosition(BodyLock::LOCK)) <= kPointMassCollisionDistance;
 }
 
 bool Physics::PointMass::collidesWithRigidBody(const RigidBody &rb) const {
@@ -134,8 +139,8 @@ bool Physics::PointMass::resolveCollisionWithPointMass(float dt, PointMass &pm) 
     // Contact conduction
     ThermalProperties myProps = getThermalProperties(BodyLock::NOLOCK);
     ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
-    const double contactArea = 0.01 * std::min(getSurfaceArea(), pm.getSurfaceArea());
-    const double distance = 0.01;
+    const double contactArea = kContactAreaFraction * std::min(getSurfaceArea(), pm.getSurfaceArea());
+    const double distance = kContactConductionDistance;
     Physics::Thermal::applyConductiveExchange(
         myProps, getMass(BodyLock::NOLOCK),
         pmProps, pm.getMass(BodyLock::NOLOCK),

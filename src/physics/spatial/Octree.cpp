@@ -8,6 +8,8 @@
 
 namespace {
 constexpr float kMinNodeHalfSize = 0.001f;
+constexpr std::size_t kTraversalStackReserve = 512;
+constexpr double kMinRadiationDistanceSq = 0.0001;
 
 bool containsPosition(const OctreeNode& node, const glm::vec3& position) {
     const glm::vec3 delta = glm::abs(position - node.center);
@@ -147,10 +149,8 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
     glm::vec3 bodyPos   = body->getPosition(BodyLock::NOLOCK);
     double bodyMass      = body->getMass(BodyLock::NOLOCK);
 
-    // Use vector incase overflow
-    // I was planning for 512 elements but not sure
     std::vector<NodeIndex> stack;
-    stack.reserve(512);
+    stack.reserve(kTraversalStackReserve);
     stack.push_back(NodeIndex::rootIndex());
 
     while (!stack.empty()) {
@@ -214,7 +214,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
     double projectedArea = area * 0.25;
 
     std::vector<NodeIndex> stack;
-    stack.reserve(512);
+    stack.reserve(kTraversalStackReserve);
     stack.push_back(NodeIndex::rootIndex());
 
     while (!stack.empty()) {
@@ -226,7 +226,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
 
         glm::vec3 dist = node.massCenter - bodyPos;
         double distSq = static_cast<double>(glm::dot(dist, dist));
-        if (distSq < 0.0001) distSq = 0.0001;
+        if (distSq < kMinRadiationDistanceSq) distSq = kMinRadiationDistanceSq;
 
         float widthSq = node.halfSize * node.halfSize * 4.0f;
         const bool nodeContainsBody = containsPosition(node, bodyPos);
@@ -236,7 +236,7 @@ double Octree::computeHeat(Physics::PhysicsBody* body) {
                 if (other == body) continue;
                 glm::vec3 pairDist = other->getPosition(BodyLock::NOLOCK) - bodyPos;
                 double pairDistSq = static_cast<double>(glm::dot(pairDist, pairDist));
-                if (pairDistSq < 0.0001) pairDistSq = 0.0001;
+                if (pairDistSq < kMinRadiationDistanceSq) pairDistSq = kMinRadiationDistanceSq;
 
                 double otherArea = other->getSurfaceArea();
                 ThermalProperties otherProps = other->getThermalProperties(BodyLock::NOLOCK);
