@@ -50,8 +50,7 @@ public:
     bool isEmpty() const { return m_gpu.empty(); }
 
 private:
-    static constexpr uint32_t kLeaf = 0x80000000u;
-    static constexpr int kMaxLeafTris = 7;
+    static constexpr int      kMaxLeafTris = 7;
     struct RangeBounds {
         glm::vec3 bmin{};
         glm::vec3 bmax{};

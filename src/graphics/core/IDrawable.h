@@ -113,9 +113,10 @@ public:
     /**
      * @brief Gets the model transformation matrix for this instance.
      *
-     * The model matrix transforms vertices from model space to world space,
-     * encoding the object's position, rotation, and scale. This matrix is
-     * uploaded to the GPU as part of the instance data.
+     * The model matrix transforms vertices from model space to render space.
+     * World-space drawables should subtract SceneObject::getRenderOrigin()
+     * before uploading instance data. Simulation, picking, and serialization
+     * must keep using world-space transforms.
      *
      * @return The 4x4 model transformation matrix.
      *

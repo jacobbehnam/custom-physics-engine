@@ -7,11 +7,13 @@
 #include "bounding/ICollider.h"
 #include "physics/PhysicsBody.h"
 
+class Mesh;
+
 namespace Physics {
 
     class RigidBody : public PhysicsBody {
     public:
-        RigidBody(uint32_t id, float mass, std::unique_ptr<Bounding::ICollider> collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
+        RigidBody(uint32_t id, double mass, std::unique_ptr<Bounding::ICollider> collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = false);
         explicit RigidBody(uint32_t id, std::unique_ptr<Bounding::ICollider> collider, glm::vec3 pos = glm::vec3(0.0f), bool isStatic = true); // static objects dont need mass
 
         void step(float dt, BodyLock lock) override;
@@ -25,11 +27,19 @@ namespace Physics {
         bool collidesWithPointMass(const PointMass &pm) const override;
         bool collidesWithRigidBody(const RigidBody &rb) const override;
 
-        bool resolveCollisionWith(PhysicsBody &other) override;
-        bool resolveCollisionWithPointMass(PointMass &pm) override;
-        bool resolveCollisionWithRigidBody(RigidBody &rb) override;
+        bool resolveCollisionWith(float dt, PhysicsBody &other) override;
+        bool resolveCollisionWithPointMass(float dt, PointMass &pm) override;
+        bool resolveCollisionWithRigidBody(float dt, RigidBody &rb) override;
+
+        void setScale(const glm::vec3& newScale);
+        void setGeometry(const std::vector<glm::vec3>& vertices, const std::vector<unsigned int>& indices);
     private:
         std::unique_ptr<Bounding::ICollider> collider;
+        glm::vec3 scale = glm::vec3(1.0f);
+        std::vector<glm::vec3> meshVertices;
+        std::vector<unsigned int> meshIndices;
+
+        void recomputeGeometry();
     };
 
 }

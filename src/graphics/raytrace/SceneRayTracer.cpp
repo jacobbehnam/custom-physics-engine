@@ -13,19 +13,13 @@
 #include <QOpenGLFunctions_4_5_Core>
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstring>
-#include <fstream>
 #include <glm/common.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-#include <glm/gtc/constants.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <limits>
 #include <span>
-#include <sstream>
-#include <thread>
 
 namespace {
 
@@ -33,39 +27,11 @@ using Raytrace::GpuBvhNode;
 using Raytrace::GpuTri;
 using Raytrace::MaterialKind;
 
-constexpr uint32_t kLeaf = 0x80000000u;
-constexpr uint32_t kLeafStartMask = 0x0FFFFFFFu;
-constexpr uint32_t kLeafCountShift = 28u;
-constexpr uint32_t kLeafCountMask = 0x7u;
-constexpr int kBvhStackSize = 64;
-constexpr float kRayBias = 1.0e-3f;
-constexpr float kFarClip = 300000.0f;
-constexpr float kCpuFallbackMaxScale = 0.5f;
+constexpr float kFarClip                = 300000.0f;
 constexpr float kGpuInteractiveMaxScale = 0.6f;
-const glm::vec3 kSunDir = glm::normalize(glm::vec3(0.35f, 0.9f, 0.22f));
-const glm::vec3 kSunRadiance = glm::vec3(4.6f, 4.2f, 3.8f);
-
-struct CpuHit {
-    float t{std::numeric_limits<float>::max()};
-    uint32_t triIndex{0};
-    glm::vec3 bary{0.0f};
-    glm::vec3 position{0.0f};
-    glm::vec3 normal{0.0f};
-    glm::vec3 geomNormal{0.0f};
-    glm::vec3 albedo{0.0f};
-    glm::vec3 emissive{0.0f};
-    bool hit{false};
-};
-
-static std::string readAll(const char* path) {
-    std::ifstream file(path);
-    if (!file) {
-        return {};
-    }
-    std::stringstream ss;
-    ss << file.rdbuf();
-    return ss.str();
-}
+constexpr float kEmptySceneClearRed     = 0.40f;
+constexpr float kEmptySceneClearGreen   = 0.52f;
+constexpr float kEmptySceneClearBlue    = 0.66f;
 
 static GLuint compileShader(GLenum type, const std::string& source, const char* label, QOpenGLFunctions_4_5_Core* gl) {
     const char* src = source.c_str();
@@ -124,342 +90,11 @@ static MaterialKind pickMaterialKind(const SceneObject& object) {
         : MaterialKind::Matte;
 }
 
-static std::array<float, 2> aabbInterval(
-    const glm::vec3& origin, const glm::vec3& invDir, const glm::vec3& bmin, const glm::vec3& bmax) {
-    const glm::vec3 t0 = (bmin - origin) * invDir;
-    const glm::vec3 t1 = (bmax - origin) * invDir;
-    const glm::vec3 tMin = glm::min(t0, t1);
-    const glm::vec3 tMax = glm::max(t0, t1);
-    return {
-        std::max(tMin.x, std::max(tMin.y, tMin.z)),
-        std::min(tMax.x, std::min(tMax.y, tMax.z)),
-    };
-}
-
-static glm::vec3 geometricNormal(const GpuTri& tri) {
-    return glm::normalize(glm::cross(glm::vec3(tri.v1) - glm::vec3(tri.v0), glm::vec3(tri.v2) - glm::vec3(tri.v0)));
-}
-
 static bool isFiniteVec3(const glm::vec3& v) {
     return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
 }
 
-static bool tryTriangle(
-    const GpuTri& tri, const glm::vec3& origin, const glm::vec3& dir, float tMax, float& tHit, glm::vec3& bary) {
-    const glm::vec3 v0(tri.v0);
-    const glm::vec3 v1(tri.v1);
-    const glm::vec3 v2(tri.v2);
-    const glm::vec3 e1 = v1 - v0;
-    const glm::vec3 e2 = v2 - v0;
-    const glm::vec3 p = glm::cross(dir, e2);
-    const float det = glm::dot(e1, p);
-    if (std::abs(det) < 1.0e-6f) {
-        return false;
-    }
-
-    const float invDet = 1.0f / det;
-    const glm::vec3 t = origin - v0;
-    const float u = glm::dot(t, p) * invDet;
-    if (u < 0.0f || u > 1.0f) {
-        return false;
-    }
-
-    const glm::vec3 q = glm::cross(t, e1);
-    const float v = glm::dot(dir, q) * invDet;
-    if (v < 0.0f || (u + v) > 1.0f) {
-        return false;
-    }
-
-    const float hit = glm::dot(e2, q) * invDet;
-    if (hit < 1.0e-4f || hit >= tMax) {
-        return false;
-    }
-
-    tHit = hit;
-    bary = glm::vec3(1.0f - u - v, u, v);
-    return true;
-}
-
-static uint32_t decodeLeafCount(uint32_t packed) {
-    return (packed >> kLeafCountShift) & kLeafCountMask;
-}
-
-static uint32_t decodeLeafStart(uint32_t packed) {
-    return packed & kLeafStartMask;
-}
-
-static uint32_t triangleMaterialKind(const GpuTri& tri) {
-    return static_cast<uint32_t>(tri.material.w + 0.5f);
-}
-
-static glm::vec3 evaluateMaterial(const GpuTri& tri, const glm::vec3& position) {
-    const glm::vec3 base = glm::clamp(glm::vec3(tri.material), glm::vec3(0.02f), glm::vec3(0.98f));
-    if (triangleMaterialKind(tri) != static_cast<uint32_t>(MaterialKind::Checkerboard)) {
-        return base;
-    }
-
-    constexpr float tileSize = 100.0f;
-    const float tx = std::floor(position.x / tileSize);
-    const float tz = std::floor(position.z / tileSize);
-    const bool dark = std::fmod(tx + tz, 2.0f) == 0.0f;
-    const glm::vec3 a = glm::clamp(base * 0.7f, glm::vec3(0.02f), glm::vec3(0.95f));
-    const glm::vec3 b = glm::clamp(base * 1.25f + glm::vec3(0.03f), glm::vec3(0.02f), glm::vec3(0.95f));
-    return dark ? a : b;
-}
-
-static glm::vec3 skyRadiance(const glm::vec3& dir) {
-    const float up = glm::clamp(dir.y * 0.5f + 0.5f, 0.0f, 1.0f);
-    glm::vec3 sky = glm::mix(glm::vec3(0.80f, 0.84f, 0.92f), glm::vec3(0.20f, 0.38f, 0.78f), std::pow(up, 0.55f));
-    if (dir.y < 0.0f) {
-        sky = glm::mix(glm::vec3(0.12f, 0.13f, 0.15f), sky, glm::clamp(dir.y + 1.0f, 0.0f, 1.0f));
-    }
-
-    const float sun = std::max(glm::dot(dir, kSunDir), 0.0f);
-    sky += glm::vec3(7.5f, 6.4f, 5.2f) * std::pow(sun, 1024.0f);
-    sky += glm::vec3(1.8f, 1.3f, 0.9f) * std::pow(sun, 48.0f);
-    return sky;
-}
-
-struct PcgRng {
-    uint32_t state{0};
-
-    explicit PcgRng(uint32_t seed) : state(seed ? seed : 1u) {}
-
-    uint32_t nextU32() {
-        state = state * 747796405u + 2891336453u;
-        uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
-        word = (word >> 22u) ^ word;
-        return word;
-    }
-
-    float nextFloat() {
-        return static_cast<float>(nextU32() & 0x00ffffffu) * (1.0f / 16777216.0f);
-    }
-};
-
-static void buildBasis(const glm::vec3& n, glm::vec3& tangent, glm::vec3& bitangent) {
-    if (std::abs(n.z) < 0.999f) {
-        tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), n));
-    } else {
-        tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), n));
-    }
-    bitangent = glm::cross(n, tangent);
-}
-
-static glm::vec3 cosineHemisphere(const glm::vec3& n, PcgRng& rng) {
-    const float u1 = rng.nextFloat();
-    const float u2 = rng.nextFloat();
-    const float r = std::sqrt(u1);
-    const float phi = glm::two_pi<float>() * u2;
-    const float x = r * std::cos(phi);
-    const float y = r * std::sin(phi);
-    const float z = std::sqrt(std::max(0.0f, 1.0f - u1));
-
-    glm::vec3 tangent;
-    glm::vec3 bitangent;
-    buildBasis(n, tangent, bitangent);
-    return glm::normalize(tangent * x + bitangent * y + n * z);
-}
-
-static bool traceClosest(
-    const std::vector<GpuBvhNode>& nodes,
-    const std::vector<GpuTri>& tris,
-    uint32_t root,
-    const glm::vec3& origin,
-    const glm::vec3& dir,
-    float tMax,
-    CpuHit& outHit) {
-    if (nodes.empty() || tris.empty()) {
-        return false;
-    }
-
-    const glm::vec3 invDir = 1.0f / dir;
-    std::array<uint32_t, kBvhStackSize> stack{};
-    int sp = 0;
-
-    const auto rootRange = aabbInterval(origin, invDir, nodes[root].bmin, nodes[root].bmax);
-    if (rootRange[0] > rootRange[1] || rootRange[1] < 0.0f || rootRange[0] >= tMax) {
-        return false;
-    }
-    stack[sp++] = root;
-
-    CpuHit hit;
-    hit.t = tMax;
-
-    while (sp > 0) {
-        const uint32_t nodeIndex = stack[--sp];
-        const GpuBvhNode& node = nodes[nodeIndex];
-
-        if ((node.c0 & kLeaf) != 0u) {
-            const uint32_t count = decodeLeafCount(node.c0);
-            const uint32_t start = decodeLeafStart(node.c0);
-            for (uint32_t i = 0; i < count; ++i) {
-                const uint32_t triIndex = start + i;
-                float triT = hit.t;
-                glm::vec3 bary(0.0f);
-                if (!tryTriangle(tris[triIndex], origin, dir, hit.t, triT, bary)) {
-                    continue;
-                }
-
-                hit.hit = true;
-                hit.t = triT;
-                hit.triIndex = triIndex;
-                hit.bary = bary;
-            }
-            continue;
-        }
-
-        const uint32_t left = node.c0;
-        const uint32_t right = node.c1;
-        const auto leftRange = aabbInterval(origin, invDir, nodes[left].bmin, nodes[left].bmax);
-        const auto rightRange = aabbInterval(origin, invDir, nodes[right].bmin, nodes[right].bmax);
-
-        const bool hitLeft = leftRange[0] <= leftRange[1] && leftRange[1] >= 0.0f && leftRange[0] < hit.t;
-        const bool hitRight = rightRange[0] <= rightRange[1] && rightRange[1] >= 0.0f && rightRange[0] < hit.t;
-
-        if (hitLeft && hitRight) {
-            const bool leftFirst = leftRange[0] <= rightRange[0];
-            if (sp + 2 <= kBvhStackSize) {
-                stack[sp++] = leftFirst ? right : left;
-                stack[sp++] = leftFirst ? left : right;
-            }
-        } else if (hitLeft) {
-            if (sp + 1 <= kBvhStackSize) {
-                stack[sp++] = left;
-            }
-        } else if (hitRight) {
-            if (sp + 1 <= kBvhStackSize) {
-                stack[sp++] = right;
-            }
-        }
-    }
-
-    if (!hit.hit) {
-        return false;
-    }
-
-    const GpuTri& tri = tris[hit.triIndex];
-    hit.position = origin + dir * hit.t;
-    glm::vec3 geomN = geometricNormal(tri);
-    if (glm::dot(geomN, dir) > 0.0f) {
-        geomN = -geomN;
-    }
-    glm::vec3 n = glm::normalize(
-        hit.bary.x * glm::vec3(tri.n0) + hit.bary.y * glm::vec3(tri.n1) + hit.bary.z * glm::vec3(tri.n2));
-    if (!isFiniteVec3(n) || glm::dot(n, n) < 1.0e-8f) {
-        n = geomN;
-    }
-    if (glm::dot(n, dir) > 0.0f) {
-        n = -n;
-    }
-    if (glm::dot(n, geomN) < 0.0f) {
-        n = geomN;
-    }
-    hit.normal = n;
-    hit.geomNormal = geomN;
-    hit.albedo = evaluateMaterial(tri, hit.position);
-    hit.emissive = glm::vec3(tris[hit.triIndex].emissive);
-    outHit = hit;
-    return true;
-}
-
-static bool traceShadow(
-    const std::vector<GpuBvhNode>& nodes,
-    const std::vector<GpuTri>& tris,
-    uint32_t root,
-    const glm::vec3& origin,
-    const glm::vec3& dir,
-    float maxDistance) {
-    CpuHit shadowHit;
-    return traceClosest(nodes, tris, root, origin, dir, maxDistance, shadowHit);
-}
-
-static glm::vec3 tracePath(
-    const std::vector<GpuBvhNode>& nodes,
-    const std::vector<GpuTri>& tris,
-    uint32_t root,
-    const glm::vec3& origin,
-    const glm::vec3& dir,
-    PcgRng& rng);
-
-static glm::vec3 shadePreview(
-    const std::vector<GpuBvhNode>& nodes,
-    const std::vector<GpuTri>& tris,
-    uint32_t root,
-    const glm::vec3& origin,
-    const glm::vec3& dir,
-    uint32_t seedBase) {
-    glm::vec3 accum(0.0f);
-    for (uint32_t i = 0; i < 2u; ++i) {
-        PcgRng rng(seedBase + 0x9e3779b9u * (i + 1u));
-        accum += tracePath(nodes, tris, root, origin, dir, rng);
-    }
-    return accum * 0.5f;
-}
-
-static glm::vec3 tracePath(
-    const std::vector<GpuBvhNode>& nodes,
-    const std::vector<GpuTri>& tris,
-    uint32_t root,
-    const glm::vec3& origin,
-    const glm::vec3& dir,
-    PcgRng& rng) {
-    glm::vec3 throughput(1.0f);
-    glm::vec3 radiance(0.0f);
-    glm::vec3 rayOrigin = origin;
-    glm::vec3 rayDir = dir;
-
-    for (int bounce = 0; bounce < 2; ++bounce) {
-        CpuHit hit;
-        if (!traceClosest(nodes, tris, root, rayOrigin, rayDir, std::numeric_limits<float>::max(), hit)) {
-            radiance += throughput * skyRadiance(rayDir);
-            break;
-        }
-        radiance += throughput * hit.emissive;
-
-        const float nDotL = std::max(glm::dot(hit.normal, kSunDir), 0.0f);
-        if (nDotL > 0.0f && !traceShadow(nodes, tris, root, hit.position + hit.geomNormal * kRayBias, kSunDir, kFarClip)) {
-            radiance += throughput * hit.albedo * kSunRadiance * nDotL;
-        }
-
-        radiance += throughput * hit.albedo * skyRadiance(hit.normal) * 0.08f;
-        throughput *= hit.albedo;
-
-        const float rr = std::max(throughput.x, std::max(throughput.y, throughput.z));
-        if (bounce > 0) {
-            const float keep = std::clamp(rr, 0.1f, 0.95f);
-            if (rng.nextFloat() > keep) {
-                break;
-            }
-            throughput /= keep;
-        }
-
-        rayOrigin = hit.position + hit.geomNormal * kRayBias;
-        rayDir = cosineHemisphere(hit.normal, rng);
-    }
-
-    return radiance;
-}
-
-static glm::vec3 primaryRayDirection(
-    const glm::mat4& invView, const glm::mat4& invProj, int width, int height, float px, float py) {
-    const float ndcX = (2.0f * px / static_cast<float>(width)) - 1.0f;
-    const float ndcY = (2.0f * py / static_cast<float>(height)) - 1.0f;
-    glm::vec4 clip(ndcX, ndcY, -1.0f, 1.0f);
-    glm::vec4 view = invProj * clip;
-    view /= view.w;
-    return glm::normalize(glm::vec3(invView * glm::vec4(glm::normalize(glm::vec3(view)), 0.0f)));
-}
-
 } // namespace
-
-void SceneRayTracer::setRequireGpu(bool requireGpu) {
-    if (m_requireGpu == requireGpu) {
-        return;
-    }
-    m_requireGpu = requireGpu;
-    resetAccumulation();
-}
 
 void SceneRayTracer::ensureComputeProgram() {
     if (m_computeAttempted || m_shader) {
@@ -479,7 +114,7 @@ void SceneRayTracer::ensureComputeProgram() {
         || ctx->hasExtension(QByteArrayLiteral("GL_ARB_compute_shader"));
 
     if (!supportsCompute) {
-        std::cerr << "[raytrace] compute shaders unavailable, CPU fallback will be used." << std::endl;
+        std::cerr << "[raytrace] compute shaders unavailable; ray traced view disabled." << std::endl;
         return;
     }
 
@@ -517,6 +152,39 @@ in vec2 vTex;
 out vec4 o;
 layout(binding = 0) uniform sampler2D t;
 
+const float DENOISE_CENTER_WEIGHT   = 4.0;
+const float DENOISE_LUMA_STRENGTH   = 6.0;
+const float DENOISE_DIAGONAL_WEIGHT = 0.65;
+
+float luminance(vec3 c) {
+    return dot(c, vec3(0.2126, 0.7152, 0.0722));
+}
+
+vec3 denoise(vec2 uv) {
+    ivec2 size = textureSize(t, 0);
+    vec2 texel = 1.0 / vec2(size);
+    vec3 center = texture(t, uv).rgb;
+    float centerLum = luminance(center);
+    vec3 sum = center * DENOISE_CENTER_WEIGHT;
+    float weightSum = DENOISE_CENTER_WEIGHT;
+
+    for (int y = -1; y <= 1; ++y) {
+        for (int x = -1; x <= 1; ++x) {
+            if (x == 0 && y == 0) {
+                continue;
+            }
+            vec3 sampleColor = texture(t, uv + vec2(x, y) * texel).rgb;
+            float colorDelta = abs(luminance(sampleColor) - centerLum);
+            float weight = exp(-colorDelta * DENOISE_LUMA_STRENGTH)
+                * ((x == 0 || y == 0) ? 1.0 : DENOISE_DIAGONAL_WEIGHT);
+            sum += sampleColor * weight;
+            weightSum += weight;
+        }
+    }
+
+    return sum / weightSum;
+}
+
 vec3 aces(vec3 x) {
     const float a = 2.51;
     const float b = 0.03;
@@ -527,7 +195,7 @@ vec3 aces(vec3 x) {
 }
 
 void main() {
-    vec3 col = texture(t, vTex).rgb;
+    vec3 col = denoise(vTex);
     col = aces(col);
     col = pow(col, vec3(1.0 / 2.2));
     o = vec4(col, 1.0);
@@ -596,7 +264,6 @@ void SceneRayTracer::ensureOutputSize(int w, int h) {
     m_g->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     m_g->glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_cpuPixels.assign(static_cast<size_t>(w) * static_cast<size_t>(h), glm::vec4(0.0f));
     resetAccumulation();
 }
 
@@ -628,7 +295,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
         out.reserve(triCount);
     }
 
-    for (const auto& owned : m_sm->getObjectStorage()) {
+    for (const auto& owned : m_sm->getObjects()) {
         const SceneObject* object = owned.get();
         Mesh* mesh = object->getMesh();
         if (!mesh) {
@@ -694,7 +361,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
 
 size_t SceneRayTracer::quickTriCount() const {
     size_t total = 0;
-    for (const auto& owned : m_sm->getObjectStorage()) {
+    for (const auto& owned : m_sm->getObjects()) {
         const Mesh* mesh = owned->getMesh();
         if (!mesh) {
             continue;
@@ -706,7 +373,7 @@ size_t SceneRayTracer::quickTriCount() const {
 
 uint64_t SceneRayTracer::structureHash() const {
     uint64_t h = 14695981039346656037ull;
-    for (const auto& owned : m_sm->getObjectStorage()) {
+    for (const auto& owned : m_sm->getObjects()) {
         const SceneObject* object = owned.get();
         const Mesh* mesh = object->getMesh();
         const Shader* shader = object->getShader();
@@ -729,7 +396,7 @@ uint64_t SceneRayTracer::structureHash() const {
 
 uint64_t SceneRayTracer::geometryHash() const {
     uint64_t h = 14695981039346656037ull;
-    for (const auto& owned : m_sm->getObjectStorage()) {
+    for (const auto& owned : m_sm->getObjects()) {
         const SceneObject* object = owned.get();
         h = fnvAppend(h, object->getObjectID());
 
@@ -764,9 +431,6 @@ uint64_t SceneRayTracer::viewHash(int w, int h, float internalScale, const Camer
 void SceneRayTracer::resetAccumulation() {
     m_accumulatedFrames = 0;
     m_lastViewHash = 0;
-    if (!m_cpuPixels.empty()) {
-        std::fill(m_cpuPixels.begin(), m_cpuPixels.end(), glm::vec4(0.0f));
-    }
 }
 
 void SceneRayTracer::maybeRebuildAccel() {
@@ -847,10 +511,6 @@ void SceneRayTracer::refitAndUpload() {
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-SceneRayTracer::Backend SceneRayTracer::chooseBackend() const {
-    return m_computeOk ? Backend::Gpu : Backend::Cpu;
-}
-
 void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     const float aspect      = static_cast<float>(w) / static_cast<float>(h);
     const glm::mat4 proj    = glm::perspective(glm::radians(camera->fov), aspect, 0.1f, kFarClip);
@@ -905,78 +565,6 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     );
 }
 
-void SceneRayTracer::uploadCpuTexture() {
-    if (!m_outTex || m_cpuPixels.empty()) {
-        return;
-    }
-
-    m_g->glBindTexture(GL_TEXTURE_2D, m_outTex);
-    m_g->glTexSubImage2D(
-        GL_TEXTURE_2D, 0, 0, 0, m_fbw, m_fbh, GL_RGBA, GL_FLOAT, m_cpuPixels.data());
-    m_g->glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void SceneRayTracer::renderCpu(int w, int h, const Camera* camera) {
-    const auto& nodes = m_bvh.getNodes();
-    const auto& tris = m_bvh.getGpuTris();
-    const glm::mat4 invView = glm::inverse(camera->getViewMatrix());
-    const glm::mat4 invProj = glm::inverse(glm::perspective(glm::radians(camera->fov), static_cast<float>(w) / static_cast<float>(h), 0.1f, kFarClip));
-    const uint32_t frameIndex = m_accumulatedFrames;
-
-    const unsigned int hw = std::max(1u, std::thread::hardware_concurrency());
-    const unsigned int workerCount = std::max(1u, std::min<unsigned int>(hw, static_cast<unsigned int>(h)));
-    const int rowsPerWorker = std::max(1, (h + static_cast<int>(workerCount) - 1) / static_cast<int>(workerCount));
-
-    auto renderRows = [&](int y0, int y1, uint32_t workerId) {
-        for (int y = y0; y < y1; ++y) {
-            for (int x = 0; x < w; ++x) {
-                const uint32_t seed =
-                    static_cast<uint32_t>(x * 1973 + y * 9277 + frameIndex * 26699u + workerId * 3181u + 0x68bc21ebu);
-                PcgRng rng(seed);
-                glm::vec3 sample(0.0f);
-                if (frameIndex == 0u) {
-                    const glm::vec3 rayDir = primaryRayDirection(
-                        invView, invProj, w, h, static_cast<float>(x) + 0.5f, static_cast<float>(y) + 0.5f);
-                    sample = shadePreview(nodes, tris, m_bvh.getRoot(), camera->position, rayDir, seed);
-                } else {
-                    const float jx = rng.nextFloat() - 0.5f;
-                    const float jy = rng.nextFloat() - 0.5f;
-                    const glm::vec3 rayDir = primaryRayDirection(
-                        invView, invProj, w, h, static_cast<float>(x) + 0.5f + jx, static_cast<float>(y) + 0.5f + jy);
-                    sample = tracePath(nodes, tris, m_bvh.getRoot(), camera->position, rayDir, rng);
-                }
-
-                const size_t idx = static_cast<size_t>(y) * static_cast<size_t>(w) + static_cast<size_t>(x);
-                glm::vec3 average = glm::vec3(m_cpuPixels[idx]);
-                if (frameIndex == 0u) {
-                    average = sample;
-                } else {
-                    average += (sample - average) * (1.0f / static_cast<float>(frameIndex + 1u));
-                }
-                m_cpuPixels[idx] = glm::vec4(average, 1.0f);
-            }
-        }
-    };
-
-    std::vector<std::thread> workers;
-    workers.reserve(workerCount > 0 ? workerCount - 1 : 0);
-    for (unsigned int worker = 1; worker < workerCount; ++worker) {
-        const int y0 = static_cast<int>(worker) * rowsPerWorker;
-        if (y0 >= h) {
-            break;
-        }
-        const int y1 = std::min(h, y0 + rowsPerWorker);
-        workers.emplace_back(renderRows, y0, y1, worker);
-    }
-
-    renderRows(0, std::min(h, rowsPerWorker), 0u);
-    for (auto& worker : workers) {
-        worker.join();
-    }
-
-    uploadCpuTexture();
-}
-
 void SceneRayTracer::presentOutput(int fbWidth, int fbHeight) {
     m_g->glDisable(GL_DEPTH_TEST);
     m_g->glViewport(0, 0, fbWidth, fbHeight);
@@ -1020,7 +608,7 @@ SceneRayTracer::~SceneRayTracer() {
 
 void SceneRayTracer::render(
     int fbWidth, int fbHeight, Camera* camera, const std::optional<std::vector<ObjectSnapshot>>&, float internalScale) {
-    if (fbWidth < 1 || fbHeight < 1 || !m_g || !camera || !m_sm) {
+    if (!m_enabled || fbWidth < 1 || fbHeight < 1 || !m_g || !camera || !m_sm) {
         return;
     }
     if (!QOpenGLContext::currentContext()) {
@@ -1036,17 +624,17 @@ void SceneRayTracer::render(
     maybeRebuildAccel();
     if (m_bvh.isEmpty()) {
         m_g->glDisable(GL_DEPTH_TEST);
-        m_g->glClearColor(0.40f, 0.52f, 0.66f, 1.0f);
+        m_g->glClearColor(kEmptySceneClearRed, kEmptySceneClearGreen, kEmptySceneClearBlue, 1.0f);
         m_g->glClear(GL_COLOR_BUFFER_BIT);
         m_g->glEnable(GL_DEPTH_TEST);
         return;
     }
 
-    const Backend backend = chooseBackend();
-    float scale = std::clamp(internalScale, 0.25f, 1.0f);
-    if (backend == Backend::Cpu) {
-        scale = std::min(scale, kCpuFallbackMaxScale);
-    } else if (m_accumulatedFrames == 0u) {
+    float scale = std::clamp(
+        internalScale,
+        GraphicsSettings::kMinRayTraceResolutionScale,
+        GraphicsSettings::kMaxRayTraceResolutionScale);
+    if (m_accumulatedFrames == 0u) {
         scale = std::min(scale, kGpuInteractiveMaxScale);
     }
 
@@ -1056,21 +644,14 @@ void SceneRayTracer::render(
 
     const uint64_t currentViewHash = viewHash(traceW, traceH, scale, camera);
     const bool currentSunState = AppSettings::getInstance().getGroup<GraphicsSettings>().enableGlobalLight;
-    
+
     if (currentViewHash != m_lastViewHash || currentSunState != m_lastEnableGlobalLight) {
         resetAccumulation();
         m_lastViewHash = currentViewHash;
         m_lastEnableGlobalLight = currentSunState;
     }
 
-    switch (backend) {
-        case Backend::Gpu:
-            renderGpu(traceW, traceH, camera);
-            break;
-        case Backend::Cpu:
-            renderCpu(traceW, traceH, camera);
-            break;
-    }
+    renderGpu(traceW, traceH, camera);
 
     ++m_accumulatedFrames;
     presentOutput(fbWidth, fbHeight);

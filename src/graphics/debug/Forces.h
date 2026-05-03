@@ -28,6 +28,7 @@ private:
         glm::vec3 net{0.0f};
         float netMag = 0.0f;
         glm::vec3 startPos{0.0f};
+        float radius = 1.0f;
     };
 
     SceneManager* sceneManager;
@@ -35,5 +36,6 @@ private:
     bool enabled = true;
 
     /** Reused each draw to avoid per-frame heap allocations when forces overlay is on. */
+    mutable std::vector<ArrowCpu> m_arrowScratch;
     mutable std::vector<Rendering::InstanceData> m_instanceScratch;
 };

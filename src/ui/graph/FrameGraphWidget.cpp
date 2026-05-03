@@ -53,11 +53,11 @@ FrameGraphWidget::FrameGraphWidget(QWidget* parent) : QWidget(parent) {
 }
 
 void FrameGraphWidget::setSharedData(
-    const std::vector<ObjectSnapshot>* frames,
+    std::shared_ptr<const std::vector<ObjectSnapshot>> frames,
     const std::array<std::pair<float, float>, kPlottableMetricCount>& valueMinMax, 
     float tMin, float tMax
 ) {
-    canvas->setSharedData(frames, valueMinMax, tMin, tMax);
+    canvas->setSharedData(std::move(frames), valueMinMax, tMin, tMax);
 }
 
 void FrameGraphWidget::clear() {

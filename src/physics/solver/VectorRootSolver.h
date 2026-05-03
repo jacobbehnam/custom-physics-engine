@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <functional>
 #include <glm/glm.hpp>
 
@@ -83,6 +84,8 @@ private:
     std::array<glm::vec3, 3> fPerturbed;
 
     int currentPerturbation = -1;
+    int iterationCount = 0;
+    int maxIterations;
     float h;
     float tolerance;
     float alpha;

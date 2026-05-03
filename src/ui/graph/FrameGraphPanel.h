@@ -4,6 +4,7 @@
 #include <QGridLayout>
 #include <QScrollArea>
 #include <array>
+#include <memory>
 #include <vector>
 
 #include "Metric.h"
@@ -26,7 +27,7 @@ private:
     QScrollArea* scrollArea;
     std::vector<FrameGraphWidget*> frameGraphs;
     int currentColumns = 0;
-    std::vector<ObjectSnapshot> m_snapshots;
+    std::shared_ptr<const std::vector<ObjectSnapshot>> m_snapshots;
     float m_tMin = 0.0f;
     float m_tMax = 0.0f;
     std::array<std::pair<float, float>, kPlottableMetricCount> m_valueMinMaxPerMetric{};

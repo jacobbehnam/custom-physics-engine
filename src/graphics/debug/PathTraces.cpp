@@ -1,7 +1,17 @@
+#include <algorithm>
+#include <iterator>
+
 #include "PathTraces.h"
 #include "physics/PhysicsBody.h"
 #include "graphics/core/ResourceManager.h"
 #include "graphics/core/SceneManager.h"
+#include "graphics/core/SceneObject.h"
+
+namespace {
+constexpr int   kMaxTrailPointsPerObject = 4096;
+constexpr int   kMinTrailPointCount      = 2;
+constexpr float kTraceLineWidth          = 2.0f;
+}
 
 PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
     gl->glGenVertexArrays(1, &vao);
@@ -31,37 +41,54 @@ void PathTraces::draw() const {
 
     gl->glBindVertexArray(vao);
     
+    const GLboolean depthWasEnabled = gl->glIsEnabled(GL_DEPTH_TEST);
+    if (depthWasEnabled) {
+        gl->glDisable(GL_DEPTH_TEST);
+    }
+
     float oldLineWidth;
     gl->glGetFloatv(GL_LINE_WIDTH, &oldLineWidth);
     
-    gl->glLineWidth(1.0f);
+    gl->glLineWidth(kTraceLineWidth);
 
     std::vector<glm::vec3> points;
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         Physics::PhysicsBody* body = obj->getPhysicsBody();
         if (!body) continue;
 
-        body->withFrames(BodyLock::LOCK, [this, &points](const std::vector<ObjectSnapshot>& snapshots) {
-        if (snapshots.size() < 2) return;
+        const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
+        body->withFrames(BodyLock::LOCK, [this, &points, renderOrigin](const std::vector<ObjectSnapshot>& snapshots) {
+        if (snapshots.size() < kMinTrailPointCount) return;
 
         const float latestTime = snapshots.back().time;
         const float startTime = latestTime - this->timeWindow;
 
         points.clear();
 
-        int startIdx = static_cast<int>(snapshots.size() - 1);
-        while (startIdx > 0 && snapshots[static_cast<size_t>(startIdx)].time >= startTime) {
-            startIdx--;
+        const auto startIt = std::lower_bound(snapshots.begin(), snapshots.end(), startTime,
+            [](const ObjectSnapshot& snapshot, float time) {
+                return snapshot.time < time;
+            });
+        int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
+        int totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        if (totalCount < kMinTrailPointCount) {
+            startIdx = std::max(0, static_cast<int>(snapshots.size()) - kMinTrailPointCount);
+            totalCount = static_cast<int>(snapshots.size()) - startIdx;
+        }
+        const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
+        points.reserve(static_cast<size_t>(std::min(totalCount, kMaxTrailPointsPerObject + 1)));
+
+        int lastDrawnIndex = -1;
+        for (int i = startIdx; i < static_cast<int>(snapshots.size()); i += stride) {
+            points.push_back(snapshots[static_cast<size_t>(i)].position - renderOrigin);
+            lastDrawnIndex = i;
+        }
+        if (lastDrawnIndex != static_cast<int>(snapshots.size()) - 1) {
+            points.push_back(snapshots.back().position - renderOrigin);
         }
 
-        const int count = static_cast<int>(snapshots.size()) - startIdx;
-        points.reserve(static_cast<size_t>(count));
-
-        for (int i = startIdx; i < static_cast<int>(snapshots.size()); ++i) {
-            points.push_back(snapshots[static_cast<size_t>(i)].position);
-        }
-
-        if (points.size() < 2) return;
+        if (points.size() < kMinTrailPointCount) return;
 
         this->gl->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
         this->gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
@@ -72,4 +99,7 @@ void PathTraces::draw() const {
 
     gl->glBindVertexArray(0);
     gl->glLineWidth(oldLineWidth);
+    if (depthWasEnabled) {
+        gl->glEnable(GL_DEPTH_TEST);
+    }
 }

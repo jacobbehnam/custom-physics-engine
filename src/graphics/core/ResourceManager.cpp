@@ -174,7 +174,7 @@ void ResourceManager::loadPrimSphere() {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    // 32×32: ~2k tris vs 64×64 ~8k — much cheaper for RT and still smooth for raster.
+    // 32x32: about 2k tris vs 64x64 about 8k; cheaper for RT and still smooth for raster.
     unsigned int latitudeSegments = 32;
     unsigned int longitudeSegments = 32;
 
@@ -207,12 +207,12 @@ void ResourceManager::loadPrimSphere() {
             unsigned int i2 = (y + 1) * (longitudeSegments + 1) + (x + 1);
             unsigned int i3 = y * (longitudeSegments + 1) + (x + 1);
 
-            // lower‐left triangle  (i0, i1, i2)
+            // lower-left triangle (i0, i1, i2)
             indices.push_back(i0);
             indices.push_back(i1);
             indices.push_back(i2);
 
-            // upper‐right triangle (i0, i2, i3)
+            // upper-right triangle (i0, i2, i3)
             indices.push_back(i0);
             indices.push_back(i2);
             indices.push_back(i3);

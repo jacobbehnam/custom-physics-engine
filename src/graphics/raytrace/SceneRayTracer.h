@@ -4,7 +4,6 @@
 #include "graphics/components/ComputeShader.h"
 #include "physics/PhysicsBody.h"
 
-#include <glm/vec4.hpp>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -14,26 +13,20 @@ class Camera;
 class SceneManager;
 class QOpenGLFunctions_4_5_Core;
 
-// Progressive ray traced view with GPU compute when available and multithreaded CPU fallback otherwise.
+// Progressive GPU ray traced view. Compute shader support is required.
 class SceneRayTracer {
 public:
     SceneRayTracer(SceneManager* sm, QOpenGLFunctions_4_5_Core* gl);
     ~SceneRayTracer();
 
     void setEnabled(bool e) { m_enabled = e; }
-    void setRequireGpu(bool requireGpu);
     /// fbWidth/Height = window pixels; internalScale in [0.25,1] traces at lower res then upscales (large perf win).
     void render(int fbWidth, int fbHeight, Camera* camera, const std::optional<std::vector<ObjectSnapshot>>& snapshots,
         float internalScale);
 
-    bool isUsable() const { return m_presentOk && (m_computeOk || !m_requireGpu); }
+    bool isUsable() const { return m_presentOk && m_computeOk; }
 
 private:
-    enum class Backend {
-        Gpu,
-        Cpu,
-    };
-
     std::unique_ptr<ComputeShader> m_shader;
 
     void ensureOutputSize(int w, int h);
@@ -47,17 +40,13 @@ private:
     uint64_t viewHash(int w, int h, float internalScale, const Camera* camera) const;
     void maybeRebuildAccel();
     void resetAccumulation();
-    Backend chooseBackend() const;
     void renderGpu(int w, int h, const Camera* camera);
-    void renderCpu(int w, int h, const Camera* camera);
-    void uploadCpuTexture();
     void presentOutput(int fbWidth, int fbHeight);
 
     SceneManager* m_sm{nullptr};
     QOpenGLFunctions_4_5_Core* m_g{nullptr};
 
     bool m_enabled{true};
-    bool m_requireGpu{false};
     bool m_computeOk{false};
     bool m_presentOk{false};
     bool m_computeAttempted{false};
@@ -69,7 +58,6 @@ private:
     int m_fbh{0};
 
     unsigned m_outTex{0};
-    std::vector<glm::vec4> m_cpuPixels;
 
     Raytrace::TriangleBvh m_bvh;
     size_t m_triCap{0};

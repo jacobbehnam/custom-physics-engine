@@ -1,6 +1,17 @@
 #include "physics/PhysicsBody.h"
 
+#include <algorithm>
+#include <cmath>
 #include <iostream>
+#include "physics/utils/ThermalUtils.h"
+
+namespace {
+
+constexpr float kVisibleIncandescenceStartK = 800.0f;
+constexpr float kVisibleEmitterReferenceK   = 5800.0f;
+constexpr float kVisibleEmitterReferenceLux = 20.0f;
+
+} // namespace
 
 bool Physics::PhysicsBody::isUnknown(const std::string &key, BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
@@ -101,7 +112,7 @@ void Physics::PhysicsBody::setVelocity(const glm::vec3 &vel, BodyLock lock) {
     velocity = vel;
 }
 
-float Physics::PhysicsBody::getMass(BodyLock lock) const {
+double Physics::PhysicsBody::getMass(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
@@ -109,8 +120,8 @@ float Physics::PhysicsBody::getMass(BodyLock lock) const {
     return mass;
 }
 
-void Physics::PhysicsBody::setMass(float newMass, BodyLock lock) {
-    if (newMass <= 0.0001f) {
+void Physics::PhysicsBody::setMass(double newMass, BodyLock lock) {
+    if (newMass <= 0.0) {
         std::cerr << "Warning: Invalid mass " << newMass << ". Ignoring." << std::endl;
         return;
     }
@@ -165,14 +176,14 @@ void Physics::PhysicsBody::setTemperature(float kelvin, BodyLock lock) {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
-    m_temperature = std::max(0.0f, kelvin);
+    thermalProps.tempK = Physics::Thermal::clampTemperature(kelvin);
 }
 
 float Physics::PhysicsBody::getTemperature(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
-    return m_temperature;
+    return static_cast<float>(thermalProps.tempK);
 }
 
 glm::vec3 Physics::PhysicsBody::blackbodyRGB(float t) {
@@ -196,15 +207,59 @@ glm::vec3 Physics::PhysicsBody::blackbodyRGB(float t) {
 }
 
 float Physics::PhysicsBody::temperatureToIntensity(float tempKelvin) {
-    // Scaled-down Stefan-Boltzmann
-    constexpr float kScale = 1.0f / (1000.0f * 1000.0f);
-    return std::pow(tempKelvin, 4.0f) * kScale;
+    if (tempKelvin < kVisibleIncandescenceStartK) {
+        return 0.0f;
+    }
+
+    const float visibleT = (tempKelvin - kVisibleIncandescenceStartK)
+        / (kVisibleEmitterReferenceK - kVisibleIncandescenceStartK);
+    return std::pow(std::max(visibleT, 0.0f), 4.0f) * kVisibleEmitterReferenceLux;
 }
 
 glm::vec3 Physics::PhysicsBody::getEmission(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
-    if (m_temperature <= 0.0f) return glm::vec3(0.0f);
-    return blackbodyRGB(m_temperature) * temperatureToIntensity(m_temperature);
+    const float tempK = static_cast<float>(thermalProps.tempK);
+    if (tempK <= 0.0f || thermalProps.emissivity <= 0.0f) return glm::vec3(0.0f);
+    return blackbodyRGB(tempK) * temperatureToIntensity(tempK) * thermalProps.emissivity;
+}
+
+void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps, BodyLock lock) {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
+    thermalProps = newProps;
+    thermalProps.tempK = Physics::Thermal::clampTemperature(thermalProps.tempK);
+    if (!std::isfinite(thermalProps.internalHeatPower)) thermalProps.internalHeatPower = 0.0;
+    if (!std::isfinite(thermalProps.externalHeatFlux)) thermalProps.externalHeatFlux = 0.0;
+    if (!std::isfinite(thermalProps.entropyJPerK)) thermalProps.entropyJPerK = 0.0;
+    thermalProps.referenceTempK = Physics::Thermal::clampTemperature(thermalProps.referenceTempK);
+    thermalProps.specificHeat = std::max(thermalProps.specificHeat, 0.0f);
+    if (!std::isfinite(thermalProps.specificHeatTempCoeff)) thermalProps.specificHeatTempCoeff = 0.0f;
+    thermalProps.thermalMassFraction = std::clamp(thermalProps.thermalMassFraction, 0.0f, 1.0f);
+    thermalProps.emissivity = std::clamp(thermalProps.emissivity, 0.0f, 1.0f);
+    if (!std::isfinite(thermalProps.emissivityTempCoeff)) thermalProps.emissivityTempCoeff = 0.0f;
+    thermalProps.absorptivity = std::clamp(thermalProps.absorptivity, 0.0f, 1.0f);
+    if (!std::isfinite(thermalProps.absorptivityTempCoeff)) thermalProps.absorptivityTempCoeff = 0.0f;
+    thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);
+    thermalProps.conductivity = std::max(thermalProps.conductivity, 0.0f);
+    if (!std::isfinite(thermalProps.conductivityTempCoeff)) thermalProps.conductivityTempCoeff = 0.0f;
+    thermalProps.density = std::max(thermalProps.density, 0.0f);
+    if (!std::isfinite(thermalProps.linearExpansionCoeff)) thermalProps.linearExpansionCoeff = 0.0f;
+    thermalProps.meltingPoint = std::max(thermalProps.meltingPoint, 0.0f);
+    thermalProps.latentHeatFusion = std::max(thermalProps.latentHeatFusion, 0.0f);
+    thermalProps.fusionProgress = std::clamp(thermalProps.fusionProgress, 0.0f, 1.0f);
+    thermalProps.boilingPoint = std::max(thermalProps.boilingPoint, 0.0f);
+    thermalProps.latentHeatVaporization = std::max(thermalProps.latentHeatVaporization, 0.0f);
+    thermalProps.vaporizationProgress = std::clamp(thermalProps.vaporizationProgress, 0.0f, 1.0f);
+}
+
+ThermalProperties Physics::PhysicsBody::getThermalProperties(BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+
+    return thermalProps;
 }

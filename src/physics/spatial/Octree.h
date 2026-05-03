@@ -21,11 +21,15 @@ struct OctreeNode {
     uint8_t childMask = 0; // Bitmask to track which children exist
 
     // Leaf nodes only
-    Physics::PhysicsBody* body = nullptr;
+    std::vector<Physics::PhysicsBody*> bodies;
 
     // Aggregated properties (center, mass)
     glm::vec3 massCenter;
-    float totalMass = 0.0f;
+    double totalMass = 0.0;
+
+    // Aggregated thermal properties
+    double totalEffectiveArea = 0.0; // sum of (epsilon * Area)
+    double totalEmission = 0.0;      // sum of (epsilon * Area * T^4)
 
     bool isLeaf() const {
         return childMask == 0;
@@ -41,6 +45,7 @@ private:
     Octant getOctant(NodeIndex nodeIdx, const glm::vec3& pos) const;
 public:
     Octree() = default;
-    glm::vec3 computeForce(Physics::PhysicsBody* body, float G);
+    glm::vec3 computeForce(Physics::PhysicsBody* body, double G);
+    double computeHeat(Physics::PhysicsBody* body);
     void build(const std::vector<Physics::PhysicsBody*>& bodies);
 };

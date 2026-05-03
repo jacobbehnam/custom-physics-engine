@@ -40,17 +40,18 @@ FrameGraphPanel::FrameGraphPanel(QWidget* parent) : QWidget(parent) {
 }
 
 void FrameGraphPanel::recomputeTimeAndValueRanges() {
-    if (m_snapshots.empty()) {
+    if (!m_snapshots || m_snapshots->empty()) {
         m_tMin = m_tMax = 0.0f;
         m_valueMinMaxPerMetric = {};
         return;
     }
-    m_tMin = m_tMax = m_snapshots.front().time;
+    const auto& snapshots = *m_snapshots;
+    m_tMin = m_tMax = snapshots.front().time;
     for (int m = 0; m < static_cast<int>(kPlottableMetricCount); ++m) {
-        const float v = objectSnapshotValue(static_cast<Metric>(m), m_snapshots.front());
+        const float v = objectSnapshotValue(static_cast<Metric>(m), snapshots.front());
         m_valueMinMaxPerMetric[static_cast<size_t>(m)] = {v, v};
     }
-    for (const auto& s : m_snapshots) {
+    for (const auto& s : snapshots) {
         m_tMin = std::min(m_tMin, s.time);
         m_tMax = std::max(m_tMax, s.time);
         for (int m = 0; m < static_cast<int>(kPlottableMetricCount); ++m) {
@@ -73,21 +74,21 @@ void FrameGraphPanel::recomputeTimeAndValueRanges() {
 }
 
 void FrameGraphPanel::loadSnapshots(const std::vector<ObjectSnapshot>& snapshots) {
-    m_snapshots = snapshots;
+    m_snapshots = std::make_shared<std::vector<ObjectSnapshot>>(snapshots);
     recomputeTimeAndValueRanges();
-    if (m_snapshots.empty()) {
+    if (!m_snapshots || m_snapshots->empty()) {
         for (auto* graph : frameGraphs) {
             graph->clear();
         }
         return;
     }
     for (auto* graph : frameGraphs) {
-        graph->setSharedData(&m_snapshots, m_valueMinMaxPerMetric, m_tMin, m_tMax);
+        graph->setSharedData(m_snapshots, m_valueMinMaxPerMetric, m_tMin, m_tMax);
     }
 }
 
 void FrameGraphPanel::clear() {
-    m_snapshots.clear();
+    m_snapshots.reset();
     m_tMin = m_tMax = 0.0f;
     m_valueMinMaxPerMetric = {};
     for (auto* graph : frameGraphs) {

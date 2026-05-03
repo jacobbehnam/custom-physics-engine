@@ -1,9 +1,22 @@
 #include "Octree.h"
 #include "physics/Constants.h"
 #include "physics/PhysicsSystem.h"
+#include "physics/utils/ThermalUtils.h"
+#include <algorithm>
 #include <bit>
 #include <glm/gtx/component_wise.hpp>
 #include <cstdint>
+
+namespace {
+constexpr float kMinNodeHalfSize = 0.001f;
+constexpr std::size_t kTraversalStackReserve = 512;
+constexpr double kMinRadiationDistanceSq = 0.0001;
+
+bool containsPosition(const OctreeNode& node, const glm::vec3& position) {
+    const glm::vec3 delta = glm::abs(position - node.center);
+    return delta.x <= node.halfSize && delta.y <= node.halfSize && delta.z <= node.halfSize;
+}
+}
 
 void Octree::clear() {
     nodes.clear();
@@ -28,32 +41,36 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     OctreeNode* node        = &nodes[nodeIndex.val];
     glm::vec3 nodeCenter    = node->center;
     glm::vec3 bodyPos       = body->getPosition(BodyLock::NOLOCK);
-    float bodyMass          = body->getMass(BodyLock::NOLOCK);
+    double bodyMass          = body->getMass(BodyLock::NOLOCK);
     float childHalfSize     = node->halfSize * 0.5f;
 
+    ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+    double area = body->getSurfaceArea();
+    double epsArea = Physics::Thermal::effectiveEmissivity(props, props.tempK) * area;
+    double emission = epsArea * Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(props.tempK));
+
     // Node is empty, put the body here
-    if (node->body == nullptr && node->totalMass == 0.0f) {
-        node->body       = body;
+    if (node->bodies.empty() && node->totalMass == 0.0) {
+        node->bodies.push_back(body);
         node->massCenter = bodyPos;
         node->totalMass  = bodyMass;
+        node->totalEffectiveArea = epsArea;
+        node->totalEmission = emission;
         return;
     }
 
     // Since this node now contains this body, update
-    float newMass       = node->totalMass + bodyMass;
-    node->massCenter    = (
-        node->massCenter    * node->totalMass + 
-        bodyPos             * bodyMass
-    ) / newMass;
+    double newMass       = node->totalMass + bodyMass;
+    node->massCenter += (bodyPos - node->massCenter) * static_cast<float>(bodyMass / newMass);
     node->totalMass     = newMass;
-
-    Physics::PhysicsBody* existingBody = node->body;
+    node->totalEffectiveArea += epsArea;
+    node->totalEmission += emission;
 
     auto insertBody = [&](Physics::PhysicsBody* b) {
         glm::vec3 bPos = b->getPosition(BodyLock::NOLOCK);
         Octant bOct = Octree::getOctant(nodeIndex, bPos);
 
-        // Could change due to vector resize during recursion 
+        // Could change due to vector resize during recursion
         node = &nodes[nodeIndex.val];
         if (node->children[bOct.val].isEmpty()) {
             glm::vec3 childCenter = nodeCenter + childHalfSize * glm::vec3(
@@ -69,12 +86,25 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
         insert(node->children[bOct.val], b);
     };
 
-    if (existingBody != nullptr) {
-        // Clear and Push the existing body down the tree
-        node->body = nullptr;
-        insertBody(existingBody);
+    if (node->isLeaf() && !node->bodies.empty()) {
+        const bool hasCoincidentBody = std::any_of(node->bodies.begin(), node->bodies.end(),
+            [&](Physics::PhysicsBody* existing) {
+                return existing->getPosition(BodyLock::NOLOCK) == bodyPos;
+            });
+
+        if (childHalfSize <= kMinNodeHalfSize || hasCoincidentBody) {
+            node->bodies.push_back(body);
+            return;
+        }
+
+        std::vector<Physics::PhysicsBody*> existingBodies = std::move(node->bodies);
+        node->bodies.clear();
+        for (Physics::PhysicsBody* existing : existingBodies) {
+            insertBody(existing);
+        }
+        insertBody(body);
+        return;
     }
-    // Insert the new body
     insertBody(body);
 }
 
@@ -103,19 +133,17 @@ void Octree::build(const std::vector<Physics::PhysicsBody*>& bodies) {
     }
 }
 
-glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
+glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
     if (nodes.empty() || body == nullptr) {
         return glm::vec3(0.0f);
     }
 
     glm::vec3 totalForce(0.0f);
     glm::vec3 bodyPos   = body->getPosition(BodyLock::NOLOCK);
-    float bodyMass      = body->getMass(BodyLock::NOLOCK);
+    double bodyMass      = body->getMass(BodyLock::NOLOCK);
 
-    // Use vector incase overflow
-    // I was planning for 512 elements but not sure
     std::vector<NodeIndex> stack;
-    stack.reserve(512);
+    stack.reserve(kTraversalStackReserve);
     stack.push_back(NodeIndex::rootIndex());
 
     while (!stack.empty()) {
@@ -124,22 +152,33 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
         const OctreeNode& node = nodes[currentIdx.val];
 
         // Empty region
-        if (node.totalMass == 0.0f) continue;
-        
+        if (node.totalMass == 0.0) continue;
+
         glm::vec3 dist = node.massCenter - body->getPosition(BodyLock::NOLOCK);
         float distSq = glm::dot(dist, dist);
         float softeningDistSq = distSq + Constants::SOFTENING_SQ;
         float widthSq = node.halfSize * node.halfSize * 4.0f;
+        const bool nodeContainsBody = containsPosition(node, bodyPos);
 
-        // Only single body or sufficiently far away, treat as point mass
-        if (node.isLeaf() || widthSq < Constants::THETA_SQ * distSq) {
-            if (node.body == body) continue; // Skip self
+        if (node.isLeaf() || (!nodeContainsBody && widthSq < Constants::THETA_SQ * distSq)) {
+            if (node.isLeaf() && !node.bodies.empty()) {
+                for (Physics::PhysicsBody* other : node.bodies) {
+                    if (other == body) continue;
+                    glm::vec3 pairDist = other->getPosition(BodyLock::NOLOCK) - bodyPos;
+                    float pairDistSq = glm::dot(pairDist, pairDist) + Constants::SOFTENING_SQ;
+                    float invPairDist = 1.0f / std::sqrt(pairDistSq);
+                    float invPairDist3 = invPairDist * invPairDist * invPairDist;
+                    double pairForce = (G * bodyMass * other->getMass(BodyLock::NOLOCK)) * invPairDist3;
+                    totalForce += static_cast<float>(pairForce) * pairDist;
+                }
+                continue;
+            }
 
             float invDist = 1.0f / sqrt(softeningDistSq);
             float invDist3 = invDist * invDist * invDist;
 
-            float force = (G * bodyMass * node.totalMass) * invDist3;
-            totalForce += force * dist;
+            double force = (G * bodyMass * node.totalMass) * invDist3;
+            totalForce += static_cast<float>(force) * dist;
         } else {
             // Add valid children to stack
             std::uint8_t childMask = node.childMask;
@@ -151,4 +190,67 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, float G) {
         }
     }
     return totalForce;
+}
+
+double Octree::computeHeat(Physics::PhysicsBody* body) {
+    if (nodes.empty() || body == nullptr) {
+        return 0.0;
+    }
+
+    double totalHeat = 0.0;
+    glm::vec3 bodyPos = body->getPosition(BodyLock::NOLOCK);
+    ThermalProperties props = body->getThermalProperties(BodyLock::NOLOCK);
+    const double absorptivity = Physics::Thermal::effectiveAbsorptivity(props, props.tempK);
+    double area = body->getSurfaceArea();
+    double projectedArea = area * 0.25;
+
+    std::vector<NodeIndex> stack;
+    stack.reserve(kTraversalStackReserve);
+    stack.push_back(NodeIndex::rootIndex());
+
+    while (!stack.empty()) {
+        NodeIndex currentIdx = stack.back();
+        stack.pop_back();
+        const OctreeNode& node = nodes[currentIdx.val];
+
+        if (node.totalEffectiveArea == 0.0) continue;
+
+        glm::vec3 dist = node.massCenter - bodyPos;
+        double distSq = static_cast<double>(glm::dot(dist, dist));
+        if (distSq < kMinRadiationDistanceSq) distSq = kMinRadiationDistanceSq;
+
+        float widthSq = node.halfSize * node.halfSize * 4.0f;
+        const bool nodeContainsBody = containsPosition(node, bodyPos);
+
+        if (node.isLeaf()) {
+            for (Physics::PhysicsBody* other : node.bodies) {
+                if (other == body) continue;
+                glm::vec3 pairDist = other->getPosition(BodyLock::NOLOCK) - bodyPos;
+                double pairDistSq = static_cast<double>(glm::dot(pairDist, pairDist));
+                if (pairDistSq < kMinRadiationDistanceSq) pairDistSq = kMinRadiationDistanceSq;
+
+                double otherArea = other->getSurfaceArea();
+                ThermalProperties otherProps = other->getThermalProperties(BodyLock::NOLOCK);
+                double other_t_4 = Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(otherProps.tempK));
+                double viewFactorTerm = (projectedArea * otherArea) / (4.0 * glm::pi<double>() * pairDistSq);
+                viewFactorTerm = std::min(viewFactorTerm, projectedArea);
+                double q_rad = Constants::STEFAN_BOLTZMANN * absorptivity * Physics::Thermal::effectiveEmissivity(otherProps, otherProps.tempK) * viewFactorTerm * other_t_4;
+                totalHeat += q_rad;
+            }
+
+        } else if (!nodeContainsBody && widthSq < Constants::THETA_SQ * distSq) {
+            double solidAngleFactor = projectedArea / (4.0 * glm::pi<double>() * distSq);
+            double q_rad = Constants::STEFAN_BOLTZMANN * absorptivity * solidAngleFactor * node.totalEmission;
+            totalHeat += q_rad;
+
+        } else {
+            std::uint8_t childMask = node.childMask;
+            while (childMask) {
+                int childOctant = std::countr_zero(childMask);
+                stack.push_back(node.children[childOctant]);
+                childMask &= (childMask - 1);
+            }
+        }
+    }
+    return totalHeat;
 }

@@ -1,14 +1,50 @@
 #include "RigidBody.h"
 
+#include <algorithm>
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "PointMass.h"
 #include "bounding/BoxCollider.h"
+#include "physics/utils/ThermalUtils.h"
 
-Physics::RigidBody::RigidBody(uint32_t id, float m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
+namespace {
+constexpr double kContactAreaFraction = 0.01;
+constexpr double kContactConductionDistance = 0.01;
+}
+
+void Physics::RigidBody::setScale(const glm::vec3& newScale) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    scale = newScale;
+    recomputeGeometry();
+}
+
+void Physics::RigidBody::setGeometry(const std::vector<glm::vec3>& vertices, const std::vector<unsigned int>& indices) {
+    std::lock_guard<std::mutex> lock(stateMutex);
+    meshVertices = vertices;
+    meshIndices = indices;
+    recomputeGeometry();
+}
+
+void Physics::RigidBody::recomputeGeometry() {
+    if (meshIndices.empty()) return;
+    float area = 0.0f;
+
+    for (size_t i = 0; i < meshIndices.size(); i += 3) {
+        glm::vec3 a = meshVertices[meshIndices[i]] * scale;
+        glm::vec3 b = meshVertices[meshIndices[i+1]] * scale;
+        glm::vec3 c = meshVertices[meshIndices[i+2]] * scale;
+        area += 0.5f * glm::length(glm::cross(b - a, c - a));
+    }
+
+    surfaceArea = area;
+}
+
+Physics::RigidBody::RigidBody(uint32_t id, double m, std::unique_ptr<Bounding::ICollider> col, glm::vec3 pos, bool bodyStatic) : PhysicsBody(id) {
     std::lock_guard<std::mutex> lock(stateMutex);
     setMass(m, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
+    setWorldTransform(glm::translate(glm::mat4(1.0f), pos), BodyLock::NOLOCK);
     collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
 }
@@ -18,6 +54,7 @@ Physics::RigidBody::RigidBody(uint32_t id, std::unique_ptr<Bounding::ICollider> 
     collider = std::move(col);
     setIsStatic(bodyStatic, BodyLock::NOLOCK);
     setPosition(pos, BodyLock::NOLOCK);
+    setWorldTransform(glm::translate(glm::mat4(1.0f), pos), BodyLock::NOLOCK);
     setMass(1.0f, BodyLock::NOLOCK);
 }
 
@@ -26,7 +63,7 @@ void Physics::RigidBody::recordFrame(float t, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK)} );
+    frames.push_back( {this, t, getPosition(BodyLock::NOLOCK), getVelocity(BodyLock::NOLOCK), static_cast<float>(getThermalProperties(BodyLock::NOLOCK).tempK)} );
 }
 
 void Physics::RigidBody::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock) {
@@ -36,6 +73,9 @@ void Physics::RigidBody::loadFrame(const ObjectSnapshot &snapshot, BodyLock lock
 
     setPosition(snapshot.position, BodyLock::NOLOCK);
     setVelocity(snapshot.velocity, BodyLock::NOLOCK);
+    ThermalProperties props = getThermalProperties(BodyLock::NOLOCK);
+    props.tempK = snapshot.temperature;
+    setThermalProperty(props, BodyLock::NOLOCK);
 }
 
 void Physics::RigidBody::step(float dt, BodyLock lock) {
@@ -43,11 +83,11 @@ void Physics::RigidBody::step(float dt, BodyLock lock) {
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
 
-    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK);
+    glm::vec3 acceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK));
     glm::vec3 posIncrement = getVelocity(BodyLock::NOLOCK) * dt + 0.5f * acceleration * dt * dt;
     setPosition(getPosition(BodyLock::NOLOCK) + posIncrement, BodyLock::NOLOCK);
     setWorldTransform(glm::translate(getWorldTransform(BodyLock::NOLOCK), posIncrement), BodyLock::NOLOCK);
-    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / getMass(BodyLock::NOLOCK); // if netForce changed during the step
+    glm::vec3 newAcceleration = getNetForce(BodyLock::NOLOCK) / static_cast<float>(getMass(BodyLock::NOLOCK)); // if netForce changed during the step
     setVelocity(getVelocity(BodyLock::NOLOCK) + 0.5f * (acceleration + newAcceleration) * dt, BodyLock::NOLOCK);
 }
 
@@ -65,11 +105,11 @@ bool Physics::RigidBody::collidesWithRigidBody(const RigidBody &rb) const {
     return false;
 }
 
-bool Physics::RigidBody::resolveCollisionWith(PhysicsBody &other) {
-    return other.resolveCollisionWithRigidBody(*this);
+bool Physics::RigidBody::resolveCollisionWith(float dt, PhysicsBody &other) {
+    return other.resolveCollisionWithRigidBody(dt, *this);
 }
 
-bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
+bool Physics::RigidBody::resolveCollisionWithPointMass(float dt, PointMass &pm) {
     std::lock_guard<std::mutex> lock(stateMutex);
     auto worldCollider = collider->getTransformed(getWorldTransform(BodyLock::NOLOCK));
     Bounding::ContactInfo ci = worldCollider->closestPoint(pm.getPosition(BodyLock::NOLOCK));
@@ -79,7 +119,7 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     if (vRel >= 0.0f) return false; // moving apart or resting
 
     float e = 0.0f; // restitution coefficient
-    float j = -(1.0f + e) * vRel * pm.getMass(BodyLock::NOLOCK);
+    float j = -(1.0f + e) * vRel * static_cast<float>(pm.getMass(BodyLock::NOLOCK));
 
     pm.applyImpulse(j * ci.normal, BodyLock::NOLOCK);
     glm::vec3 Fnet(0.0f);
@@ -89,9 +129,28 @@ bool Physics::RigidBody::resolveCollisionWithPointMass(PointMass &pm) {
     pm.setForce("Normal", Fn, BodyLock::NOLOCK);
     pm.setPosition(pm.getPosition(BodyLock::LOCK) + ci.normal * ci.penetration, BodyLock::NOLOCK);
 
+    // Friction heat & Contact conduction
+    ThermalProperties rbProps = getThermalProperties(BodyLock::NOLOCK);
+    ThermalProperties pmProps = pm.getThermalProperties(BodyLock::NOLOCK);
+
+    const double keLost = 0.5 * pm.getMass(BodyLock::NOLOCK) * static_cast<double>(vRel) * static_cast<double>(vRel);
+    Physics::Thermal::applyThermalEnergy(rbProps, getMass(BodyLock::NOLOCK), keLost * 0.5);
+    Physics::Thermal::applyThermalEnergy(pmProps, pm.getMass(BodyLock::NOLOCK), keLost * 0.5);
+
+    const double contactArea = kContactAreaFraction * std::min(getSurfaceArea(), pm.getSurfaceArea());
+    const double distance = kContactConductionDistance;
+    Physics::Thermal::applyConductiveExchange(
+        rbProps, getMass(BodyLock::NOLOCK),
+        pmProps, pm.getMass(BodyLock::NOLOCK),
+        contactArea, distance, dt
+    );
+
+    setThermalProperty(rbProps, BodyLock::NOLOCK);
+    pm.setThermalProperty(pmProps, BodyLock::NOLOCK);
+
     return true;
 }
 
-bool Physics::RigidBody::resolveCollisionWithRigidBody(RigidBody &rb) {
+bool Physics::RigidBody::resolveCollisionWithRigidBody(float dt, RigidBody &rb) {
     return false;
 }

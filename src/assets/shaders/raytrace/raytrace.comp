@@ -34,15 +34,30 @@ uniform uint uNumBvh;
 uniform uint uAccumFrames;
 uniform int uEnableGlobalLight;
 
-const uint LEAF = 0x80000000u;
-const uint LEAF_START_MASK = 0x0FFFFFFFu;
-const uint HIT_NONE = 0xFFFFFFFFu;
-const int STACKN = 64;
-const float RAY_BIAS = 1.0e-3;
-const float FAR_CLIP = 300000.0;
-const float SUN_ANGULAR_RADIUS = 0.0125;
-const vec3 SUN_DIR = normalize(vec3(0.35, 0.9, 0.22));
-const vec3 SUN_RADIANCE = vec3(4.6, 4.2, 3.8);
+const uint  LEAF                = 0x80000000u;
+const uint  LEAF_START_MASK     = 0x0FFFFFFFu;
+const uint  HIT_NONE            = 0xFFFFFFFFu;
+const int   STACKN              = 64;
+const float RAY_BIAS            = 1.0e-3;
+const float FAR_CLIP            = 300000.0;
+const vec3  SUN_DIR             = normalize(vec3(0.35, 0.9, 0.22));
+const vec3  SUN_RADIANCE        = vec3(4.6, 4.2, 3.8);
+const float MATERIAL_MIN_VALUE  = 0.02;
+const float MATERIAL_MAX_VALUE  = 0.98;
+const float CHECKER_TILE_SIZE   = 100.0;
+const float CHECKER_DARK_SCALE  = 0.7;
+const float CHECKER_LIGHT_SCALE = 1.25;
+const float CHECKER_LIGHT_BIAS  = 0.03;
+const float CHECKER_MAX_VALUE   = 0.95;
+const vec3  SKY_HORIZON_COLOR   = vec3(0.80, 0.84, 0.92);
+const vec3  SKY_ZENITH_COLOR    = vec3(0.20, 0.38, 0.78);
+const vec3  SKY_GROUND_COLOR    = vec3(0.12, 0.13, 0.15);
+const float SKY_GRADIENT_POWER  = 0.55;
+const vec3  SUN_CORE_COLOR      = vec3(7.5, 6.4, 5.2);
+const vec3  SUN_HALO_COLOR      = vec3(1.8, 1.3, 0.9);
+const float SUN_CORE_POWER      = 1024.0;
+const float SUN_HALO_POWER      = 48.0;
+const float TWO_PI              = 6.28318530718;
 
 vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
     vec3 t0 = (bmin - o) * invD;
@@ -112,16 +127,19 @@ uint materialKind(Tri tri) {
 }
 
 vec3 evaluateMaterial(Tri tri, vec3 pos) {
-    vec3 base = clamp(tri.material.rgb, vec3(0.02), vec3(0.98));
+    vec3 base = clamp(tri.material.rgb, vec3(MATERIAL_MIN_VALUE), vec3(MATERIAL_MAX_VALUE));
     if (materialKind(tri) != 1u) {
         return base;
     }
 
-    float tx = floor(pos.x / 100.0);
-    float tz = floor(pos.z / 100.0);
+    float tx = floor(pos.x / CHECKER_TILE_SIZE);
+    float tz = floor(pos.z / CHECKER_TILE_SIZE);
     bool dark = mod(tx + tz, 2.0) == 0.0;
-    vec3 a = clamp(base * 0.7, vec3(0.02), vec3(0.95));
-    vec3 b = clamp(base * 1.25 + vec3(0.03), vec3(0.02), vec3(0.95));
+    vec3 a = clamp(base * CHECKER_DARK_SCALE, vec3(MATERIAL_MIN_VALUE), vec3(CHECKER_MAX_VALUE));
+    vec3 b = clamp(
+        base * CHECKER_LIGHT_SCALE + vec3(CHECKER_LIGHT_BIAS),
+        vec3(MATERIAL_MIN_VALUE),
+        vec3(CHECKER_MAX_VALUE));
     return dark ? a : b;
 }
 
@@ -131,14 +149,14 @@ vec3 skyRadiance(vec3 dir) {
     }
     
     float up = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);
-    vec3 sky = mix(vec3(0.80, 0.84, 0.92), vec3(0.20, 0.38, 0.78), pow(up, 0.55));
+    vec3 sky = mix(SKY_HORIZON_COLOR, SKY_ZENITH_COLOR, pow(up, SKY_GRADIENT_POWER));
     if (dir.y < 0.0) {
-        sky = mix(vec3(0.12, 0.13, 0.15), sky, clamp(dir.y + 1.0, 0.0, 1.0));
+        sky = mix(SKY_GROUND_COLOR, sky, clamp(dir.y + 1.0, 0.0, 1.0));
     }
 
     float sun = max(dot(dir, SUN_DIR), 0.0);
-    sky += vec3(7.5, 6.4, 5.2) * pow(sun, 1024.0);
-    sky += vec3(1.8, 1.3, 0.9) * pow(sun, 48.0);
+    sky += SUN_CORE_COLOR * pow(sun, SUN_CORE_POWER);
+    sky += SUN_HALO_COLOR * pow(sun, SUN_HALO_POWER);
     return sky;
 }
 
@@ -155,7 +173,7 @@ vec3 cosineHemisphere(vec3 n, inout uint state) {
     float u1 = rand01(state);
     float u2 = rand01(state);
     float r = sqrt(u1);
-    float phi = 6.28318530718 * u2;
+    float phi = TWO_PI * u2;
     float x = r * cos(phi);
     float y = r * sin(phi);
     float z = sqrt(max(0.0, 1.0 - u1));
@@ -237,39 +255,11 @@ bool traceShadow(vec3 origin, vec3 dir, float maxDistance) {
     return traceClosest(origin, dir, maxDistance, tHit, triIndex, bary);
 }
 
-float softShadowVisibility(vec3 origin, vec3 lightDir) {
-    vec3 tangent;
-    vec3 bitangent;
-    buildBasis(lightDir, tangent, bitangent);
-
-    const vec2 sunSamples[4] = vec2[](
-        vec2(0.0, 0.0),
-        vec2(0.65, 0.2),
-        vec2(-0.55, 0.45),
-        vec2(0.15, -0.7)
-    );
-
-    float visible = 0.0;
-    for (int i = 0; i < 4; ++i) {
-        vec3 sampleDir = normalize(
-            lightDir + tangent * (sunSamples[i].x * SUN_ANGULAR_RADIUS) + bitangent * (sunSamples[i].y * SUN_ANGULAR_RADIUS)
-        );
-        if (!traceShadow(origin, sampleDir, FAR_CLIP)) {
-            visible += 1.0;
-        }
-    }
-    return visible * 0.25;
-}
-
 vec3 tracePath(vec3 origin, vec3 dir, inout uint state);
 
 vec3 shadePreview(vec3 origin, vec3 dir, uint seedBase) {
-    vec3 accum = vec3(0.0);
-    for (uint i = 0u; i < 2u; ++i) {
-        uint localState = seedBase + 0x9E3779B9u * (i + 1u);
-        accum += tracePath(origin, dir, localState);
-    }
-    return accum * 0.5;
+    uint localState = seedBase + 0x9E3779B9u;
+    return tracePath(origin, dir, localState);
 }
 
 vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
@@ -309,7 +299,6 @@ vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
             radiance += throughput * albedo * SUN_RADIANCE * nDotL;
         }
 
-        radiance += throughput * albedo * skyRadiance(normal) * 0.08;
         throughput *= albedo;
 
         if (bounce > 0) {

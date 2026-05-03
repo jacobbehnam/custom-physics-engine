@@ -42,12 +42,30 @@ SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, 
             scale = o.base.scale;
             rotation = o.base.rotation;
             physicsBody = std::make_unique<Physics::RigidBody>(objectID, o.mass, o.createCollider(o.base), o.base.position, o.isStatic);
+            auto rb = static_cast<Physics::RigidBody*>(physicsBody.get());
+
+            std::span<const Vertex> meshVerts = mesh->getVertices();
+            std::vector<glm::vec3> verts(meshVerts.size());
+            for (size_t i = 0; i < meshVerts.size(); ++i) {
+                verts[i] = meshVerts[i].pos;
+            }
+
+            std::span<const unsigned int> meshInds = mesh->getIndices();
+            std::vector<unsigned int> inds(meshInds.data(), meshInds.data() + meshInds.size());
+
+            rb->setGeometry(verts, inds);
+            rb->setScale(o.base.scale);
             physicsBody->setVelocity(o.velocity, BodyLock::LOCK);
             sceneManager->addToPhysicsSystem(physicsBody.get());
         } else {
             std::cout << "Problem with CreationOptions on SceneObject construction!" << std::endl;
         }
     }, options);
+
+    orientation = glm::quat(rotation);
+    if (physicsBody) {
+        physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
+    }
 }
 
 SceneObject::~SceneObject() {
@@ -57,14 +75,41 @@ SceneObject::~SceneObject() {
     }
 }
 
-glm::mat4 SceneObject::getModelMatrix() const{
+glm::mat4 SceneObject::getModelMatrix() const {
+    return buildModelMatrix(false);
+}
+
+glm::mat4 SceneObject::getRenderModelMatrix() const {
+    return buildModelMatrix(true);
+}
+
+glm::mat4 SceneObject::buildModelMatrix(bool relativeToRenderOrigin) const{
     glm::vec3 currentPosition = position;
-    if (physicsBody) {
+    glm::vec3 origin(0.0f);
+    bool hasMappedPhysicsPosition = false;
+
+    {
         std::lock_guard<std::mutex> lk(posMapMutex);
-        auto it = posMap.find(physicsBody.get());
-        if (it != posMap.end())
-            currentPosition = it->second;
+        origin = renderOrigin;
+        if (physicsBody) {
+            auto it = posMap.find(physicsBody.get());
+            if (it != posMap.end()) {
+                currentPosition = it->second;
+                hasMappedPhysicsPosition = true;
+            }
+        }
     }
+
+    if (physicsBody) {
+        if (!hasMappedPhysicsPosition) {
+            currentPosition = physicsBody->getPosition(BodyLock::LOCK);
+        }
+    }
+
+    if (relativeToRenderOrigin) {
+        currentPosition -= origin;
+    }
+
     glm::mat4 model(1.0f);
     model = glm::translate(model, currentPosition);
     model = model * glm::mat4_cast(orientation);
@@ -156,8 +201,13 @@ void SceneObject::setRotation(const glm::vec3 &euler) {
 
 void SceneObject::setScale(const glm::vec3 &scl) {
     scale = scl;
-    if (physicsBody)
+    if (physicsBody) {
         physicsBody->setWorldTransform(getModelMatrix(), BodyLock::LOCK);
+        auto rb = dynamic_cast<Physics::RigidBody*>(physicsBody.get());
+        if (rb) {
+            rb->setScale(scl);
+        }
+    }
 }
 
 glm::vec3 SceneObject::getPosition() const{
@@ -200,5 +250,5 @@ uint32_t SceneObject::getObjectID() const {
 }
 
 Rendering::InstanceData SceneObject::getInstanceData() const {
-    return {getModelMatrix(), getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f)};
+    return {getRenderModelMatrix(), getObjectID(), glm::vec3(1.0f, 1.0f, 0.0f)};
 }

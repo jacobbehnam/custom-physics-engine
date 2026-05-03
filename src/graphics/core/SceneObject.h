@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <utility>
 #include <graphics/components/Mesh.h>
 #include "IDrawable.h"
@@ -37,6 +38,7 @@ public:
     Rendering::InstanceData getInstanceData() const override;
     Physics::PhysicsBody* getPhysicsBody() const { return physicsBody.get(); }
     std::optional<float> intersectsRay(const Math::Ray& ray) const override;
+    glm::mat4 getModelMatrix() const override;
 
     void handleClick(const Math::Ray& ray, float distance) override;
     void setHovered(bool hovered) override;
@@ -46,8 +48,6 @@ public:
     const std::string& getName() const { return objectName; }
     const std::string& getMeshName() const { return meshName; }
     void setName(std::string name) { objectName = std::move(name); }
-    /// World model matrix (physics snapshot applied when active).
-    glm::mat4 getModelMatrix() const;
     CreationOptions getCreationOptions() const { return creationOptions; }
 
     using PosMap = std::unordered_map<Physics::PhysicsBody*, glm::vec3>;
@@ -57,9 +57,23 @@ public:
         posMap = m;
     }
 
+    static void setRenderOrigin(const glm::vec3& origin) {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        renderOrigin = origin;
+    }
+    static glm::vec3 getRenderOrigin() {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        return renderOrigin;
+    }
+    static glm::mat4 worldToRenderMatrix() {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        return glm::translate(glm::mat4(1.0f), -renderOrigin);
+    }
+
 private:
     inline static std::mutex posMapMutex;
     inline static PosMap posMap{};
+    inline static glm::vec3 renderOrigin{0.0f};
 
     QObject* parent;
     Mesh* mesh;
@@ -80,6 +94,8 @@ private:
     uint32_t objectID;
     std::string objectName;
 
+    glm::mat4 getRenderModelMatrix() const;
+    glm::mat4 buildModelMatrix(bool relativeToRenderOrigin) const;
     std::optional<float> intersectsAABB(const Math::Ray& ray) const;
     std::optional<float> intersectsMesh(const Math::Ray& ray) const;
 };

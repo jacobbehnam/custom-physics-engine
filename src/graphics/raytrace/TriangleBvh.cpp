@@ -8,14 +8,17 @@
 namespace Raytrace {
 
 namespace {
-constexpr uint32_t kLeaf = 0x80000000u;
+constexpr uint32_t kLeaf           = 0x80000000u;
+constexpr uint32_t kLeafStartMask  = 0x0FFFFFFFu;
+constexpr uint32_t kLeafCountShift = 28u;
+constexpr uint32_t kLeafCountMask  = 0x7u;
 
 uint32_t decodeLeafCount(uint32_t packed) {
-    return (packed >> 28u) & 0x7u;
+    return (packed >> kLeafCountShift) & kLeafCountMask;
 }
 
 uint32_t decodeLeafStart(uint32_t packed) {
-    return packed & 0x0FFFFFFFu;
+    return packed & kLeafStartMask;
 }
 } // namespace
 
@@ -159,7 +162,7 @@ uint32_t TriangleBvh::buildRange(
         const int nodeIndex = allocNode();
         m_nodes[static_cast<size_t>(nodeIndex)] = GpuBvhNode{
             bounds.bmin,
-            TriangleBvh::kLeaf | (static_cast<uint32_t>(count) << 28u) | static_cast<uint32_t>(oLo),
+            kLeaf | (static_cast<uint32_t>(count) << kLeafCountShift) | static_cast<uint32_t>(oLo),
             bounds.bmax,
             0u,
         };

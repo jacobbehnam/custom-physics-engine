@@ -16,4 +16,5 @@ private:
     QDoubleSpinBox* m_trailTimeBox;
     QCheckBox* m_showForcesBox;
     QCheckBox* m_showCollidersBox;
+    QCheckBox* m_showObjectLabelsBox;
 };

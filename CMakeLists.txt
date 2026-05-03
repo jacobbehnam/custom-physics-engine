@@ -30,6 +30,9 @@ add_library(PhysicsCore STATIC
         src/physics/RigidBody.cpp
         src/physics/PointMass.h
         src/physics/PointMass.cpp
+        src/physics/ThermalProperties.h
+        src/physics/utils/ThermalUtils.h
+        src/physics/utils/ThermalUtils.cpp
 
         # Bounding Box Logic
         src/physics/bounding/AABB.h
@@ -80,6 +83,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/graphics/core/SceneSerializer.cpp
         src/graphics/core/SceneSerializer.h
         src/graphics/core/SceneObjectOptions.h
+        src/graphics/presets/ScenePresets.cpp
+        src/graphics/presets/ScenePresets.h
+        src/graphics/presets/AstronomyPresets.cpp
+        src/graphics/presets/AstronomyPresets.h
         src/graphics/components/Mesh.cpp
         src/graphics/components/Shader.cpp
         src/graphics/components/Shader.h
@@ -136,6 +143,8 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/IInspectorSection.h
         src/ui/inspector/TransformInspectorWidget.h
         src/ui/inspector/TransformInspectorWidget.cpp
+        src/ui/inspector/ThermalInspectorWidget.h
+        src/ui/inspector/ThermalInspectorWidget.cpp
         src/ui/inspector/InspectorRow.h
         src/ui/SnapshotTableModel.cpp
         src/ui/SnapshotTableModel.h
@@ -198,22 +207,19 @@ target_link_libraries(PhysicsCore PUBLIC
         atomic
 )
 
-# Detect changes in shader files and trigger asset copying if needed
-file(GLOB_RECURSE SHADER_FILES
-    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.comp"
-    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.vert"
-    "${CMAKE_SOURCE_DIR}/src/assets/shaders/*.frag"
-)
-
 set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
 set(ASSETS_DEST "${CMAKE_BINARY_DIR}/assets")
 set(ASSETS_STAMP "${CMAKE_BINARY_DIR}/assets_copied.stamp")
+
+file(GLOB_RECURSE ASSET_FILES CONFIGURE_DEPENDS
+    "${ASSETS_SOURCE}/*"
+)
 
 add_custom_command(
     OUTPUT ${ASSETS_STAMP}
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE} ${ASSETS_DEST}
     COMMAND ${CMAKE_COMMAND} -E touch ${ASSETS_STAMP}
-    DEPENDS ${SHADER_FILES}
+    DEPENDS ${ASSET_FILES}
     COMMENT "Copying changed assets..."
 )
 

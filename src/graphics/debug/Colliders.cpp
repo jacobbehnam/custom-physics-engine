@@ -27,7 +27,8 @@ void Colliders::draw() const {
         m_instanceScratch.reserve(objects.size());
     }
 
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         auto* body = obj->getPhysicsBody();
         if (!body) continue;
         auto* col = body->getCollider();
@@ -51,6 +52,11 @@ void Colliders::draw() const {
     if (m_instanceScratch.empty()) return;
 
     basicShader->use();
+
+    const glm::mat4 worldToRender = SceneObject::worldToRenderMatrix();
+    for (auto& instance : m_instanceScratch) {
+        instance.model = worldToRender * instance.model;
+    }
 
     GLint oldPolygonMode[2];
     GLfloat oldLineWidth = 1.0f;

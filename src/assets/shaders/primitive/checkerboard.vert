@@ -10,6 +10,8 @@ layout (location = 6) in uint objectID;
 out vec3 FragPos;
 flat out uint fragObjectID;
 
+uniform vec3 renderOrigin;
+
 layout(std140, binding=0) uniform cameraMatrices {
     mat4 projection;
     mat4 view;
@@ -20,7 +22,7 @@ void main()
     mat4 model = mat4(iModel0, iModel1, iModel2, iModel3);
 
     vec4 worldPos = model * vec4(aPos, 1.0);
-    FragPos = worldPos.xyz;
+    FragPos = worldPos.xyz + renderOrigin;
 
     fragObjectID = objectID;
 

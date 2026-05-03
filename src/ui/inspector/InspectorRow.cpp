@@ -37,7 +37,7 @@ InspectorRow& InspectorRow::addVec3(const std::function<glm::vec3()> &get, const
     return *this;
 }
 
-InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const std::function<void(float)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit) {
+InspectorRow &InspectorRow::addScalar(const std::function<double()> &get, const std::function<void(double)> &set, const QString& unit, const std::function<void(ScalarWidget*)> &onInit) {
     auto* scalar = new ScalarWidget(" " + unit);
     scalar->setValue(get());
     layout->addWidget(scalar);
@@ -46,8 +46,8 @@ InspectorRow &InspectorRow::addScalar(const std::function<float()> &get, const s
         onInit(scalar);
     }
 
-    QObject::connect(scalar, &ScalarWidget::valueChanged, [set](float f){
-        if (set) set(f);
+    QObject::connect(scalar, &ScalarWidget::valueChanged, [set](double value){
+        if (set) set(value);
     });
 
     updaters.emplace_back([scalar, get]() {

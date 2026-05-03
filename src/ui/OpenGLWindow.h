@@ -4,9 +4,13 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QSet>
 #include <QCursor>
+#include <QPushButton>
 #include <chrono>
+#include <memory>
+#include <vector>
 #include "math/Ray.h"
 
 class Scene;
@@ -20,8 +24,8 @@ signals:
     void glInitialized();
 
 public:
-    explicit OpenGLWindow(Scene* scene, QWidget* parent = nullptr);
-    ~OpenGLWindow();
+    explicit OpenGLWindow(QWidget* parent = nullptr);
+    ~OpenGLWindow() override = default;
 
     bool isKeyPressed(int qtKey) const { return pressedKeys.contains(qtKey); }
 
@@ -30,7 +34,7 @@ public:
     /// Device pixels for GL viewport / RT (not QWidget::size(), which is DPR-scaled logical).
     QSize getFramebufferSize() const;
 
-    void setScene(Scene* sc) { scene = sc; }
+    void setScene(std::unique_ptr<Scene> sc) { scene = std::move(sc); }
     void setSceneManager(SceneManager* scm) { sceneManager = scm; }
 
     void setMouseCaptured(bool captured);
@@ -43,6 +47,9 @@ public:
 
     void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
     float getSimSpeed() const { return simSpeed.load(); }
+    void setRenderClockRunning(bool running) { simulating = running; }
+    bool isRenderClockRunning() const { return simulating; }
+    void resetRenderClock(float simTime = 0.0f) { renderSimTime = simTime; }
 
 protected:
     void initializeGL() override;
@@ -53,6 +60,7 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     std::chrono::steady_clock::time_point lastFrame;
@@ -70,9 +78,12 @@ private:
     bool firstMouse = false;
     bool mouseCaptured = false;
 
-    Scene* scene = nullptr;
+    std::unique_ptr<Scene> scene;
     SceneManager* sceneManager = nullptr;
+    std::vector<QPushButton*> objectLabelButtons;
 
     void calculateFPS();
     Math::Ray getMouseRay();
+    void updateObjectLabels();
+    void hideObjectLabels();
 };

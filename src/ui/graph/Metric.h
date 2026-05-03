@@ -28,7 +28,7 @@ inline QString metricLabel(Metric metric) {
         case Metric::VelocityX:     return QObject::tr("Velocity X");
         case Metric::VelocityY:     return QObject::tr("Velocity Y");
         case Metric::VelocityZ:     return QObject::tr("Velocity Z");
-        case Metric::Temperature:   return QObject::tr("Temperature");
+        case Metric::Temperature:   return QObject::tr("Temperature (K)");
         case Metric::Count:         return QObject::tr("Invalid Metric");
     }
     return QObject::tr("Unknown Metric");

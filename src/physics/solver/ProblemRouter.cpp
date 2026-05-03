@@ -5,6 +5,14 @@
 #include "InterceptSolver.h"
 #include "physics/PhysicsSystem.h"
 
+namespace {
+constexpr float kMissingTargetDistance = 99999.0f;
+constexpr double kVelocitySolverTolerance = 1.0e-3;
+constexpr int kVelocitySolverMaxIterations = 30;
+constexpr double kVelocitySolverJacobianStep = 0.01;
+constexpr double kVelocitySolverDamping = 1.0;
+}
+
 ProblemRouter::ProblemRouter(Physics::PhysicsSystem& physics) : physicsSystem(physics) {
     registerKinematicsProblems();
 }
@@ -169,7 +177,7 @@ void ProblemRouter::registerKinematicsProblems() {
         glm::vec3 targetPoint(knowns.at("Stop_Val_X"), knowns.at("Stop_Val_Y"), knowns.at("Stop_Val_Z"));
         Physics::PhysicsBody* targetBody = physicsSystem.getBodyById(targetID);
 
-        auto monitor = [=]() -> float {
+        auto monitor = [=, this]() -> float {
             float currentVal = 0.0f;
 
             switch (prop) {
@@ -198,7 +206,7 @@ void ProblemRouter::registerKinematicsProblems() {
 
                     currentVal = glm::distance(pSubject, pTarget);
                 } else {
-                    currentVal = 99999.0f;
+                    currentVal = kMissingTargetDistance;
                 }
                 break;
             }
@@ -257,12 +265,12 @@ void ProblemRouter::registerKinematicsProblems() {
             targetPos = targetBody->getPosition(BodyLock::LOCK);
         }
 
-        auto setter = [=](const glm::vec3& guess_v0) {
+        auto setter = [=, this](const glm::vec3& guess_v0) {
             physicsSystem.reset();
             body->setVelocity(guess_v0, BodyLock::LOCK);
         };
 
-        auto stopCondition = [=]() -> bool {
+        auto stopCondition = [=, this]() -> bool {
             if (targetTime > 0.0f) {
                 return physicsSystem.simTime >= targetTime;
             }
@@ -281,7 +289,7 @@ void ProblemRouter::registerKinematicsProblems() {
                     currentVal = glm::distance(subjectBody->getPosition(BodyLock::LOCK),
                                                targetBody->getPosition(BodyLock::LOCK));
                 } else {
-                    currentVal = 99999.0f;
+                    currentVal = kMissingTargetDistance;
                 }
                 break;
             case 3:
@@ -299,7 +307,10 @@ void ProblemRouter::registerKinematicsProblems() {
 
         return std::make_unique<VectorRootSolver<glm::vec3, glm::vec3>>(
             setter, stopCondition, extractor, targetPos,
-            1e-3, 30, 0.01, 1.0
+            kVelocitySolverTolerance,
+            kVelocitySolverMaxIterations,
+            kVelocitySolverJacobianStep,
+            kVelocitySolverDamping
         );
     };
 

@@ -18,9 +18,9 @@ HierarchyWidget::HierarchyWidget(QWidget* parent) : QWidget(parent) {
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(tree, &QTreeWidget::itemDoubleClicked, this, [this](QTreeWidgetItem* item, int column) {
-        if (column == 0) {
-            tree->editItem(item, 0);
-        }
+        Q_UNUSED(column);
+        if (SceneObject* obj = getObjectFromItem(item))
+            emit focusObjectRequested(obj);
     });
     connect(tree, &QTreeWidget::itemChanged, this, &HierarchyWidget::onItemNameChanged);
 
@@ -71,6 +71,32 @@ void HierarchyWidget::showContextMenu(const QPoint& pos) {
         tree->clearSelection();
     });
     contextMenu.addSeparator();
+
+    if (SceneObject* obj = getObjectFromItem(tree->itemAt(pos))) {
+        QAction* focusAction = contextMenu.addAction("Focus Camera");
+        connect(focusAction, &QAction::triggered, [this, obj]() {
+            emit focusObjectRequested(obj);
+        });
+
+        QAction* followAction = contextMenu.addAction("Follow Camera");
+        connect(followAction, &QAction::triggered, [this, obj]() {
+            emit followObjectRequested(obj);
+        });
+
+        QAction* clearFollowAction = contextMenu.addAction("Stop Camera Follow");
+        connect(clearFollowAction, &QAction::triggered, [this]() {
+            emit clearCameraFollowRequested();
+        });
+
+        QAction* renameAction = contextMenu.addAction("Rename");
+        connect(renameAction, &QAction::triggered, [this, pos]() {
+            if (QTreeWidgetItem* item = tree->itemAt(pos)) {
+                tree->editItem(item, 0);
+            }
+        });
+
+        contextMenu.addSeparator();
+    }
 
     QAction* addPmAction = contextMenu.addAction("Add Point Mass");
 
