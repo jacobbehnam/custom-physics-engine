@@ -2,6 +2,7 @@
 #include "physics/Constants.h"
 #include "physics/PhysicsSystem.h"
 #include "physics/utils/ThermalUtils.h"
+#include <algorithm>
 #include <bit>
 #include <glm/gtx/component_wise.hpp>
 #include <cstdint>
@@ -49,8 +50,7 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
     double emission = epsArea * Physics::Thermal::fourthPower(Physics::Thermal::clampTemperature(props.tempK));
 
     // Node is empty, put the body here
-    if (node->body == nullptr && node->totalMass == 0.0) {
-        node->body       = body;
+    if (node->bodies.empty() && node->totalMass == 0.0) {
         node->bodies.push_back(body);
         node->massCenter = bodyPos;
         node->totalMass  = bodyMass;
@@ -86,31 +86,24 @@ void Octree::insert(NodeIndex nodeIndex, Physics::PhysicsBody* body) {
         insert(node->children[bOct.val], b);
     };
 
-    Physics::PhysicsBody* existingBody = node->body;
     if (node->isLeaf() && !node->bodies.empty()) {
-        if (childHalfSize <= kMinNodeHalfSize || (existingBody != nullptr && existingBody->getPosition(BodyLock::NOLOCK) == bodyPos)) {
+        const bool hasCoincidentBody = std::any_of(node->bodies.begin(), node->bodies.end(),
+            [&](Physics::PhysicsBody* existing) {
+                return existing->getPosition(BodyLock::NOLOCK) == bodyPos;
+            });
+
+        if (childHalfSize <= kMinNodeHalfSize || hasCoincidentBody) {
             node->bodies.push_back(body);
-            node->body = node->bodies.size() == 1 ? node->bodies.front() : nullptr;
             return;
         }
 
         std::vector<Physics::PhysicsBody*> existingBodies = std::move(node->bodies);
         node->bodies.clear();
-        node->body = nullptr;
         for (Physics::PhysicsBody* existing : existingBodies) {
             insertBody(existing);
         }
         insertBody(body);
         return;
-    }
-
-    if (existingBody != nullptr) {
-        std::vector<Physics::PhysicsBody*> existingBodies = std::move(node->bodies);
-        node->bodies.clear();
-        node->body = nullptr;
-        for (Physics::PhysicsBody* existing : existingBodies) {
-            insertBody(existing);
-        }
     }
     insertBody(body);
 }
@@ -180,8 +173,6 @@ glm::vec3 Octree::computeForce(Physics::PhysicsBody* body, double G) {
                 }
                 continue;
             }
-
-            if (node.body == body) continue;
 
             float invDist = 1.0f / sqrt(softeningDistSq);
             float invDist3 = invDist * invDist * invDist;

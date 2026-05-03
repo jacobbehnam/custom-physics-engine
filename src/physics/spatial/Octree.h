@@ -21,7 +21,6 @@ struct OctreeNode {
     uint8_t childMask = 0; // Bitmask to track which children exist
 
     // Leaf nodes only
-    Physics::PhysicsBody* body = nullptr;
     std::vector<Physics::PhysicsBody*> bodies;
 
     // Aggregated properties (center, mass)
