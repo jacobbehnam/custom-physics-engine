@@ -15,6 +15,9 @@
 namespace {
 constexpr float kFloatingOriginThreshold = 1.0e6f;
 constexpr float kNearClipDepthFraction = 0.05f;
+constexpr float kFarClipPaddingMultiplier = 1.25f;
+constexpr float kMinFarthestDepthOffset = 1.0f;
+constexpr float kMaxNearClipFractionOfFarClip = 0.5f;
 
 float maxAbsComponent(const glm::vec3& v) {
     return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
@@ -112,7 +115,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     camera.update(renderTargetPositionPtr);
 
     float nearestDepth = std::numeric_limits<float>::max();
-    float farthestDepth = Camera::kDefaultNearClip + 1.0f;
+    float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;
     bool foundVisibleDepth = false;
 
     for (auto* drawable : instancedDrawables) {
@@ -129,10 +132,10 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     if (foundVisibleDepth) {
-        const float farClip = std::max(farthestDepth * 1.25f, Camera::kDefaultFarClip);
+        const float farClip = std::max(farthestDepth * kFarClipPaddingMultiplier, Camera::kDefaultFarClip);
         const float nearClip = nearestDepth == std::numeric_limits<float>::max()
             ? Camera::kDefaultNearClip
-            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * 0.5f);
+            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * kMaxNearClipFractionOfFarClip);
         camera.setClipRange(nearClip, farClip);
     } else {
         camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
