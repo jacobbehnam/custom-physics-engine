@@ -137,7 +137,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
     parameterStack->addWidget(targetVecWidget);
 
     subjectCombo->addItem("-- Subject --", -1);
-    for (auto* obj : sceneManager->getObjects()) {
+    for (const auto& objPtr : sceneManager->getObjects()) {
+        SceneObject* obj = objPtr.get();
         subjectCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
     }
     connect(subjectCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, subjectCombo](int){
@@ -188,7 +189,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
         if (subjectCombo->count() != sceneManager->getObjects().size() + 1) {
              subjectCombo->clear();
              subjectCombo->addItem("-- Subject --", -1);
-             for (auto* obj : sceneManager->getObjects()) {
+             for (const auto& objPtr : sceneManager->getObjects()) {
+                 SceneObject* obj = objPtr.get();
                  subjectCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
              }
              subjIdx = subjectCombo->findData(sceneManager->stopCondition.subjectID);
@@ -212,7 +214,8 @@ void GlobalsInspectorWidget::createStopConditionUi() {
             if (targetObjCombo->count() != sceneManager->getObjects().size()) {
                 const QSignalBlocker b(targetObjCombo);
                 targetObjCombo->clear();
-                for (auto* obj : sceneManager->getObjects()) {
+                for (const auto& objPtr : sceneManager->getObjects()) {
+                    SceneObject* obj = objPtr.get();
                     targetObjCombo->addItem(QString::fromStdString(obj->getName()), obj->getObjectID());
                 }
             }
@@ -314,7 +317,8 @@ void GlobalsInspectorWidget::runSolver() {
     knowns["Target_Time"] = targetTime;
 
     SceneObject* visualSubject = nullptr;
-    for (auto* obj : sceneManager->getObjects()) {
+    for (const auto& objPtr : sceneManager->getObjects()) {
+        SceneObject* obj = objPtr.get();
         if (static_cast<int>(obj->getObjectID()) == cond.subjectID) {
             visualSubject = obj;
             break;

@@ -30,7 +30,8 @@ void Colliders::draw() const {
         m_instanceScratch.reserve(objects.size());
     }
 
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         auto* body = obj->getPhysicsBody();
         if (!body) continue;
         auto* col = body->getCollider();

@@ -58,7 +58,8 @@ void Forces::draw() const {
     float maxMag = 0.0f;
     bool haveSpan = false;
 
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         auto* body = obj->getPhysicsBody();
         if (!body) continue;
 

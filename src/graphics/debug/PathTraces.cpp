@@ -53,7 +53,8 @@ void PathTraces::draw() const {
     gl->glLineWidth(2.0f);
 
     std::vector<glm::vec3> points;
-    for (SceneObject* obj : objects) {
+    for (const auto& objPtr : objects) {
+        SceneObject* obj = objPtr.get();
         Physics::PhysicsBody* body = obj->getPhysicsBody();
         if (!body) continue;
 

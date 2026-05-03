@@ -238,7 +238,7 @@ void OpenGLWindow::updateObjectLabels() {
             continue;
         }
 
-        SceneObject* obj = objects[i];
+        SceneObject* obj = objects[i].get();
         const glm::vec3 objectPosition = glm::vec3(obj->getModelMatrix()[3]);
         const glm::vec3 labelPosition = useFloatingOrigin ? objectPosition - renderOrigin : objectPosition;
         glm::vec4 clip = proj * view * glm::vec4(labelPosition, 1.0f);

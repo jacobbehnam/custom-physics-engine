@@ -96,7 +96,6 @@ SceneObject* SceneManager::createPrimitive(Primitive type, Shader *shader = Reso
     assert(primitive != nullptr);
     SceneObject* ptr = primitive.get();
 
-    sceneObjectPtrs.push_back(ptr);
     sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
@@ -113,7 +112,6 @@ SceneObject* SceneManager::createObject(const std::string &meshName, Shader *sha
     SceneObject* ptr = primitive.get();
 
     setObjectName(primitive.get(), makeUniqueName(generateDefaultName(options)));
-    sceneObjectPtrs.push_back(ptr);
     sceneObjectsByID[ptr->getObjectID()] = ptr;
     sceneObjects.push_back(std::move(primitive));
 
@@ -146,10 +144,6 @@ void SceneManager::deleteObject(SceneObject *obj) {
         pickableObjects.end()
     );
     scene->removeDrawable(obj);
-    sceneObjectPtrs.erase(
-        std::remove(sceneObjectPtrs.begin(), sceneObjectPtrs.end(), obj),
-        sceneObjectPtrs.end()
-    );
     sceneObjectsByID.erase(obj->getObjectID());
     const std::string& objectName = obj->getName();
     auto nameIt = usedNames.find(objectName);
@@ -174,12 +168,11 @@ void SceneManager::deleteAllObjects() {
         deleteObject(sceneObjects.back().get());
     }
     usedNames.clear();
-    sceneObjectPtrs.clear();
     sceneObjectsByID.clear();
 }
 
-const std::vector<SceneObject*>& SceneManager::getObjects() const {
-    return sceneObjectPtrs;
+const std::vector<std::unique_ptr<SceneObject>>& SceneManager::getObjects() const {
+    return sceneObjects;
 }
 
 SceneObject* SceneManager::getObjectByID(uint32_t objectID) const {

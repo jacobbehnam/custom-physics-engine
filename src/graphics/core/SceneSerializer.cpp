@@ -131,7 +131,8 @@ bool SceneSerializer::saveToJson(const QString &filename) const {
     }
 
     QJsonArray objectsArray;
-    for (auto* obj : sceneManager->getObjects()) {
+    for (const auto& objPtr : sceneManager->getObjects()) {
+        SceneObject* obj = objPtr.get();
         QJsonObject objJson;
         objJson["id"] = static_cast<double>(obj->getObjectID());
         objJson["meshName"] = QString::fromStdString(obj->getMeshName());
