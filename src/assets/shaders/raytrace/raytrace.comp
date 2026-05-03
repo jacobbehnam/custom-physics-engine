@@ -21,8 +21,14 @@ struct BvhNode {
     uint c1;
 };
 
+struct Light {
+    vec4 positionRadius;
+    vec4 emissive;
+};
+
 layout(std430, binding = 0) buffer TBuf { Tri t[]; } tbuf;
 layout(std430, binding = 1) buffer BBuf { BvhNode n[]; } bbuf;
+layout(std430, binding = 2) buffer LBuf { Light l[]; } lbuf;
 
 uniform vec3 uCamPos;
 uniform mat4 uInvView;
@@ -31,6 +37,7 @@ uniform uvec2 uSize;
 uniform uint uRoot;
 uniform uint uNumTris;
 uniform uint uNumBvh;
+uniform uint uNumLights;
 uniform uint uAccumFrames;
 uniform int uEnableGlobalLight;
 
@@ -58,6 +65,11 @@ const vec3  SUN_HALO_COLOR      = vec3(1.8, 1.3, 0.9);
 const float SUN_CORE_POWER      = 1024.0;
 const float SUN_HALO_POWER      = 48.0;
 const float TWO_PI              = 6.28318530718;
+const float PI                  = 3.141592653589793;
+const int   MAX_DIRECT_LIGHTS   = 8;
+const float MAX_SAMPLE_LUMA     = 64.0;
+const uint  AA_PATTERN_COUNT    = 4u;
+const float AA_JITTER_OFFSET    = 0.25;
 
 vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
     vec3 t0 = (bmin - o) * invD;
@@ -67,14 +79,8 @@ vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
     return vec2(max(tMin.x, max(tMin.y, tMin.z)), min(tMax.x, min(tMax.y, tMax.z)));
 }
 
-uint pcg(inout uint state) {
-    state = state * 747796405u + 2891336453u;
-    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
-    return (word >> 22u) ^ word;
-}
-
-float rand01(inout uint state) {
-    return float(pcg(state) & 0x00FFFFFFu) * (1.0 / 16777216.0);
+float luminance(vec3 c) {
+    return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
 vec3 geometricNormal(Tri tri) {
@@ -160,30 +166,6 @@ vec3 skyRadiance(vec3 dir) {
     return sky;
 }
 
-void buildBasis(vec3 n, out vec3 tangent, out vec3 bitangent) {
-    if (abs(n.z) < 0.999) {
-        tangent = normalize(cross(vec3(0.0, 0.0, 1.0), n));
-    } else {
-        tangent = normalize(cross(vec3(0.0, 1.0, 0.0), n));
-    }
-    bitangent = cross(n, tangent);
-}
-
-vec3 cosineHemisphere(vec3 n, inout uint state) {
-    float u1 = rand01(state);
-    float u2 = rand01(state);
-    float r = sqrt(u1);
-    float phi = TWO_PI * u2;
-    float x = r * cos(phi);
-    float y = r * sin(phi);
-    float z = sqrt(max(0.0, 1.0 - u1));
-
-    vec3 tangent;
-    vec3 bitangent;
-    buildBasis(n, tangent, bitangent);
-    return normalize(tangent * x + bitangent * y + n * z);
-}
-
 bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint triIndex, out vec3 bary) {
     vec3 invDir = 1.0 / dir;
     uint stack[STACKN];
@@ -255,71 +237,103 @@ bool traceShadow(vec3 origin, vec3 dir, float maxDistance) {
     return traceClosest(origin, dir, maxDistance, tHit, triIndex, bary);
 }
 
-vec3 tracePath(vec3 origin, vec3 dir, inout uint state);
+vec3 sampleDirectLights(
+    vec3 hitPos,
+    vec3 geomN,
+    vec3 normal,
+    vec3 albedo) {
+    if (uNumLights == 0u) {
+        return vec3(0.0);
+    }
 
-vec3 shadePreview(vec3 origin, vec3 dir, uint seedBase) {
-    uint localState = seedBase + 0x9E3779B9u;
-    return tracePath(origin, dir, localState);
-}
-
-vec3 tracePath(vec3 origin, vec3 dir, inout uint state) {
-    vec3 throughput = vec3(1.0);
-    vec3 radiance = vec3(0.0);
-
-    for (int bounce = 0; bounce < 2; ++bounce) {
-        float tHit;
-        uint triIndex;
-        vec3 bary;
-        if (!traceClosest(origin, dir, 1.0e30, tHit, triIndex, bary)) {
-            radiance += throughput * skyRadiance(dir);
+    vec3 direct = vec3(0.0);
+    for (int i = 0; i < MAX_DIRECT_LIGHTS; ++i) {
+        if (uint(i) >= uNumLights) {
             break;
         }
 
-        Tri tri = tbuf.t[triIndex];
-        vec3 hitPos = origin + dir * tHit;
-        vec3 geomN = geometricNormal(tri);
-        if (dot(geomN, dir) > 0.0) {
-            geomN = -geomN;
-        }
-        vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
-        if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
-            normal = geomN;
-        }
-        if (dot(normal, dir) > 0.0) {
-            normal = -normal;
-        }
-        if (dot(normal, geomN) < 0.0) {
-            normal = geomN;
+        Light light = lbuf.l[i];
+        vec3 lightPos = light.positionRadius.xyz;
+        float lightRadius = light.positionRadius.w;
+        vec3 toLight = lightPos - hitPos;
+        float dist2 = max(dot(toLight, toLight), 1.0e-6);
+        float dist = sqrt(dist2);
+        vec3 lightDir = toLight / dist;
+
+        float cosSurface = max(dot(normal, lightDir), 0.0);
+        if (cosSurface <= 0.0) {
+            continue;
         }
 
-        vec3 albedo = evaluateMaterial(tri, hitPos);
-        radiance += throughput * tri.emissive.rgb;
-        float nDotL = max(dot(normal, SUN_DIR), 0.0);
-        if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
-            radiance += throughput * albedo * SUN_RADIANCE * nDotL;
+        float shadowDistance = max(dist - lightRadius - RAY_BIAS, 0.0);
+        if (traceShadow(hitPos + geomN * RAY_BIAS, lightDir, shadowDistance)) {
+            continue;
         }
 
-        throughput *= albedo;
-
-        if (bounce > 0) {
-            float keep = clamp(max(throughput.x, max(throughput.y, throughput.z)), 0.1, 0.95);
-            if (rand01(state) > keep) {
-                break;
-            }
-            throughput /= keep;
-        }
-
-        origin = hitPos + geomN * RAY_BIAS;
-        dir = cosineHemisphere(normal, state);
+        float sinTheta2 = clamp((lightRadius * lightRadius) / dist2, 0.0, 1.0);
+        float solidAngle = TWO_PI * (1.0 - sqrt(max(0.0, 1.0 - sinTheta2)));
+        direct += albedo * light.emissive.rgb * (cosSurface * solidAngle / PI);
     }
+
+    return direct;
+}
+
+vec3 traceRadiance(vec3 origin, vec3 dir) {
+    vec3 radiance = vec3(0.0);
+
+    float tHit;
+    uint triIndex;
+    vec3 bary;
+    if (!traceClosest(origin, dir, 1.0e30, tHit, triIndex, bary)) {
+        return skyRadiance(dir);
+    }
+
+    Tri tri = tbuf.t[triIndex];
+    vec3 hitPos = origin + dir * tHit;
+    vec3 geomN = geometricNormal(tri);
+    if (dot(geomN, dir) > 0.0) {
+        geomN = -geomN;
+    }
+    vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
+    if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
+        normal = geomN;
+    }
+    if (dot(normal, dir) > 0.0) {
+        normal = -normal;
+    }
+    if (dot(normal, geomN) < 0.0) {
+        normal = geomN;
+    }
+
+    vec3 albedo = evaluateMaterial(tri, hitPos);
+    radiance += tri.emissive.rgb;
+    float nDotL = max(dot(normal, SUN_DIR), 0.0);
+    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
+        radiance += albedo * SUN_RADIANCE * nDotL;
+    }
+    radiance += sampleDirectLights(hitPos, geomN, normal, albedo);
 
     return radiance;
 }
 
-vec3 primaryRay(vec2 pixel, inout uint state) {
+vec2 temporalJitter(uint frame) {
+    uint phase = frame % AA_PATTERN_COUNT;
+    if (phase == 0u) {
+        return vec2(-AA_JITTER_OFFSET, -AA_JITTER_OFFSET);
+    }
+    if (phase == 1u) {
+        return vec2(AA_JITTER_OFFSET, -AA_JITTER_OFFSET);
+    }
+    if (phase == 2u) {
+        return vec2(-AA_JITTER_OFFSET, AA_JITTER_OFFSET);
+    }
+    return vec2(AA_JITTER_OFFSET, AA_JITTER_OFFSET);
+}
+
+vec3 primaryRay(vec2 pixel) {
     vec2 jitter = vec2(0.0);
     if (uAccumFrames != 0u) {
-        jitter = vec2(rand01(state), rand01(state)) - vec2(0.5);
+        jitter = temporalJitter(uAccumFrames - 1u);
     }
     vec2 samplePos = pixel + jitter;
     float ndcX = 2.0 * samplePos.x / float(uSize.x) - 1.0;
@@ -328,6 +342,14 @@ vec3 primaryRay(vec2 pixel, inout uint state) {
     vec4 view = uInvProj * clip;
     view /= view.w;
     return normalize((uInvView * vec4(normalize(view.xyz), 0.0)).xyz);
+}
+
+vec3 clampFireflies(vec3 color) {
+    float luma = luminance(color);
+    if (luma <= MAX_SAMPLE_LUMA) {
+        return color;
+    }
+    return color * (MAX_SAMPLE_LUMA / max(luma, 1.0e-6));
 }
 
 void main() {
@@ -341,9 +363,9 @@ void main() {
         return;
     }
 
-    uint state = pixel.x * 1973u + pixel.y * 9277u + uAccumFrames * 26699u + 0x68BC21EBu;
-    vec3 rayDir = primaryRay(vec2(pixel) + vec2(0.5), state);
-    vec3 sampleColor = uAccumFrames == 0u ? shadePreview(uCamPos, rayDir, state) : tracePath(uCamPos, rayDir, state);
+    vec3 rayDir = primaryRay(vec2(pixel) + vec2(0.5));
+    vec3 sampleColor = traceRadiance(uCamPos, rayDir);
+    sampleColor = clampFireflies(sampleColor);
 
     vec3 average = sampleColor;
     if (uAccumFrames != 0u) {

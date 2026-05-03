@@ -31,6 +31,7 @@ private:
 
     void ensureOutputSize(int w, int h);
     void ensureSSBOs(size_t nTri, size_t nNode);
+    void uploadLights();
     void buildAndUpload();
     void refitAndUpload();
     void gather(std::vector<Raytrace::WorldTriangle>& out);
@@ -62,8 +63,11 @@ private:
     Raytrace::TriangleBvh m_bvh;
     size_t m_triCap{0};
     size_t m_nodeCap{0};
+    size_t m_lightCap{0};
+    size_t m_lightCount{0};
     unsigned m_triSsb{0};
     unsigned m_nodeSsb{0};
+    unsigned m_lightSsb{0};
 
     unsigned m_fsqVao{0};
 

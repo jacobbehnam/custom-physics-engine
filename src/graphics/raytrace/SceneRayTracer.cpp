@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <glm/common.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -24,14 +25,20 @@
 namespace {
 
 using Raytrace::GpuBvhNode;
+using Raytrace::GpuLight;
 using Raytrace::GpuTri;
 using Raytrace::MaterialKind;
 
-constexpr float kFarClip                = 300000.0f;
-constexpr float kGpuInteractiveMaxScale = 0.6f;
-constexpr float kEmptySceneClearRed     = 0.40f;
-constexpr float kEmptySceneClearGreen   = 0.52f;
-constexpr float kEmptySceneClearBlue    = 0.66f;
+constexpr float    kFarClip                = 300000.0f;
+constexpr float    kGpuInteractiveMaxScale = 0.6f;
+constexpr float    kEmptySceneClearRed     = 0.40f;
+constexpr float    kEmptySceneClearGreen   = 0.52f;
+constexpr float    kEmptySceneClearBlue    = 0.66f;
+constexpr float    kLightPowerEpsilon      = 1.0e-5f;
+constexpr float    kMinAnalyticLightRadius = 0.1f;
+constexpr size_t   kMaxAnalyticLights      = 8;
+constexpr uint32_t kShaderAaPatternCount   = 4;
+constexpr uint32_t kTemporalSampleCount    = 1 + kShaderAaPatternCount;
 
 static GLuint compileShader(GLenum type, const std::string& source, const char* label, QOpenGLFunctions_4_5_Core* gl) {
     const char* src = source.c_str();
@@ -71,6 +78,15 @@ static float hash01(uint32_t v) {
     v *= 0x846ca68bu;
     v ^= v >> 16u;
     return static_cast<float>(v & 0x00ffffffu) * (1.0f / 16777215.0f);
+}
+
+static float luminance(const glm::vec3& c) {
+    return glm::dot(c, glm::vec3(0.2126f, 0.7152f, 0.0722f));
+}
+
+static float lightImportance(const GpuLight& light) {
+    const float radius = light.positionRadius.w;
+    return luminance(glm::vec3(light.emissive)) * radius * radius;
 }
 
 static glm::vec3 pickObjectAlbedo(const SceneObject& object) {
@@ -288,6 +304,75 @@ void SceneRayTracer::ensureSSBOs(size_t nTri, size_t nNode) {
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
+void SceneRayTracer::uploadLights() {
+    std::vector<GpuLight> lights;
+    lights.reserve(m_sm->getObjects().size());
+
+    for (const auto& owned : m_sm->getObjects()) {
+        const SceneObject* object = owned.get();
+        const Physics::PhysicsBody* body = object->getPhysicsBody();
+        if (!body) {
+            continue;
+        }
+
+        const glm::vec3 emission = body->getEmission(BodyLock::LOCK);
+        if (luminance(emission) <= kLightPowerEpsilon) {
+            continue;
+        }
+
+        const glm::mat4 model = object->getModelMatrix();
+        const glm::vec3 position = glm::vec3(model[3]);
+        const glm::vec3 scale = glm::abs(object->getScale());
+        const float radius = std::max(kMinAnalyticLightRadius, 0.5f * std::max({scale.x, scale.y, scale.z}));
+
+        lights.push_back({
+            glm::vec4(position, radius),
+            glm::vec4(emission, 0.0f),
+        });
+    }
+
+    std::sort(lights.begin(), lights.end(), [](const GpuLight& lhs, const GpuLight& rhs) {
+        return lightImportance(lhs) > lightImportance(rhs);
+    });
+    if (lights.size() > kMaxAnalyticLights) {
+        lights.resize(kMaxAnalyticLights);
+    }
+
+    m_lightCount = lights.size();
+    if (m_lightSsb == 0) {
+        m_g->glGenBuffers(1, &m_lightSsb);
+    }
+
+    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_lightSsb);
+    if (m_lightCount == 0) {
+        const GpuLight dummy{};
+        if (m_lightCap == 0) {
+            m_g->glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GpuLight), &dummy, GL_DYNAMIC_DRAW);
+            m_lightCap = 1;
+        } else {
+            m_g->glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(GpuLight), &dummy);
+        }
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+        return;
+    }
+
+    if (m_lightCount > m_lightCap) {
+        m_g->glBufferData(
+            GL_SHADER_STORAGE_BUFFER,
+            static_cast<GLsizeiptr>(m_lightCount * sizeof(GpuLight)),
+            lights.data(),
+            GL_DYNAMIC_DRAW);
+        m_lightCap = m_lightCount;
+    } else {
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(m_lightCount * sizeof(GpuLight)),
+            lights.data());
+    }
+    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
 void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
     out.clear();
     const size_t triCount = quickTriCount();
@@ -341,7 +426,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
 
             glm::vec3 emission{0.0f};
             if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
-                emission = body->getEmission(BodyLock::NOLOCK);
+                emission = body->getEmission(BodyLock::LOCK);
             }
 
             out.push_back({
@@ -406,6 +491,12 @@ uint64_t SceneRayTracer::geometryHash() const {
                 h = fnvAppendFloat(h, model[c][r]);
             }
         }
+        if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
+            const glm::vec3 emission = body->getEmission(BodyLock::LOCK);
+            h = fnvAppendFloat(h, emission.x);
+            h = fnvAppendFloat(h, emission.y);
+            h = fnvAppendFloat(h, emission.z);
+        }
     }
     return h;
 }
@@ -468,6 +559,7 @@ void SceneRayTracer::maybeRebuildAccel() {
 void SceneRayTracer::buildAndUpload() {
     std::vector<Raytrace::WorldTriangle> triangles;
     gather(triangles);
+    uploadLights();
     m_bvh.build(triangles);
     if (m_bvh.isEmpty()) {
         return;
@@ -491,6 +583,7 @@ void SceneRayTracer::buildAndUpload() {
 void SceneRayTracer::refitAndUpload() {
     std::vector<Raytrace::WorldTriangle> triangles;
     gather(triangles);
+    uploadLights();
     m_bvh.refit(triangles);
     if (m_bvh.isEmpty()) {
         return;
@@ -531,6 +624,7 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
 
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_triSsb);
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_nodeSsb);
+    m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_lightSsb);
 
     m_shader->setVec3("uCamPos", camera->position);
     m_shader->setMat4("uInvView", invView);
@@ -548,6 +642,9 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
 
     m_shader->setUInt("uNumBvh",
         static_cast<unsigned int>(m_bvh.getNodes().size()));
+
+    m_shader->setUInt("uNumLights",
+        static_cast<unsigned int>(m_lightCount));
 
     m_shader->setUInt("uAccumFrames",
         static_cast<unsigned int>(m_accumulatedFrames));
@@ -604,6 +701,9 @@ SceneRayTracer::~SceneRayTracer() {
     if (m_nodeSsb) {
         m_g->glDeleteBuffers(1, &m_nodeSsb);
     }
+    if (m_lightSsb) {
+        m_g->glDeleteBuffers(1, &m_lightSsb);
+    }
 }
 
 void SceneRayTracer::render(
@@ -649,6 +749,11 @@ void SceneRayTracer::render(
         resetAccumulation();
         m_lastViewHash = currentViewHash;
         m_lastEnableGlobalLight = currentSunState;
+    }
+
+    if (m_accumulatedFrames >= kTemporalSampleCount) {
+        presentOutput(fbWidth, fbHeight);
+        return;
     }
 
     renderGpu(traceW, traceH, camera);

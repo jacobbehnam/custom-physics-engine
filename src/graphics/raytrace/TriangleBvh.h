@@ -30,6 +30,11 @@ struct alignas(16) GpuTri {
     glm::vec4 emissive{};
 };
 
+struct alignas(16) GpuLight {
+    glm::vec4 positionRadius{};
+    glm::vec4 emissive{};
+};
+
 struct WorldTriangle {
     glm::vec3 p0, p1, p2;
     glm::vec3 s0, s1, s2;
