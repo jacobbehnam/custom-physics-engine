@@ -73,23 +73,6 @@ void PhysicsInspectorWidget::createUiComponents() {
         layout->addRow(row.getLabel(), row.getEditor());
         rows.push_back(std::move(row));
     }
-
-    {
-        InspectorRow row("Temperature", this);
-        row.addScalar(
-            [this]() {
-                auto* b = getBody();
-                return b ? b->getTemperature(BodyLock::NOLOCK) : 0.0f;
-            },
-            [this](float t) {
-                if (auto* b = getBody()) b->setTemperature(t, BodyLock::NOLOCK);
-            },
-            "K"
-        );
-
-        layout->addRow(row.getLabel(), row.getEditor());
-        rows.push_back(std::move(row));
-    }
 }
 
 void PhysicsInspectorWidget::load(SceneObject* object) {
