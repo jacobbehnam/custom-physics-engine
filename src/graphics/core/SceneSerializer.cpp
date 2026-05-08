@@ -45,6 +45,8 @@ namespace JsonUtils {
         obj["thermalMassFraction"] = props.thermalMassFraction;
         obj["emissivity"] = props.emissivity;
         obj["emissivityTempCoeff"] = props.emissivityTempCoeff;
+        obj["visibleLightPower"] = props.visibleLightPower;
+        obj["visibleLightColor"] = vec3ToJson(props.visibleLightColor);
         obj["absorptivity"] = props.absorptivity;
         obj["absorptivityTempCoeff"] = props.absorptivityTempCoeff;
         obj["heatTransferCoeff"] = props.heatTransferCoeff;
@@ -73,6 +75,10 @@ namespace JsonUtils {
         props.thermalMassFraction = static_cast<float>(numberOr(obj, "thermalMassFraction", props.thermalMassFraction));
         props.emissivity = static_cast<float>(numberOr(obj, "emissivity", props.emissivity));
         props.emissivityTempCoeff = static_cast<float>(numberOr(obj, "emissivityTempCoeff", props.emissivityTempCoeff));
+        props.visibleLightPower = static_cast<float>(numberOr(obj, "visibleLightPower", props.visibleLightPower));
+        if (obj["visibleLightColor"].isArray()) {
+            props.visibleLightColor = jsonToVec3(obj["visibleLightColor"].toArray(), props.visibleLightColor);
+        }
         props.absorptivity = static_cast<float>(numberOr(obj, "absorptivity", props.absorptivity));
         props.absorptivityTempCoeff = static_cast<float>(numberOr(obj, "absorptivityTempCoeff", props.absorptivityTempCoeff));
         props.heatTransferCoeff = static_cast<float>(numberOr(obj, "heatTransferCoeff", props.heatTransferCoeff));

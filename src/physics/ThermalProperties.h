@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/vec3.hpp>
+
 struct ThermalProperties {
     double tempK                    = 293.15;   // 20C, standard room temperature
     double internalHeatPower        = 0.0;      // W          - generated heat inside the body
@@ -11,6 +13,8 @@ struct ThermalProperties {
     float thermalMassFraction       = 1.0f;     // 0–1       - fraction of body mass thermally active
     float emissivity                = 0.70f;    // 0–1       - oxidized metal
     float emissivityTempCoeff       = 0.0f;     // 1/K        - linear emissivity temperature coefficient
+    float visibleLightPower         = 0.0f;     // renderer units - non-thermal visible light output
+    glm::vec3 visibleLightColor     = glm::vec3(1.0f);
     float absorptivity              = 0.70f;    // 0–1       - absorbed incident radiation
     float absorptivityTempCoeff     = 0.0f;     // 1/K       - linear absorptivity temperature coefficient
     float heatTransferCoeff         = 10.0f;    // W/(m²·K)  - still air natural convection

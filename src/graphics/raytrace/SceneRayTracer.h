@@ -4,6 +4,7 @@
 #include "graphics/components/ComputeShader.h"
 #include "physics/PhysicsBody.h"
 
+#include <glm/vec3.hpp>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -65,6 +66,7 @@ private:
     size_t m_nodeCap{0};
     size_t m_lightCap{0};
     size_t m_lightCount{0};
+    glm::vec3 m_renderOrigin{0.0f};
     unsigned m_triSsb{0};
     unsigned m_nodeSsb{0};
     unsigned m_lightSsb{0};

@@ -3,13 +3,14 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <glm/common.hpp>
 #include "physics/utils/ThermalUtils.h"
 
 namespace {
 
-constexpr float kVisibleIncandescenceStartK = 800.0f;
-constexpr float kVisibleEmitterReferenceK   = 5800.0f;
-constexpr float kVisibleEmitterReferenceLux = 20.0f;
+constexpr float kVisibleIncandescenceStartK       = 800.0f;
+constexpr float kVisibleEmitterReferenceK         = 5800.0f;
+constexpr float kVisibleEmitterReferenceRadiance  = 65000.0f;
 
 } // namespace
 
@@ -213,16 +214,21 @@ float Physics::PhysicsBody::temperatureToIntensity(float tempKelvin) {
 
     const float visibleT = (tempKelvin - kVisibleIncandescenceStartK)
         / (kVisibleEmitterReferenceK - kVisibleIncandescenceStartK);
-    return std::pow(std::max(visibleT, 0.0f), 4.0f) * kVisibleEmitterReferenceLux;
+    return std::pow(std::max(visibleT, 0.0f), 4.0f) * kVisibleEmitterReferenceRadiance;
 }
 
 glm::vec3 Physics::PhysicsBody::getEmission(BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
         maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    glm::vec3 emission = thermalProps.visibleLightColor * thermalProps.visibleLightPower;
+
     const float tempK = static_cast<float>(thermalProps.tempK);
-    if (tempK <= 0.0f || thermalProps.emissivity <= 0.0f) return glm::vec3(0.0f);
-    return blackbodyRGB(tempK) * temperatureToIntensity(tempK) * thermalProps.emissivity;
+    const float thermalEmissivity = static_cast<float>(Physics::Thermal::effectiveEmissivity(thermalProps, tempK));
+    if (tempK > 0.0f && thermalEmissivity > 0.0f) {
+        emission += blackbodyRGB(tempK) * temperatureToIntensity(tempK) * thermalEmissivity;
+    }
+    return emission;
 }
 
 void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps, BodyLock lock) {
@@ -241,6 +247,12 @@ void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps,
     thermalProps.thermalMassFraction = std::clamp(thermalProps.thermalMassFraction, 0.0f, 1.0f);
     thermalProps.emissivity = std::clamp(thermalProps.emissivity, 0.0f, 1.0f);
     if (!std::isfinite(thermalProps.emissivityTempCoeff)) thermalProps.emissivityTempCoeff = 0.0f;
+    if (!std::isfinite(thermalProps.visibleLightPower)) thermalProps.visibleLightPower = 0.0f;
+    thermalProps.visibleLightPower = std::max(thermalProps.visibleLightPower, 0.0f);
+    if (!std::isfinite(thermalProps.visibleLightColor.r)) thermalProps.visibleLightColor.r = 1.0f;
+    if (!std::isfinite(thermalProps.visibleLightColor.g)) thermalProps.visibleLightColor.g = 1.0f;
+    if (!std::isfinite(thermalProps.visibleLightColor.b)) thermalProps.visibleLightColor.b = 1.0f;
+    thermalProps.visibleLightColor = glm::clamp(thermalProps.visibleLightColor, glm::vec3(0.0f), glm::vec3(1.0f));
     thermalProps.absorptivity = std::clamp(thermalProps.absorptivity, 0.0f, 1.0f);
     if (!std::isfinite(thermalProps.absorptivityTempCoeff)) thermalProps.absorptivityTempCoeff = 0.0f;
     thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);

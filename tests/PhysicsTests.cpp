@@ -371,6 +371,18 @@ TEST(PhysicsBody, VisibleEmission_IgnoresRoomTemperature) {
     EXPECT_VEC3_EXACT(pm.getEmission(BodyLock::LOCK), glm::vec3(0.0f));
 }
 
+TEST(PhysicsBody, VisibleEmission_AllowsNonThermalLight) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 293.15;
+    props.emissivity = 0.0f;
+    props.visibleLightPower = 3.0f;
+    props.visibleLightColor = glm::vec3(0.25f, 0.50f, 1.0f);
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    EXPECT_VEC3_EXACT(pm.getEmission(BodyLock::LOCK), glm::vec3(0.75f, 1.5f, 3.0f));
+}
+
 TEST(PhysicsBody, VisibleEmission_HotBodiesEmitLight) {
     Physics::PointMass pm(0, 1.0);
     ThermalProperties props;
@@ -382,6 +394,19 @@ TEST(PhysicsBody, VisibleEmission_HotBodiesEmitLight) {
     EXPECT_GT(emission.r, 0.0f);
     EXPECT_GE(emission.r, emission.g);
     EXPECT_GE(emission.g, emission.b);
+}
+
+TEST(PhysicsBody, VisibleEmission_SolarTemperatureProducesHighRadiance) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 5772.0;
+    props.emissivity = 1.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    const glm::vec3 emission = pm.getEmission(BodyLock::LOCK);
+    EXPECT_GT(emission.r, 50000.0f);
+    EXPECT_GT(emission.g, 40000.0f);
+    EXPECT_GT(emission.b, 30000.0f);
 }
 
 TEST(RigidBody, SurfaceArea_UsesAllScaleAxes) {

@@ -33,12 +33,6 @@ constexpr int    kLabelOffsetAboveObjectPx      = 8;
 constexpr int    kLabelStepYPx                  = 4;
 constexpr int    kLabelMinStepXPx               = 36;
 constexpr int    kLabelSearchRings              = 12;
-constexpr float  kRayTraceMaxCameraCoordinate   = 1.0e6f;
-
-bool rayTraceSupportsCamera(const Camera& camera) {
-    return std::max({std::abs(camera.position.x), std::abs(camera.position.y), std::abs(camera.position.z)})
-        < kRayTraceMaxCameraCoordinate;
-}
 }
 
 QSize OpenGLWindow::getFramebufferSize() const {
@@ -102,13 +96,7 @@ void OpenGLWindow::paintGL() {
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
     auto& visRt = AppSettings::getInstance().getGroup<GraphicsSettings>();
-    Camera* camera = scene->getCamera();
-    const bool useRayTraced = visRt.useRayTraced
-        && sceneManager->getRayTracer()
-        && sceneManager->getRayTracer()->isUsable()
-        && rayTraceSupportsCamera(*camera);
-
-    if (useRayTraced) {
+    if (visRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
         scene->applyPhysicsSnapshots(snaps);
         float sc = visRt.rayTraceResolutionScale;
         if (sc < GraphicsSettings::kMinRayTraceResolutionScale) {

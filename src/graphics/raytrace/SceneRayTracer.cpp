@@ -18,6 +18,7 @@
 #include <cstring>
 #include <glm/common.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <span>
@@ -29,16 +30,15 @@ using Raytrace::GpuLight;
 using Raytrace::GpuTri;
 using Raytrace::MaterialKind;
 
-constexpr float    kFarClip                = 300000.0f;
-constexpr float    kGpuInteractiveMaxScale = 0.6f;
-constexpr float    kEmptySceneClearRed     = 0.40f;
-constexpr float    kEmptySceneClearGreen   = 0.52f;
-constexpr float    kEmptySceneClearBlue    = 0.66f;
-constexpr float    kLightPowerEpsilon      = 1.0e-5f;
-constexpr float    kMinAnalyticLightRadius = 0.1f;
-constexpr size_t   kMaxAnalyticLights      = 8;
-constexpr uint32_t kShaderAaPatternCount   = 4;
-constexpr uint32_t kTemporalSampleCount    = 1 + kShaderAaPatternCount;
+constexpr float    kEmptySceneClearRed      = 0.40f;
+constexpr float    kEmptySceneClearGreen    = 0.52f;
+constexpr float    kEmptySceneClearBlue     = 0.66f;
+constexpr float    kFloatingOriginThreshold = 1.0e6f;
+constexpr float    kLightPowerEpsilon       = 1.0e-5f;
+constexpr float    kMinAnalyticLightRadius  = 0.1f;
+constexpr size_t   kMaxAnalyticLights       = 8;
+constexpr uint32_t kShaderAaPatternCount    = 4;
+constexpr uint32_t kTemporalSampleCount     = 1 + kShaderAaPatternCount;
 
 static GLuint compileShader(GLenum type, const std::string& source, const char* label, QOpenGLFunctions_4_5_Core* gl) {
     const char* src = source.c_str();
@@ -82,6 +82,28 @@ static float hash01(uint32_t v) {
 
 static float luminance(const glm::vec3& c) {
     return glm::dot(c, glm::vec3(0.2126f, 0.7152f, 0.0722f));
+}
+
+static float maxAbsComponent(const glm::vec3& v) {
+    return std::max({std::abs(v.x), std::abs(v.y), std::abs(v.z)});
+}
+
+static glm::vec3 renderOriginForCamera(const Camera* camera) {
+    if (!camera || maxAbsComponent(camera->position) < kFloatingOriginThreshold) {
+        return glm::vec3(0.0f);
+    }
+    return camera->position;
+}
+
+static glm::mat4 relativeModelMatrix(const SceneObject& object, const glm::vec3& renderOrigin) {
+    glm::mat4 model = object.getModelMatrix();
+    model[3] -= glm::vec4(renderOrigin, 0.0f);
+    return model;
+}
+
+static glm::mat4 relativeViewMatrix(const Camera* camera, const glm::vec3& renderOrigin) {
+    const glm::vec3 position = camera->position - renderOrigin;
+    return glm::lookAt(position, position + camera->front, camera->up);
 }
 
 static float lightImportance(const GpuLight& light) {
@@ -168,9 +190,12 @@ in vec2 vTex;
 out vec4 o;
 layout(binding = 0) uniform sampler2D t;
 
-const float DENOISE_CENTER_WEIGHT   = 4.0;
-const float DENOISE_LUMA_STRENGTH   = 6.0;
-const float DENOISE_DIAGONAL_WEIGHT = 0.65;
+const float DENOISE_CENTER_WEIGHT   = 12.0;
+const float DENOISE_LUMA_STRENGTH   = 18.0;
+const float DENOISE_DIAGONAL_WEIGHT = 0.35;
+const float BLOOM_THRESHOLD         = 1.0;
+const float BLOOM_STRENGTH          = 0.08;
+const float BLOOM_RADIUS_PIXELS     = 2.0;
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -201,6 +226,25 @@ vec3 denoise(vec2 uv) {
     return sum / weightSum;
 }
 
+vec3 bloom(vec2 uv) {
+    ivec2 size = textureSize(t, 0);
+    vec2 texel = BLOOM_RADIUS_PIXELS / vec2(size);
+    vec3 sum = vec3(0.0);
+    float weightSum = 0.0;
+
+    for (int y = -2; y <= 2; ++y) {
+        for (int x = -2; x <= 2; ++x) {
+            vec2 offset = vec2(x, y);
+            float weight = 1.0 / (1.0 + dot(offset, offset));
+            vec3 sampleColor = texture(t, uv + offset * texel).rgb;
+            sum += max(sampleColor - vec3(BLOOM_THRESHOLD), vec3(0.0)) * weight;
+            weightSum += weight;
+        }
+    }
+
+    return weightSum > 0.0 ? sum / weightSum : vec3(0.0);
+}
+
 vec3 aces(vec3 x) {
     const float a = 2.51;
     const float b = 0.03;
@@ -212,6 +256,7 @@ vec3 aces(vec3 x) {
 
 void main() {
     vec3 col = denoise(vTex);
+    col += bloom(vTex) * BLOOM_STRENGTH;
     col = aces(col);
     col = pow(col, vec3(1.0 / 2.2));
     o = vec4(col, 1.0);
@@ -320,7 +365,7 @@ void SceneRayTracer::uploadLights() {
             continue;
         }
 
-        const glm::mat4 model = object->getModelMatrix();
+        const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
         const glm::vec3 position = glm::vec3(model[3]);
         const glm::vec3 scale = glm::abs(object->getScale());
         const float radius = std::max(kMinAnalyticLightRadius, 0.5f * std::max({scale.x, scale.y, scale.z}));
@@ -387,7 +432,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
             continue;
         }
 
-        const glm::mat4 model = object->getModelMatrix();
+        const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
         const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
         const glm::vec3 albedo = pickObjectAlbedo(*object);
         const MaterialKind materialKind = pickMaterialKind(*object);
@@ -481,6 +526,9 @@ uint64_t SceneRayTracer::structureHash() const {
 
 uint64_t SceneRayTracer::geometryHash() const {
     uint64_t h = 14695981039346656037ull;
+    h = fnvAppendFloat(h, m_renderOrigin.x);
+    h = fnvAppendFloat(h, m_renderOrigin.y);
+    h = fnvAppendFloat(h, m_renderOrigin.z);
     for (const auto& owned : m_sm->getObjects()) {
         const SceneObject* object = owned.get();
         h = fnvAppend(h, object->getObjectID());
@@ -606,8 +654,8 @@ void SceneRayTracer::refitAndUpload() {
 
 void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     const float aspect      = static_cast<float>(w) / static_cast<float>(h);
-    const glm::mat4 proj    = glm::perspective(glm::radians(camera->fov), aspect, 0.1f, kFarClip);
-    const glm::mat4 invView = glm::inverse(camera->getViewMatrix());
+    const glm::mat4 proj    = glm::infinitePerspective(glm::radians(camera->fov), aspect, 0.1f);
+    const glm::mat4 invView = glm::inverse(relativeViewMatrix(camera, m_renderOrigin));
     const glm::mat4 invProj = glm::inverse(proj);
 
     m_shader->use();
@@ -626,7 +674,7 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_nodeSsb);
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_lightSsb);
 
-    m_shader->setVec3("uCamPos", camera->position);
+    m_shader->setVec3("uCamPos", camera->position - m_renderOrigin);
     m_shader->setMat4("uInvView", invView);
     m_shader->setMat4("uInvProj", invProj);
 
@@ -721,6 +769,7 @@ void SceneRayTracer::render(
         return;
     }
 
+    m_renderOrigin = renderOriginForCamera(camera);
     maybeRebuildAccel();
     if (m_bvh.isEmpty()) {
         m_g->glDisable(GL_DEPTH_TEST);
@@ -734,10 +783,6 @@ void SceneRayTracer::render(
         internalScale,
         GraphicsSettings::kMinRayTraceResolutionScale,
         GraphicsSettings::kMaxRayTraceResolutionScale);
-    if (m_accumulatedFrames == 0u) {
-        scale = std::min(scale, kGpuInteractiveMaxScale);
-    }
-
     const int traceW = std::max(1, static_cast<int>(std::lround(static_cast<float>(fbWidth) * scale)));
     const int traceH = std::max(1, static_cast<int>(std::lround(static_cast<float>(fbHeight) * scale)));
     ensureOutputSize(traceW, traceH);

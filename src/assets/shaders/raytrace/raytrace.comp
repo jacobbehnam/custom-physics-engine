@@ -45,8 +45,11 @@ const uint  LEAF                = 0x80000000u;
 const uint  LEAF_START_MASK     = 0x0FFFFFFFu;
 const uint  HIT_NONE            = 0xFFFFFFFFu;
 const int   STACKN              = 64;
-const float RAY_BIAS            = 1.0e-3;
-const float FAR_CLIP            = 300000.0;
+const float RAY_T_MIN           = 1.0e-4;
+const float MIN_RAY_BIAS        = 1.0e-3;
+const float SHADOW_TRACE_MAX    = 1.0e30;
+const float SHADOW_EDGE_BIAS    = 1.0e-4;
+const float SHADOW_VIEW_BIAS    = 2.0e-6;
 const vec3  SUN_DIR             = normalize(vec3(0.35, 0.9, 0.22));
 const vec3  SUN_RADIANCE        = vec3(4.6, 4.2, 3.8);
 const float MATERIAL_MIN_VALUE  = 0.02;
@@ -87,7 +90,20 @@ vec3 geometricNormal(Tri tri) {
     return normalize(cross(tri.v1.xyz - tri.v0.xyz, tri.v2.xyz - tri.v0.xyz));
 }
 
-bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMax, out float tHit, out vec3 bary) {
+float triangleMaxEdge(Tri tri) {
+    float e0 = length(tri.v1.xyz - tri.v0.xyz);
+    float e1 = length(tri.v2.xyz - tri.v1.xyz);
+    float e2 = length(tri.v0.xyz - tri.v2.xyz);
+    return max(e0, max(e1, e2));
+}
+
+float shadowBias(Tri tri, vec3 hitPos) {
+    float edgeBias = triangleMaxEdge(tri) * SHADOW_EDGE_BIAS;
+    float viewBias = length(hitPos - uCamPos) * SHADOW_VIEW_BIAS;
+    return max(MIN_RAY_BIAS, max(edgeBias, viewBias));
+}
+
+bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMin, float tMax, out float tHit, out vec3 bary) {
     Tri tri = tbuf.t[triIndex];
     vec3 e1 = tri.v1.xyz - tri.v0.xyz;
     vec3 e2 = tri.v2.xyz - tri.v0.xyz;
@@ -111,7 +127,7 @@ bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMax, out float tHit, ou
     }
 
     float hit = dot(e2, q) * invDet;
-    if (hit < 1.0e-4 || hit >= tMax) {
+    if (hit <= tMin || hit >= tMax) {
         return false;
     }
 
@@ -166,13 +182,13 @@ vec3 skyRadiance(vec3 dir) {
     return sky;
 }
 
-bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint triIndex, out vec3 bary) {
+bool traceClosest(vec3 origin, vec3 dir, float tMin, float tMax, uint skipTriIndex, out float tHit, out uint triIndex, out vec3 bary) {
     vec3 invDir = 1.0 / dir;
     uint stack[STACKN];
     int sp = 0;
 
     vec2 rootRange = aabbT(origin, invDir, bbuf.n[uRoot].bmin, bbuf.n[uRoot].bmax);
-    if (rootRange.x > rootRange.y || rootRange.y < 0.0 || rootRange.x >= tMax) {
+    if (rootRange.x > rootRange.y || rootRange.y <= tMin || rootRange.x >= tMax) {
         return false;
     }
     stack[sp++] = uRoot;
@@ -192,7 +208,7 @@ bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint tr
                 float triT;
                 vec3 triBary;
                 uint currentIndex = start + i;
-                if (!tryTri(currentIndex, origin, dir, tHit, triT, triBary)) {
+                if (currentIndex == skipTriIndex || !tryTri(currentIndex, origin, dir, tMin, tHit, triT, triBary)) {
                     continue;
                 }
                 tHit = triT;
@@ -207,8 +223,8 @@ bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint tr
         vec2 leftRange = aabbT(origin, invDir, bbuf.n[left].bmin, bbuf.n[left].bmax);
         vec2 rightRange = aabbT(origin, invDir, bbuf.n[right].bmin, bbuf.n[right].bmax);
 
-        bool hitLeft = leftRange.x <= leftRange.y && leftRange.y >= 0.0 && leftRange.x < tHit;
-        bool hitRight = rightRange.x <= rightRange.y && rightRange.y >= 0.0 && rightRange.x < tHit;
+        bool hitLeft = leftRange.x <= leftRange.y && leftRange.y > tMin && leftRange.x < tHit;
+        bool hitRight = rightRange.x <= rightRange.y && rightRange.y > tMin && rightRange.x < tHit;
 
         if (hitLeft && hitRight) {
             bool leftFirst = leftRange.x <= rightRange.x;
@@ -230,15 +246,17 @@ bool traceClosest(vec3 origin, vec3 dir, float tMax, out float tHit, out uint tr
     return triIndex != HIT_NONE;
 }
 
-bool traceShadow(vec3 origin, vec3 dir, float maxDistance) {
+bool traceShadow(vec3 origin, vec3 dir, float minDistance, float maxDistance, uint skipTriIndex) {
     float tHit;
     uint triIndex;
     vec3 bary;
-    return traceClosest(origin, dir, maxDistance, tHit, triIndex, bary);
+    return traceClosest(origin, dir, minDistance, maxDistance, skipTriIndex, tHit, triIndex, bary);
 }
 
 vec3 sampleDirectLights(
     vec3 hitPos,
+    Tri tri,
+    uint hitTriIndex,
     vec3 geomN,
     vec3 normal,
     vec3 albedo) {
@@ -265,8 +283,9 @@ vec3 sampleDirectLights(
             continue;
         }
 
-        float shadowDistance = max(dist - lightRadius - RAY_BIAS, 0.0);
-        if (traceShadow(hitPos + geomN * RAY_BIAS, lightDir, shadowDistance)) {
+        float bias = shadowBias(tri, hitPos);
+        float shadowDistance = max(dist - lightRadius - bias, 0.0);
+        if (traceShadow(hitPos + geomN * bias, lightDir, RAY_T_MIN, shadowDistance, hitTriIndex)) {
             continue;
         }
 
@@ -284,7 +303,7 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     float tHit;
     uint triIndex;
     vec3 bary;
-    if (!traceClosest(origin, dir, 1.0e30, tHit, triIndex, bary)) {
+    if (!traceClosest(origin, dir, RAY_T_MIN, 1.0e30, HIT_NONE, tHit, triIndex, bary)) {
         return skyRadiance(dir);
     }
 
@@ -308,10 +327,11 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     vec3 albedo = evaluateMaterial(tri, hitPos);
     radiance += tri.emissive.rgb;
     float nDotL = max(dot(normal, SUN_DIR), 0.0);
-    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * RAY_BIAS, SUN_DIR, FAR_CLIP)) {
+    float bias = shadowBias(tri, hitPos);
+    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * bias, SUN_DIR, RAY_T_MIN, SHADOW_TRACE_MAX, triIndex)) {
         radiance += albedo * SUN_RADIANCE * nDotL;
     }
-    radiance += sampleDirectLights(hitPos, geomN, normal, albedo);
+    radiance += sampleDirectLights(hitPos, tri, triIndex, geomN, normal, albedo);
 
     return radiance;
 }
