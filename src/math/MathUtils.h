@@ -9,7 +9,10 @@
 */
 
 #pragma once
+#include <algorithm>
+#include <cmath>
 #include <glm/glm.hpp>
+#include <limits>
 #include <vector>
 #include <optional>
 #include "graphics/core/IPickable.h"
@@ -114,6 +117,31 @@ namespace Math {
      * Ray ray = {camera.position, rayDir};
      * @endcode
      */
+    inline glm::vec3 screenToWorldRayDirection(
+        double mouseX,
+        double mouseY,
+        int fbWidth,
+        int fbHeight,
+        const glm::vec3& cameraFront,
+        const glm::vec3& cameraRight,
+        const glm::vec3& cameraUp,
+        float fovDeg
+    ) {
+        if (fbWidth <= 0 || fbHeight <= 0) {
+            return glm::normalize(cameraFront);
+        }
+
+        const float x = static_cast<float>((2.0 * mouseX) / static_cast<double>(fbWidth) - 1.0);
+        const float y = static_cast<float>(1.0 - (2.0 * mouseY) / static_cast<double>(fbHeight));
+        const float aspect = static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
+        const float tanHalfFov = std::tan(glm::radians(fovDeg) * 0.5f);
+
+        return glm::normalize(
+            cameraFront
+            + cameraRight * (x * aspect * tanHalfFov)
+            + cameraUp * (y * tanHalfFov));
+    }
+
     inline glm::vec3 screenToWorldRayDirection(
         double mouseX,
         double mouseY,

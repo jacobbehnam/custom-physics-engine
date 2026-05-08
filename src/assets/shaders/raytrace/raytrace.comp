@@ -44,6 +44,7 @@ uniform int uEnableGlobalLight;
 const uint  LEAF                = 0x80000000u;
 const uint  LEAF_START_MASK     = 0x0FFFFFFFu;
 const uint  HIT_NONE            = 0xFFFFFFFFu;
+const uint  MATERIAL_SPHERE     = 2u;
 const int   STACKN              = 64;
 const float RAY_T_MIN           = 1.0e-4;
 const float MIN_RAY_BIAS        = 1.0e-3;
@@ -88,6 +89,10 @@ float luminance(vec3 c) {
 
 vec3 geometricNormal(Tri tri) {
     return normalize(cross(tri.v1.xyz - tri.v0.xyz, tri.v2.xyz - tri.v0.xyz));
+}
+
+vec3 sphereCenter(Tri tri) {
+    return vec3(tri.n0.w, tri.n1.w, tri.n2.w);
 }
 
 float triangleMaxEdge(Tri tri) {
@@ -257,7 +262,6 @@ vec3 sampleDirectLights(
     vec3 hitPos,
     Tri tri,
     uint hitTriIndex,
-    vec3 geomN,
     vec3 normal,
     vec3 albedo) {
     if (uNumLights == 0u) {
@@ -285,7 +289,7 @@ vec3 sampleDirectLights(
 
         float bias = shadowBias(tri, hitPos);
         float shadowDistance = max(dist - lightRadius - bias, 0.0);
-        if (traceShadow(hitPos + geomN * bias, lightDir, RAY_T_MIN, shadowDistance, hitTriIndex)) {
+        if (traceShadow(hitPos + normal * bias, lightDir, RAY_T_MIN, shadowDistance, hitTriIndex)) {
             continue;
         }
 
@@ -314,6 +318,12 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
         geomN = -geomN;
     }
     vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
+    if (materialKind(tri) == MATERIAL_SPHERE) {
+        vec3 sphereN = normalize(hitPos - sphereCenter(tri));
+        if (!any(isnan(sphereN)) && dot(sphereN, sphereN) > 1.0e-8) {
+            normal = sphereN;
+        }
+    }
     if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
         normal = geomN;
     }
@@ -328,10 +338,10 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     radiance += tri.emissive.rgb;
     float nDotL = max(dot(normal, SUN_DIR), 0.0);
     float bias = shadowBias(tri, hitPos);
-    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + geomN * bias, SUN_DIR, RAY_T_MIN, SHADOW_TRACE_MAX, triIndex)) {
+    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + normal * bias, SUN_DIR, RAY_T_MIN, SHADOW_TRACE_MAX, triIndex)) {
         radiance += albedo * SUN_RADIANCE * nDotL;
     }
-    radiance += sampleDirectLights(hitPos, tri, triIndex, geomN, normal, albedo);
+    radiance += sampleDirectLights(hitPos, tri, triIndex, normal, albedo);
 
     return radiance;
 }

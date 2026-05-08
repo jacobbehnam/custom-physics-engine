@@ -123,9 +123,13 @@ static glm::vec3 pickObjectAlbedo(const SceneObject& object) {
 }
 
 static MaterialKind pickMaterialKind(const SceneObject& object) {
-    return object.getShader() == ResourceManager::getShader("checkerboard")
-        ? MaterialKind::Checkerboard
-        : MaterialKind::Matte;
+    if (object.getShader() == ResourceManager::getShader("checkerboard")) {
+        return MaterialKind::Checkerboard;
+    }
+    if (object.getMeshName() == "prim_sphere") {
+        return MaterialKind::Sphere;
+    }
+    return MaterialKind::Matte;
 }
 
 static bool isFiniteVec3(const glm::vec3& v) {
@@ -189,6 +193,7 @@ void main() {
 in vec2 vTex;
 out vec4 o;
 layout(binding = 0) uniform sampler2D t;
+uniform float uExposure;
 
 const float DENOISE_CENTER_WEIGHT   = 12.0;
 const float DENOISE_LUMA_STRENGTH   = 18.0;
@@ -236,7 +241,7 @@ vec3 bloom(vec2 uv) {
         for (int x = -2; x <= 2; ++x) {
             vec2 offset = vec2(x, y);
             float weight = 1.0 / (1.0 + dot(offset, offset));
-            vec3 sampleColor = texture(t, uv + offset * texel).rgb;
+            vec3 sampleColor = texture(t, uv + offset * texel).rgb * uExposure;
             sum += max(sampleColor - vec3(BLOOM_THRESHOLD), vec3(0.0)) * weight;
             weightSum += weight;
         }
@@ -255,7 +260,7 @@ vec3 aces(vec3 x) {
 }
 
 void main() {
-    vec3 col = denoise(vTex);
+    vec3 col = denoise(vTex) * uExposure;
     col += bloom(vTex) * BLOOM_STRENGTH;
     col = aces(col);
     col = pow(col, vec3(1.0 / 2.2));
@@ -434,6 +439,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
 
         const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
         const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
+        const glm::vec3 sphereCenter = glm::vec3(model[3]);
         const glm::vec3 albedo = pickObjectAlbedo(*object);
         const MaterialKind materialKind = pickMaterialKind(*object);
         const std::span<const Vertex> vertices = mesh->getVertices();
@@ -481,6 +487,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
                 glm::normalize(n0),
                 glm::normalize(n1),
                 glm::normalize(n2),
+                sphereCenter,
                 albedo,
                 materialKind,
                 emission,
@@ -714,6 +721,14 @@ void SceneRayTracer::presentOutput(int fbWidth, int fbHeight) {
     m_g->glDisable(GL_DEPTH_TEST);
     m_g->glViewport(0, 0, fbWidth, fbHeight);
     m_g->glUseProgram(m_present);
+    const float exposure = std::clamp(
+        AppSettings::getInstance().getGroup<GraphicsSettings>().rayTraceExposure,
+        GraphicsSettings::kMinRayTraceExposure,
+        GraphicsSettings::kMaxRayTraceExposure);
+    const GLint exposureLocation = m_g->glGetUniformLocation(m_present, "uExposure");
+    if (exposureLocation >= 0) {
+        m_g->glUniform1f(exposureLocation, exposure);
+    }
     m_g->glActiveTexture(GL_TEXTURE0);
     m_g->glBindTexture(GL_TEXTURE_2D, m_outTex);
     m_g->glBindVertexArray(m_fsqVao);

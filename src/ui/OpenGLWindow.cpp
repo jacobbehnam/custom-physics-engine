@@ -125,13 +125,14 @@ Math::Ray OpenGLWindow::getMouseRay() {
     const double mxd = mousePos.x() * dpr;
     const double myd = mousePos.y() * dpr;
     const QSize fbSize = getFramebufferSize();
+    Camera* camera = scene->getCamera();
 
     return {
-        scene->getCamera()->position,
+        camera->position,
         Math::screenToWorldRayDirection(
             mxd, myd,
             fbSize.width(), fbSize.height(),
-            scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
+            camera->front, camera->right, camera->up, camera->fov)
     };
 }
 

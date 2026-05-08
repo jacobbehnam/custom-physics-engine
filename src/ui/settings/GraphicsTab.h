@@ -14,5 +14,6 @@ public:
 private:
     QCheckBox* m_rayTracedBox;
     QDoubleSpinBox* m_rayResScaleBox;
+    QDoubleSpinBox* m_rayExposureBox;
     QCheckBox* m_enableGlobalLightBox;
 };

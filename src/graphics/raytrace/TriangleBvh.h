@@ -10,6 +10,7 @@ namespace Raytrace {
 enum class MaterialKind : uint32_t {
     Matte = 0u,
     Checkerboard = 1u,
+    Sphere = 2u,
 };
 
 struct alignas(16) GpuBvhNode {
@@ -38,6 +39,7 @@ struct alignas(16) GpuLight {
 struct WorldTriangle {
     glm::vec3 p0, p1, p2;
     glm::vec3 s0, s1, s2;
+    glm::vec3 sphereCenter{0.0f};
     glm::vec3 albedo{0.0f};
     MaterialKind materialKind{MaterialKind::Matte};
     glm::vec3 emissive{0.0f};

@@ -71,9 +71,9 @@ GpuTri TriangleBvh::packTriangle(const WorldTriangle& tri) {
         glm::vec4(tri.p0, 0.0f),
         glm::vec4(tri.p1, 0.0f),
         glm::vec4(tri.p2, 0.0f),
-        glm::vec4(tri.s0, 0.0f),
-        glm::vec4(tri.s1, 0.0f),
-        glm::vec4(tri.s2, 0.0f),
+        glm::vec4(tri.s0, tri.sphereCenter.x),
+        glm::vec4(tri.s1, tri.sphereCenter.y),
+        glm::vec4(tri.s2, tri.sphereCenter.z),
         glm::vec4(tri.albedo, static_cast<float>(tri.materialKind)),
         glm::vec4(tri.emissive, 0.0f),
     };

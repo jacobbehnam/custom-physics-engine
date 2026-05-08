@@ -98,4 +98,5 @@ private:
     glm::mat4 buildModelMatrix(bool relativeToRenderOrigin) const;
     std::optional<float> intersectsAABB(const Math::Ray& ray) const;
     std::optional<float> intersectsMesh(const Math::Ray& ray) const;
+    std::optional<float> intersectsSphere(const Math::Ray& ray) const;
 };
