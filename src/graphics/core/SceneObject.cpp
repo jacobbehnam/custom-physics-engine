@@ -231,40 +231,46 @@ std::optional<float> SceneObject::intersectsMesh(const Math::Ray& ray) const {
 }
 
 std::optional<float> SceneObject::intersectsSphere(const Math::Ray& ray) const {
-    const auto localRay = localRayForModel(getModelMatrix(), ray);
-    if (!localRay) {
+    const glm::mat4 model = getModelMatrix();
+    const glm::dvec3 center(model[3]);
+    const glm::dvec3 rayOrigin(ray.origin);
+    const glm::dvec3 rayDir = glm::normalize(glm::dvec3(ray.dir));
+    const double radius = 0.5 * static_cast<double>(std::max({
+        glm::length(glm::vec3(model[0])),
+        glm::length(glm::vec3(model[1])),
+        glm::length(glm::vec3(model[2]))
+    }));
+    if (!std::isfinite(radius) || radius <= 0.0) {
         return std::nullopt;
     }
 
-    constexpr float kSphereRadius = 0.5f;
-    const float a = glm::dot(localRay->ray.dir, localRay->ray.dir);
-    const float b = 2.0f * glm::dot(localRay->ray.origin, localRay->ray.dir);
-    const float c = glm::dot(localRay->ray.origin, localRay->ray.origin) - kSphereRadius * kSphereRadius;
-    const float discriminant = b * b - 4.0f * a * c;
+    const glm::dvec3 offset = rayOrigin - center;
+    const double b = glm::dot(offset, rayDir);
+    const double c = glm::dot(offset, offset) - radius * radius;
+    const double discriminant = b * b - c;
     if (!std::isfinite(discriminant) || discriminant < 0.0f) {
         return std::nullopt;
     }
 
-    const float sqrtDiscriminant = std::sqrt(discriminant);
-    const float invDenom = 0.5f / a;
-    const float tNear = (-b - sqrtDiscriminant) * invDenom;
-    const float tFar = (-b + sqrtDiscriminant) * invDenom;
-    const float t = tNear > 0.0f ? tNear : tFar;
-    if (!std::isfinite(t) || t <= 0.0f) {
+    const double sqrtDiscriminant = std::sqrt(discriminant);
+    const double tNear = -b - sqrtDiscriminant;
+    const double tFar = -b + sqrtDiscriminant;
+    const double t = tNear > 0.0 ? tNear : tFar;
+    if (!std::isfinite(t) || t <= 0.0 || t > static_cast<double>(std::numeric_limits<float>::max())) {
         return std::nullopt;
     }
 
-    return t * localRay->localToWorldDistance;
+    return static_cast<float>(t);
 }
 
 std::optional<float> SceneObject::intersectsRay(const Math::Ray& ray) const {
-    auto tAABB = intersectsAABB(ray);
-    if (!tAABB)
-        return std::nullopt;
-
     if (meshName == "prim_sphere") {
         return intersectsSphere(ray);
     }
+
+    auto tAABB = intersectsAABB(ray);
+    if (!tAABB)
+        return std::nullopt;
 
     auto tTri = intersectsMesh(ray);
     if (tTri) {
