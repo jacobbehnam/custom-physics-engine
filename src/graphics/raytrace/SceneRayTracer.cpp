@@ -200,11 +200,6 @@ uniform float uExposure;
 const float DENOISE_CENTER_WEIGHT   = 12.0;
 const float DENOISE_LUMA_STRENGTH   = 18.0;
 const float DENOISE_DIAGONAL_WEIGHT = 0.35;
-const float BLOOM_THRESHOLD         = 0.85;
-const float BLOOM_STRENGTH          = 0.18;
-const float BLOOM_RADIUS_PIXELS     = 8.0;
-const float BLOOM_SIGMA             = 0.42;
-const int   BLOOM_KERNEL_RADIUS     = 4;
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -235,29 +230,6 @@ vec3 denoise(vec2 uv) {
     return sum / weightSum;
 }
 
-vec3 bloom(vec2 uv) {
-    ivec2 size = textureSize(t, 0);
-    vec2 texel = 1.0 / vec2(size);
-    vec3 sum = vec3(0.0);
-    float weightSum = 0.0;
-
-    for (int y = -BLOOM_KERNEL_RADIUS; y <= BLOOM_KERNEL_RADIUS; ++y) {
-        for (int x = -BLOOM_KERNEL_RADIUS; x <= BLOOM_KERNEL_RADIUS; ++x) {
-            vec2 offset = vec2(x, y) / float(BLOOM_KERNEL_RADIUS);
-            float r2 = dot(offset, offset);
-            if (r2 > 1.0) {
-                continue;
-            }
-            float weight = exp(-r2 / (2.0 * BLOOM_SIGMA * BLOOM_SIGMA));
-            vec3 sampleColor = texture(t, uv + offset * BLOOM_RADIUS_PIXELS * texel).rgb * uExposure;
-            sum += max(sampleColor - vec3(BLOOM_THRESHOLD), vec3(0.0)) * weight;
-            weightSum += weight;
-        }
-    }
-
-    return weightSum > 0.0 ? sum / weightSum : vec3(0.0);
-}
-
 vec3 aces(vec3 x) {
     const float a = 2.51;
     const float b = 0.03;
@@ -269,7 +241,6 @@ vec3 aces(vec3 x) {
 
 void main() {
     vec3 col = denoise(vTex) * uExposure;
-    col += bloom(vTex) * BLOOM_STRENGTH;
     col = aces(col);
     col = pow(col, vec3(1.0 / 2.2));
     o = vec4(col, 1.0);

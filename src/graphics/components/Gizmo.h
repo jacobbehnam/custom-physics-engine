@@ -196,4 +196,7 @@ private:
     uint32_t objectID; ///< Gizmo's object ID
     bool isDragging = false; ///< true during active drag
     bool isHovered = false; ///< true when any handle is hovered
+
+    float getHandleVisualScale() const;
+    glm::mat4 getScaledHandleModel(const IHandle& handle) const;
 };

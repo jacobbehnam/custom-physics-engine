@@ -76,15 +76,12 @@ const vec3  SKY_HORIZON_COLOR   = vec3(0.80, 0.84, 0.92);
 const vec3  SKY_ZENITH_COLOR    = vec3(0.20, 0.38, 0.78);
 const vec3  SKY_GROUND_COLOR    = vec3(0.12, 0.13, 0.15);
 const float SKY_GRADIENT_POWER  = 0.55;
-const vec3  SUN_CORE_COLOR      = vec3(7.5, 6.4, 5.2);
-const vec3  SUN_HALO_COLOR      = vec3(1.8, 1.3, 0.9);
-const float SUN_CORE_POWER      = 1024.0;
-const float SUN_HALO_POWER      = 48.0;
 const float TWO_PI              = 6.28318530718;
 const float PI                  = 3.141592653589793;
 const int   MAX_DIRECT_LIGHTS   = 8;
 const uint  AA_PATTERN_COUNT    = 4u;
 const float AA_JITTER_OFFSET    = 0.25;
+const float SUBPIXEL_MAX_RADIUS = 2.0;
 
 vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
     vec3 t0 = (bmin - o) * invD;
@@ -211,6 +208,9 @@ bool trySphere(
     double centerDistance2 = max(dot(oc, oc) - tCenter * tCenter, 0.0);
     double centerDistance = sqrt(centerDistance2);
     double footprintRadius = max(double(rayConeTan) * tCenter, 0.0);
+    if (radius > footprintRadius * double(SUBPIXEL_MAX_RADIUS)) {
+        return false;
+    }
     if (footprintRadius <= 0.0 || centerDistance > radius + footprintRadius) {
         return false;
     }
@@ -296,9 +296,6 @@ vec3 skyRadiance(vec3 dir) {
         sky = mix(SKY_GROUND_COLOR, sky, clamp(dir.y + 1.0, 0.0, 1.0));
     }
 
-    float sun = max(dot(dir, SUN_DIR), 0.0);
-    sky += SUN_CORE_COLOR * pow(sun, SUN_CORE_POWER);
-    sky += SUN_HALO_COLOR * pow(sun, SUN_HALO_POWER);
     return sky;
 }
 
