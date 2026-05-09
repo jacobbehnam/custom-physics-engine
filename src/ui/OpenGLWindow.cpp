@@ -33,6 +33,7 @@ constexpr int    kLabelOffsetAboveObjectPx      = 8;
 constexpr int    kLabelStepYPx                  = 4;
 constexpr int    kLabelMinStepXPx               = 36;
 constexpr int    kLabelSearchRings              = 12;
+constexpr float  kRenderSnapshotDelayFrames     = 0.5f;
 }
 
 QSize OpenGLWindow::getFramebufferSize() const {
@@ -82,16 +83,26 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
+    float interpolationDelay = 0.0f;
     if (simulating) {
         renderSimTime += deltaTime * simSpeed;
+        interpolationDelay = sceneManager->physicsSystem->getSnapshotInterpolationDelay() * kRenderSnapshotDelayFrames;
+        if (auto latestSnapshotTime = sceneManager->physicsSystem->getLatestSnapshotTime()) {
+            renderSimTime = std::min(renderSimTime, *latestSnapshotTime);
+        }
     }
 
     //sceneManager->stepPhysics(deltaTime);
-    // 1) Acquire the latest batch of snapshots
-    auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(renderSimTime);
+    // 1) Acquire the render-synchronized batch of snapshots
+    float snapshotSimTime = renderSimTime;
+    if (simulating) {
+        snapshotSimTime -= interpolationDelay;
+    }
+    auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(snapshotSimTime);
 
+    scene->applyPhysicsSnapshots(snaps);
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
-    scene->getCamera()->update();
+    scene->updateCameraFromSnapshots(snaps);
 
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);

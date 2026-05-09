@@ -16,6 +16,7 @@ public:
 
     // Same snapshot sync as the start of draw; call before a ray-trace pass when not calling draw.
     void applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snapshots);
+    void updateCameraFromSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snapshots);
 
     void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);
     void drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>& snapshots, const std::unordered_set<uint32_t>& hoverIDs, const std::unordered_set<uint32_t>& selectIDs);

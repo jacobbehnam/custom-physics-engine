@@ -9,7 +9,7 @@ TranslateHandle::TranslateHandle(SceneObject *tgt, Axis ax) : target(tgt), axis(
 
 glm::mat4 TranslateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
-    model = glm::translate(model, target->getPosition());
+    model = glm::translate(model, target->getRenderPosition());
     model = model * rotateFromYToAxis(axis);
     model = glm::scale(model, glm::vec3(thickness, length, thickness));
     return model;

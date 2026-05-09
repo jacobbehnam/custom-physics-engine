@@ -30,6 +30,7 @@ public:
     void setRotationQuat(const glm::quat& q);
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
+    glm::vec3 getRenderPosition() const;
     glm::vec3 getRotation() const;
     glm::quat getRotationQuat() const;
     glm::vec3 getScale() const;

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <atomic>
+#include <deque>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
@@ -44,6 +45,8 @@ namespace Physics {
         void setAmbientTemperature(float newTemp) { ambientTemperature.store(newTemp); }
 
         std::optional<std::vector<ObjectSnapshot>> fetchLatestSnapshot(float renderSimTime);
+        std::optional<float> getLatestSnapshotTime() const;
+        float getSnapshotInterpolationDelay() const;
 
         const ProblemRouter* getRouter() const { return &router; }
         void solveProblem(PhysicsBody* body, const std::unordered_map<std::string, double>& knowns, const std::string& unknown = "");
@@ -55,6 +58,8 @@ namespace Physics {
     private:
         void physicsLoop();
         void advancePhysics(float dt);
+        std::vector<ObjectSnapshot> captureSnapshots() const;
+        void publishSnapshots(std::vector<ObjectSnapshot> snapshots);
 
         ProblemRouter router;
         std::unique_ptr<ISolver> solver = nullptr;
@@ -77,9 +82,10 @@ namespace Physics {
         mutable std::mutex bodiesMutex;
         std::atomic<bool> threadRunning{false};
 
-        std::mutex snapshotMutex;
+        mutable std::mutex snapshotMutex;
         std::vector<ObjectSnapshot> currentSnapshots;
         std::vector<ObjectSnapshot> previousSnapshots;
+        std::deque<std::vector<ObjectSnapshot>> snapshotHistory;
         std::atomic<bool> snapshotReady{false};
     };
 

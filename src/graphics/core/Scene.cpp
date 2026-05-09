@@ -100,6 +100,24 @@ void Scene::applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot
     }
 }
 
+void Scene::updateCameraFromSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snaps) {
+    glm::vec3 renderTargetPosition;
+    const glm::vec3* renderTargetPositionPtr = nullptr;
+    if (snaps && camera.hasTarget()) {
+        const SceneObject* target = camera.getTarget();
+        const Physics::PhysicsBody* targetBody = target ? target->getPhysicsBody() : nullptr;
+        for (const auto& snapshot : *snaps) {
+            if (snapshot.body == targetBody) {
+                renderTargetPosition = snapshot.position;
+                renderTargetPositionPtr = &renderTargetPosition;
+                break;
+            }
+        }
+    }
+
+    camera.update(renderTargetPositionPtr);
+}
+
 void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
     SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
@@ -128,22 +146,7 @@ void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, 
 
 void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     applyPhysicsSnapshots(snaps);
-
-    glm::vec3 renderTargetPosition;
-    const glm::vec3* renderTargetPositionPtr = nullptr;
-    if (snaps && camera.hasTarget()) {
-        const SceneObject* target = camera.getTarget();
-        const Physics::PhysicsBody* targetBody = target ? target->getPhysicsBody() : nullptr;
-        for (const auto& snapshot : *snaps) {
-            if (snapshot.body == targetBody) {
-                renderTargetPosition = snapshot.position;
-                renderTargetPositionPtr = &renderTargetPosition;
-                break;
-            }
-        }
-    }
-
-    camera.update(renderTargetPositionPtr);
+    updateCameraFromSnapshots(snaps);
 
     float nearestDepth = std::numeric_limits<float>::max();
     float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;

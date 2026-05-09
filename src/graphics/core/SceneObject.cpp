@@ -320,6 +320,28 @@ glm::vec3 SceneObject::getPosition() const{
     return position;
 }
 
+glm::vec3 SceneObject::getRenderPosition() const {
+    glm::vec3 currentPosition = position;
+    bool hasMappedPhysicsPosition = false;
+
+    {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        if (physicsBody) {
+            auto it = posMap.find(physicsBody.get());
+            if (it != posMap.end()) {
+                currentPosition = it->second;
+                hasMappedPhysicsPosition = true;
+            }
+        }
+    }
+
+    if (physicsBody && !hasMappedPhysicsPosition) {
+        currentPosition = physicsBody->getPosition(BodyLock::LOCK);
+    }
+
+    return currentPosition;
+}
+
 glm::vec3 SceneObject::getRotation() const {
     return glm::eulerAngles(orientation);
 }
