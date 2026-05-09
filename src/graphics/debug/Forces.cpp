@@ -41,7 +41,7 @@ Forces::Forces(SceneManager* sceneManager) : sceneManager(sceneManager) {
     basicShader = ResourceManager::getShader("basic");
 }
 
-void Forces::draw() const {
+void Forces::draw(const std::optional<std::vector<ObjectSnapshot>>&) const {
     if (!enabled) return;
 
     auto* arrowMesh = ResourceManager::getMesh("gizmo_translate");

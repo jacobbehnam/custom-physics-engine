@@ -192,7 +192,7 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     for (auto* obj : customDrawables) {
-        obj->draw();
+        obj->draw(snaps);
     }
 }
 
@@ -201,7 +201,7 @@ void Scene::drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>
     updateFrameUniforms(hoveredIDs, selectedIDs);
 
     for (auto* obj : customDrawables) {
-        obj->draw();
+        obj->draw(snaps);
     }
 }
 

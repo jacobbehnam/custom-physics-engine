@@ -63,7 +63,7 @@ glm::mat4 Gizmo::getScaledHandleModel(const IHandle& handle) const {
     return handle.getModelMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(getHandleVisualScale()));
 }
 
-void Gizmo::draw() const {
+void Gizmo::draw(const std::optional<std::vector<ObjectSnapshot>>&) const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
 

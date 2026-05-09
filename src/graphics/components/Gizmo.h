@@ -88,7 +88,7 @@ public:
      * The active handle (if dragging) uses its own object ID for precise
      * picking, otherwise all handles share the gizmo's object ID.
      */
-    void draw() const override;
+    void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots) const override;
 
     /**
      * @brief Gets the gizmo's unique identifier.

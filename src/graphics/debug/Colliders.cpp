@@ -16,7 +16,7 @@ Colliders::Colliders(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFu
     cubeMesh = ResourceManager::getMesh("prim_cube");
 }
 
-void Colliders::draw() const {
+void Colliders::draw(const std::optional<std::vector<ObjectSnapshot>>&) const {
     if (!enabled) return;
 
     if (!basicShader || !cubeMesh) return;
