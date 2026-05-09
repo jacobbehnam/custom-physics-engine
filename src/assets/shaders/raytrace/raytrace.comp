@@ -41,6 +41,7 @@ uniform vec3 uCamPos;
 uniform mat4 uInvView;
 uniform mat4 uInvProj;
 uniform uvec2 uSize;
+uniform float uPixelConeTan;
 uniform uint uRoot;
 uniform uint uNumTris;
 uniform uint uNumBvh;
@@ -153,7 +154,16 @@ bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMin, float tMax, out fl
     return true;
 }
 
-bool trySphere(uint sphereIndex, vec3 origin, vec3 dir, float tMin, float tMax, out float tHit, out vec3 outwardNormal) {
+bool trySphere(
+    uint sphereIndex,
+    vec3 origin,
+    vec3 dir,
+    float tMin,
+    float tMax,
+    float rayConeTan,
+    out float tHit,
+    out vec3 outwardNormal,
+    out float coverage) {
     Sphere sphere = sbuf.s[sphereIndex];
     double radius = double(sphere.centerRadius.w);
     if (radius <= 0.0) {
@@ -165,27 +175,59 @@ bool trySphere(uint sphereIndex, vec3 origin, vec3 dir, float tMin, float tMax, 
     double halfB = dot(oc, rayDir);
     double c = dot(oc, oc) - radius * radius;
     double discriminant = halfB * halfB - c;
-    if (discriminant < 0.0) {
-        return false;
-    }
-
-    double root = sqrt(discriminant);
-    double hit = -halfB - root;
-    if (hit <= double(tMin) || hit >= double(tMax)) {
-        hit = -halfB + root;
+    if (discriminant >= 0.0) {
+        double root = sqrt(discriminant);
+        double hit = -halfB - root;
         if (hit <= double(tMin) || hit >= double(tMax)) {
-            return false;
+            hit = -halfB + root;
+            if (hit <= double(tMin) || hit >= double(tMax)) {
+                hit = -1.0;
+            }
+        }
+
+        if (hit > 0.0) {
+            dvec3 relativeHit = oc + rayDir * hit;
+            double normalLength2 = dot(relativeHit, relativeHit);
+            if (normalLength2 <= 1.0e-20) {
+                outwardNormal = -dir;
+            } else {
+                outwardNormal = vec3(relativeHit / sqrt(normalLength2));
+            }
+            tHit = float(hit);
+            coverage = 1.0;
+            return true;
         }
     }
 
-    dvec3 relativeHit = oc + rayDir * hit;
-    double normalLength2 = dot(relativeHit, relativeHit);
+    if (rayConeTan <= 0.0) {
+        return false;
+    }
+
+    double tCenter = -halfB;
+    if (tCenter <= double(tMin) || tCenter >= double(tMax)) {
+        return false;
+    }
+
+    double centerDistance2 = max(dot(oc, oc) - tCenter * tCenter, 0.0);
+    double centerDistance = sqrt(centerDistance2);
+    double footprintRadius = max(double(rayConeTan) * tCenter, 0.0);
+    if (footprintRadius <= 0.0 || centerDistance > radius + footprintRadius) {
+        return false;
+    }
+
+    dvec3 relativeClosest = oc + rayDir * tCenter;
+    double normalLength2 = dot(relativeClosest, relativeClosest);
     if (normalLength2 <= 1.0e-20) {
         outwardNormal = -dir;
     } else {
-        outwardNormal = vec3(relativeHit / sqrt(normalLength2));
+        outwardNormal = vec3(relativeClosest / sqrt(normalLength2));
     }
+    double hit = max(tCenter - radius, double(tMin));
     tHit = float(hit);
+
+    double rawCoverage = (radius + footprintRadius - centerDistance) / max(2.0 * footprintRadius, 1.0e-12);
+    coverage = float(clamp(rawCoverage, 0.0, 1.0));
+    coverage = coverage * coverage * (3.0 - 2.0 * coverage);
     return true;
 }
 
@@ -268,14 +310,17 @@ bool traceClosest(
     uint skipTriIndex,
     uint skipObjectID0,
     uint skipObjectID1,
+    float sphereRayConeTan,
     out float tHit,
     out uint hitKind,
     out uint hitIndex,
-    out vec3 bary) {
+    out vec3 bary,
+    out float hitCoverage) {
     tHit = tMax;
     hitKind = HIT_KIND_NONE;
     hitIndex = HIT_NONE;
     bary = vec3(0.0);
+    hitCoverage = 0.0;
 
     if (uNumTris != 0u && uNumBvh != 0u) {
         vec3 invDir = 1.0 / dir;
@@ -310,6 +355,7 @@ bool traceClosest(
                         hitKind = HIT_KIND_TRIANGLE;
                         hitIndex = currentIndex;
                         bary = triBary;
+                        hitCoverage = 1.0;
                     }
                     continue;
                 }
@@ -349,13 +395,15 @@ bool traceClosest(
 
         float sphereT;
         vec3 sphereNormal;
-        if (!trySphere(i, origin, dir, tMin, tHit, sphereT, sphereNormal)) {
+        float sphereCoverage;
+        if (!trySphere(i, origin, dir, tMin, tHit, sphereRayConeTan, sphereT, sphereNormal, sphereCoverage)) {
             continue;
         }
         tHit = sphereT;
         hitKind = HIT_KIND_SPHERE;
         hitIndex = i;
         bary = sphereNormal;
+        hitCoverage = sphereCoverage;
     }
 
     return hitKind != HIT_KIND_NONE;
@@ -373,6 +421,7 @@ bool traceShadow(
     uint hitKind;
     uint hitIndex;
     vec3 bary;
+    float hitCoverage;
     return traceClosest(
         origin,
         dir,
@@ -381,10 +430,12 @@ bool traceShadow(
         skipTriIndex,
         skipObjectID0,
         skipObjectID1,
+        0.0,
         tHit,
         hitKind,
         hitIndex,
-        bary);
+        bary,
+        hitCoverage);
 }
 
 vec3 sampleDirectLights(
@@ -444,7 +495,21 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     uint hitKind;
     uint hitIndex;
     vec3 bary;
-    if (!traceClosest(origin, dir, RAY_T_MIN, 1.0e30, HIT_NONE, HIT_NONE, HIT_NONE, tHit, hitKind, hitIndex, bary)) {
+    float hitCoverage;
+    if (!traceClosest(
+            origin,
+            dir,
+            RAY_T_MIN,
+            1.0e30,
+            HIT_NONE,
+            HIT_NONE,
+            HIT_NONE,
+            uPixelConeTan,
+            tHit,
+            hitKind,
+            hitIndex,
+            bary,
+            hitCoverage)) {
         return skyRadiance(dir);
     }
 
@@ -516,6 +581,9 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     }
     radiance += sampleDirectLights(hitPos, skipTriIndex, skipObjectID, normal, albedo, bias);
 
+    if (hitCoverage < 1.0) {
+        radiance = mix(skyRadiance(dir), radiance, hitCoverage);
+    }
     return radiance;
 }
 

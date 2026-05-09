@@ -37,6 +37,7 @@ constexpr float    kEmptySceneClearBlue     = 0.66f;
 constexpr float    kFloatingOriginThreshold = 1.0e6f;
 constexpr float    kLightPowerEpsilon       = 1.0e-5f;
 constexpr float    kMinAnalyticLightRadius  = 0.1f;
+constexpr float    kPixelConeDiagonalScale  = 1.41421356237f;
 constexpr size_t   kMaxAnalyticLights       = 8;
 constexpr uint32_t kShaderAaPatternCount    = 4;
 constexpr uint32_t kTemporalSampleCount     = 1 + kShaderAaPatternCount;
@@ -199,9 +200,11 @@ uniform float uExposure;
 const float DENOISE_CENTER_WEIGHT   = 12.0;
 const float DENOISE_LUMA_STRENGTH   = 18.0;
 const float DENOISE_DIAGONAL_WEIGHT = 0.35;
-const float BLOOM_THRESHOLD         = 1.0;
-const float BLOOM_STRENGTH          = 0.08;
-const float BLOOM_RADIUS_PIXELS     = 2.0;
+const float BLOOM_THRESHOLD         = 0.85;
+const float BLOOM_STRENGTH          = 0.18;
+const float BLOOM_RADIUS_PIXELS     = 8.0;
+const float BLOOM_SIGMA             = 0.42;
+const int   BLOOM_KERNEL_RADIUS     = 4;
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -234,15 +237,19 @@ vec3 denoise(vec2 uv) {
 
 vec3 bloom(vec2 uv) {
     ivec2 size = textureSize(t, 0);
-    vec2 texel = BLOOM_RADIUS_PIXELS / vec2(size);
+    vec2 texel = 1.0 / vec2(size);
     vec3 sum = vec3(0.0);
     float weightSum = 0.0;
 
-    for (int y = -2; y <= 2; ++y) {
-        for (int x = -2; x <= 2; ++x) {
-            vec2 offset = vec2(x, y);
-            float weight = 1.0 / (1.0 + dot(offset, offset));
-            vec3 sampleColor = texture(t, uv + offset * texel).rgb * uExposure;
+    for (int y = -BLOOM_KERNEL_RADIUS; y <= BLOOM_KERNEL_RADIUS; ++y) {
+        for (int x = -BLOOM_KERNEL_RADIUS; x <= BLOOM_KERNEL_RADIUS; ++x) {
+            vec2 offset = vec2(x, y) / float(BLOOM_KERNEL_RADIUS);
+            float r2 = dot(offset, offset);
+            if (r2 > 1.0) {
+                continue;
+            }
+            float weight = exp(-r2 / (2.0 * BLOOM_SIGMA * BLOOM_SIGMA));
+            vec3 sampleColor = texture(t, uv + offset * BLOOM_RADIUS_PIXELS * texel).rgb * uExposure;
             sum += max(sampleColor - vec3(BLOOM_THRESHOLD), vec3(0.0)) * weight;
             weightSum += weight;
         }
@@ -769,6 +776,10 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     m_shader->setUVec2("uSize",
         static_cast<unsigned int>(w),
         static_cast<unsigned int>(h));
+
+    const float pixelConeTan = kPixelConeDiagonalScale * std::tan(glm::radians(camera->fov) * 0.5f)
+        / static_cast<float>(h);
+    m_shader->setFloat("uPixelConeTan", pixelConeTan);
 
     m_shader->setUInt("uRoot",
         m_bvh.getRoot());
