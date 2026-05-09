@@ -36,6 +36,12 @@ struct alignas(16) GpuLight {
     glm::vec4 emissive{};
 };
 
+struct alignas(16) GpuSphere {
+    glm::vec4 centerRadius{};
+    glm::vec4 material{};
+    glm::vec4 emissive{};
+};
+
 struct WorldTriangle {
     glm::vec3 p0, p1, p2;
     glm::vec3 s0, s1, s2;
@@ -43,6 +49,7 @@ struct WorldTriangle {
     glm::vec3 albedo{0.0f};
     MaterialKind materialKind{MaterialKind::Matte};
     glm::vec3 emissive{0.0f};
+    uint32_t objectID{0};
 };
 
 class TriangleBvh {

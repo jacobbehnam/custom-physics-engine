@@ -26,9 +26,16 @@ struct Light {
     vec4 emissive;
 };
 
+struct Sphere {
+    vec4 centerRadius;
+    vec4 material;
+    vec4 emissive;
+};
+
 layout(std430, binding = 0) buffer TBuf { Tri t[]; } tbuf;
 layout(std430, binding = 1) buffer BBuf { BvhNode n[]; } bbuf;
 layout(std430, binding = 2) buffer LBuf { Light l[]; } lbuf;
+layout(std430, binding = 3) buffer SBuf { Sphere s[]; } sbuf;
 
 uniform vec3 uCamPos;
 uniform mat4 uInvView;
@@ -38,12 +45,16 @@ uniform uint uRoot;
 uniform uint uNumTris;
 uniform uint uNumBvh;
 uniform uint uNumLights;
+uniform uint uNumSpheres;
 uniform uint uAccumFrames;
 uniform int uEnableGlobalLight;
 
 const uint  LEAF                = 0x80000000u;
 const uint  LEAF_START_MASK     = 0x0FFFFFFFu;
 const uint  HIT_NONE            = 0xFFFFFFFFu;
+const uint  HIT_KIND_NONE       = 0u;
+const uint  HIT_KIND_TRIANGLE   = 1u;
+const uint  HIT_KIND_SPHERE     = 2u;
 const uint  MATERIAL_SPHERE     = 2u;
 const int   STACKN              = 64;
 const float RAY_T_MIN           = 1.0e-4;
@@ -71,7 +82,6 @@ const float SUN_HALO_POWER      = 48.0;
 const float TWO_PI              = 6.28318530718;
 const float PI                  = 3.141592653589793;
 const int   MAX_DIRECT_LIGHTS   = 8;
-const float MAX_SAMPLE_LUMA     = 64.0;
 const uint  AA_PATTERN_COUNT    = 4u;
 const float AA_JITTER_OFFSET    = 0.25;
 
@@ -81,10 +91,6 @@ vec2 aabbT(vec3 o, vec3 invD, vec3 bmin, vec3 bmax) {
     vec3 tMin = min(t0, t1);
     vec3 tMax = max(t0, t1);
     return vec2(max(tMin.x, max(tMin.y, tMin.z)), min(tMax.x, min(tMax.y, tMax.z)));
-}
-
-float luminance(vec3 c) {
-    return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
 vec3 geometricNormal(Tri tri) {
@@ -104,6 +110,12 @@ float triangleMaxEdge(Tri tri) {
 
 float shadowBias(Tri tri, vec3 hitPos) {
     float edgeBias = triangleMaxEdge(tri) * SHADOW_EDGE_BIAS;
+    float viewBias = length(hitPos - uCamPos) * SHADOW_VIEW_BIAS;
+    return max(MIN_RAY_BIAS, max(edgeBias, viewBias));
+}
+
+float shadowBias(Sphere sphere, vec3 hitPos) {
+    float edgeBias = sphere.centerRadius.w * SHADOW_EDGE_BIAS;
     float viewBias = length(hitPos - uCamPos) * SHADOW_VIEW_BIAS;
     return max(MIN_RAY_BIAS, max(edgeBias, viewBias));
 }
@@ -141,6 +153,42 @@ bool tryTri(uint triIndex, vec3 origin, vec3 dir, float tMin, float tMax, out fl
     return true;
 }
 
+bool trySphere(uint sphereIndex, vec3 origin, vec3 dir, float tMin, float tMax, out float tHit, out vec3 outwardNormal) {
+    Sphere sphere = sbuf.s[sphereIndex];
+    double radius = double(sphere.centerRadius.w);
+    if (radius <= 0.0) {
+        return false;
+    }
+
+    dvec3 oc = dvec3(origin) - dvec3(sphere.centerRadius.xyz);
+    dvec3 rayDir = dvec3(dir);
+    double halfB = dot(oc, rayDir);
+    double c = dot(oc, oc) - radius * radius;
+    double discriminant = halfB * halfB - c;
+    if (discriminant < 0.0) {
+        return false;
+    }
+
+    double root = sqrt(discriminant);
+    double hit = -halfB - root;
+    if (hit <= double(tMin) || hit >= double(tMax)) {
+        hit = -halfB + root;
+        if (hit <= double(tMin) || hit >= double(tMax)) {
+            return false;
+        }
+    }
+
+    dvec3 relativeHit = oc + rayDir * hit;
+    double normalLength2 = dot(relativeHit, relativeHit);
+    if (normalLength2 <= 1.0e-20) {
+        outwardNormal = -dir;
+    } else {
+        outwardNormal = vec3(relativeHit / sqrt(normalLength2));
+    }
+    tHit = float(hit);
+    return true;
+}
+
 uint decodeLeafCount(uint leafData) {
     return (leafData >> 28u) & 0x7u;
 }
@@ -151,6 +199,27 @@ uint decodeLeafStart(uint leafData) {
 
 uint materialKind(Tri tri) {
     return uint(tri.material.w + 0.5);
+}
+
+uint materialKind(Sphere sphere) {
+    return uint(sphere.material.w + 0.5);
+}
+
+uint objectID(Tri tri) {
+    return uint(tri.emissive.w + 0.5);
+}
+
+uint objectID(Sphere sphere) {
+    return uint(sphere.emissive.w + 0.5);
+}
+
+uint objectID(Light light) {
+    return uint(light.emissive.w + 0.5);
+}
+
+bool shouldSkipObject(uint currentObjectID, uint skipObjectID0, uint skipObjectID1) {
+    return (skipObjectID0 != HIT_NONE && currentObjectID == skipObjectID0)
+        || (skipObjectID1 != HIT_NONE && currentObjectID == skipObjectID1);
 }
 
 vec3 evaluateMaterial(Tri tri, vec3 pos) {
@@ -170,6 +239,10 @@ vec3 evaluateMaterial(Tri tri, vec3 pos) {
     return dark ? a : b;
 }
 
+vec3 evaluateMaterial(Sphere sphere, vec3 pos) {
+    return clamp(sphere.material.rgb, vec3(MATERIAL_MIN_VALUE), vec3(MATERIAL_MAX_VALUE));
+}
+
 vec3 skyRadiance(vec3 dir) {
     if (uEnableGlobalLight == 0) {
         return vec3(0.0);
@@ -187,83 +260,140 @@ vec3 skyRadiance(vec3 dir) {
     return sky;
 }
 
-bool traceClosest(vec3 origin, vec3 dir, float tMin, float tMax, uint skipTriIndex, out float tHit, out uint triIndex, out vec3 bary) {
-    vec3 invDir = 1.0 / dir;
-    uint stack[STACKN];
-    int sp = 0;
-
-    vec2 rootRange = aabbT(origin, invDir, bbuf.n[uRoot].bmin, bbuf.n[uRoot].bmax);
-    if (rootRange.x > rootRange.y || rootRange.y <= tMin || rootRange.x >= tMax) {
-        return false;
-    }
-    stack[sp++] = uRoot;
-
+bool traceClosest(
+    vec3 origin,
+    vec3 dir,
+    float tMin,
+    float tMax,
+    uint skipTriIndex,
+    uint skipObjectID0,
+    uint skipObjectID1,
+    out float tHit,
+    out uint hitKind,
+    out uint hitIndex,
+    out vec3 bary) {
     tHit = tMax;
-    triIndex = HIT_NONE;
+    hitKind = HIT_KIND_NONE;
+    hitIndex = HIT_NONE;
     bary = vec3(0.0);
 
-    while (sp > 0) {
-        uint nodeIndex = stack[--sp];
-        BvhNode node = bbuf.n[nodeIndex];
+    if (uNumTris != 0u && uNumBvh != 0u) {
+        vec3 invDir = 1.0 / dir;
+        uint stack[STACKN];
+        int sp = 0;
 
-        if ((node.c0 & LEAF) != 0u) {
-            uint count = decodeLeafCount(node.c0);
-            uint start = decodeLeafStart(node.c0);
-            for (uint i = 0u; i < count; ++i) {
-                float triT;
-                vec3 triBary;
-                uint currentIndex = start + i;
-                if (currentIndex == skipTriIndex || !tryTri(currentIndex, origin, dir, tMin, tHit, triT, triBary)) {
+        vec2 rootRange = aabbT(origin, invDir, bbuf.n[uRoot].bmin, bbuf.n[uRoot].bmax);
+        if (!(rootRange.x > rootRange.y || rootRange.y <= tMin || rootRange.x >= tMax)) {
+            stack[sp++] = uRoot;
+
+            while (sp > 0) {
+                uint nodeIndex = stack[--sp];
+                BvhNode node = bbuf.n[nodeIndex];
+
+                if ((node.c0 & LEAF) != 0u) {
+                    uint count = decodeLeafCount(node.c0);
+                    uint start = decodeLeafStart(node.c0);
+                    for (uint i = 0u; i < count; ++i) {
+                        float triT;
+                        vec3 triBary;
+                        uint currentIndex = start + i;
+                        if (currentIndex == skipTriIndex) {
+                            continue;
+                        }
+                        if (shouldSkipObject(objectID(tbuf.t[currentIndex]), skipObjectID0, skipObjectID1)) {
+                            continue;
+                        }
+                        if (!tryTri(currentIndex, origin, dir, tMin, tHit, triT, triBary)) {
+                            continue;
+                        }
+                        tHit = triT;
+                        hitKind = HIT_KIND_TRIANGLE;
+                        hitIndex = currentIndex;
+                        bary = triBary;
+                    }
                     continue;
                 }
-                tHit = triT;
-                triIndex = currentIndex;
-                bary = triBary;
+
+                uint left = node.c0;
+                uint right = node.c1;
+                vec2 leftRange = aabbT(origin, invDir, bbuf.n[left].bmin, bbuf.n[left].bmax);
+                vec2 rightRange = aabbT(origin, invDir, bbuf.n[right].bmin, bbuf.n[right].bmax);
+
+                bool hitLeft = leftRange.x <= leftRange.y && leftRange.y > tMin && leftRange.x < tHit;
+                bool hitRight = rightRange.x <= rightRange.y && rightRange.y > tMin && rightRange.x < tHit;
+
+                if (hitLeft && hitRight) {
+                    bool leftFirst = leftRange.x <= rightRange.x;
+                    if (sp + 2 <= STACKN) {
+                        stack[sp++] = leftFirst ? right : left;
+                        stack[sp++] = leftFirst ? left : right;
+                    }
+                } else if (hitLeft) {
+                    if (sp + 1 <= STACKN) {
+                        stack[sp++] = left;
+                    }
+                } else if (hitRight) {
+                    if (sp + 1 <= STACKN) {
+                        stack[sp++] = right;
+                    }
+                }
             }
+        }
+    }
+
+    for (uint i = 0u; i < uNumSpheres; ++i) {
+        Sphere sphere = sbuf.s[i];
+        if (shouldSkipObject(objectID(sphere), skipObjectID0, skipObjectID1)) {
             continue;
         }
 
-        uint left = node.c0;
-        uint right = node.c1;
-        vec2 leftRange = aabbT(origin, invDir, bbuf.n[left].bmin, bbuf.n[left].bmax);
-        vec2 rightRange = aabbT(origin, invDir, bbuf.n[right].bmin, bbuf.n[right].bmax);
-
-        bool hitLeft = leftRange.x <= leftRange.y && leftRange.y > tMin && leftRange.x < tHit;
-        bool hitRight = rightRange.x <= rightRange.y && rightRange.y > tMin && rightRange.x < tHit;
-
-        if (hitLeft && hitRight) {
-            bool leftFirst = leftRange.x <= rightRange.x;
-            if (sp + 2 <= STACKN) {
-                stack[sp++] = leftFirst ? right : left;
-                stack[sp++] = leftFirst ? left : right;
-            }
-        } else if (hitLeft) {
-            if (sp + 1 <= STACKN) {
-                stack[sp++] = left;
-            }
-        } else if (hitRight) {
-            if (sp + 1 <= STACKN) {
-                stack[sp++] = right;
-            }
+        float sphereT;
+        vec3 sphereNormal;
+        if (!trySphere(i, origin, dir, tMin, tHit, sphereT, sphereNormal)) {
+            continue;
         }
+        tHit = sphereT;
+        hitKind = HIT_KIND_SPHERE;
+        hitIndex = i;
+        bary = sphereNormal;
     }
 
-    return triIndex != HIT_NONE;
+    return hitKind != HIT_KIND_NONE;
 }
 
-bool traceShadow(vec3 origin, vec3 dir, float minDistance, float maxDistance, uint skipTriIndex) {
+bool traceShadow(
+    vec3 origin,
+    vec3 dir,
+    float minDistance,
+    float maxDistance,
+    uint skipTriIndex,
+    uint skipObjectID0,
+    uint skipObjectID1) {
     float tHit;
-    uint triIndex;
+    uint hitKind;
+    uint hitIndex;
     vec3 bary;
-    return traceClosest(origin, dir, minDistance, maxDistance, skipTriIndex, tHit, triIndex, bary);
+    return traceClosest(
+        origin,
+        dir,
+        minDistance,
+        maxDistance,
+        skipTriIndex,
+        skipObjectID0,
+        skipObjectID1,
+        tHit,
+        hitKind,
+        hitIndex,
+        bary);
 }
 
 vec3 sampleDirectLights(
     vec3 hitPos,
-    Tri tri,
-    uint hitTriIndex,
+    uint skipTriIndex,
+    uint skipObjectID,
     vec3 normal,
-    vec3 albedo) {
+    vec3 albedo,
+    float bias) {
     if (uNumLights == 0u) {
         return vec3(0.0);
     }
@@ -287,9 +417,15 @@ vec3 sampleDirectLights(
             continue;
         }
 
-        float bias = shadowBias(tri, hitPos);
         float shadowDistance = max(dist - lightRadius - bias, 0.0);
-        if (traceShadow(hitPos + normal * bias, lightDir, RAY_T_MIN, shadowDistance, hitTriIndex)) {
+        if (traceShadow(
+                hitPos + normal * bias,
+                lightDir,
+                RAY_T_MIN,
+                shadowDistance,
+                skipTriIndex,
+                skipObjectID,
+                objectID(light))) {
             continue;
         }
 
@@ -305,43 +441,80 @@ vec3 traceRadiance(vec3 origin, vec3 dir) {
     vec3 radiance = vec3(0.0);
 
     float tHit;
-    uint triIndex;
+    uint hitKind;
+    uint hitIndex;
     vec3 bary;
-    if (!traceClosest(origin, dir, RAY_T_MIN, 1.0e30, HIT_NONE, tHit, triIndex, bary)) {
+    if (!traceClosest(origin, dir, RAY_T_MIN, 1.0e30, HIT_NONE, HIT_NONE, HIT_NONE, tHit, hitKind, hitIndex, bary)) {
         return skyRadiance(dir);
     }
 
-    Tri tri = tbuf.t[triIndex];
     vec3 hitPos = origin + dir * tHit;
-    vec3 geomN = geometricNormal(tri);
-    if (dot(geomN, dir) > 0.0) {
-        geomN = -geomN;
-    }
-    vec3 normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
-    if (materialKind(tri) == MATERIAL_SPHERE) {
-        vec3 sphereN = normalize(hitPos - sphereCenter(tri));
-        if (!any(isnan(sphereN)) && dot(sphereN, sphereN) > 1.0e-8) {
-            normal = sphereN;
+    vec3 normal = vec3(0.0);
+    vec3 albedo = vec3(0.0);
+    uint skipTriIndex = HIT_NONE;
+    uint skipObjectID = HIT_NONE;
+    float bias = MIN_RAY_BIAS;
+
+    if (hitKind == HIT_KIND_TRIANGLE) {
+        Tri tri = tbuf.t[hitIndex];
+        vec3 geomN = geometricNormal(tri);
+        if (dot(geomN, dir) > 0.0) {
+            geomN = -geomN;
         }
-    }
-    if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
-        normal = geomN;
-    }
-    if (dot(normal, dir) > 0.0) {
-        normal = -normal;
-    }
-    if (dot(normal, geomN) < 0.0) {
-        normal = geomN;
+        normal = normalize(bary.x * tri.n0.xyz + bary.y * tri.n1.xyz + bary.z * tri.n2.xyz);
+        if (materialKind(tri) == MATERIAL_SPHERE) {
+            vec3 sphereN = normalize(hitPos - sphereCenter(tri));
+            if (!any(isnan(sphereN)) && dot(sphereN, sphereN) > 1.0e-8) {
+                normal = sphereN;
+            }
+        }
+        if (any(isnan(normal)) || dot(normal, normal) < 1.0e-8) {
+            normal = geomN;
+        }
+        if (dot(normal, dir) > 0.0) {
+            normal = -normal;
+        }
+        if (dot(normal, geomN) < 0.0) {
+            normal = geomN;
+        }
+
+        albedo = evaluateMaterial(tri, hitPos);
+        radiance += tri.emissive.rgb;
+        skipTriIndex = hitIndex;
+        bias = shadowBias(tri, hitPos);
+    } else if (hitKind == HIT_KIND_SPHERE) {
+        Sphere sphere = sbuf.s[hitIndex];
+        vec3 outward = normalize(bary);
+        if (any(isnan(outward)) || dot(outward, outward) < 1.0e-8) {
+            outward = -dir;
+        }
+        hitPos = sphere.centerRadius.xyz + outward * sphere.centerRadius.w;
+        normal = outward;
+        if (dot(normal, dir) > 0.0) {
+            normal = -normal;
+        }
+
+        albedo = evaluateMaterial(sphere, hitPos);
+        radiance += sphere.emissive.rgb;
+        skipObjectID = objectID(sphere);
+        bias = shadowBias(sphere, hitPos);
+    } else {
+        return skyRadiance(dir);
     }
 
-    vec3 albedo = evaluateMaterial(tri, hitPos);
-    radiance += tri.emissive.rgb;
     float nDotL = max(dot(normal, SUN_DIR), 0.0);
-    float bias = shadowBias(tri, hitPos);
-    if (uEnableGlobalLight != 0 && nDotL > 0.0 && !traceShadow(hitPos + normal * bias, SUN_DIR, RAY_T_MIN, SHADOW_TRACE_MAX, triIndex)) {
+    if (uEnableGlobalLight != 0 && nDotL > 0.0
+        && !traceShadow(
+            hitPos + normal * bias,
+            SUN_DIR,
+            RAY_T_MIN,
+            SHADOW_TRACE_MAX,
+            skipTriIndex,
+            skipObjectID,
+            HIT_NONE)) {
         radiance += albedo * SUN_RADIANCE * nDotL;
     }
-    radiance += sampleDirectLights(hitPos, tri, triIndex, normal, albedo);
+    radiance += sampleDirectLights(hitPos, skipTriIndex, skipObjectID, normal, albedo, bias);
 
     return radiance;
 }
@@ -374,28 +547,19 @@ vec3 primaryRay(vec2 pixel) {
     return normalize((uInvView * vec4(normalize(view.xyz), 0.0)).xyz);
 }
 
-vec3 clampFireflies(vec3 color) {
-    float luma = luminance(color);
-    if (luma <= MAX_SAMPLE_LUMA) {
-        return color;
-    }
-    return color * (MAX_SAMPLE_LUMA / max(luma, 1.0e-6));
-}
-
 void main() {
     uvec2 pixel = gl_GlobalInvocationID.xy;
     if (pixel.x >= uSize.x || pixel.y >= uSize.y) {
         return;
     }
 
-    if (uNumTris == 0u || uNumBvh == 0u) {
+    if ((uNumTris == 0u || uNumBvh == 0u) && uNumSpheres == 0u) {
         imageStore(accumImage, ivec2(pixel), vec4(0.0));
         return;
     }
 
     vec3 rayDir = primaryRay(vec2(pixel) + vec2(0.5));
     vec3 sampleColor = traceRadiance(uCamPos, rayDir);
-    sampleColor = clampFireflies(sampleColor);
 
     vec3 average = sampleColor;
     if (uAccumFrames != 0u) {

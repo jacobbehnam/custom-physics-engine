@@ -31,12 +31,13 @@ private:
     std::unique_ptr<ComputeShader> m_shader;
 
     void ensureOutputSize(int w, int h);
-    void ensureSSBOs(size_t nTri, size_t nNode);
+    void ensureSSBOs(size_t nTri, size_t nNode, size_t nSphere);
     void uploadLights();
     void buildAndUpload();
     void refitAndUpload();
-    void gather(std::vector<Raytrace::WorldTriangle>& out);
+    void gather(std::vector<Raytrace::WorldTriangle>& triangles, std::vector<Raytrace::GpuSphere>& spheres);
     size_t quickTriCount() const;
+    size_t quickSphereCount() const;
     uint64_t structureHash() const;
     uint64_t geometryHash() const;
     uint64_t viewHash(int w, int h, float internalScale, const Camera* camera) const;
@@ -66,16 +67,20 @@ private:
     size_t m_nodeCap{0};
     size_t m_lightCap{0};
     size_t m_lightCount{0};
+    size_t m_sphereCap{0};
+    size_t m_sphereCount{0};
     glm::vec3 m_renderOrigin{0.0f};
     unsigned m_triSsb{0};
     unsigned m_nodeSsb{0};
     unsigned m_lightSsb{0};
+    unsigned m_sphereSsb{0};
 
     unsigned m_fsqVao{0};
 
     uint64_t m_lastGeomHash{0};
     uint64_t m_lastStructureHash{0};
     size_t m_lastTriCount{static_cast<size_t>(-1)};
+    size_t m_lastSphereCount{static_cast<size_t>(-1)};
     uint64_t m_lastViewHash{0};
     uint32_t m_accumulatedFrames{0};
     bool m_lastEnableGlobalLight{true};

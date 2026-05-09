@@ -27,6 +27,7 @@ namespace {
 
 using Raytrace::GpuBvhNode;
 using Raytrace::GpuLight;
+using Raytrace::GpuSphere;
 using Raytrace::GpuTri;
 using Raytrace::MaterialKind;
 
@@ -123,11 +124,11 @@ static glm::vec3 pickObjectAlbedo(const SceneObject& object) {
 }
 
 static MaterialKind pickMaterialKind(const SceneObject& object) {
-    if (object.getShader() == ResourceManager::getShader("checkerboard")) {
-        return MaterialKind::Checkerboard;
-    }
     if (object.getMeshName() == "prim_sphere") {
         return MaterialKind::Sphere;
+    }
+    if (object.getShader() == ResourceManager::getShader("checkerboard")) {
+        return MaterialKind::Checkerboard;
     }
     return MaterialKind::Matte;
 }
@@ -333,23 +334,41 @@ void SceneRayTracer::ensureOutputSize(int w, int h) {
     resetAccumulation();
 }
 
-void SceneRayTracer::ensureSSBOs(size_t nTri, size_t nNode) {
+void SceneRayTracer::ensureSSBOs(size_t nTri, size_t nNode, size_t nSphere) {
     if (m_triSsb == 0) {
         m_g->glGenBuffers(1, &m_triSsb);
     }
     if (m_nodeSsb == 0) {
         m_g->glGenBuffers(1, &m_nodeSsb);
     }
-    if (nTri > m_triCap) {
-        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
-        m_g->glBufferData(GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(nTri * sizeof(GpuTri)), nullptr, GL_DYNAMIC_DRAW);
-        m_triCap = nTri;
+    if (m_sphereSsb == 0) {
+        m_g->glGenBuffers(1, &m_sphereSsb);
     }
-    if (nNode > m_nodeCap) {
+
+    const size_t triCapacity = std::max<size_t>(nTri, 1);
+    const size_t nodeCapacity = std::max<size_t>(nNode, 1);
+    const size_t sphereCapacity = std::max<size_t>(nSphere, 1);
+
+    if (triCapacity > m_triCap) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
+        m_g->glBufferData(
+            GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(triCapacity * sizeof(GpuTri)), nullptr, GL_DYNAMIC_DRAW);
+        m_triCap = triCapacity;
+    }
+    if (nodeCapacity > m_nodeCap) {
         m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
         m_g->glBufferData(
-            GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(nNode * sizeof(GpuBvhNode)), nullptr, GL_DYNAMIC_DRAW);
-        m_nodeCap = nNode;
+            GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(nodeCapacity * sizeof(GpuBvhNode)), nullptr, GL_DYNAMIC_DRAW);
+        m_nodeCap = nodeCapacity;
+    }
+    if (sphereCapacity > m_sphereCap) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_sphereSsb);
+        m_g->glBufferData(
+            GL_SHADER_STORAGE_BUFFER,
+            static_cast<GLsizeiptr>(sphereCapacity * sizeof(GpuSphere)),
+            nullptr,
+            GL_DYNAMIC_DRAW);
+        m_sphereCap = sphereCapacity;
     }
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
@@ -377,7 +396,7 @@ void SceneRayTracer::uploadLights() {
 
         lights.push_back({
             glm::vec4(position, radius),
-            glm::vec4(emission, 0.0f),
+            glm::vec4(emission, static_cast<float>(object->getObjectID())),
         });
     }
 
@@ -423,11 +442,16 @@ void SceneRayTracer::uploadLights() {
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
-    out.clear();
+void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& triangles, std::vector<Raytrace::GpuSphere>& spheres) {
+    triangles.clear();
+    spheres.clear();
     const size_t triCount = quickTriCount();
-    if (out.capacity() < triCount) {
-        out.reserve(triCount);
+    if (triangles.capacity() < triCount) {
+        triangles.reserve(triCount);
+    }
+    const size_t sphereCount = quickSphereCount();
+    if (spheres.capacity() < sphereCount) {
+        spheres.reserve(sphereCount);
     }
 
     for (const auto& owned : m_sm->getObjects()) {
@@ -438,14 +462,32 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
         }
 
         const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
-        const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
         const glm::vec3 sphereCenter = glm::vec3(model[3]);
         const glm::vec3 albedo = pickObjectAlbedo(*object);
         const MaterialKind materialKind = pickMaterialKind(*object);
+        glm::vec3 emission{0.0f};
+        if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
+            emission = body->getEmission(BodyLock::LOCK);
+        }
+
+        if (materialKind == MaterialKind::Sphere) {
+            const glm::vec3 scale = glm::abs(object->getScale());
+            const float radius = 0.5f * std::max({scale.x, scale.y, scale.z});
+            if (radius > 0.0f) {
+                spheres.push_back({
+                    glm::vec4(sphereCenter, radius),
+                    glm::vec4(albedo, static_cast<float>(materialKind)),
+                    glm::vec4(emission, static_cast<float>(object->getObjectID())),
+                });
+            }
+            continue;
+        }
+
+        const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
         const std::span<const Vertex> vertices = mesh->getVertices();
         const std::span<const unsigned int> indices = mesh->getIndices();
 
-        out.reserve(out.size() + indices.size() / 3u);
+        triangles.reserve(triangles.size() + indices.size() / 3u);
         for (size_t i = 0; i + 2u < indices.size(); i += 3u) {
             const unsigned int ia = indices[i];
             const unsigned int ib = indices[i + 1u];
@@ -475,12 +517,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
                 n2 = faceN;
             }
 
-            glm::vec3 emission{0.0f};
-            if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
-                emission = body->getEmission(BodyLock::LOCK);
-            }
-
-            out.push_back({
+            triangles.push_back({
                 w0,
                 w1,
                 w2,
@@ -491,6 +528,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
                 albedo,
                 materialKind,
                 emission,
+                object->getObjectID(),
             });
         }
     }
@@ -499,11 +537,24 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& out) {
 size_t SceneRayTracer::quickTriCount() const {
     size_t total = 0;
     for (const auto& owned : m_sm->getObjects()) {
+        if (owned->getMeshName() == "prim_sphere") {
+            continue;
+        }
         const Mesh* mesh = owned->getMesh();
         if (!mesh) {
             continue;
         }
         total += mesh->getIndices().size() / 3u;
+    }
+    return total;
+}
+
+size_t SceneRayTracer::quickSphereCount() const {
+    size_t total = 0;
+    for (const auto& owned : m_sm->getObjects()) {
+        if (owned->getMeshName() == "prim_sphere" && owned->getMesh()) {
+            ++total;
+        }
     }
     return total;
 }
@@ -581,20 +632,12 @@ void SceneRayTracer::resetAccumulation() {
 
 void SceneRayTracer::maybeRebuildAccel() {
     const size_t triCount = quickTriCount();
-    if (triCount == 0) {
-        if (m_lastTriCount != 0 || m_lastGeomHash != 0 || m_lastStructureHash != 0) {
-            resetAccumulation();
-        }
-        m_lastGeomHash = 0;
-        m_lastStructureHash = 0;
-        m_lastTriCount = 0;
-        buildAndUpload();
-        return;
-    }
+    const size_t sphereCount = quickSphereCount();
 
     const uint64_t accelStructureHash = structureHash();
     const uint64_t geomHash = geometryHash();
-    if (accelStructureHash == m_lastStructureHash && geomHash == m_lastGeomHash && triCount == m_lastTriCount) {
+    if (accelStructureHash == m_lastStructureHash && geomHash == m_lastGeomHash && triCount == m_lastTriCount
+        && sphereCount == m_lastSphereCount) {
         return;
     }
 
@@ -603,6 +646,7 @@ void SceneRayTracer::maybeRebuildAccel() {
     m_lastStructureHash = accelStructureHash;
     m_lastGeomHash = geomHash;
     m_lastTriCount = triCount;
+    m_lastSphereCount = sphereCount;
     if (needsRebuild) {
         buildAndUpload();
     } else {
@@ -613,48 +657,84 @@ void SceneRayTracer::maybeRebuildAccel() {
 
 void SceneRayTracer::buildAndUpload() {
     std::vector<Raytrace::WorldTriangle> triangles;
-    gather(triangles);
+    std::vector<GpuSphere> spheres;
+    gather(triangles, spheres);
     uploadLights();
+    m_sphereCount = spheres.size();
     m_bvh.build(triangles);
-    if (m_bvh.isEmpty()) {
-        return;
-    }
 
     const auto& gpuTriangles = m_bvh.getGpuTris();
     const auto& gpuNodes = m_bvh.getNodes();
-    ensureSSBOs(gpuTriangles.size(), gpuNodes.size());
+    ensureSSBOs(gpuTriangles.size(), gpuNodes.size(), spheres.size());
 
-    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
-    m_g->glBufferSubData(
-        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuTriangles.size() * sizeof(GpuTri)), gpuTriangles.data());
+    if (!gpuTriangles.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(gpuTriangles.size() * sizeof(GpuTri)),
+            gpuTriangles.data());
+    }
 
-    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
-    m_g->glBufferSubData(
-        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuNodes.size() * sizeof(GpuBvhNode)), gpuNodes.data());
+    if (!gpuNodes.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(gpuNodes.size() * sizeof(GpuBvhNode)),
+            gpuNodes.data());
+    }
+
+    if (!spheres.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_sphereSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(spheres.size() * sizeof(GpuSphere)),
+            spheres.data());
+    }
 
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void SceneRayTracer::refitAndUpload() {
     std::vector<Raytrace::WorldTriangle> triangles;
-    gather(triangles);
+    std::vector<GpuSphere> spheres;
+    gather(triangles, spheres);
     uploadLights();
+    m_sphereCount = spheres.size();
     m_bvh.refit(triangles);
-    if (m_bvh.isEmpty()) {
-        return;
-    }
 
     const auto& gpuTriangles = m_bvh.getGpuTris();
     const auto& gpuNodes = m_bvh.getNodes();
-    ensureSSBOs(gpuTriangles.size(), gpuNodes.size());
+    ensureSSBOs(gpuTriangles.size(), gpuNodes.size(), spheres.size());
 
-    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
-    m_g->glBufferSubData(
-        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuTriangles.size() * sizeof(GpuTri)), gpuTriangles.data());
+    if (!gpuTriangles.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_triSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(gpuTriangles.size() * sizeof(GpuTri)),
+            gpuTriangles.data());
+    }
 
-    m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
-    m_g->glBufferSubData(
-        GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(gpuNodes.size() * sizeof(GpuBvhNode)), gpuNodes.data());
+    if (!gpuNodes.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_nodeSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(gpuNodes.size() * sizeof(GpuBvhNode)),
+            gpuNodes.data());
+    }
+
+    if (!spheres.empty()) {
+        m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_sphereSsb);
+        m_g->glBufferSubData(
+            GL_SHADER_STORAGE_BUFFER,
+            0,
+            static_cast<GLsizeiptr>(spheres.size() * sizeof(GpuSphere)),
+            spheres.data());
+    }
 
     m_g->glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
@@ -680,6 +760,7 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_triSsb);
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_nodeSsb);
     m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_lightSsb);
+    m_g->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_sphereSsb);
 
     m_shader->setVec3("uCamPos", camera->position - m_renderOrigin);
     m_shader->setMat4("uInvView", invView);
@@ -700,6 +781,9 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
 
     m_shader->setUInt("uNumLights",
         static_cast<unsigned int>(m_lightCount));
+
+    m_shader->setUInt("uNumSpheres",
+        static_cast<unsigned int>(m_sphereCount));
 
     m_shader->setUInt("uAccumFrames",
         static_cast<unsigned int>(m_accumulatedFrames));
@@ -767,6 +851,9 @@ SceneRayTracer::~SceneRayTracer() {
     if (m_lightSsb) {
         m_g->glDeleteBuffers(1, &m_lightSsb);
     }
+    if (m_sphereSsb) {
+        m_g->glDeleteBuffers(1, &m_sphereSsb);
+    }
 }
 
 void SceneRayTracer::render(
@@ -786,7 +873,7 @@ void SceneRayTracer::render(
 
     m_renderOrigin = renderOriginForCamera(camera);
     maybeRebuildAccel();
-    if (m_bvh.isEmpty()) {
+    if (m_bvh.isEmpty() && m_sphereCount == 0) {
         m_g->glDisable(GL_DEPTH_TEST);
         m_g->glClearColor(kEmptySceneClearRed, kEmptySceneClearGreen, kEmptySceneClearBlue, 1.0f);
         m_g->glClear(GL_COLOR_BUFFER_BIT);
