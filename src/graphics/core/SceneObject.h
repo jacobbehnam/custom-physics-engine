@@ -30,6 +30,7 @@ public:
     void setRotationQuat(const glm::quat& q);
     void setScale(const glm::vec3& scl);
     glm::vec3 getPosition() const;
+    glm::vec3 getRenderPosition() const;
     glm::vec3 getRotation() const;
     glm::quat getRotationQuat() const;
     glm::vec3 getScale() const;
@@ -96,7 +97,7 @@ private:
 
     glm::mat4 getRenderModelMatrix() const;
     glm::mat4 buildModelMatrix(bool relativeToRenderOrigin) const;
-
     std::optional<float> intersectsAABB(const Math::Ray& ray) const;
     std::optional<float> intersectsMesh(const Math::Ray& ray) const;
+    std::optional<float> intersectsSphere(const Math::Ray& ray) const;
 };

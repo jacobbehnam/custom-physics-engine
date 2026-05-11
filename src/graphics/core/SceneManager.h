@@ -12,6 +12,7 @@
 class PathTraces;
 class Forces;
 class Colliders;
+class SceneRayTracer;
 namespace ScenePresets { struct PresetDescriptor; }
 
 enum class Primitive {
@@ -77,6 +78,8 @@ public:
 
     void applyDebugSettings();
 
+    SceneRayTracer* getRayTracer() { return sceneRayTracer.get(); }
+
     bool saveScene(const QString &file);
     bool loadScene(const QString &file);
     bool loadPreset(const ScenePresets::PresetDescriptor& preset);
@@ -115,6 +118,7 @@ private:
     void initDebugDrawables();
     void removeDebugDrawables();
 
+    std::unique_ptr<SceneRayTracer> sceneRayTracer;
     std::unique_ptr<PathTraces> pathTraces;
     std::unique_ptr<Forces> forces;
     std::unique_ptr<Colliders> colliders;

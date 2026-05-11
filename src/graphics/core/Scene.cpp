@@ -73,6 +73,7 @@ Scene::Scene(QOpenGLFunctions_4_5_Core* glFuncs) : funcs(glFuncs), camera(Camera
     ResourceManager::loadPrimitives();
     basicShader = ResourceManager::loadShader("assets/shaders/primitive/primitive.vert", "assets/shaders/primitive/primitive.frag", "basic");
     ResourceManager::loadShader("assets/shaders/primitive/checkerboard.vert", "assets/shaders/primitive/checkerboard.frag", "checkerboard");
+    ResourceManager::loadShader("assets/shaders/debug/pathtrace.vert", "assets/shaders/debug/pathtrace.frag", "pathtrace");
 }
 
 uint32_t Scene::allocateObjectID() {
@@ -88,16 +89,18 @@ void Scene::freeObjectID(uint32_t objID) {
     freeIDs.push_back(objID);
 }
 
-void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+void Scene::applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snaps) {
     SceneObject::PosMap renderPositions;
     if (snaps) {
         renderPositions.reserve(snaps->size());
         for (const auto &s : *snaps) {
             renderPositions.emplace(s.body, s.position);
         }
-        SceneObject::setPhysicsPosMap(renderPositions);
     }
+    SceneObject::setPhysicsPosMap(renderPositions);
+}
 
+void Scene::updateCameraFromSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snaps) {
     glm::vec3 renderTargetPosition;
     const glm::vec3* renderTargetPositionPtr = nullptr;
     if (snaps && camera.hasTarget()) {
@@ -113,7 +116,9 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     camera.update(renderTargetPositionPtr);
+}
 
+void Scene::updateCameraClipRange() {
     float nearestDepth = std::numeric_limits<float>::max();
     float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;
     bool foundVisibleDepth = false;
@@ -140,12 +145,11 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     } else {
         camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
     }
+}
 
+void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     const bool useFloatingOrigin = maxAbsComponent(camera.position) >= kFloatingOriginThreshold;
     SceneObject::setRenderOrigin(useFloatingOrigin ? camera.position : glm::vec3(0.0f));
-
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const glm::mat4 viewMatrix = useFloatingOrigin ? camera.getRenderViewMatrix() : camera.getViewMatrix();
     cameraUBO.updateData(glm::value_ptr(camera.getProjMatrix()), sizeof(glm::mat4), 0);
@@ -167,6 +171,17 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
 
     hoverUBO.updateData(hoverVec.data(), hoverVec.size() * sizeof(glm::ivec4));
     selectUBO.updateData(selectVec.data(), selectVec.size() * sizeof(glm::ivec4));
+}
+
+void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    applyPhysicsSnapshots(snaps);
+    updateCameraFromSnapshots(snaps);
+    updateCameraClipRange();
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    updateFrameUniforms(hoveredIDs, selectedIDs);
 
     // --- instanced ---
     std::map<BatchKey, std::vector<Rendering::InstanceData>> batches;
@@ -183,7 +198,18 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
     }
 
     for (auto* obj : customDrawables) {
-        obj->draw();
+        obj->draw(snaps);
+    }
+}
+
+void Scene::drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
+    applyPhysicsSnapshots(snaps);
+    updateCameraFromSnapshots(snaps);
+    updateCameraClipRange();
+    updateFrameUniforms(hoveredIDs, selectedIDs);
+
+    for (auto* obj : customDrawables) {
+        obj->draw(snaps);
     }
 }
 

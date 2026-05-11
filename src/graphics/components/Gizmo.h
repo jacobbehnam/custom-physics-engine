@@ -88,7 +88,7 @@ public:
      * The active handle (if dragging) uses its own object ID for precise
      * picking, otherwise all handles share the gizmo's object ID.
      */
-    void draw() const override;
+    void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots) const override;
 
     /**
      * @brief Gets the gizmo's unique identifier.
@@ -196,4 +196,7 @@ private:
     uint32_t objectID; ///< Gizmo's object ID
     bool isDragging = false; ///< true during active drag
     bool isHovered = false; ///< true when any handle is hovered
+
+    float getHandleVisualScale() const;
+    glm::mat4 getScaledHandleModel(const IHandle& handle) const;
 };

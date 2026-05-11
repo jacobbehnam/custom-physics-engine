@@ -1,9 +1,58 @@
 #include "PhysicsSystem.h"
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include "PointMass.h"
 #include "physics/utils/ThermalUtils.h"
+
+namespace {
+constexpr size_t kSnapshotHistoryLimit = 128;
+constexpr size_t kDelaySampleCount     = 8;
+constexpr float  kSnapshotTimeEpsilon  = 1.0e-6f;
+constexpr auto   kPhysicsIdleSleep     = std::chrono::microseconds(100);
+
+bool snapshotBatchHasValidTime(const std::vector<ObjectSnapshot>& snapshots) {
+    return !snapshots.empty() && std::isfinite(snapshots.front().time);
+}
+
+std::vector<ObjectSnapshot> interpolateSnapshotBatch(
+    const std::vector<ObjectSnapshot>& previous,
+    const std::vector<ObjectSnapshot>& current,
+    float renderSimTime
+) {
+    if (!snapshotBatchHasValidTime(previous) || !snapshotBatchHasValidTime(current)) {
+        return current;
+    }
+
+    const float t0 = previous.front().time;
+    const float t1 = current.front().time;
+    if (t1 <= t0 + kSnapshotTimeEpsilon) {
+        return current;
+    }
+
+    const float alpha = std::clamp((renderSimTime - t0) / (t1 - t0), 0.0f, 1.0f);
+    std::vector<ObjectSnapshot> out;
+    out.reserve(current.size());
+    for (size_t i = 0; i < current.size(); ++i) {
+        const auto& b = current[i];
+        if (i >= previous.size() || previous[i].body != b.body) {
+            out.push_back(b);
+            continue;
+        }
+
+        const auto& a = previous[i];
+        ObjectSnapshot interpolated;
+        interpolated.body        = a.body;
+        interpolated.time        = renderSimTime;
+        interpolated.position    = glm::mix(a.position, b.position, alpha);
+        interpolated.velocity    = glm::mix(a.velocity, b.velocity, alpha);
+        interpolated.temperature = glm::mix(a.temperature, b.temperature, alpha);
+        out.push_back(interpolated);
+    }
+    return out;
+}
+}
 
 namespace Physics {
     class PointMass;
@@ -46,52 +95,119 @@ std::optional<std::vector<ObjectSnapshot>> Physics::PhysicsSystem::fetchLatestSn
 
     std::lock_guard<std::mutex> lk(snapshotMutex);
 
-    if (currentSnapshots.empty()) {
+    if (snapshotHistory.empty()) {
         return std::nullopt;
     }
 
-    if (previousSnapshots.empty() || previousSnapshots.size() != currentSnapshots.size()) {
-        return currentSnapshots;
+    if (!std::isfinite(renderSimTime)) {
+        return snapshotHistory.back();
     }
 
-    float t0 = previousSnapshots[0].time;
-    float t1 = currentSnapshots[0].time;
-
-    if (!std::isfinite(t0) || !std::isfinite(t1) || t1 <= t0) {
-        return currentSnapshots;
+    if (snapshotHistory.size() == 1) {
+        return snapshotHistory.back();
     }
 
-    if (renderSimTime <= t0) {
-        return previousSnapshots;
-    }
-    if (renderSimTime >= t1) {
-        return currentSnapshots;
+    if (!snapshotBatchHasValidTime(snapshotHistory.front())) {
+        return snapshotHistory.back();
     }
 
-    float alpha = (renderSimTime - t0) / (t1 - t0);
+    if (renderSimTime <= snapshotHistory.front().front().time) {
+        return snapshotHistory.front();
+    }
 
-    std::vector<ObjectSnapshot> out;
-    out.reserve(currentSnapshots.size());
-    for (size_t i = 0; i < currentSnapshots.size(); ++i) {
-        const auto &A = previousSnapshots[i];
-        const auto &B = currentSnapshots[i];
-
-        if (A.body != B.body) {
-            out.push_back(B);
+    for (size_t i = 1; i < snapshotHistory.size(); ++i) {
+        const auto& previous = snapshotHistory[i - 1];
+        const auto& current = snapshotHistory[i];
+        if (!snapshotBatchHasValidTime(current)) {
             continue;
         }
 
-        ObjectSnapshot C;
-        C.body     = A.body;
-        C.time     = renderSimTime;
-        C.position = glm::mix(A.position, B.position, alpha);
-        C.velocity = glm::mix(A.velocity, B.velocity, alpha);
-        C.temperature = glm::mix(A.temperature, B.temperature, alpha);
-
-        out.push_back(C);
+        if (renderSimTime <= current.front().time) {
+            return interpolateSnapshotBatch(previous, current, renderSimTime);
+        }
     }
 
-    return out;
+    return snapshotHistory.back();
+}
+
+std::optional<float> Physics::PhysicsSystem::getLatestSnapshotTime() const {
+    if (!snapshotReady.load(std::memory_order_acquire)) {
+        return std::nullopt;
+    }
+
+    std::lock_guard<std::mutex> lk(snapshotMutex);
+    if (!snapshotBatchHasValidTime(currentSnapshots)) {
+        return std::nullopt;
+    }
+    return currentSnapshots.front().time;
+}
+
+float Physics::PhysicsSystem::getSnapshotInterpolationDelay() const {
+    if (!snapshotReady.load(std::memory_order_acquire)) {
+        return 0.0f;
+    }
+
+    std::lock_guard<std::mutex> lk(snapshotMutex);
+    if (snapshotHistory.size() < 2) {
+        return 0.0f;
+    }
+
+    const size_t start = snapshotHistory.size() > kDelaySampleCount
+        ? snapshotHistory.size() - kDelaySampleCount
+        : 1u;
+    float totalInterval = 0.0f;
+    size_t intervalCount = 0;
+    for (size_t i = start; i < snapshotHistory.size(); ++i) {
+        const auto& previous = snapshotHistory[i - 1];
+        const auto& current = snapshotHistory[i];
+        if (!snapshotBatchHasValidTime(previous) || !snapshotBatchHasValidTime(current)) {
+            continue;
+        }
+
+        const float interval = current.front().time - previous.front().time;
+        if (std::isfinite(interval) && interval > kSnapshotTimeEpsilon) {
+            totalInterval += interval;
+            ++intervalCount;
+        }
+    }
+
+    if (intervalCount == 0) {
+        return 0.0f;
+    }
+    return totalInterval / static_cast<float>(intervalCount);
+}
+
+void Physics::PhysicsSystem::publishSnapshots(std::vector<ObjectSnapshot> snapshots) {
+    std::lock_guard<std::mutex> lk(snapshotMutex);
+    previousSnapshots = std::move(currentSnapshots);
+    currentSnapshots = std::move(snapshots);
+
+    if (currentSnapshots.empty()) {
+        snapshotHistory.clear();
+        snapshotReady.store(false, std::memory_order_release);
+        return;
+    }
+
+    snapshotHistory.push_back(currentSnapshots);
+    while (snapshotHistory.size() > kSnapshotHistoryLimit) {
+        snapshotHistory.pop_front();
+    }
+    snapshotReady.store(true, std::memory_order_release);
+}
+
+std::vector<ObjectSnapshot> Physics::PhysicsSystem::captureSnapshots() const {
+    std::vector<ObjectSnapshot> snapshots;
+    snapshots.reserve(bodies.size());
+    for (auto* body : bodies) {
+        snapshots.push_back({
+            body,
+            simTime,
+            body->getPosition(BodyLock::LOCK),
+            body->getVelocity(BodyLock::LOCK),
+            static_cast<float>(body->getThermalProperties(BodyLock::LOCK).tempK)
+        });
+    }
+    return snapshots;
 }
 
 void Physics::PhysicsSystem::physicsLoop() {
@@ -115,7 +231,7 @@ void Physics::PhysicsSystem::physicsLoop() {
 
         accumulator += frameTime * getSimSpeed();
 
-        std::vector<ObjectSnapshot> localSnaps;
+        bool publishedSnapshot = false;
         {
             std::lock_guard<std::mutex> lock(bodiesMutex);
             if (accumulator >= kBaseDt) {
@@ -125,9 +241,13 @@ void Physics::PhysicsSystem::physicsLoop() {
 
                 for (int i = 0; i < stepsToRun && accumulator >= kBaseDt; ++i) {
                     if (step(dt)) {
+                        publishSnapshots(captureSnapshots());
+                        publishedSnapshot = true;
                         accumulator = 0.0f;
                         break;
                     }
+                    publishSnapshots(captureSnapshots());
+                    publishedSnapshot = true;
                     accumulator -= std::min(dt, accumulator);
                 }
 
@@ -135,16 +255,10 @@ void Physics::PhysicsSystem::physicsLoop() {
                     accumulator = 0.0f;
                 }
             }
+        }
 
-            localSnaps.reserve(bodies.size());
-            for (auto* body : bodies) {
-                localSnaps.push_back({ body,simTime, body->getPosition(BodyLock::LOCK), body->getVelocity(BodyLock::LOCK), static_cast<float>(body->getThermalProperties(BodyLock::LOCK).tempK) });
-            }
-
-            std::lock_guard<std::mutex> lk(snapshotMutex);
-            previousSnapshots = std::move(currentSnapshots);
-            currentSnapshots = std::move(localSnaps);
-            snapshotReady.store(true, std::memory_order_release);
+        if (!publishedSnapshot) {
+            std::this_thread::sleep_for(kPhysicsIdleSleep);
         }
     }
 }
@@ -174,7 +288,16 @@ void Physics::PhysicsSystem::removeBody(PhysicsBody *body) {
             };
             removeSnapshotForBody(currentSnapshots);
             removeSnapshotForBody(previousSnapshots);
-            if (currentSnapshots.empty() && previousSnapshots.empty()) {
+            for (auto& snapshots : snapshotHistory) {
+                removeSnapshotForBody(snapshots);
+            }
+            snapshotHistory.erase(
+                std::remove_if(snapshotHistory.begin(), snapshotHistory.end(), [](const std::vector<ObjectSnapshot>& snapshots) {
+                    return snapshots.empty();
+                }),
+                snapshotHistory.end()
+            );
+            if (currentSnapshots.empty() && previousSnapshots.empty() && snapshotHistory.empty()) {
                 snapshotReady.store(false, std::memory_order_relaxed);
             }
         }
@@ -276,7 +399,7 @@ bool Physics::PhysicsSystem::step(float dt) {
         }
 
         solver = nullptr;
-        physicsEnabled = false;
+        physicsEnabled.store(false, std::memory_order_release);
         return true;
     }
 
@@ -289,10 +412,17 @@ void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordere
 
     if (solver) {
         std::cout << "Solver Started: " << unknown << std::endl;
-        physicsEnabled = true;
+        enablePhysics();
     } else {
         std::cerr << "Solver Error: No recipe found for " << unknown << std::endl;
     }
+}
+
+void Physics::PhysicsSystem::setSimSpeed(float newSpeed) {
+    if (!std::isfinite(newSpeed) || newSpeed < 0.0f) {
+        newSpeed = 0.0f;
+    }
+    simSpeed.store(std::min(newSpeed, 1.0e12f), std::memory_order_release);
 }
 
 void Physics::PhysicsSystem::reset() {
@@ -302,6 +432,13 @@ void Physics::PhysicsSystem::reset() {
         body->clearAllFrames(BodyLock::LOCK);
         body->loadFrame(initialState, BodyLock::LOCK);
     }
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+        snapshotHistory.clear();
+    }
+    snapshotReady.store(false, std::memory_order_relaxed);
 }
 
 void Physics::PhysicsSystem::clearRuntimeState() {
@@ -314,13 +451,25 @@ void Physics::PhysicsSystem::clearRuntimeState() {
         std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
         currentSnapshots.clear();
         previousSnapshots.clear();
+        snapshotHistory.clear();
     }
     snapshotReady.store(false, std::memory_order_relaxed);
 }
 
 void Physics::PhysicsSystem::enablePhysics() {
-    physicsEnabled.store(true);
-    snapshotReady.store(false, std::memory_order_relaxed); // so we don't read from the stale buffer
+    if (physicsEnabled.load(std::memory_order_acquire)) {
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+        snapshotHistory.clear();
+    }
+    // so we don't read/interpolate from stale buffers from a previous run
+    snapshotReady.store(false, std::memory_order_relaxed);
+    physicsEnabled.store(true, std::memory_order_release);
 }
 
 void Physics::PhysicsSystem::disablePhysics() {

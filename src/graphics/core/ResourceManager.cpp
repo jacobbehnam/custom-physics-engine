@@ -127,29 +127,44 @@ void ResourceManager::loadPrimitives() {
 
 void ResourceManager::loadPrimCube() {
     std::vector<Vertex> vertices = {
-        { {-0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
-        { {0.5f, -0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
-        { {0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
-        { {-0.5f, 0.5f, -0.5f}, {0.0f,0.0f,0.0f}},
-        { {-0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
-        { {0.5f, -0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
-        { {0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}},
-        { {-0.5f, 0.5f, 0.5f}, {0.0f,0.0f,0.0f}}
+        {{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+        {{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+
+        {{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+        {{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+        {{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+
+        {{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+
+        {{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+
+        {{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
+
+        {{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}}
     };
 
     std::vector<unsigned int> indices {
-        0, 1, 2,
-        0, 3, 2,
-        0, 1, 5,
-        0, 4, 5,
-        0, 4, 7,
-        0, 3, 7,
-        1, 2, 6,
-        1, 5, 6,
-        2, 3, 7,
-        2, 6, 7,
-        4, 5, 6,
-        4, 7, 6
+        0, 1, 2, 0, 2, 3,
+        4, 5, 6, 4, 6, 7,
+        8, 9, 10, 8, 10, 11,
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23
     };
 
     loadMesh(vertices, indices, "prim_cube");
@@ -159,8 +174,9 @@ void ResourceManager::loadPrimSphere() {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    unsigned int latitudeSegments = 64;
-    unsigned int longitudeSegments = 64;
+    // 32x32: about 2k tris vs 64x64 about 8k; cheaper for RT and still smooth for raster.
+    unsigned int latitudeSegments = 32;
+    unsigned int longitudeSegments = 32;
 
     // 1) Generate vertices
     for (unsigned int y = 0; y <= latitudeSegments; ++y) {
@@ -191,12 +207,12 @@ void ResourceManager::loadPrimSphere() {
             unsigned int i2 = (y + 1) * (longitudeSegments + 1) + (x + 1);
             unsigned int i3 = y * (longitudeSegments + 1) + (x + 1);
 
-            // lower‐left triangle  (i0, i1, i2)
+            // lower-left triangle (i0, i1, i2)
             indices.push_back(i0);
             indices.push_back(i1);
             indices.push_back(i2);
 
-            // upper‐right triangle (i0, i2, i3)
+            // upper-right triangle (i0, i2, i3)
             indices.push_back(i0);
             indices.push_back(i2);
             indices.push_back(i3);

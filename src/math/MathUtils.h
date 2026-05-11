@@ -9,7 +9,10 @@
 */
 
 #pragma once
+#include <algorithm>
+#include <cmath>
 #include <glm/glm.hpp>
+#include <limits>
 #include <vector>
 #include <optional>
 #include "graphics/core/IPickable.h"
@@ -25,6 +28,18 @@ struct ObjectSnapshot;
  * physics systems.
  */
 namespace Math {
+    inline bool isFiniteVec3(const glm::vec3& v) {
+        return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+    }
+
+    inline glm::vec3 normalizeOrFallback(const glm::vec3& v, const glm::vec3& fallback = glm::vec3(0.0f, 0.0f, -1.0f)) {
+        const float len2 = glm::dot(v, v);
+        if (!isFiniteVec3(v) || !std::isfinite(len2) || len2 <= std::numeric_limits<float>::epsilon()) {
+            return fallback;
+        }
+        return v * (1.0f / std::sqrt(len2));
+    }
+
     /**
     * @brief Tests ray-triangle intersection using Möller-Trumbore algorithm
     *
@@ -114,6 +129,33 @@ namespace Math {
      * Ray ray = {camera.position, rayDir};
      * @endcode
      */
+    inline glm::vec3 screenToWorldRayDirection(
+        double mouseX,
+        double mouseY,
+        int fbWidth,
+        int fbHeight,
+        const glm::vec3& cameraFront,
+        const glm::vec3& cameraRight,
+        const glm::vec3& cameraUp,
+        float fovDeg
+    ) {
+        if (fbWidth <= 0 || fbHeight <= 0) {
+            return normalizeOrFallback(cameraFront);
+        }
+
+        const float x = static_cast<float>((2.0 * mouseX) / static_cast<double>(fbWidth) - 1.0);
+        const float y = static_cast<float>(1.0 - (2.0 * mouseY) / static_cast<double>(fbHeight));
+        const float aspect = static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
+        const float safeFov = std::isfinite(fovDeg) ? std::clamp(fovDeg, 1.0f, 179.0f) : 45.0f;
+        const float tanHalfFov = std::tan(glm::radians(safeFov) * 0.5f);
+
+        const glm::vec3 dir =
+            normalizeOrFallback(cameraFront)
+            + cameraRight * (x * aspect * tanHalfFov)
+            + cameraUp * (y * tanHalfFov);
+        return normalizeOrFallback(dir, normalizeOrFallback(cameraFront));
+    }
+
     inline glm::vec3 screenToWorldRayDirection(
         double mouseX,
         double mouseY,

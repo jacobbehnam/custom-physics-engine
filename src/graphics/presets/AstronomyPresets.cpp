@@ -242,7 +242,8 @@ void createRealSolarSystem(SceneManager& sceneManager) {
     sunOptions.mass = sunMassKg;
     SceneObject* sun = sceneManager.createObject("prim_sphere", ResourceManager::getShader("basic"), sunOptions);
     sceneManager.setObjectName(sun, "Sun");
-    sun->getPhysicsBody()->setThermalProperty(makeThermal(makeFluidSpec(sunTempK, 1408.0f, 0.0f, 20780.0f, 1.0e4f), sunLuminosity), BodyLock::NOLOCK);
+    ThermalProperties sunThermal = makeThermal(makeFluidSpec(sunTempK, 1408.0f, 0.0f, 20780.0f, 1.0e4f), sunLuminosity);
+    sun->getPhysicsBody()->setThermalProperty(sunThermal, BodyLock::NOLOCK);
 
     const std::array<BodySpec, 8> planets{{
         {"Mercury", 0.33010e24, 2439.7, makeRockySpec(440.15, 5429.0f, 0.068f, 800.0f, 2.0f), {0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081}},

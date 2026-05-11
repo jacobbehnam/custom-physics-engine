@@ -40,7 +40,7 @@ void RotateHandle::setDragState(glm::vec3 initHitPos) {
 
 glm::mat4 RotateHandle::getModelMatrix() const {
     glm::mat4 model(1.0f);
-    model = glm::translate(model, target->getPosition());
+    model = glm::translate(model, target->getRenderPosition());
     model = model * rotateFromYToAxis(axis);
     model = glm::scale(model, glm::vec3(scale, scale, scale));
     return model;

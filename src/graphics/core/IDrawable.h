@@ -6,6 +6,10 @@
 #pragma once
 #include <graphics/components/Shader.h>
 #include <graphics/components/Mesh.h>
+#include <optional>
+#include <vector>
+
+struct ObjectSnapshot;
 
 /**
  * @interface IDrawable
@@ -166,7 +170,7 @@ public:
  * Example usage:
  * @code
  * class Gizmo : public ICustomDrawable {
- *     void draw() const override {
+ *     void draw(const std::optional<std::vector<ObjectSnapshot>>&) const override {
  *         glDisable(GL_DEPTH_TEST);
  *         shader->use();
  *         mesh->drawInstanced(handleInstances);
@@ -195,5 +199,5 @@ public:
      *
      * @see Scene::draw()
      */
-    virtual void draw() const = 0;
+    virtual void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots) const = 0;
 };

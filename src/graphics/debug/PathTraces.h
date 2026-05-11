@@ -17,7 +17,7 @@ public:
     Mesh* getMesh() const override { return nullptr; }
     uint32_t getObjectID() const override { return 0; }
 
-    void draw() const override;
+    void draw(const std::optional<std::vector<ObjectSnapshot>>& snapshots) const override;
 
     void setEnabled(bool value) { enabled = value; }
     void setTimeWindow(float value) { timeWindow = value; }

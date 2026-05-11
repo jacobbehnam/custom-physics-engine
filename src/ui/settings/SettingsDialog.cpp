@@ -7,6 +7,7 @@
 #include "ui/settings/ISettingsTab.h"
 #include "ui/settings/CameraTab.h"
 #include "ui/settings/DebugTab.h"
+#include "ui/settings/GraphicsTab.h"
 
 SettingsDialog::SettingsDialog(QWidget* parent) 
     : QDialog(parent) {
@@ -20,6 +21,10 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     tabWidget->addTab(cameraTab, "Camera");
     m_tabs.push_back(cameraTab);
     
+    auto* graphicsTab = new GraphicsTab(this);
+    tabWidget->addTab(graphicsTab, "Graphics");
+    m_tabs.push_back(graphicsTab);
+
     auto* debugTab = new DebugTab(this);
     tabWidget->addTab(debugTab, "Debug");
     m_tabs.push_back(debugTab);

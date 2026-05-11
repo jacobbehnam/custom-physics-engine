@@ -15,6 +15,8 @@
 #include "physics/Constants.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+#include "ui/settings/GraphicsSettings.h"
+#include "graphics/raytrace/SceneRayTracer.h"
 
 #include <algorithm>
 
@@ -25,7 +27,14 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 }
 
 SceneManager::~SceneManager() {
+    const bool madeCurrent = window && window->context();
+    if (madeCurrent) {
+        window->makeCurrent();
+    }
     removeDebugDrawables();
+    if (madeCurrent) {
+        window->doneCurrent();
+    }
 }
 
 void SceneManager::defaultSetup() {
@@ -265,14 +274,18 @@ void SceneManager::clearCameraTarget() {
 
 Math::Ray SceneManager::getMouseRay() {
     QPointF mousePos = window->getMousePos();
-    QSize fbSize = window->getFramebufferSize();
+    const qreal dpr = window->devicePixelRatioF();
+    const double mxd = mousePos.x() * dpr;
+    const double myd = mousePos.y() * dpr;
+    const QSize fbSize = window->getFramebufferSize();
+    Camera* camera = scene->getCamera();
 
     return {
-        scene->getCamera()->position,
+        camera->position,
         Math::screenToWorldRayDirection(
-            mousePos.x(), mousePos.y(),
+            mxd, myd,
             fbSize.width(), fbSize.height(),
-            scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
+            camera->front, camera->right, camera->up, camera->fov)
     };
 }
 
@@ -472,10 +485,15 @@ void SceneManager::initDebugDrawables() {
     scene->addDrawable(pathTraces.get());
     scene->addDrawable(forces.get());
     scene->addDrawable(colliders.get());
+
+    sceneRayTracer = std::make_unique<SceneRayTracer>(this, window);
+    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
+    sceneRayTracer->setEnabled(vs.useRayTraced);
 }
 
 void SceneManager::removeDebugDrawables() {
     if (!scene) {
+        sceneRayTracer.reset();
         pathTraces.reset();
         forces.reset();
         colliders.reset();
@@ -496,11 +514,17 @@ void SceneManager::removeDebugDrawables() {
         scene->removeDrawable(colliders.get());
         colliders.reset();
     }
+
+    sceneRayTracer.reset();
 }
 
 void SceneManager::applyDebugSettings() {
     auto& dbg = AppSettings::getInstance().getGroup<DebugSettings>();
+    auto& vs = AppSettings::getInstance().getGroup<GraphicsSettings>();
 
+    if (sceneRayTracer) {
+        sceneRayTracer->setEnabled(vs.useRayTraced);
+    }
     if (pathTraces) {
         pathTraces->setEnabled(dbg.showAllPathTrails);
         pathTraces->setTimeWindow(dbg.pathTrailTime);

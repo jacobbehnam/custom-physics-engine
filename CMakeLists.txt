@@ -128,6 +128,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/settings/CameraTab.cpp
         src/ui/settings/DebugTab.h
         src/ui/settings/DebugTab.cpp
+        src/ui/settings/GraphicsSettings.h
+        src/ui/settings/GraphicsSettings.cpp
+        src/ui/settings/GraphicsTab.h
+        src/ui/settings/GraphicsTab.cpp
         src/ui/RawInputFilter.cpp
         src/ui/RawInputFilter.h
         src/ui/inspector/InspectorWidget.cpp
@@ -157,6 +161,10 @@ add_executable(PhysicsEngine src/main.cpp
         src/ui/inspector/GlobalsInspectorWidget.cpp
         src/ui/inspector/GlobalsInspectorWidget.h
         src/graphics/core/InstanceData.h
+        src/graphics/raytrace/TriangleBvh.cpp
+        src/graphics/raytrace/TriangleBvh.h
+        src/graphics/raytrace/SceneRayTracer.cpp
+        src/graphics/raytrace/SceneRayTracer.h
 )
 
 # Include directories
@@ -180,16 +188,6 @@ if (UNIX AND NOT APPLE)
     target_link_libraries(PhysicsEngine PRIVATE X11 Xi)
 endif()
 
-set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
-set(ASSETS_DEST "$<TARGET_FILE_DIR:PhysicsEngine>/assets")
-
-add_custom_command(TARGET PhysicsEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE}
-        ${ASSETS_DEST}
-        COMMENT "Copying Assets..."
-)
-
 enable_testing()
 add_subdirectory(tests)
 
@@ -198,3 +196,22 @@ target_link_libraries(PhysicsCore PUBLIC
         glm::glm
         atomic
 )
+
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
+set(ASSETS_DEST "${CMAKE_BINARY_DIR}/assets")
+set(ASSETS_STAMP "${CMAKE_BINARY_DIR}/assets_copied.stamp")
+
+file(GLOB_RECURSE ASSET_FILES CONFIGURE_DEPENDS
+    "${ASSETS_SOURCE}/*"
+)
+
+add_custom_command(
+    OUTPUT ${ASSETS_STAMP}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE} ${ASSETS_DEST}
+    COMMAND ${CMAKE_COMMAND} -E touch ${ASSETS_STAMP}
+    DEPENDS ${ASSET_FILES}
+    COMMENT "Copying changed assets..."
+)
+
+add_custom_target(copy_assets ALL DEPENDS ${ASSETS_STAMP})
+add_dependencies(PhysicsEngine copy_assets)

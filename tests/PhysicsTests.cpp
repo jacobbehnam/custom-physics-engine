@@ -181,6 +181,15 @@ TEST(PhysicsSystem, Parameters_GlobalSettings) {
 
     system.setSimSpeed(0.5f);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.5f);
+
+    system.setSimSpeed(-1.0f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.0f);
+
+    system.setSimSpeed(std::numeric_limits<float>::quiet_NaN());
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.0f);
+
+    system.setSimSpeed(1.0e20f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 1.0e12f);
 }
 
 TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {
@@ -359,6 +368,54 @@ TEST(PhysicsBody, LoadFrame_RestoresTemperature) {
     pm.loadFrame(snapshot, BodyLock::LOCK);
 
     EXPECT_FLOAT_EQ(pm.getThermalProperties(BodyLock::LOCK).tempK, 275.0f);
+}
+
+TEST(PhysicsBody, VisibleEmission_IgnoresRoomTemperature) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 293.15;
+    props.emissivity = 1.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    EXPECT_VEC3_EXACT(pm.getEmission(BodyLock::LOCK), glm::vec3(0.0f));
+}
+
+TEST(PhysicsBody, VisibleEmission_AllowsNonThermalLight) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 293.15;
+    props.emissivity = 0.0f;
+    props.visibleLightPower = 3.0f;
+    props.visibleLightColor = glm::vec3(0.25f, 0.50f, 1.0f);
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    EXPECT_VEC3_EXACT(pm.getEmission(BodyLock::LOCK), glm::vec3(0.75f, 1.5f, 3.0f));
+}
+
+TEST(PhysicsBody, VisibleEmission_HotBodiesEmitLight) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 1800.0;
+    props.emissivity = 1.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    const glm::vec3 emission = pm.getEmission(BodyLock::LOCK);
+    EXPECT_GT(emission.r, 0.0f);
+    EXPECT_GE(emission.r, emission.g);
+    EXPECT_GE(emission.g, emission.b);
+}
+
+TEST(PhysicsBody, VisibleEmission_SolarTemperatureProducesHighRadiance) {
+    Physics::PointMass pm(0, 1.0);
+    ThermalProperties props;
+    props.tempK = 5772.0;
+    props.emissivity = 1.0f;
+    pm.setThermalProperty(props, BodyLock::LOCK);
+
+    const glm::vec3 emission = pm.getEmission(BodyLock::LOCK);
+    EXPECT_GT(emission.r, 50000.0f);
+    EXPECT_GT(emission.g, 40000.0f);
+    EXPECT_GT(emission.b, 30000.0f);
 }
 
 TEST(RigidBody, SurfaceArea_UsesAllScaleAxes) {

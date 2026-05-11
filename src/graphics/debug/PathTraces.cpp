@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 
 #include "PathTraces.h"
@@ -11,6 +12,20 @@ namespace {
 constexpr int   kMaxTrailPointsPerObject = 4096;
 constexpr int   kMinTrailPointCount      = 2;
 constexpr float kTraceLineWidth          = 2.0f;
+constexpr float kFrameTimeEpsilon        = 1.0e-4f;
+
+const ObjectSnapshot* findRenderedSnapshot(
+    const std::optional<std::vector<ObjectSnapshot>>& renderSnapshots,
+    const Physics::PhysicsBody* body) {
+    if (!renderSnapshots) return nullptr;
+
+    for (const ObjectSnapshot& snapshot : *renderSnapshots) {
+        if (snapshot.body == body) {
+            return &snapshot;
+        }
+    }
+    return nullptr;
+}
 }
 
 PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* glFuncs) : sceneManager(sceneManager), gl(glFuncs) {
@@ -24,9 +39,6 @@ PathTraces::PathTraces(SceneManager* sceneManager, QOpenGLFunctions_4_5_Core* gl
     gl->glBindVertexArray(0);
 
     traceShader = ResourceManager::getShader("pathtrace");
-    if (!traceShader) {
-        traceShader = ResourceManager::loadShader("assets/shaders/debug/pathtrace.vert", "assets/shaders/debug/pathtrace.frag", "pathtrace");
-    }
 }
 
 PathTraces::~PathTraces() {
@@ -34,7 +46,7 @@ PathTraces::~PathTraces() {
     if (vbo) gl->glDeleteBuffers(1, &vbo);
 }
 
-void PathTraces::draw() const {
+void PathTraces::draw(const std::optional<std::vector<ObjectSnapshot>>& renderSnapshots) const {
     if (!traceShader) return;
     if (!enabled) return;
 
@@ -61,42 +73,52 @@ void PathTraces::draw() const {
         if (!body) continue;
 
         const glm::vec3 renderOrigin = SceneObject::getRenderOrigin();
-        body->withFrames(BodyLock::LOCK, [this, &points, renderOrigin](const std::vector<ObjectSnapshot>& snapshots) {
-        if (snapshots.size() < kMinTrailPointCount) return;
+        const ObjectSnapshot* renderedSnapshot = findRenderedSnapshot(renderSnapshots, body);
+        body->withFrames(BodyLock::LOCK, [this, &points, renderOrigin, renderedSnapshot](const std::vector<ObjectSnapshot>& snapshots) {
+            if (snapshots.size() < kMinTrailPointCount) return;
 
-        const float latestTime = snapshots.back().time;
-        const float startTime = latestTime - this->timeWindow;
+            const float latestTime = renderedSnapshot ? renderedSnapshot->time : snapshots.back().time;
+            const glm::vec3 latestPosition = renderedSnapshot ? renderedSnapshot->position : snapshots.back().position;
+            const float startTime = latestTime - this->timeWindow;
 
-        points.clear();
+            points.clear();
 
-        const auto startIt = std::lower_bound(snapshots.begin(), snapshots.end(), startTime,
-            [](const ObjectSnapshot& snapshot, float time) {
-                return snapshot.time < time;
-            });
-        int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
-        int totalCount = static_cast<int>(snapshots.size()) - startIdx;
-        if (totalCount < kMinTrailPointCount) {
-            startIdx = std::max(0, static_cast<int>(snapshots.size()) - kMinTrailPointCount);
-            totalCount = static_cast<int>(snapshots.size()) - startIdx;
-        }
-        const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
-        points.reserve(static_cast<size_t>(std::min(totalCount, kMaxTrailPointsPerObject + 1)));
+            const auto startIt = std::lower_bound(snapshots.begin(), snapshots.end(), startTime,
+                [](const ObjectSnapshot& snapshot, float time) {
+                    return snapshot.time < time;
+                });
+            const auto endIt = std::upper_bound(snapshots.begin(), snapshots.end(), latestTime,
+                [](float time, const ObjectSnapshot& snapshot) {
+                    return time < snapshot.time;
+                });
+            int startIdx = static_cast<int>(std::distance(snapshots.begin(), startIt));
+            int endIdx = static_cast<int>(std::distance(snapshots.begin(), endIt));
+            if (endIdx <= 0) return;
 
-        int lastDrawnIndex = -1;
-        for (int i = startIdx; i < static_cast<int>(snapshots.size()); i += stride) {
-            points.push_back(snapshots[static_cast<size_t>(i)].position - renderOrigin);
-            lastDrawnIndex = i;
-        }
-        if (lastDrawnIndex != static_cast<int>(snapshots.size()) - 1) {
-            points.push_back(snapshots.back().position - renderOrigin);
-        }
+            int totalCount = endIdx - startIdx;
+            if (totalCount < kMinTrailPointCount) {
+                startIdx = std::max(0, endIdx - kMinTrailPointCount);
+                totalCount = endIdx - startIdx;
+            }
+            const int stride = std::max(1, totalCount / kMaxTrailPointsPerObject);
+            points.reserve(static_cast<size_t>(std::min(totalCount, kMaxTrailPointsPerObject + 1)));
 
-        if (points.size() < kMinTrailPointCount) return;
+            int lastDrawnIndex = -1;
+            for (int i = startIdx; i < endIdx; i += stride) {
+                points.push_back(snapshots[static_cast<size_t>(i)].position - renderOrigin);
+                lastDrawnIndex = i;
+            }
+            if (lastDrawnIndex < 0
+                || std::abs(snapshots[static_cast<size_t>(lastDrawnIndex)].time - latestTime) > kFrameTimeEpsilon) {
+                points.push_back(latestPosition - renderOrigin);
+            }
 
-        this->gl->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-        this->gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
+            if (points.size() < kMinTrailPointCount) return;
 
-        this->gl->glDrawArrays(GL_LINE_STRIP, 0, static_cast<GLsizei>(points.size()));
+            this->gl->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+            this->gl->glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), points.data(), GL_DYNAMIC_DRAW);
+
+            this->gl->glDrawArrays(GL_LINE_STRIP, 0, static_cast<GLsizei>(points.size()));
         });
     }
 

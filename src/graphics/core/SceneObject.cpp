@@ -1,18 +1,78 @@
 #include "SceneObject.h"
 
+#include <cmath>
 #include <iostream>
+#include <limits>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <graphics/core/Scene.h>
 #include <math/Ray.h>
 #include "physics/PointMass.h"
 #include <graphics/core/SceneManager.h>
-#include <graphics/components/ComputeShader.h>
-#include <QOpenGLVersionFunctionsFactory>
-#include <QOpenGLFunctions_4_5_Core>
 
 #include "ResourceManager.h"
 #include "physics/bounding/BoxCollider.h"
+
+namespace {
+struct LocalRay {
+    Math::Ray ray;
+    float localToWorldDistance = 1.0f;
+};
+
+std::optional<LocalRay> localRayForModel(const glm::mat4& model, const Math::Ray& ray) {
+    const glm::mat3 invLinear = glm::inverse(glm::mat3(model));
+    const glm::vec3 modelPosition = glm::vec3(model[3]);
+    const glm::vec3 localOrigin = invLinear * (ray.origin - modelPosition);
+    const glm::vec3 localDir = invLinear * ray.dir;
+    const float localDirLen = glm::length(localDir);
+    if (!std::isfinite(localOrigin.x) || !std::isfinite(localOrigin.y) || !std::isfinite(localOrigin.z)
+        || !std::isfinite(localDirLen) || localDirLen <= std::numeric_limits<float>::epsilon()) {
+        return std::nullopt;
+    }
+
+    return LocalRay{
+        {localOrigin, localDir / localDirLen},
+        1.0f / localDirLen
+    };
+}
+
+std::optional<float> intersectLocalTriangle(
+    const Math::Ray& ray,
+    const glm::vec3& v0,
+    const glm::vec3& v1,
+    const glm::vec3& v2
+) {
+    constexpr float kEpsilon = 1.0e-7f;
+
+    const glm::vec3 edge1 = v1 - v0;
+    const glm::vec3 edge2 = v2 - v0;
+    const glm::vec3 pvec = glm::cross(ray.dir, edge2);
+    const float det = glm::dot(edge1, pvec);
+    if (std::abs(det) < kEpsilon) {
+        return std::nullopt;
+    }
+
+    const float invDet = 1.0f / det;
+    const glm::vec3 tvec = ray.origin - v0;
+    const float u = glm::dot(tvec, pvec) * invDet;
+    if (u < 0.0f || u > 1.0f) {
+        return std::nullopt;
+    }
+
+    const glm::vec3 qvec = glm::cross(tvec, edge1);
+    const float v = glm::dot(ray.dir, qvec) * invDet;
+    if (v < 0.0f || u + v > 1.0f) {
+        return std::nullopt;
+    }
+
+    const float t = glm::dot(edge2, qvec) * invDet;
+    if (!std::isfinite(t) || t <= kEpsilon) {
+        return std::nullopt;
+    }
+
+    return t;
+}
+} // namespace
 
 SceneObject::SceneObject(SceneManager* sceneMgr, const std::string &nameOfMesh, Shader *sdr, const CreationOptions &options, QObject* objectParent)
     : shader(sdr), ownerScene(sceneMgr->scene), sceneManager(sceneMgr), objectID(sceneMgr->scene->allocateObjectID()), parent(objectParent), meshName(nameOfMesh) {
@@ -118,10 +178,13 @@ glm::mat4 SceneObject::buildModelMatrix(bool relativeToRenderOrigin) const{
 }
 
 std::optional<float> SceneObject::intersectsAABB(const Math::Ray& ray) const {
-    Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
-    auto worldAABB = localAABB.getTransformed(getModelMatrix());
+    const auto localRay = localRayForModel(getModelMatrix(), ray);
+    if (!localRay) {
+        return std::nullopt;
+    }
 
-    if (auto t = worldAABB->intersectRay(ray)) {
+    const Physics::Bounding::AABB localAABB = getMesh()->getLocalAABB();
+    if (auto t = localAABB.intersectRay(localRay->ray)) {
         return t;
     }
 
@@ -129,41 +192,83 @@ std::optional<float> SceneObject::intersectsAABB(const Math::Ray& ray) const {
 }
 
 std::optional<float> SceneObject::intersectsMesh(const Math::Ray& ray) const {
-    std::span<const Vertex> verts = mesh->getVertices();
-    std::vector<glm::vec3> vertPositions;
-    vertPositions.reserve(verts.size());
-    for (const auto& vert : verts) {
-        vertPositions.push_back({vert.pos});
-    }
-    const size_t triCount = verts.size() / 3;
-
-    std::span<const unsigned int> indices = mesh->getIndices();
-    auto *glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_4_5_Core>(QOpenGLContext::currentContext());
-    ComputeShader compute("assets/shaders/meshIntersection.comp", glFuncs);
-    (void) compute.createSSBO(vertPositions.data(), vertPositions.size() * sizeof(glm::vec3), 0);
-    (void) compute.createSSBO(indices.data(), indices.size() * sizeof(unsigned int), 1);
-    std::vector<float> initDists(triCount, -1.0f);
-    unsigned int distancesSSBO = compute.createSSBO(initDists.data(), initDists.size() * sizeof(float), 2);
-    compute.use();
-    compute.setVec3("rayOrig", ray.origin);
-    compute.setVec3("rayDir", ray.dir);
-    compute.setMat4("modelMatrix", getModelMatrix());
-
-    constexpr unsigned int groupSize = 64;
-    unsigned int groups = (triCount + groupSize - 1) / groupSize;
-    compute.dispatch(groups);
-
-    auto distances = compute.readSSBO<float>(distancesSSBO, triCount);
-    auto minIt = std::min_element(distances.begin(), distances.end());
-    if (minIt == distances.end()) {
+    const std::span<const Vertex> verts = mesh->getVertices();
+    const std::span<const unsigned int> indices = mesh->getIndices();
+    if (indices.size() < 3 || verts.empty()) {
         return std::nullopt;
     }
-    return *minIt;
+
+    const glm::mat4 model = getModelMatrix();
+    const auto localRay = localRayForModel(model, ray);
+    if (!localRay) {
+        return std::nullopt;
+    }
+
+    float closest = std::numeric_limits<float>::infinity();
+    for (size_t i = 0; i + 2u < indices.size(); i += 3u) {
+        const unsigned int ia = indices[i];
+        const unsigned int ib = indices[i + 1u];
+        const unsigned int ic = indices[i + 2u];
+        if (ia >= verts.size() || ib >= verts.size() || ic >= verts.size()) {
+            continue;
+        }
+
+        const auto t = intersectLocalTriangle(localRay->ray, verts[ia].pos, verts[ib].pos, verts[ic].pos);
+        if (!t) {
+            continue;
+        }
+
+        const float worldDistance = *t * localRay->localToWorldDistance;
+        if (std::isfinite(worldDistance) && worldDistance > 0.0f && worldDistance < closest) {
+            closest = worldDistance;
+        }
+    }
+
+    if (!std::isfinite(closest)) {
+        return std::nullopt;
+    }
+    return closest;
 }
 
+std::optional<float> SceneObject::intersectsSphere(const Math::Ray& ray) const {
+    const glm::mat4 model = getModelMatrix();
+    const auto localRay = localRayForModel(model, ray);
+    if (!localRay) {
+        return std::nullopt;
+    }
 
+    constexpr double kPrimitiveSphereRadius = 0.5;
+    const glm::dvec3 offset(localRay->ray.origin);
+    const glm::dvec3 rayDir(localRay->ray.dir);
+    const double b = glm::dot(offset, rayDir);
+    const double c = glm::dot(offset, offset) - kPrimitiveSphereRadius * kPrimitiveSphereRadius;
+    const double discriminant = b * b - c;
+    if (!std::isfinite(discriminant) || discriminant < 0.0f) {
+        return std::nullopt;
+    }
+
+    const double sqrtDiscriminant = std::sqrt(discriminant);
+    const double tNear = -b - sqrtDiscriminant;
+    const double tFar = -b + sqrtDiscriminant;
+    const double localT = tNear > 0.0 ? tNear : tFar;
+    if (!std::isfinite(localT) || localT <= 0.0) {
+        return std::nullopt;
+    }
+
+    const double worldDistance = localT * static_cast<double>(localRay->localToWorldDistance);
+    if (!std::isfinite(worldDistance) || worldDistance <= 0.0
+        || worldDistance > static_cast<double>(std::numeric_limits<float>::max())) {
+        return std::nullopt;
+    }
+
+    return static_cast<float>(worldDistance);
+}
 
 std::optional<float> SceneObject::intersectsRay(const Math::Ray& ray) const {
+    if (meshName == "prim_sphere") {
+        return intersectsSphere(ray);
+    }
+
     auto tAABB = intersectsAABB(ray);
     if (!tAABB)
         return std::nullopt;
@@ -214,6 +319,28 @@ glm::vec3 SceneObject::getPosition() const{
     if (physicsBody)
         return physicsBody->getPosition(BodyLock::NOLOCK);
     return position;
+}
+
+glm::vec3 SceneObject::getRenderPosition() const {
+    glm::vec3 currentPosition = position;
+    bool hasMappedPhysicsPosition = false;
+
+    {
+        std::lock_guard<std::mutex> lk(posMapMutex);
+        if (physicsBody) {
+            auto it = posMap.find(physicsBody.get());
+            if (it != posMap.end()) {
+                currentPosition = it->second;
+                hasMappedPhysicsPosition = true;
+            }
+        }
+    }
+
+    if (physicsBody && !hasMappedPhysicsPosition) {
+        currentPosition = physicsBody->getPosition(BodyLock::LOCK);
+    }
+
+    return currentPosition;
 }
 
 glm::vec3 SceneObject::getRotation() const {

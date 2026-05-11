@@ -1,14 +1,21 @@
 #include "Gizmo.h"
 
+#include <algorithm>
 #include <iostream>
 #include <math/MathUtils.h>
 #include <graphics/components/TranslateHandle.h>
 #include <graphics/components/RotateHandle.h>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "ScaleHandle.h"
 #include "graphics/core/ResourceManager.h"
 #include "graphics/core/SceneManager.h"
 #include "graphics/core/SceneObject.h"
+
+namespace {
+constexpr float kMinGizmoVisualScale    = 1.0f;
+constexpr float kTargetSizeGizmoScale   = 0.75f;
+}
 
 Gizmo::Gizmo(GizmoType type, SceneManager* sceneManager, SceneObject *tgt) : target(tgt), ownerScene(sceneManager->scene), objectID(sceneManager->scene->allocateObjectID()){
     sceneManager->addDrawable(this);
@@ -42,8 +49,21 @@ Gizmo::~Gizmo() {
     ownerScene->freeObjectID(objectID);
 }
 
+float Gizmo::getHandleVisualScale() const {
+    if (!target) {
+        return kMinGizmoVisualScale;
+    }
 
-void Gizmo::draw() const {
+    const glm::vec3 scale = glm::abs(target->getScale());
+    const float targetExtent = std::max({scale.x, scale.y, scale.z});
+    return std::max(kMinGizmoVisualScale, targetExtent * kTargetSizeGizmoScale);
+}
+
+glm::mat4 Gizmo::getScaledHandleModel(const IHandle& handle) const {
+    return handle.getModelMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(getHandleVisualScale()));
+}
+
+void Gizmo::draw(const std::optional<std::vector<ObjectSnapshot>>&) const {
     glDisable(GL_DEPTH_TEST);
     getShader()->use();
 
@@ -57,7 +77,7 @@ void Gizmo::draw() const {
             color = glm::mix(color, glm::vec3(1.0f), 0.7f); // lighten
         }
 
-        const glm::mat4 renderModel = worldToRender * handle->getModelMatrix();
+        const glm::mat4 renderModel = worldToRender * getScaledHandleModel(*handle);
         drawData.push_back({ renderModel, objectID, color });
     }
 
@@ -72,7 +92,7 @@ std::optional<float> Gizmo::intersectsRay(const Math::Ray& ray) const{
     float closestT = std::numeric_limits<float>::infinity();
 
     for (const auto& handle: handles) {
-        auto worldAABB = localAABB.getTransformed(handle->getModelMatrix());
+        auto worldAABB = localAABB.getTransformed(getScaledHandleModel(*handle));
         if (auto t = worldAABB->intersectRay(ray)) {
             if (*t < closestT) {
                 closestT = *t;

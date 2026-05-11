@@ -141,6 +141,38 @@ void ThermalInspectorWidget::createUiComponents() {
             widget->setRange(-1.0e3, 1.0e3);
             widget->setDecimals(8);
         });
+    addThermalScalar(radiation, "Visible Light",
+        [](const ThermalProperties& props) { return props.visibleLightPower; },
+        [](ThermalProperties& props, double value) { props.visibleLightPower = static_cast<float>(value); },
+        "",
+        [](ScalarWidget* widget) {
+            widget->setRange(0.0, 1000.0);
+            widget->setDecimals(3);
+        });
+    addThermalScalar(radiation, "Light Red",
+        [](const ThermalProperties& props) { return props.visibleLightColor.r; },
+        [](ThermalProperties& props, double value) { props.visibleLightColor.r = static_cast<float>(value); },
+        "",
+        [](ScalarWidget* widget) {
+            widget->setRange(0.0, 1.0);
+            widget->setDecimals(3);
+        });
+    addThermalScalar(radiation, "Light Green",
+        [](const ThermalProperties& props) { return props.visibleLightColor.g; },
+        [](ThermalProperties& props, double value) { props.visibleLightColor.g = static_cast<float>(value); },
+        "",
+        [](ScalarWidget* widget) {
+            widget->setRange(0.0, 1.0);
+            widget->setDecimals(3);
+        });
+    addThermalScalar(radiation, "Light Blue",
+        [](const ThermalProperties& props) { return props.visibleLightColor.b; },
+        [](ThermalProperties& props, double value) { props.visibleLightColor.b = static_cast<float>(value); },
+        "",
+        [](ScalarWidget* widget) {
+            widget->setRange(0.0, 1.0);
+            widget->setDecimals(3);
+        });
     addThermalScalar(radiation, "Absorptivity",
         [](const ThermalProperties& props) { return props.absorptivity; },
         [](ThermalProperties& props, double value) { props.absorptivity = static_cast<float>(value); });

@@ -39,12 +39,9 @@ glm::mat4 rotateFromYToDir(const glm::vec3& dir) {
 
 Forces::Forces(SceneManager* sceneManager) : sceneManager(sceneManager) {
     basicShader = ResourceManager::getShader("basic");
-    if (!basicShader) {
-        basicShader = ResourceManager::loadShader("assets/shaders/primitive/primitive.vert", "assets/shaders/primitive/primitive.frag", "basic");
-    }
 }
 
-void Forces::draw() const {
+void Forces::draw(const std::optional<std::vector<ObjectSnapshot>>&) const {
     if (!enabled) return;
 
     auto* arrowMesh = ResourceManager::getMesh("gizmo_translate");
@@ -53,9 +50,8 @@ void Forces::draw() const {
     const auto& objects = sceneManager->getObjects();
 
     m_arrowScratch.clear();
-    const std::size_t n = objects.size();
-    if (m_arrowScratch.capacity() < n) {
-        m_arrowScratch.reserve(n);
+    if (m_arrowScratch.capacity() < objects.size()) {
+        m_arrowScratch.reserve(objects.size());
     }
 
     float minMag = 0.0f;
@@ -84,9 +80,6 @@ void Forces::draw() const {
         const glm::vec3 surfaceStart = body->getPosition(BodyLock::LOCK) + dir * radius;
         m_arrowScratch.push_back({obj->getObjectID(), net, netMag, surfaceStart, std::max(radius, kArrowRadiusMin)});
     }
-
-    if (m_arrowScratch.empty()) return;
-
     basicShader->use();
 
     const float magSpan = maxMag - minMag;
@@ -112,5 +105,6 @@ void Forces::draw() const {
         m_instanceScratch.emplace_back(model, e.objectID, kArrowColor);
     }
 
+    if (m_instanceScratch.empty()) return;
     arrowMesh->drawInstanced(m_instanceScratch);
 }

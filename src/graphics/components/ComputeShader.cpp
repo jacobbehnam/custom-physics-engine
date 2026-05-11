@@ -5,18 +5,46 @@
 ComputeShader::ComputeShader(const std::string& computePath, QOpenGLFunctions_4_5_Core* glFuncs)
     : funcs(glFuncs)
 {
+    if (!funcs) {
+        std::cerr << "ERROR::COMPUTE_SHADER::NO_OPENGL_FUNCTIONS" << std::endl;
+        return;
+    }
+
     std::string source = loadFile(computePath);
     unsigned int comp = compileShader(GL_COMPUTE_SHADER, source);
+    if (comp == 0) {
+        return;
+    }
 
     ID = funcs->glCreateProgram();
+    if (ID == 0) {
+        std::cerr << "ERROR::COMPUTE_SHADER::PROGRAM_CREATE_FAILED" << std::endl;
+        funcs->glDeleteShader(comp);
+        return;
+    }
     funcs->glAttachShader(ID, comp);
     funcs->glLinkProgram(ID);
 
     funcs->glDeleteShader(comp);
+
+    GLint success = GL_FALSE;
+    funcs->glGetProgramiv(ID, GL_LINK_STATUS, &success);
+    if (success != GL_TRUE) {
+        char infoLog[1024];
+        funcs->glGetProgramInfoLog(ID, sizeof(infoLog), nullptr, infoLog);
+        std::cerr << "ERROR::COMPUTE_SHADER::PROGRAM_LINK_FAILED\n" << infoLog << std::endl;
+        funcs->glDeleteProgram(ID);
+        ID = 0;
+    }
 }
 
 ComputeShader::~ComputeShader() {
-    funcs->glDeleteProgram(ID);
+    if (!funcs) {
+        return;
+    }
+    if (ID != 0) {
+        funcs->glDeleteProgram(ID);
+    }
     for (auto ssbo : ssboIDs) {
         funcs->glDeleteBuffers(1, &ssbo);
     }
@@ -27,7 +55,17 @@ void ComputeShader::use() const {
 }
 
 unsigned int ComputeShader::compileShader(GLenum type, const std::string& source) const {
+    if (source.empty()) {
+        std::cerr << "ERROR::COMPUTE_SHADER::EMPTY_SOURCE" << std::endl;
+        return 0;
+    }
+
     unsigned int shader = funcs->glCreateShader(type);
+    if (shader == 0) {
+        std::cerr << "ERROR::COMPUTE_SHADER::SHADER_CREATE_FAILED" << std::endl;
+        return 0;
+    }
+
     const char* src = source.c_str();
     funcs->glShaderSource(shader, 1, &src, nullptr);
     funcs->glCompileShader(shader);
@@ -38,6 +76,8 @@ unsigned int ComputeShader::compileShader(GLenum type, const std::string& source
         char infoLog[512];
         funcs->glGetShaderInfoLog(shader, 512, nullptr, infoLog);
         std::cerr << "ERROR::COMPUTE_SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+        funcs->glDeleteShader(shader);
+        return 0;
     }
 
     return shader;
@@ -64,9 +104,9 @@ unsigned int ComputeShader::createSSBO(const void *data, unsigned int size, unsi
     return ssbo;
 }
 
-void ComputeShader::dispatch(GLuint groupsX, GLuint groupsY, GLuint groupsZ) const {
+void ComputeShader::dispatch(GLuint groupsX, GLuint groupsY, GLuint groupsZ, GLbitfield barrier) const {
     funcs->glDispatchCompute(groupsX, groupsY, groupsZ);
-    funcs->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    funcs->glMemoryBarrier(barrier);
 }
 
 void ComputeShader::setBool(const std::string& name, bool value) const {
@@ -87,4 +127,12 @@ void ComputeShader::setMat4(const std::string& name, const glm::mat4& mat) const
 
 void ComputeShader::setVec3(const std::string& name, const glm::vec3& vec) const {
     funcs->glUniform3fv(funcs->glGetUniformLocation(ID, name.c_str()), 1, &vec[0]);
+}
+
+void ComputeShader::setUInt(const std::string& name, unsigned int value) const {
+    funcs->glUniform1ui(funcs->glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void ComputeShader::setUVec2(const std::string& name, unsigned int x, unsigned int y) const {
+    funcs->glUniform2ui(funcs->glGetUniformLocation(ID, name.c_str()), x, y);
 }

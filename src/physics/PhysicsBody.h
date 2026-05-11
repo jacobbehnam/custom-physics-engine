@@ -71,6 +71,9 @@ namespace Physics {
         float getSurfaceArea() const { return surfaceArea; }
         bool getIsStatic(BodyLock lock) const;
         void setIsStatic(bool newStatic, BodyLock lock);
+        float getTemperature(BodyLock lock) const;
+        void setTemperature(float newTemp, BodyLock lock);
+        glm::vec3 getEmission(BodyLock lock) const;
 
         glm::mat4 getWorldTransform(BodyLock lock) const;
         void setWorldTransform(const glm::mat4& M, BodyLock lock);
@@ -112,6 +115,9 @@ namespace Physics {
 
         double mass = 1.0;
         ThermalProperties thermalProps;
+
+        static glm::vec3 blackbodyRGB(float tempKelvin);
+        static float temperatureToIntensity(float tempKelvin);
     };
 
     template <typename F>

@@ -3,7 +3,16 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <glm/common.hpp>
 #include "physics/utils/ThermalUtils.h"
+
+namespace {
+
+constexpr float kVisibleIncandescenceStartK       = 800.0f;
+constexpr float kVisibleEmitterReferenceK         = 5800.0f;
+constexpr float kVisibleEmitterReferenceRadiance  = 65000.0f;
+
+} // namespace
 
 bool Physics::PhysicsBody::isUnknown(const std::string &key, BodyLock lock) const {
     std::unique_lock<std::mutex> maybeLock;
@@ -164,6 +173,64 @@ void Physics::PhysicsBody::clearAllFrames(BodyLock lock) {
     frames.clear();
 }
 
+void Physics::PhysicsBody::setTemperature(float kelvin, BodyLock lock) {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    thermalProps.tempK = Physics::Thermal::clampTemperature(kelvin);
+}
+
+float Physics::PhysicsBody::getTemperature(BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    return static_cast<float>(thermalProps.tempK);
+}
+
+glm::vec3 Physics::PhysicsBody::blackbodyRGB(float t) {
+    if (t <= 0.0f) return glm::vec3(0.0f);
+    float k = t / 100.0f;
+    glm::vec3 col;
+
+    col.r = k <= 66.0f
+        ? 1.0f
+        : glm::clamp(1.2929f * std::pow(k - 60.0f, -0.1332f), 0.0f, 1.0f);
+
+    col.g = k <= 66.0f
+        ? glm::clamp(0.3900f * std::log(k) - 0.6318f, 0.0f, 1.0f)
+        : glm::clamp(1.1298f * std::pow(k - 60.0f, -0.0755f), 0.0f, 1.0f);
+
+    col.b = k >= 66.0f ? 1.0f
+          : k <= 19.0f ? 0.0f
+          : glm::clamp(0.5432f * std::log(k - 10.0f) - 1.1963f, 0.0f, 1.0f);
+
+    return col;
+}
+
+float Physics::PhysicsBody::temperatureToIntensity(float tempKelvin) {
+    if (tempKelvin < kVisibleIncandescenceStartK) {
+        return 0.0f;
+    }
+
+    const float visibleT = (tempKelvin - kVisibleIncandescenceStartK)
+        / (kVisibleEmitterReferenceK - kVisibleIncandescenceStartK);
+    return std::pow(std::max(visibleT, 0.0f), 4.0f) * kVisibleEmitterReferenceRadiance;
+}
+
+glm::vec3 Physics::PhysicsBody::getEmission(BodyLock lock) const {
+    std::unique_lock<std::mutex> maybeLock;
+    if (lock == BodyLock::LOCK)
+        maybeLock = std::unique_lock<std::mutex>(stateMutex);
+    glm::vec3 emission = thermalProps.visibleLightColor * thermalProps.visibleLightPower;
+
+    const float tempK = static_cast<float>(thermalProps.tempK);
+    const float thermalEmissivity = static_cast<float>(Physics::Thermal::effectiveEmissivity(thermalProps, tempK));
+    if (tempK > 0.0f && thermalEmissivity > 0.0f) {
+        emission += blackbodyRGB(tempK) * temperatureToIntensity(tempK) * thermalEmissivity;
+    }
+    return emission;
+}
+
 void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps, BodyLock lock) {
     std::unique_lock<std::mutex> maybeLock;
     if (lock == BodyLock::LOCK)
@@ -180,6 +247,12 @@ void Physics::PhysicsBody::setThermalProperty(const ThermalProperties &newProps,
     thermalProps.thermalMassFraction = std::clamp(thermalProps.thermalMassFraction, 0.0f, 1.0f);
     thermalProps.emissivity = std::clamp(thermalProps.emissivity, 0.0f, 1.0f);
     if (!std::isfinite(thermalProps.emissivityTempCoeff)) thermalProps.emissivityTempCoeff = 0.0f;
+    if (!std::isfinite(thermalProps.visibleLightPower)) thermalProps.visibleLightPower = 0.0f;
+    thermalProps.visibleLightPower = std::max(thermalProps.visibleLightPower, 0.0f);
+    if (!std::isfinite(thermalProps.visibleLightColor.r)) thermalProps.visibleLightColor.r = 1.0f;
+    if (!std::isfinite(thermalProps.visibleLightColor.g)) thermalProps.visibleLightColor.g = 1.0f;
+    if (!std::isfinite(thermalProps.visibleLightColor.b)) thermalProps.visibleLightColor.b = 1.0f;
+    thermalProps.visibleLightColor = glm::clamp(thermalProps.visibleLightColor, glm::vec3(0.0f), glm::vec3(1.0f));
     thermalProps.absorptivity = std::clamp(thermalProps.absorptivity, 0.0f, 1.0f);
     if (!std::isfinite(thermalProps.absorptivityTempCoeff)) thermalProps.absorptivityTempCoeff = 0.0f;
     thermalProps.heatTransferCoeff = std::max(thermalProps.heatTransferCoeff, 0.0f);

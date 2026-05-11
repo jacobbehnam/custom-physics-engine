@@ -5,16 +5,17 @@
 #include "physics/PhysicsSystem.h"
 #include "graphics/core/Scene.h"
 #include "graphics/core/SceneManager.h"
-
-#include "graphics/components/Gizmo.h"
-#include "graphics/core/ResourceManager.h"
-#include "graphics/core/SceneObject.h"
 #include "ui/AppSettings.h"
 #include "ui/settings/DebugSettings.h"
+#include "ui/settings/GraphicsSettings.h"
+#include "graphics/raytrace/SceneRayTracer.h"
+#include "graphics/core/ResourceManager.h"
+#include "graphics/core/SceneObject.h"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <utility>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -33,9 +34,36 @@ constexpr int    kLabelOffsetAboveObjectPx      = 8;
 constexpr int    kLabelStepYPx                  = 4;
 constexpr int    kLabelMinStepXPx               = 36;
 constexpr int    kLabelSearchRings              = 12;
+constexpr float  kRenderSnapshotDelayFrames     = 0.5f;
+}
+
+QSize OpenGLWindow::getFramebufferSize() const {
+    const qreal dpr = devicePixelRatioF();
+    return QSize(
+        static_cast<int>(std::lround(static_cast<qreal>(width()) * dpr)),
+        static_cast<int>(std::lround(static_cast<qreal>(height()) * dpr)));
 }
 
 OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent) {}
+
+void OpenGLWindow::setScene(std::unique_ptr<Scene> sc) {
+    scene = std::move(sc);
+
+    const QSize fb = getFramebufferSize();
+    if (!scene || fb.width() <= 0 || fb.height() <= 0) {
+        return;
+    }
+
+    scene->getCamera()->setAspectRatio(static_cast<float>(fb.width()) /
+                                       static_cast<float>(fb.height()));
+}
+
+void OpenGLWindow::setSimSpeed(float newSpeed) {
+    if (!std::isfinite(newSpeed) || newSpeed < 0.0f) {
+        newSpeed = 0.0f;
+    }
+    simSpeed.store(std::min(newSpeed, 1.0e12f));
+}
 
 void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
@@ -58,9 +86,17 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::resizeGL(int w, int h) {
-    // TODO: camera should be in SceneManager
-    glViewport(0, 0, w, h);
-    scene->getCamera()->setAspectRatio(static_cast<float>(w) / h);
+    if (w <= 0 || h <= 0) {
+        return;
+    }
+    // Match device-pixel framebuffer (same as getFramebufferSize + Qt paintGL viewport).
+    const qreal dpr = devicePixelRatioF();
+    const int pw = static_cast<int>(std::lround(static_cast<qreal>(w) * dpr));
+    const int ph = static_cast<int>(std::lround(static_cast<qreal>(h) * dpr));
+    glViewport(0, 0, pw, ph);
+    if (scene) {
+        scene->getCamera()->setAspectRatio(static_cast<float>(pw) / static_cast<float>(ph));
+    }
 }
 
 void OpenGLWindow::paintGL() {
@@ -69,19 +105,56 @@ void OpenGLWindow::paintGL() {
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
 
+    if (!scene || !sceneManager) {
+        glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hideObjectLabels();
+        return;
+    }
+
+    float interpolationDelay = 0.0f;
     if (simulating) {
         renderSimTime += deltaTime * simSpeed;
+        interpolationDelay = sceneManager->physicsSystem->getSnapshotInterpolationDelay() * kRenderSnapshotDelayFrames;
+        if (auto latestSnapshotTime = sceneManager->physicsSystem->getLatestSnapshotTime()) {
+            renderSimTime = std::min(renderSimTime, *latestSnapshotTime);
+        }
     }
 
     //sceneManager->stepPhysics(deltaTime);
-    // 1) Acquire the latest batch of snapshots
-    auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(renderSimTime);
+    // 1) Acquire the render-synchronized batch of snapshots
+    float snapshotSimTime = renderSimTime;
+    if (simulating) {
+        snapshotSimTime -= interpolationDelay;
+    }
+    auto snaps = sceneManager->physicsSystem->fetchLatestSnapshot(snapshotSimTime);
 
+    scene->applyPhysicsSnapshots(snaps);
     sceneManager->processHeldKeys(pressedKeys, deltaTime);
+    scene->updateCameraFromSnapshots(snaps);
 
     Math::Ray ray = getMouseRay();
     sceneManager->updateHoverState(ray);
-    scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    auto& visRt = AppSettings::getInstance().getGroup<GraphicsSettings>();
+    if (visRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
+        scene->applyPhysicsSnapshots(snaps);
+        float sc = visRt.rayTraceResolutionScale;
+        if (!std::isfinite(sc)) {
+            sc = GraphicsSettings::kMaxRayTraceResolutionScale;
+        }
+        if (sc < GraphicsSettings::kMinRayTraceResolutionScale) {
+            sc = GraphicsSettings::kMinRayTraceResolutionScale;
+        }
+        if (sc > GraphicsSettings::kMaxRayTraceResolutionScale) {
+            sc = GraphicsSettings::kMaxRayTraceResolutionScale;
+        }
+        const QSize fb = getFramebufferSize();
+        sceneManager->getRayTracer()->render(fb.width(), fb.height(), scene->getCamera(), snaps, sc);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        scene->drawCustomDrawables(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    } else {
+        scene->draw(snaps, sceneManager->hoveredIDs, sceneManager->selectedIDs);
+    }
     updateObjectLabels();
 
     calculateFPS();
@@ -91,14 +164,18 @@ void OpenGLWindow::paintGL() {
 
 Math::Ray OpenGLWindow::getMouseRay() {
     QPointF mousePos = getMousePos();
-    QSize fbSize = getFramebufferSize();
+    const qreal dpr = devicePixelRatioF();
+    const double mxd = mousePos.x() * dpr;
+    const double myd = mousePos.y() * dpr;
+    const QSize fbSize = getFramebufferSize();
+    Camera* camera = scene->getCamera();
 
     return {
-        scene->getCamera()->position,
+        camera->position,
         Math::screenToWorldRayDirection(
-            mousePos.x(), mousePos.y(),
+            mxd, myd,
             fbSize.width(), fbSize.height(),
-            scene->getCamera()->getViewMatrix(), scene->getCamera()->getProjMatrix())
+            camera->front, camera->right, camera->up, camera->fov)
     };
 }
 
@@ -166,7 +243,7 @@ void OpenGLWindow::setMouseCaptured(bool captured) {
 }
 
 void OpenGLWindow::handleRawMouseDelta(int dx, int dy) {
-    if (mouseCaptured) {
+    if (mouseCaptured && scene) {
         QCursor::setPos(mouseLastPosBeforeCapture);
         scene->getCamera()->processMouseMovement(dx, -dy);
     }
