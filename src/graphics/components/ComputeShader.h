@@ -1,5 +1,7 @@
 #pragma once
+#include <algorithm>
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 #include <QOpenGLFunctions_4_5_Core>
 #include <iostream>
@@ -51,8 +53,8 @@ public:
     unsigned int id() const { return ID; }
 
 private:
-    QOpenGLFunctions_4_5_Core* funcs;
-    unsigned int ID;
+    QOpenGLFunctions_4_5_Core* funcs{nullptr};
+    unsigned int ID{0};
     std::vector<unsigned int> ssboIDs;
     std::string loadFile(const std::string& path) const;
     unsigned int compileShader(GLenum type, const std::string& source) const;

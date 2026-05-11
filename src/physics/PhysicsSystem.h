@@ -37,7 +37,7 @@ namespace Physics {
         glm::vec3 getGlobalAcceleration() const { return globalAcceleration.load(); }
         void setGlobalAcceleration(const glm::vec3& newAcceleration) { globalAcceleration.store(newAcceleration); }
         float getSimSpeed() const { return simSpeed.load(); }
-        void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
+        void setSimSpeed(float newSpeed);
         double getGravitationalConstant() const { return gravitationalConstant.load(); }
         void setGravitationalConstant(double newG) { gravitationalConstant.store(newG); }
 

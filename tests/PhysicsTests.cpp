@@ -181,6 +181,15 @@ TEST(PhysicsSystem, Parameters_GlobalSettings) {
 
     system.setSimSpeed(0.5f);
     EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.5f);
+
+    system.setSimSpeed(-1.0f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.0f);
+
+    system.setSimSpeed(std::numeric_limits<float>::quiet_NaN());
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 0.0f);
+
+    system.setSimSpeed(1.0e20f);
+    EXPECT_FLOAT_EQ(system.getSimSpeed(), 1.0e12f);
 }
 
 TEST(PhysicsSystem, Step_OverlappingBodies_DoesNotCrash) {

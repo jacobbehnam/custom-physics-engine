@@ -27,7 +27,14 @@ SceneManager::SceneManager(OpenGLWindow* win, Scene *scn) : window(win), scene(s
 }
 
 SceneManager::~SceneManager() {
+    const bool madeCurrent = window && window->context();
+    if (madeCurrent) {
+        window->makeCurrent();
+    }
     removeDebugDrawables();
+    if (madeCurrent) {
+        window->doneCurrent();
+    }
 }
 
 void SceneManager::defaultSetup() {

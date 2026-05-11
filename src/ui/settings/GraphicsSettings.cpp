@@ -1,5 +1,7 @@
 #include "GraphicsSettings.h"
 
+#include <cmath>
+
 namespace {
 constexpr auto kGraphicsGroup = "graphics";
 constexpr auto kUseRayTracedKey = "useRayTraced";
@@ -14,11 +16,17 @@ void GraphicsSettings::load(QSettings& settings) {
     rayTraceResolutionScale = static_cast<float>(settings.value(kRayTraceResScaleKey, rayTraceResolutionScale).toDouble());
     rayTraceExposure = static_cast<float>(settings.value(kRayTraceExposureKey, rayTraceExposure).toDouble());
     enableGlobalLight = settings.value(kEnableGlobalLightKey, enableGlobalLight).toBool();
+    if (!std::isfinite(rayTraceResolutionScale)) {
+        rayTraceResolutionScale = kMaxRayTraceResolutionScale;
+    }
     if (rayTraceResolutionScale < kMinRayTraceResolutionScale) {
         rayTraceResolutionScale = kMinRayTraceResolutionScale;
     }
     if (rayTraceResolutionScale > kMaxRayTraceResolutionScale) {
         rayTraceResolutionScale = kMaxRayTraceResolutionScale;
+    }
+    if (!std::isfinite(rayTraceExposure)) {
+        rayTraceExposure = 1.0f;
     }
     if (rayTraceExposure < kMinRayTraceExposure) {
         rayTraceExposure = kMinRayTraceExposure;

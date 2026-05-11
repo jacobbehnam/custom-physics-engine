@@ -28,6 +28,18 @@ struct ObjectSnapshot;
  * physics systems.
  */
 namespace Math {
+    inline bool isFiniteVec3(const glm::vec3& v) {
+        return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+    }
+
+    inline glm::vec3 normalizeOrFallback(const glm::vec3& v, const glm::vec3& fallback = glm::vec3(0.0f, 0.0f, -1.0f)) {
+        const float len2 = glm::dot(v, v);
+        if (!isFiniteVec3(v) || !std::isfinite(len2) || len2 <= std::numeric_limits<float>::epsilon()) {
+            return fallback;
+        }
+        return v * (1.0f / std::sqrt(len2));
+    }
+
     /**
     * @brief Tests ray-triangle intersection using Möller-Trumbore algorithm
     *
@@ -128,18 +140,20 @@ namespace Math {
         float fovDeg
     ) {
         if (fbWidth <= 0 || fbHeight <= 0) {
-            return glm::normalize(cameraFront);
+            return normalizeOrFallback(cameraFront);
         }
 
         const float x = static_cast<float>((2.0 * mouseX) / static_cast<double>(fbWidth) - 1.0);
         const float y = static_cast<float>(1.0 - (2.0 * mouseY) / static_cast<double>(fbHeight));
         const float aspect = static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
-        const float tanHalfFov = std::tan(glm::radians(fovDeg) * 0.5f);
+        const float safeFov = std::isfinite(fovDeg) ? std::clamp(fovDeg, 1.0f, 179.0f) : 45.0f;
+        const float tanHalfFov = std::tan(glm::radians(safeFov) * 0.5f);
 
-        return glm::normalize(
-            cameraFront
+        const glm::vec3 dir =
+            normalizeOrFallback(cameraFront)
             + cameraRight * (x * aspect * tanHalfFov)
-            + cameraUp * (y * tanHalfFov));
+            + cameraUp * (y * tanHalfFov);
+        return normalizeOrFallback(dir, normalizeOrFallback(cameraFront));
     }
 
     inline glm::vec3 screenToWorldRayDirection(

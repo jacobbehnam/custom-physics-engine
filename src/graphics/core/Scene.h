@@ -41,6 +41,7 @@ private:
     UniformBuffer hoverUBO;
     UniformBuffer selectUBO;
 
+    void updateCameraClipRange();
     void updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs);
 
     uint32_t nextID = 0;

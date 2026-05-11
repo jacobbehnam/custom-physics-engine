@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <ui/MainWindow.h>
+#include <cstdint>
 #include <cstdlib>
 #include <string_view>
 
@@ -7,10 +8,16 @@
 #include "ui/RawInputFilter.h"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__)
+#define PHYSICS_ENGINE_GPU_EXPORT __declspec(dllexport)
+#else
+#define PHYSICS_ENGINE_GPU_EXPORT __attribute__((visibility("default")))
+#endif
 extern "C" {
-    __attribute__((visibility("default"))) uint32_t NvOptimusEnablement = 1;
-    __attribute__((visibility("default"))) int AmdPowerXpressRequestHighPerformance = 1;
+    PHYSICS_ENGINE_GPU_EXPORT uint32_t NvOptimusEnablement = 1;
+    PHYSICS_ENGINE_GPU_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
 }
+#undef PHYSICS_ENGINE_GPU_EXPORT
 #endif
 
 namespace {
@@ -41,9 +48,10 @@ int main(int argc, char** argv) {
     mainWindow.show();
 
     // input gets handled by RawInputFilter before Qt handles it
-    auto filter = new RawInputFilter([&](int dx, int dy){
-    mainWindow.getGlWindow()->handleRawMouseDelta(dx, dy); });
-    app.installNativeEventFilter(filter);
+    RawInputFilter filter([&](int dx, int dy) {
+        mainWindow.getGlWindow()->handleRawMouseDelta(dx, dy);
+    });
+    app.installNativeEventFilter(&filter);
 
     return QApplication::exec();
 }

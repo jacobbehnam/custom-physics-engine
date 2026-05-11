@@ -188,16 +188,6 @@ if (UNIX AND NOT APPLE)
     target_link_libraries(PhysicsEngine PRIVATE X11 Xi)
 endif()
 
-set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/src/assets")
-set(ASSETS_DEST "$<TARGET_FILE_DIR:PhysicsEngine>/assets")
-
-add_custom_command(TARGET PhysicsEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE}
-        ${ASSETS_DEST}
-        COMMENT "Copying Assets..."
-)
-
 enable_testing()
 add_subdirectory(tests)
 

@@ -399,7 +399,7 @@ bool Physics::PhysicsSystem::step(float dt) {
         }
 
         solver = nullptr;
-        physicsEnabled = false;
+        physicsEnabled.store(false, std::memory_order_release);
         return true;
     }
 
@@ -412,10 +412,17 @@ void Physics::PhysicsSystem::solveProblem(PhysicsBody* body, const std::unordere
 
     if (solver) {
         std::cout << "Solver Started: " << unknown << std::endl;
-        physicsEnabled = true;
+        enablePhysics();
     } else {
         std::cerr << "Solver Error: No recipe found for " << unknown << std::endl;
     }
+}
+
+void Physics::PhysicsSystem::setSimSpeed(float newSpeed) {
+    if (!std::isfinite(newSpeed) || newSpeed < 0.0f) {
+        newSpeed = 0.0f;
+    }
+    simSpeed.store(std::min(newSpeed, 1.0e12f), std::memory_order_release);
 }
 
 void Physics::PhysicsSystem::reset() {
@@ -425,6 +432,13 @@ void Physics::PhysicsSystem::reset() {
         body->clearAllFrames(BodyLock::LOCK);
         body->loadFrame(initialState, BodyLock::LOCK);
     }
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+        snapshotHistory.clear();
+    }
+    snapshotReady.store(false, std::memory_order_relaxed);
 }
 
 void Physics::PhysicsSystem::clearRuntimeState() {
@@ -443,8 +457,19 @@ void Physics::PhysicsSystem::clearRuntimeState() {
 }
 
 void Physics::PhysicsSystem::enablePhysics() {
-    physicsEnabled.store(true);
-    snapshotReady.store(false, std::memory_order_relaxed); // so we don't read from the stale buffer
+    if (physicsEnabled.load(std::memory_order_acquire)) {
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> snapshotLock(snapshotMutex);
+        currentSnapshots.clear();
+        previousSnapshots.clear();
+        snapshotHistory.clear();
+    }
+    // so we don't read/interpolate from stale buffers from a previous run
+    snapshotReady.store(false, std::memory_order_relaxed);
+    physicsEnabled.store(true, std::memory_order_release);
 }
 
 void Physics::PhysicsSystem::disablePhysics() {

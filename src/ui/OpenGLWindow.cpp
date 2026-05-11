@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <utility>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -45,6 +46,25 @@ QSize OpenGLWindow::getFramebufferSize() const {
 
 OpenGLWindow::OpenGLWindow(QWidget* parent) : QOpenGLWidget(parent) {}
 
+void OpenGLWindow::setScene(std::unique_ptr<Scene> sc) {
+    scene = std::move(sc);
+
+    const QSize fb = getFramebufferSize();
+    if (!scene || fb.width() <= 0 || fb.height() <= 0) {
+        return;
+    }
+
+    scene->getCamera()->setAspectRatio(static_cast<float>(fb.width()) /
+                                       static_cast<float>(fb.height()));
+}
+
+void OpenGLWindow::setSimSpeed(float newSpeed) {
+    if (!std::isfinite(newSpeed) || newSpeed < 0.0f) {
+        newSpeed = 0.0f;
+    }
+    simSpeed.store(std::min(newSpeed, 1.0e12f));
+}
+
 void OpenGLWindow::initializeGL() {
     initializeOpenGLFunctions();
     ResourceManager::initialize(this); // inherits from QOpenGLFunctions so can be cast to it
@@ -66,7 +86,7 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::resizeGL(int w, int h) {
-    if (w <= 0 || h <= 0 || !scene) {
+    if (w <= 0 || h <= 0) {
         return;
     }
     // Match device-pixel framebuffer (same as getFramebufferSize + Qt paintGL viewport).
@@ -74,7 +94,9 @@ void OpenGLWindow::resizeGL(int w, int h) {
     const int pw = static_cast<int>(std::lround(static_cast<qreal>(w) * dpr));
     const int ph = static_cast<int>(std::lround(static_cast<qreal>(h) * dpr));
     glViewport(0, 0, pw, ph);
-    scene->getCamera()->setAspectRatio(static_cast<float>(pw) / static_cast<float>(ph));
+    if (scene) {
+        scene->getCamera()->setAspectRatio(static_cast<float>(pw) / static_cast<float>(ph));
+    }
 }
 
 void OpenGLWindow::paintGL() {
@@ -82,6 +104,13 @@ void OpenGLWindow::paintGL() {
     std::chrono::duration<double> deltaDuration = currentFrame - lastFrame;
     double deltaTime = deltaDuration.count();
     lastFrame = currentFrame;
+
+    if (!scene || !sceneManager) {
+        glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hideObjectLabels();
+        return;
+    }
 
     float interpolationDelay = 0.0f;
     if (simulating) {
@@ -110,6 +139,9 @@ void OpenGLWindow::paintGL() {
     if (visRt.useRayTraced && sceneManager->getRayTracer() && sceneManager->getRayTracer()->isUsable()) {
         scene->applyPhysicsSnapshots(snaps);
         float sc = visRt.rayTraceResolutionScale;
+        if (!std::isfinite(sc)) {
+            sc = GraphicsSettings::kMaxRayTraceResolutionScale;
+        }
         if (sc < GraphicsSettings::kMinRayTraceResolutionScale) {
             sc = GraphicsSettings::kMinRayTraceResolutionScale;
         }
@@ -211,7 +243,7 @@ void OpenGLWindow::setMouseCaptured(bool captured) {
 }
 
 void OpenGLWindow::handleRawMouseDelta(int dx, int dy) {
-    if (mouseCaptured) {
+    if (mouseCaptured && scene) {
         QCursor::setPos(mouseLastPosBeforeCapture);
         scene->getCamera()->processMouseMovement(dx, -dy);
     }

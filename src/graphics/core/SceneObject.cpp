@@ -232,21 +232,16 @@ std::optional<float> SceneObject::intersectsMesh(const Math::Ray& ray) const {
 
 std::optional<float> SceneObject::intersectsSphere(const Math::Ray& ray) const {
     const glm::mat4 model = getModelMatrix();
-    const glm::dvec3 center(model[3]);
-    const glm::dvec3 rayOrigin(ray.origin);
-    const glm::dvec3 rayDir = glm::normalize(glm::dvec3(ray.dir));
-    const double radius = 0.5 * static_cast<double>(std::max({
-        glm::length(glm::vec3(model[0])),
-        glm::length(glm::vec3(model[1])),
-        glm::length(glm::vec3(model[2]))
-    }));
-    if (!std::isfinite(radius) || radius <= 0.0) {
+    const auto localRay = localRayForModel(model, ray);
+    if (!localRay) {
         return std::nullopt;
     }
 
-    const glm::dvec3 offset = rayOrigin - center;
+    constexpr double kPrimitiveSphereRadius = 0.5;
+    const glm::dvec3 offset(localRay->ray.origin);
+    const glm::dvec3 rayDir(localRay->ray.dir);
     const double b = glm::dot(offset, rayDir);
-    const double c = glm::dot(offset, offset) - radius * radius;
+    const double c = glm::dot(offset, offset) - kPrimitiveSphereRadius * kPrimitiveSphereRadius;
     const double discriminant = b * b - c;
     if (!std::isfinite(discriminant) || discriminant < 0.0f) {
         return std::nullopt;
@@ -255,12 +250,18 @@ std::optional<float> SceneObject::intersectsSphere(const Math::Ray& ray) const {
     const double sqrtDiscriminant = std::sqrt(discriminant);
     const double tNear = -b - sqrtDiscriminant;
     const double tFar = -b + sqrtDiscriminant;
-    const double t = tNear > 0.0 ? tNear : tFar;
-    if (!std::isfinite(t) || t <= 0.0 || t > static_cast<double>(std::numeric_limits<float>::max())) {
+    const double localT = tNear > 0.0 ? tNear : tFar;
+    if (!std::isfinite(localT) || localT <= 0.0) {
         return std::nullopt;
     }
 
-    return static_cast<float>(t);
+    const double worldDistance = localT * static_cast<double>(localRay->localToWorldDistance);
+    if (!std::isfinite(worldDistance) || worldDistance <= 0.0
+        || worldDistance > static_cast<double>(std::numeric_limits<float>::max())) {
+        return std::nullopt;
+    }
+
+    return static_cast<float>(worldDistance);
 }
 
 std::optional<float> SceneObject::intersectsRay(const Math::Ray& ray) const {

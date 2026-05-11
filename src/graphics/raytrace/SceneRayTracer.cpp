@@ -21,6 +21,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <limits>
 #include <span>
 
 namespace {
@@ -38,6 +39,8 @@ constexpr float    kFloatingOriginThreshold = 1.0e6f;
 constexpr float    kLightPowerEpsilon       = 1.0e-5f;
 constexpr float    kMinAnalyticLightRadius  = 0.1f;
 constexpr float    kPixelConeDiagonalScale  = 1.41421356237f;
+constexpr float    kAnalyticSphereScaleEps  = 1.0e-4f;
+constexpr float    kDegenerateTriangleArea2 = 1.0e-16f;
 constexpr size_t   kMaxAnalyticLights       = 8;
 constexpr uint32_t kShaderAaPatternCount    = 4;
 constexpr uint32_t kTemporalSampleCount     = 1 + kShaderAaPatternCount;
@@ -45,6 +48,11 @@ constexpr uint32_t kTemporalSampleCount     = 1 + kShaderAaPatternCount;
 static GLuint compileShader(GLenum type, const std::string& source, const char* label, QOpenGLFunctions_4_5_Core* gl) {
     const char* src = source.c_str();
     const GLuint shader = gl->glCreateShader(type);
+    if (shader == 0) {
+        std::cerr << "[raytrace] failed to create shader for " << label << std::endl;
+        return 0;
+    }
+
     gl->glShaderSource(shader, 1, &src, nullptr);
     gl->glCompileShader(shader);
 
@@ -124,8 +132,31 @@ static glm::vec3 pickObjectAlbedo(const SceneObject& object) {
     return glm::clamp(base, glm::vec3(0.15f), glm::vec3(0.98f));
 }
 
-static MaterialKind pickMaterialKind(const SceneObject& object) {
-    if (object.getMeshName() == "prim_sphere") {
+static bool isFiniteVec3(const glm::vec3& v) {
+    return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+}
+
+static bool canUseAnalyticSphere(const SceneObject& object) {
+    if (object.getMeshName() != "prim_sphere") {
+        return false;
+    }
+
+    const glm::vec3 scale = glm::abs(object.getScale());
+    if (!isFiniteVec3(scale)) {
+        return false;
+    }
+
+    const float minScale = std::min({scale.x, scale.y, scale.z});
+    const float maxScale = std::max({scale.x, scale.y, scale.z});
+    if (minScale <= std::numeric_limits<float>::epsilon()) {
+        return false;
+    }
+
+    return (maxScale - minScale) <= maxScale * kAnalyticSphereScaleEps;
+}
+
+static MaterialKind pickMaterialKind(const SceneObject& object, bool analyticSphere) {
+    if (analyticSphere) {
         return MaterialKind::Sphere;
     }
     if (object.getShader() == ResourceManager::getShader("checkerboard")) {
@@ -134,8 +165,12 @@ static MaterialKind pickMaterialKind(const SceneObject& object) {
     return MaterialKind::Matte;
 }
 
-static bool isFiniteVec3(const glm::vec3& v) {
-    return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+static glm::vec3 normalizeOrFallback(const glm::vec3& normal, const glm::vec3& fallback) {
+    const float len2 = glm::dot(normal, normal);
+    if (!isFiniteVec3(normal) || !std::isfinite(len2) || len2 < 1.0e-8f) {
+        return fallback;
+    }
+    return normal * glm::inversesqrt(len2);
 }
 
 } // namespace
@@ -144,13 +179,13 @@ void SceneRayTracer::ensureComputeProgram() {
     if (m_computeAttempted || m_shader) {
         return;
     }
-    m_computeAttempted = true;
 
     auto* ctx = QOpenGLContext::currentContext();
     if (!ctx) {
         std::cerr << "[raytrace] no current OpenGL context" << std::endl;
         return;
     }
+    m_computeAttempted = true;
 
     const auto fmt = ctx->format();
     const bool supportsCompute =
@@ -177,6 +212,10 @@ void SceneRayTracer::ensureComputeProgram() {
 
 void SceneRayTracer::ensurePresentProgram() {
     if (m_presentAttempted || m_present) {
+        return;
+    }
+    if (!QOpenGLContext::currentContext()) {
+        std::cerr << "[raytrace] no current OpenGL context for present program" << std::endl;
         return;
     }
     m_presentAttempted = true;
@@ -260,6 +299,13 @@ void main() {
     }
 
     m_present = m_g->glCreateProgram();
+    if (m_present == 0) {
+        std::cerr << "[raytrace] failed to create present program" << std::endl;
+        m_g->glDeleteShader(vert);
+        m_g->glDeleteShader(frag);
+        return;
+    }
+
     m_g->glAttachShader(m_present, vert);
     m_g->glAttachShader(m_present, frag);
     m_g->glLinkProgram(m_present);
@@ -363,14 +409,20 @@ void SceneRayTracer::uploadLights() {
         }
 
         const glm::vec3 emission = body->getEmission(BodyLock::LOCK);
-        if (luminance(emission) <= kLightPowerEpsilon) {
+        if (!isFiniteVec3(emission) || luminance(emission) <= kLightPowerEpsilon) {
             continue;
         }
 
         const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
         const glm::vec3 position = glm::vec3(model[3]);
         const glm::vec3 scale = glm::abs(object->getScale());
+        if (!isFiniteVec3(position) || !isFiniteVec3(scale)) {
+            continue;
+        }
         const float radius = std::max(kMinAnalyticLightRadius, 0.5f * std::max({scale.x, scale.y, scale.z}));
+        if (!std::isfinite(radius)) {
+            continue;
+        }
 
         lights.push_back({
             glm::vec4(position, radius),
@@ -442,16 +494,17 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& triangles, std
         const glm::mat4 model = relativeModelMatrix(*object, m_renderOrigin);
         const glm::vec3 sphereCenter = glm::vec3(model[3]);
         const glm::vec3 albedo = pickObjectAlbedo(*object);
-        const MaterialKind materialKind = pickMaterialKind(*object);
+        const bool analyticSphere = canUseAnalyticSphere(*object);
+        const MaterialKind materialKind = pickMaterialKind(*object, analyticSphere);
         glm::vec3 emission{0.0f};
         if (const Physics::PhysicsBody* body = object->getPhysicsBody()) {
             emission = body->getEmission(BodyLock::LOCK);
         }
 
-        if (materialKind == MaterialKind::Sphere) {
+        if (analyticSphere) {
             const glm::vec3 scale = glm::abs(object->getScale());
             const float radius = 0.5f * std::max({scale.x, scale.y, scale.z});
-            if (radius > 0.0f) {
+            if (std::isfinite(radius) && radius > 0.0f && isFiniteVec3(sphereCenter)) {
                 spheres.push_back({
                     glm::vec4(sphereCenter, radius),
                     glm::vec4(albedo, static_cast<float>(materialKind)),
@@ -481,27 +534,31 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& triangles, std
             const glm::vec3 w0 = glm::vec3(model * glm::vec4(a.pos, 1.0f));
             const glm::vec3 w1 = glm::vec3(model * glm::vec4(b.pos, 1.0f));
             const glm::vec3 w2 = glm::vec3(model * glm::vec4(c.pos, 1.0f));
+            if (!isFiniteVec3(w0) || !isFiniteVec3(w1) || !isFiniteVec3(w2)) {
+                continue;
+            }
+
+            const glm::vec3 faceCross = glm::cross(w1 - w0, w2 - w0);
+            const float faceArea2 = glm::dot(faceCross, faceCross);
+            if (!std::isfinite(faceArea2) || faceArea2 <= kDegenerateTriangleArea2) {
+                continue;
+            }
+
+            const glm::vec3 faceN = faceCross * glm::inversesqrt(faceArea2);
             glm::vec3 n0 = normalMatrix * a.normal;
             glm::vec3 n1 = normalMatrix * b.normal;
             glm::vec3 n2 = normalMatrix * c.normal;
-            const glm::vec3 faceN = glm::normalize(glm::cross(w1 - w0, w2 - w0));
-            if (!isFiniteVec3(n0) || glm::dot(n0, n0) < 1.0e-8f) {
-                n0 = faceN;
-            }
-            if (!isFiniteVec3(n1) || glm::dot(n1, n1) < 1.0e-8f) {
-                n1 = faceN;
-            }
-            if (!isFiniteVec3(n2) || glm::dot(n2, n2) < 1.0e-8f) {
-                n2 = faceN;
-            }
+            n0 = normalizeOrFallback(n0, faceN);
+            n1 = normalizeOrFallback(n1, faceN);
+            n2 = normalizeOrFallback(n2, faceN);
 
             triangles.push_back({
                 w0,
                 w1,
                 w2,
-                glm::normalize(n0),
-                glm::normalize(n1),
-                glm::normalize(n2),
+                n0,
+                n1,
+                n2,
                 sphereCenter,
                 albedo,
                 materialKind,
@@ -515,7 +572,7 @@ void SceneRayTracer::gather(std::vector<Raytrace::WorldTriangle>& triangles, std
 size_t SceneRayTracer::quickTriCount() const {
     size_t total = 0;
     for (const auto& owned : m_sm->getObjects()) {
-        if (owned->getMeshName() == "prim_sphere") {
+        if (canUseAnalyticSphere(*owned)) {
             continue;
         }
         const Mesh* mesh = owned->getMesh();
@@ -530,7 +587,7 @@ size_t SceneRayTracer::quickTriCount() const {
 size_t SceneRayTracer::quickSphereCount() const {
     size_t total = 0;
     for (const auto& owned : m_sm->getObjects()) {
-        if (owned->getMeshName() == "prim_sphere" && owned->getMesh()) {
+        if (canUseAnalyticSphere(*owned) && owned->getMesh()) {
             ++total;
         }
     }
@@ -784,13 +841,17 @@ void SceneRayTracer::renderGpu(int w, int h, const Camera* camera) {
 }
 
 void SceneRayTracer::presentOutput(int fbWidth, int fbHeight) {
+    const GLboolean depthWasEnabled = m_g->glIsEnabled(GL_DEPTH_TEST);
     m_g->glDisable(GL_DEPTH_TEST);
     m_g->glViewport(0, 0, fbWidth, fbHeight);
     m_g->glUseProgram(m_present);
-    const float exposure = std::clamp(
-        AppSettings::getInstance().getGroup<GraphicsSettings>().rayTraceExposure,
-        GraphicsSettings::kMinRayTraceExposure,
-        GraphicsSettings::kMaxRayTraceExposure);
+    float exposure = AppSettings::getInstance().getGroup<GraphicsSettings>().rayTraceExposure;
+    if (!std::isfinite(exposure)) {
+        exposure = 1.0f;
+    }
+    exposure = std::clamp(exposure,
+                          GraphicsSettings::kMinRayTraceExposure,
+                          GraphicsSettings::kMaxRayTraceExposure);
     const GLint exposureLocation = m_g->glGetUniformLocation(m_present, "uExposure");
     if (exposureLocation >= 0) {
         m_g->glUniform1f(exposureLocation, exposure);
@@ -802,7 +863,9 @@ void SceneRayTracer::presentOutput(int fbWidth, int fbHeight) {
     m_g->glBindVertexArray(0);
     m_g->glBindTexture(GL_TEXTURE_2D, 0);
     m_g->glUseProgram(0);
-    m_g->glEnable(GL_DEPTH_TEST);
+    if (depthWasEnabled) {
+        m_g->glEnable(GL_DEPTH_TEST);
+    }
 }
 
 SceneRayTracer::SceneRayTracer(SceneManager* sm, QOpenGLFunctions_4_5_Core* gl) : m_sm(sm), m_g(gl) {
@@ -856,17 +919,23 @@ void SceneRayTracer::render(
     m_renderOrigin = renderOriginForCamera(camera);
     maybeRebuildAccel();
     if (m_bvh.isEmpty() && m_sphereCount == 0) {
+        const GLboolean depthWasEnabled = m_g->glIsEnabled(GL_DEPTH_TEST);
         m_g->glDisable(GL_DEPTH_TEST);
         m_g->glClearColor(kEmptySceneClearRed, kEmptySceneClearGreen, kEmptySceneClearBlue, 1.0f);
         m_g->glClear(GL_COLOR_BUFFER_BIT);
-        m_g->glEnable(GL_DEPTH_TEST);
+        if (depthWasEnabled) {
+            m_g->glEnable(GL_DEPTH_TEST);
+        }
         return;
     }
 
-    float scale = std::clamp(
-        internalScale,
-        GraphicsSettings::kMinRayTraceResolutionScale,
-        GraphicsSettings::kMaxRayTraceResolutionScale);
+    float scale = internalScale;
+    if (!std::isfinite(scale)) {
+        scale = GraphicsSettings::kMaxRayTraceResolutionScale;
+    }
+    scale = std::clamp(scale,
+                       GraphicsSettings::kMinRayTraceResolutionScale,
+                       GraphicsSettings::kMaxRayTraceResolutionScale);
     const int traceW = std::max(1, static_cast<int>(std::lround(static_cast<float>(fbWidth) * scale)));
     const int traceH = std::max(1, static_cast<int>(std::lround(static_cast<float>(fbHeight) * scale)));
     ensureOutputSize(traceW, traceH);

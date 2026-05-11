@@ -34,7 +34,7 @@ public:
     /// Device pixels for GL viewport / RT (not QWidget::size(), which is DPR-scaled logical).
     QSize getFramebufferSize() const;
 
-    void setScene(std::unique_ptr<Scene> sc) { scene = std::move(sc); }
+    void setScene(std::unique_ptr<Scene> sc);
     void setSceneManager(SceneManager* scm) { sceneManager = scm; }
 
     void setMouseCaptured(bool captured);
@@ -45,7 +45,7 @@ public:
 
     void handleRawMouseDelta(int dx, int dy);
 
-    void setSimSpeed(float newSpeed) { simSpeed.store(newSpeed); }
+    void setSimSpeed(float newSpeed);
     float getSimSpeed() const { return simSpeed.load(); }
     void setRenderClockRunning(bool running) { simulating = running; }
     bool isRenderClockRunning() const { return simulating; }

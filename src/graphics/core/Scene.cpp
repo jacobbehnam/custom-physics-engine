@@ -96,8 +96,8 @@ void Scene::applyPhysicsSnapshots(const std::optional<std::vector<ObjectSnapshot
         for (const auto &s : *snaps) {
             renderPositions.emplace(s.body, s.position);
         }
-        SceneObject::setPhysicsPosMap(renderPositions);
     }
+    SceneObject::setPhysicsPosMap(renderPositions);
 }
 
 void Scene::updateCameraFromSnapshots(const std::optional<std::vector<ObjectSnapshot>>& snaps) {
@@ -116,6 +116,35 @@ void Scene::updateCameraFromSnapshots(const std::optional<std::vector<ObjectSnap
     }
 
     camera.update(renderTargetPositionPtr);
+}
+
+void Scene::updateCameraClipRange() {
+    float nearestDepth = std::numeric_limits<float>::max();
+    float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;
+    bool foundVisibleDepth = false;
+
+    for (auto* drawable : instancedDrawables) {
+        auto* obj = dynamic_cast<SceneObject*>(drawable);
+        if (!obj) continue;
+
+        const auto depthSpan = viewDepthSpan(*obj, camera.position, camera.front);
+        if (!depthSpan) continue;
+        if (depthSpan->second <= Camera::kDefaultNearClip) continue;
+
+        foundVisibleDepth = true;
+        nearestDepth = std::min(nearestDepth, std::max(depthSpan->first, Camera::kDefaultNearClip));
+        farthestDepth = std::max(farthestDepth, depthSpan->second);
+    }
+
+    if (foundVisibleDepth) {
+        const float farClip = std::max(farthestDepth * kFarClipPaddingMultiplier, Camera::kDefaultFarClip);
+        const float nearClip = nearestDepth == std::numeric_limits<float>::max()
+            ? Camera::kDefaultNearClip
+            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * kMaxNearClipFractionOfFarClip);
+        camera.setClipRange(nearClip, farClip);
+    } else {
+        camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
+    }
 }
 
 void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
@@ -147,33 +176,7 @@ void Scene::updateFrameUniforms(const std::unordered_set<uint32_t>& hoveredIDs, 
 void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     applyPhysicsSnapshots(snaps);
     updateCameraFromSnapshots(snaps);
-
-    float nearestDepth = std::numeric_limits<float>::max();
-    float farthestDepth = Camera::kDefaultNearClip + kMinFarthestDepthOffset;
-    bool foundVisibleDepth = false;
-
-    for (auto* drawable : instancedDrawables) {
-        auto* obj = dynamic_cast<SceneObject*>(drawable);
-        if (!obj) continue;
-
-        const auto depthSpan = viewDepthSpan(*obj, camera.position, camera.front);
-        if (!depthSpan) continue;
-        if (depthSpan->second <= Camera::kDefaultNearClip) continue;
-
-        foundVisibleDepth = true;
-        nearestDepth = std::min(nearestDepth, std::max(depthSpan->first, Camera::kDefaultNearClip));
-        farthestDepth = std::max(farthestDepth, depthSpan->second);
-    }
-
-    if (foundVisibleDepth) {
-        const float farClip = std::max(farthestDepth * kFarClipPaddingMultiplier, Camera::kDefaultFarClip);
-        const float nearClip = nearestDepth == std::numeric_limits<float>::max()
-            ? Camera::kDefaultNearClip
-            : std::clamp(nearestDepth * kNearClipDepthFraction, Camera::kDefaultNearClip, farClip * kMaxNearClipFractionOfFarClip);
-        camera.setClipRange(nearClip, farClip);
-    } else {
-        camera.setClipRange(Camera::kDefaultNearClip, Camera::kDefaultFarClip);
-    }
+    updateCameraClipRange();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -201,6 +204,8 @@ void Scene::draw(const std::optional<std::vector<ObjectSnapshot>>& snaps, const 
 
 void Scene::drawCustomDrawables(const std::optional<std::vector<ObjectSnapshot>>& snaps, const std::unordered_set<uint32_t>& hoveredIDs, const std::unordered_set<uint32_t>& selectedIDs) {
     applyPhysicsSnapshots(snaps);
+    updateCameraFromSnapshots(snaps);
+    updateCameraClipRange();
     updateFrameUniforms(hoveredIDs, selectedIDs);
 
     for (auto* obj : customDrawables) {
